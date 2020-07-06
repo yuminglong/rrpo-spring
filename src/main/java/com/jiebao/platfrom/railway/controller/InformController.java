@@ -10,18 +10,24 @@ import com.jiebao.platfrom.railway.dao.InformMapper;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
+import com.jiebao.platfrom.system.domain.Dept;
+import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -95,7 +101,7 @@ public class InformController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform) {
         inform.setStatus(1);
-        informService.saveOrUpdate(inform);
+        informService.save(inform);
         return new JiebaoResponse().message("成功");
     }
 
@@ -112,6 +118,22 @@ public class InformController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+    @PostMapping(value = "/excel")
+    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    //@RequiresPermissions("inform:export")
+    public void export(Inform inform, QueryRequest request, HttpServletResponse response) throws JiebaoException {
+        try {
+            List<Inform> informs = this.informService.getInformLists(inform, request);
+            ExcelKit.$Export(Inform.class, response).downXlsx(informs, false);
+        } catch (Exception e) {
+            message = "导出Excel失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
+
+
 
 
 }

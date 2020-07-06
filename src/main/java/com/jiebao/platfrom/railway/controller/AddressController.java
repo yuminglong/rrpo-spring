@@ -6,13 +6,16 @@ import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
+import com.wuwenze.poi.ExcelKit;
 import dm.jdbc.filter.stat.json.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,10 +116,23 @@ public class AddressController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public void updateAddress(@Valid Address address) throws JiebaoException{
         try {
-            System.out.println("+++++++++++++++++++++"+address+"++++++++++++++++++++++");
             this.addressService.updateByKey(address);
         } catch (Exception e) {
             message = "修改通讯录失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
+
+    @PostMapping(value = "/excel")
+    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    //@RequiresPermissions("inform:export")
+    public void export(Address address, QueryRequest request, HttpServletResponse response) throws JiebaoException {
+        try {
+            List<Address> addresses = addressService.findAddresses(request, address);
+            ExcelKit.$Export(Address.class, response).downXlsx(addresses, false);
+        } catch (Exception e) {
+            message = "导出Excel失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }

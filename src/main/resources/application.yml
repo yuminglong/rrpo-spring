@@ -41,6 +41,12 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
+  #文件上传大小限制
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
 # Redis配置
   redis:
     host: 114.116.141.49
@@ -82,6 +88,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/inform/**,/area/**,/address/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/inform/**,/area/**,/address/**,/file/**
     # token有效期，单位秒
     jwtTimeOut: 3600
+

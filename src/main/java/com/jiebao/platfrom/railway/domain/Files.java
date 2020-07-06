@@ -37,7 +37,7 @@ public class Files {
 
     private String createUser;
 
-    private Integer status;
 
 
+    private  String parentsId;
 }

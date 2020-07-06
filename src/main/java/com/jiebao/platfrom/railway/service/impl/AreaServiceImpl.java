@@ -12,6 +12,7 @@ import com.jiebao.platfrom.railway.dao.AreaMapper;
 import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.railway.domain.AreaTree;
 import com.jiebao.platfrom.railway.service.AreaService;
+import com.jiebao.platfrom.system.domain.Dept;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
             if (StringUtils.isNotBlank(area.getAreaName())){
                 queryWrapper.lambda().eq(Area::getAreaName,area.getAreaName());
             }
-            SortUtil.handleWrapperSort(request,queryWrapper,"id", JiebaoConstant.ORDER_ASC,true);
+            SortUtil.handleWrapperSort(request,queryWrapper,"creatTime", JiebaoConstant.ORDER_ASC,true);
             List<Area> areas = baseMapper.selectList(queryWrapper);
             ArrayList<AreaTree<Area>> trees = new ArrayList<>();
             buildTrees(trees,areas);
@@ -68,8 +69,14 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
         return map;
     }
 
-
-
+    @Override
+    public List<Area> getAreaList(QueryRequest request, Area area) {
+        QueryWrapper<Area> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(area.getAreaName()))
+            queryWrapper.lambda().eq(Area::getAreaName, area.getAreaName());
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectList(queryWrapper);
+    }
 
 
     private void buildTrees(List<AreaTree<Area>> trees, List<Area> areas) {

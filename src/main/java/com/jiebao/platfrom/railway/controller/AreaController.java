@@ -8,13 +8,18 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AreaMapper;
 import com.jiebao.platfrom.railway.domain.Area;
+import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.AreaService;
+import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +28,14 @@ import java.util.Map;
 /**
  * @author yf
  */
+@Slf4j
 @RestController
 @RequestMapping(value = "/area")
 @Api(tags = "地区")   //swagger2 api文档说明示例
 public class AreaController extends BaseController {
 
-    @Autowired
-    private AreaMapper areaMapper;
+    private String message;
+
 
     @Autowired
     private AreaService areaService;
@@ -63,7 +69,7 @@ public class AreaController extends BaseController {
     @DeleteMapping("/{ids}")
     @Log("删除")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse delete(@PathVariable Integer[] ids) throws JiebaoException {
+    public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
         try {
             Arrays.stream(ids).forEach(id -> {
                 areaService.removeById(id);
@@ -75,12 +81,25 @@ public class AreaController extends BaseController {
     }
 
     @PostMapping
-    @Log("新增或修改")
+    @Log("新增")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addArea(@PathVariable Area area){
-        areaService.saveOrUpdate(area);
+    public JiebaoResponse addArea(@Valid Area area){
+        areaService.save(area);
         return new JiebaoResponse().message("成功");
     }
 
 
+    @PostMapping(value = "/excel")
+    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    //@RequiresPermissions("inform:export")
+    public void export(Area area, QueryRequest request, HttpServletResponse response) throws JiebaoException {
+        try {
+            List<Area> areas = this.areaService.getAreaList(request,area);
+            ExcelKit.$Export(Area.class, response).downXlsx(areas, false);
+        } catch (Exception e) {
+            message = "导出Excel失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
 }

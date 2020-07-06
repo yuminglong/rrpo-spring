@@ -75,15 +75,19 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
+
+
     @Override
     public List<Address> findAddresses(QueryRequest request, Address address) {
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.isNotBlank(address.getTelPhone() + "")) {
-            queryWrapper.lambda().eq(Address::getTelPhone, address.getTelPhone());
+        SortUtil.handleWrapperSort(request, queryWrapper, "parentsId", JiebaoConstant.ORDER_DESC, true);
+        List<Address> addresses = baseMapper.selectList(queryWrapper);
+        for (Address s: addresses) {
+            String parentsId = s.getParentsId();
+            Dept byId = deptService.getById(parentsId);
+            s.setDeptName(byId.getDeptName());
         }
-
-        SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
-        return this.baseMapper.selectList(queryWrapper);
+        return addresses;
     }
 
 

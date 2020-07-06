@@ -15,4 +15,10 @@ public interface FileMapper extends BaseMapper<Files> {
 
     @Select("SELECT * FROM rail_area")
     List<Files> getFileList();
+
+    /**
+     * 删除部门时，其部门下的文件将移入公共文件夹
+     * @param parentsId
+     */
+    void updateByIds(String parentsId);
 }

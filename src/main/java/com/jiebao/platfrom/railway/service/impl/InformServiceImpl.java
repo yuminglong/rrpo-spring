@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @Service("InformService")
@@ -35,13 +37,29 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
             queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
         }
         Page<Inform> page = new Page<>(request.getPageNum(), request.getPageSize());
-        SortUtil.handleWrapperSort(request, queryWrapper, "id", JiebaoConstant.ORDER_ASC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "createTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
+
+
+
 
     @Override
     @Transactional
     public void updateByKey(Inform inform) {
         this.informMapper.updateById(inform);
     }
+
+    @Override
+    public List<Inform> getInformLists(Inform inform, QueryRequest request) {
+        QueryWrapper<Inform> queryWrapper = new QueryWrapper();
+        if (StringUtils.isNotBlank(inform.getTitle())) {
+            queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
+        }
+        SortUtil.handleWrapperSort(request, queryWrapper, "createTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+
+
 }
