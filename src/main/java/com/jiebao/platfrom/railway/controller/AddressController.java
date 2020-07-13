@@ -6,17 +6,13 @@ import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
-import com.wuwenze.poi.ExcelKit;
-import dm.jdbc.filter.stat.json.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +21,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +45,7 @@ public class AddressController extends BaseController {
     private AddressService addressService;
 
 
+
     /**
      * 使用Mapper操作数据库
      *
@@ -65,13 +59,12 @@ public class AddressController extends BaseController {
         //Object principal = SecurityUtils.getSubject().getPrincipal();
         String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
         System.out.println("-------------------"+id+"-------------------");*/
-        return this.addressService.getAddressLists(request, dept);
+        return this.addressService.getAddressLists(request,dept);
     }
 
     /**
      * 分页查询
      *
-     * @param request - 分页参数
      * @return
      * @Parameters sortField  according to order by Field
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC
@@ -82,6 +75,7 @@ public class AddressController extends BaseController {
         IPage<Address> List = addressService.getAddressList(request);
         return new JiebaoResponse().data(this.getDataTable(List));
     }*/
+
     @DeleteMapping("/{ids}")
     @Log("删除")
     @Transactional(rollbackFor = Exception.class)
@@ -99,7 +93,7 @@ public class AddressController extends BaseController {
     @PostMapping
     @Log("新增")
     @Transactional(rollbackFor = Exception.class)
-    public void addAddress(@Valid Address address) throws JiebaoException {
+    public void addAddress(@Valid Address address) throws JiebaoException{
         try {
             address.setStatus(1);
             this.addressService.saveOrUpdate(address);
@@ -114,8 +108,9 @@ public class AddressController extends BaseController {
     @PutMapping
     @Log("修改通讯录")
     @Transactional(rollbackFor = Exception.class)
-    public void updateAddress(@Valid Address address) throws JiebaoException {
+    public void updateAddress(@Valid Address address) throws JiebaoException{
         try {
+            System.out.println("+++++++++++++++++++++"+address+"++++++++++++++++++++++");
             this.addressService.updateByKey(address);
         } catch (Exception e) {
             message = "修改通讯录失败";
@@ -123,36 +118,5 @@ public class AddressController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
-    @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    //@RequiresPermissions("inform:export")
-    public void export(Address address, QueryRequest request, HttpServletResponse response) throws JiebaoException {
-        try {
-            List<Address> addresses = addressService.findAddresses(request, address);
-            ExcelKit.$Export(Address.class, response).downXlsx(addresses, false);
-        } catch (Exception e) {
-            message = "导出Excel失败";
-            log.error(message, e);
-            throw new JiebaoException(message);
-        }
-    }
-
-    @PostMapping(value = "/import")
-    @ApiOperation(value = "导入", notes = "导入", httpMethod = "POST")
-    public String importExcel( @RequestParam(value = "file", required = false) MultipartFile file) {
-        int result = 0;
-        try {
-            result = addressService.addAddressList(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (result > 0) {
-            return "excel文件数据导入成功";
-        } else {
-            return "excel文件数据导入失败";
-        }
-    }
-
 
 }
