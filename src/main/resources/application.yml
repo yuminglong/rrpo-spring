@@ -18,13 +18,13 @@ spring:
       datasource:
         # 数据源-1，名称为 primary
         primary:
-          username: SYSDBA #root
+          username: root #SYSDBA
           #password: link0122.. #jiebao@2008
-          password: SYSDBA
-          driver-class-name: dm.jdbc.driver.DmDriver #com.mysql.cj.jdbc.Driver
+          password: jiebao@2008
+          driver-class-name:  com.mysql.cj.jdbc.Driver #dm.jdbc.driver.DmDriver
           #url: jdbc:dm://192.168.20.122:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
-          url: jdbc:dm://127.0.0.1:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
-          #jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+          #url: jdbc:dm://127.0.0.1:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+          url: jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
         # 数据源-2，名称为 crm
         #crm:
         #  username: root

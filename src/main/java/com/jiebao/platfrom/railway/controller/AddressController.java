@@ -13,7 +13,6 @@ import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
-import dm.jdbc.filter.stat.json.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +65,6 @@ public class AddressController extends BaseController {
     /**
      * 分页查询
      *
-     * @param request - 分页参数
      * @return
      * @Parameters sortField  according to order by Field
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC

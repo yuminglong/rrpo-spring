@@ -19,21 +19,21 @@
 
     <select id="findUserDetail" resultType="user" parameterType="user">
         SELECT
-        u.user_id AS "userId",
+        u.user_id userId,
         u.username,
         u.password,
         u.email,
         u.mobile,
         u. STATUS,
-        u.create_time AS "createTime",
+        u.create_time createTime,
         u.ssex,
-        d.dept_id AS "deptId",
-        d.dept_name AS "deptName",
+        d.dept_id deptId,
+        d.dept_name deptName,
         u.AVATAR,
         u.DESCRIPTION,
-        u.LAST_LOGIN_TIME AS "lastLoginTime",
-        to_char(wm_concat(r.role_id)) AS "roleId",
-        to_char(wm_concat(r.ROLE_NAME)) AS "roleName"
+        u.LAST_LOGIN_TIME lastLoginTime,
+        GROUP_CONCAT(r.role_id) roleId,
+        GROUP_CONCAT(r.ROLE_NAME) roleName
         FROM
         sys_user u
         LEFT JOIN sys_dept d ON (u.dept_id = d.dept_id)
@@ -58,32 +58,47 @@
         <if test="user.status != null and user.status != ''">
             AND u.status = #{user.status}
         </if>
-        GROUP BY u.user_id,u.username,u.password,u.email,u.mobile, u.STATUS, u.create_time,u.ssex, d.dept_id, d.dept_name, u.AVATAR, u.DESCRIPTION, u.LAST_LOGIN_TIME
+        group by
+        u.user_id,
+        u.username,
+        u.password,
+        u.email,
+        u.mobile,
+        u. STATUS,
+        u.create_time,
+        u.ssex,
+        d.dept_id,
+        d.dept_name,
+        u.AVATAR,
+        u.DESCRIPTION,
+        u.LAST_LOGIN_TIME
+
     </select>
 
     <select id="findDetail" resultType="user" parameterType="string">
         SELECT
-        u.user_id AS "userId",
+        u.user_id userId,
         u.username,
         u.password,
         u.email,
         u.mobile,
         u.STATUS,
-        u.create_time AS "createTime",
+        u.create_time createTime,
         u.ssex,
-        d.dept_id AS "deptId",
-        d.dept_name AS "deptName",
+        d.dept_id deptId,
+        d.dept_name deptName,
         u.AVATAR,
         u.DESCRIPTION,
-        u.LAST_LOGIN_TIME "lastLoginTime",
-        to_char(wm_concat(r.role_id)) AS "roleId",
-        to_char(wm_concat(r.ROLE_NAME)) AS "roleName"
+        u.LAST_LOGIN_TIME lastLoginTime,
+        GROUP_CONCAT(r.role_id) roleId,
+        GROUP_CONCAT(r.ROLE_NAME) roleName
         FROM
         sys_user u
         LEFT JOIN sys_dept d ON (u.dept_id = d.dept_id)
         LEFT JOIN sys_user_role ur ON (u.user_id = ur.user_id)
         LEFT JOIN sys_role r ON r.role_id = ur.role_id
         WHERE  u.username = #{username}
-        GROUP BY u.user_id,u.username,u.password,u.email,u.mobile,u.STATUS,u.create_time, u.ssex,d.dept_id,d.dept_name,u.AVATAR,u.DESCRIPTION, u.LAST_LOGIN_TIME
+        group by u.username,u.user_id,u.password,u.email,u.mobile,u.STATUS,u.create_time,u.ssex,d.dept_id,d.dept_name,u.AVATAR,u.DESCRIPTION,
+        u.LAST_LOGIN_TIME
     </select>
 </mapper>
