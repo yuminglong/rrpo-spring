@@ -25,8 +25,10 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +52,6 @@ public class AddressController extends BaseController {
     private AddressService addressService;
 
 
-
     /**
      * 使用Mapper操作数据库
      *
@@ -64,7 +65,7 @@ public class AddressController extends BaseController {
         //Object principal = SecurityUtils.getSubject().getPrincipal();
         String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
         System.out.println("-------------------"+id+"-------------------");*/
-        return this.addressService.getAddressLists(request,dept);
+        return this.addressService.getAddressLists(request, dept);
     }
 
     /**
@@ -81,7 +82,6 @@ public class AddressController extends BaseController {
         IPage<Address> List = addressService.getAddressList(request);
         return new JiebaoResponse().data(this.getDataTable(List));
     }*/
-
     @DeleteMapping("/{ids}")
     @Log("删除")
     @Transactional(rollbackFor = Exception.class)
@@ -99,7 +99,7 @@ public class AddressController extends BaseController {
     @PostMapping
     @Log("新增")
     @Transactional(rollbackFor = Exception.class)
-    public void addAddress(@Valid Address address) throws JiebaoException{
+    public void addAddress(@Valid Address address) throws JiebaoException {
         try {
             address.setStatus(1);
             this.addressService.saveOrUpdate(address);
@@ -114,7 +114,7 @@ public class AddressController extends BaseController {
     @PutMapping
     @Log("修改通讯录")
     @Transactional(rollbackFor = Exception.class)
-    public void updateAddress(@Valid Address address) throws JiebaoException{
+    public void updateAddress(@Valid Address address) throws JiebaoException {
         try {
             this.addressService.updateByKey(address);
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class AddressController extends BaseController {
     }
 
     @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
     public void export(Address address, QueryRequest request, HttpServletResponse response) throws JiebaoException {
         try {
@@ -137,5 +137,22 @@ public class AddressController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "导入", notes = "导入", httpMethod = "POST")
+    public String importExcel( @RequestParam(value = "file", required = false) MultipartFile file) {
+        int result = 0;
+        try {
+            result = addressService.addAddressList(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (result > 0) {
+            return "excel文件数据导入成功";
+        } else {
+            return "excel文件数据导入失败";
+        }
+    }
+
 
 }

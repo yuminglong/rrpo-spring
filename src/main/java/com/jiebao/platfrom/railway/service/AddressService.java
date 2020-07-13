@@ -6,6 +6,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.domain.Dept;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,6 @@ public interface AddressService extends IService<Address> {
 
     List<Address> findAddresses( QueryRequest request,Address address);
 
-
+    int addAddressList(MultipartFile file) throws Exception;
 
 }

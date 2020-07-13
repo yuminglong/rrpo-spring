@@ -20,12 +20,19 @@ import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.impl.DeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +67,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Map<String, Object> result = new HashMap<>();
         try {
             List<Dept> depts = deptService.findDept(dept, request);
-         //   List<Address> addresses = addressService.findAddresses(address, request);
+            //   List<Address> addresses = addressService.findAddresses(address, request);
             List<Tree<Dept>> trees = new ArrayList<>();
             buildTrees(trees, depts);
             Tree<Dept> deptTree = TreeUtil.builds(trees);
@@ -75,14 +82,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
-
-
     @Override
     public List<Address> findAddresses(QueryRequest request, Address address) {
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
         SortUtil.handleWrapperSort(request, queryWrapper, "parentsId", JiebaoConstant.ORDER_DESC, true);
         List<Address> addresses = baseMapper.selectList(queryWrapper);
-        for (Address s: addresses) {
+        for (Address s : addresses) {
             String parentsId = s.getParentsId();
             Dept byId = deptService.getById(parentsId);
             s.setDeptName(byId.getDeptName());
@@ -98,7 +103,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
-    private void buildTrees(List<Tree<Dept>> trees, List<Dept> depts ) {
+    private void buildTrees(List<Tree<Dept>> trees, List<Dept> depts) {
 
 
         depts.forEach(dept -> {
@@ -136,4 +141,32 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             trees.add(tree);
         });
     }
+
+    @Override
+    public int addAddressList(MultipartFile file) throws Exception {
+        int result = 0;
+        List<Address> addressList = new ArrayList<>();
+        String filename = file.getOriginalFilename();
+        String sub = filename.substring(filename.lastIndexOf(".") + 1);
+        InputStream inputStream = file.getInputStream();
+        Workbook wb = null;
+        /**
+         * HSSFWorkbook:是操作Excel2003以前（包括2003）的版本，扩展名是.xls
+         * XSSFWorkbook:是操作Excel2007的版本，扩展名是.xlsx
+         */
+        if ("xlsx".equals(sub)) {
+            wb = new XSSFWorkbook(inputStream);
+        } else {
+            wb = new HSSFWorkbook(inputStream);
+        }
+        Sheet sheet = wb.getSheetAt(0);
+        if (sheet!=null){
+
+        }
+
+
+        return 0;
+    }
+
+
 }
