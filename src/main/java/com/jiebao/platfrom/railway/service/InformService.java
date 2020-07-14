@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface InformService extends IService<Inform> {
 
-    IPage<Inform>   getInformList(QueryRequest request,Inform inform);
+    IPage<Inform> getInformList(QueryRequest request, Inform inform);
 
     void updateByKey(Inform inform);
 
-    List<Inform> getInformLists(Inform inform,QueryRequest request);
+    List<Inform> getInformLists(Inform inform, QueryRequest request);
 }

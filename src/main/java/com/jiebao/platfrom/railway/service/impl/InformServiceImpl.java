@@ -42,8 +42,6 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
     }
 
 
-
-
     @Override
     @Transactional
     public void updateByKey(Inform inform) {
@@ -59,7 +57,6 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
         SortUtil.handleWrapperSort(request, queryWrapper, "createTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectList(queryWrapper);
     }
-
 
 
 }

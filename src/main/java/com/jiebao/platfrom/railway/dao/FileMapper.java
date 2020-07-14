@@ -18,6 +18,7 @@ public interface FileMapper extends BaseMapper<Files> {
 
     /**
      * 删除部门时，其部门下的文件将移入公共文件夹
+     *
      * @param parentsId
      */
     void updateByIds(String parentsId);

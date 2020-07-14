@@ -11,7 +11,7 @@ import com.jiebao.platfrom.railway.domain.Files;
  */
 public interface FileService extends IService<Files> {
 
-    IPage<Files>   getFileList(QueryRequest request);
+    IPage<Files> getFileList(QueryRequest request);
 
     void updateByKey(Files files);
 }

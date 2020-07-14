@@ -32,7 +32,6 @@ import java.util.Map;
 public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements AreaService {
 
 
-
     private final static String TOP_NODE_ID = "0";
     @Autowired
     AreaService areaService;
@@ -42,7 +41,7 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
         LambdaQueryWrapper<Area> lambdaQueryWrapper = new LambdaQueryWrapper();
         Page<Area> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Area::getId);
-        return this.baseMapper.selectPage(page,lambdaQueryWrapper);
+        return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 
     @Override
@@ -50,18 +49,17 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
         Map<String, Object> map = new HashMap<>();
         try {
             QueryWrapper<Area> queryWrapper = new QueryWrapper<>();
-            if (StringUtils.isNotBlank(area.getAreaName())){
-                queryWrapper.lambda().eq(Area::getAreaName,area.getAreaName());
+            if (StringUtils.isNotBlank(area.getAreaName())) {
+                queryWrapper.lambda().eq(Area::getAreaName, area.getAreaName());
             }
-            SortUtil.handleWrapperSort(request,queryWrapper,"creatTime", JiebaoConstant.ORDER_ASC,true);
+            SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
             List<Area> areas = baseMapper.selectList(queryWrapper);
             ArrayList<AreaTree<Area>> trees = new ArrayList<>();
-            buildTrees(trees,areas);
+            buildTrees(trees, areas);
             AreaTree<Area> build = build(trees);
-            map.put("rows",build);
-            map.put("total",areas.size());
-        }
-        catch (Exception e){
+            map.put("rows", build);
+            map.put("total", areas.size());
+        } catch (Exception e) {
             log.error("获取部门列表失败", e);
             map.put("rows", null);
             map.put("total", 0);
@@ -132,8 +130,6 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
         root.setText("root");
         return root;
     }
-
-
 
 
 }

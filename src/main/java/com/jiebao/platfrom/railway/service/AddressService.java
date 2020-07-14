@@ -22,13 +22,13 @@ public interface AddressService extends IService<Address> {
 
     void updateByKey(Address address);
 
-    List<Address> findAddresses( QueryRequest request,Address address);
+    List<Address> findAddresses(QueryRequest request, Address address);
 
-    boolean addAddressList(MultipartFile file,String parentsId) throws Exception;
+    boolean addAddressList(MultipartFile file, String parentsId) throws Exception;
 
     int selectUserName(String userName);
 
-    List<Address>  addressList();
+    List<Address> addressList();
 
     List<Address> getByParentsId(String ParentsId);
 

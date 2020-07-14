@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public interface AreaService extends IService<Area> {
 
-    IPage<Area>   getAreaList(QueryRequest request);
+    IPage<Area> getAreaList(QueryRequest request);
 
     Map<String, Object> getAreaListByService(QueryRequest request, Area area);
 
-    List<Area>  getAreaList(QueryRequest request, Area area);
+    List<Area> getAreaList(QueryRequest request, Area area);
 }

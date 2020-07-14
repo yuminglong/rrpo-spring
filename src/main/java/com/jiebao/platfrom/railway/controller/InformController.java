@@ -55,8 +55,8 @@ public class InformController extends BaseController {
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse getInformListByMapper() {
         List<Inform> list = informMapper.getInformList();
-        for (Inform i:list
-             ) {
+        for (Inform i : list
+        ) {
             i.setKey(i.getId());
         }
         return new JiebaoResponse().data(list).message("查询成功").put("remake", "其他数据返回");
@@ -72,10 +72,10 @@ public class InformController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getInformList(QueryRequest request,Inform inform) {
-        IPage<Inform> informList = informService.getInformList(request,inform);
+    public JiebaoResponse getInformList(QueryRequest request, Inform inform) {
+        IPage<Inform> informList = informService.getInformList(request, inform);
         List<Inform> records = informList.getRecords();
-        for (Inform i:records
+        for (Inform i : records
         ) {
             i.setKey(i.getId());
         }
@@ -108,7 +108,7 @@ public class InformController extends BaseController {
     @PutMapping
     @Log("修改通知公告")
     @Transactional(rollbackFor = Exception.class)
-    public void updateAddress(@Valid Inform inform) throws JiebaoException{
+    public void updateAddress(@Valid Inform inform) throws JiebaoException {
         try {
 
             this.informService.updateByKey(inform);
@@ -120,7 +120,7 @@ public class InformController extends BaseController {
     }
 
     @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
     public void export(Inform inform, QueryRequest request, HttpServletResponse response) throws JiebaoException {
         try {
@@ -132,8 +132,6 @@ public class InformController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
-
 
 
 }

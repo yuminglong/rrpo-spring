@@ -48,7 +48,7 @@ public class AreaController extends BaseController {
     @GetMapping
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public Map<String, Object> getAreaListByService(QueryRequest request, Area area) {
-        return this.areaService.getAreaListByService(request,area);
+        return this.areaService.getAreaListByService(request, area);
     }
 
     /**
@@ -83,18 +83,18 @@ public class AreaController extends BaseController {
     @PostMapping
     @Log("新增")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addArea(@Valid Area area){
+    public JiebaoResponse addArea(@Valid Area area) {
         areaService.save(area);
         return new JiebaoResponse().message("成功");
     }
 
 
     @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出",  httpMethod = "POST")
+    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
     public void export(Area area, QueryRequest request, HttpServletResponse response) throws JiebaoException {
         try {
-            List<Area> areas = this.areaService.getAreaList(request,area);
+            List<Area> areas = this.areaService.getAreaList(request, area);
             ExcelKit.$Export(Area.class, response).downXlsx(areas, false);
         } catch (Exception e) {
             message = "导出Excel失败";

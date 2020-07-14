@@ -142,7 +142,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
     @Override
-    public boolean addAddressList(MultipartFile file,String parentsId) throws Exception {
+    public boolean addAddressList(MultipartFile file, String parentsId) throws Exception {
         boolean save = true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
@@ -210,10 +210,10 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     @Override
-    public  List<Address>  addressList(){
+    public List<Address> addressList() {
         List<Address> list = addressService.list();
-        for (Address address: list
-             ) {
+        for (Address address : list
+        ) {
             String parentsId = address.getParentsId();
             Dept byId = deptService.getById(parentsId);
             address.setDeptName(byId.getDeptName());
@@ -223,7 +223,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     @Override
-    public List<Address> getByParentsId(String parentsId){
+    public List<Address> getByParentsId(String parentsId) {
         return addressMapper.getByParentsId(parentsId);
     }
 }

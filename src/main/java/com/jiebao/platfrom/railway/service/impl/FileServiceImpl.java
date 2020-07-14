@@ -29,7 +29,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, Files> implements F
         LambdaQueryWrapper<Files> lambdaQueryWrapper = new LambdaQueryWrapper();
         Page<Files> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Files::getId);
-        return this.baseMapper.selectPage(page,lambdaQueryWrapper);
+        return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 
     @Override

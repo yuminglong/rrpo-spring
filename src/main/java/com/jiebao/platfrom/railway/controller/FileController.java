@@ -109,7 +109,7 @@ public class FileController extends BaseController {
 
     @PostMapping("/upload")
     @ApiOperation(value = "文件上传", notes = "文件上传", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse upload(@RequestParam(value = "file",required = false) MultipartFile file, Files files) {
+    public JiebaoResponse upload(@RequestParam(value = "file", required = false) MultipartFile file, Files files) {
         String path = null;
         if (file != null) {
             path = "D:/rrpo/download/" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "_" + file.getOriginalFilename();
