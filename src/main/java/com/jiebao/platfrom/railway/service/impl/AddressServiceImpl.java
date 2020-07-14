@@ -21,8 +21,7 @@ import com.jiebao.platfrom.system.service.impl.DeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,8 +142,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
     @Override
-    public int addAddressList(MultipartFile file) throws Exception {
-        int result = 0;
+    public boolean addAddressList(MultipartFile file,String parentsId) throws Exception {
+        boolean save = true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
         String sub = filename.substring(filename.lastIndexOf(".") + 1);
@@ -160,13 +159,71 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             wb = new HSSFWorkbook(inputStream);
         }
         Sheet sheet = wb.getSheetAt(0);
-        if (sheet!=null){
+        if (sheet != null) {
+            //getLastRowNum()返回最后一行的索引，即比行总数小1
+            for (int line = 2; line <= sheet.getLastRowNum(); line++) {
+                Address address = new Address();
+                Row row = sheet.getRow(line);
+                if (row == null) {
+                    continue;
+                }
+                row.getCell(0).setCellType(CellType.STRING);
+                if (CellType.STRING != row.getCell(0).getCellTypeEnum()) {
+                    throw new Exception("单元格类型不是文本类型");
+                }
+                /**
+                 * 获取第一个单元格的内容
+                 */
+                String userName = row.getCell(0).getStringCellValue();
+                row.getCell(1).setCellType(CellType.STRING);
+                row.getCell(2).setCellType(CellType.STRING);
+                row.getCell(3).setCellType(CellType.STRING);
+                row.getCell(4).setCellType(CellType.STRING);
 
+                String phone = row.getCell(1).getStringCellValue();
+                String telPhone = row.getCell(2).getStringCellValue();
+                String weiXin = row.getCell(3).getStringCellValue();
+                String email = row.getCell(4).getStringCellValue();
+                address.setUserName(userName);
+                address.setPhone(phone);
+                address.setTelPhone(telPhone);
+                address.setWeiXin(weiXin);
+                address.setEmail(email);
+                address.setParentsId(parentsId);
+                addressList.add(address);
+            }
+            for (Address addressInfo : addressList) {
+                String userName = addressInfo.getUserName();
+                int count = addressService.selectUserName(userName);
+                if (count == 0) {
+                    save = addressService.save(addressInfo);
+                }
+            }
         }
+        return save;
+    }
 
-
-        return 0;
+    @Override
+    public int selectUserName(String userName) {
+        return addressMapper.selectUser(userName);
     }
 
 
+    @Override
+    public  List<Address>  addressList(){
+        List<Address> list = addressService.list();
+        for (Address address: list
+             ) {
+            String parentsId = address.getParentsId();
+            Dept byId = deptService.getById(parentsId);
+            address.setDeptName(byId.getDeptName());
+        }
+        return list;
+    }
+
+
+    @Override
+    public List<Address> getByParentsId(String parentsId){
+        return addressMapper.getByParentsId(parentsId);
+    }
 }

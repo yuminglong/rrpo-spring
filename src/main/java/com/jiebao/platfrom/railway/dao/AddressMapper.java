@@ -29,4 +29,11 @@ public interface AddressMapper extends BaseMapper<Address> {
      * @param parentsId
      */
     void updateByIds(String parentsId);
+
+
+    int selectUser(String username);
+
+    @Select("SELECT * FROM `rail_address` r where r.parents_id =#{parentsId}")
+    List<Address> getByParentsId(String parentsId);
+
 }

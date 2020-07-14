@@ -16,4 +16,8 @@
     <update id="updateByIds">
             UPDATE rail_address r SET r.parents_id = 'fc1a198f11198e91c593723c6a51ac97' WHERE r.parents_id = #{parentsId}
     </update>
+
+    <select id="selectUser" resultType="java.lang.Integer">
+      select count(*) from rail_address where user_name=#{userName}
+  </select>
 </mapper>
