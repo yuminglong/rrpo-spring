@@ -8,6 +8,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.FileMapper;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Files;
 import com.jiebao.platfrom.railway.service.FileService;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -181,5 +182,13 @@ public class FileController extends BaseController {
             return;
         }
         return;
+    }
+
+    @GetMapping("/{parentsId}")
+    @Log("根据部门查看文件")
+    @ApiOperation(value = "根据部门查看文件", notes = "根据部门查看文件", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public List<Files> findById(@PathVariable String parentsId) {
+        return fileService.getByParentsId(parentsId);
     }
 }

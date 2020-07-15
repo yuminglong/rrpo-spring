@@ -22,4 +22,7 @@ public interface FileMapper extends BaseMapper<Files> {
      * @param parentsId
      */
     void updateByIds(String parentsId);
+
+    @Select("SELECT * FROM `rail_file` r where r.parents_id =#{parentsId}")
+    List<Files> getByParentsId(String parentsId);
 }

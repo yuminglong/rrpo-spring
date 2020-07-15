@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @Service("FileService")
@@ -37,4 +39,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, Files> implements F
     public void updateByKey(Files files) {
         this.fileMapper.updateById(files);
     }
+
+    @Override
+    public List<Files> getByParentsId(String parentsId) {
+        return fileMapper.getByParentsId(parentsId);
+    }
+
+
 }
