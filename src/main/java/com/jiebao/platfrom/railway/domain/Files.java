@@ -40,4 +40,8 @@ public class Files {
 
 
     private  String parentsId;
+
+    private Integer type;
+
+    private String userId;
 }
