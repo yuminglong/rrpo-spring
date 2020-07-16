@@ -8,6 +8,8 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.demo.domain.Demo;
 
+import java.util.List;
+
 /**
  * 演示代码 - service
  *
@@ -20,4 +22,6 @@ public interface CarService extends IService<Car> {
     IPage<Car> getCarList(QueryRequest request, Integer state);  //分页查询
 
     JiebaoResponse addOrUpdate(Car car);
+
+    List<String>  userListByDeptId(String deptId);//通过部门id  查询 当前 部门 及子部门  相关人员
 }

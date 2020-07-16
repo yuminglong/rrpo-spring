@@ -6,8 +6,13 @@ import com.jiebao.platfrom.car.domain.CarMaintain;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
-public interface CarMainService extends IService<CarMaintain> {
-    JiebaoResponse addOrUpdate(CarMaintain carMaintain); //修改添加
+import java.util.Date;
+import java.util.List;
 
-    IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate);//分页查询
+public interface CarMainService extends IService<CarMaintain> {
+    JiebaoResponse add(CarMaintain carMaintain); //修改添加
+
+    IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate);//分页查询  ziCha  为true查询当前登陆人相关信息
+
+    JiebaoResponse update(String CarMainId ,Integer state); //修改  //维修单  赋予状态
 }

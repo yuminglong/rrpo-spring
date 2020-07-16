@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.car.controller;
 
+
 import com.jiebao.platfrom.car.domain.Car;
 import com.jiebao.platfrom.car.service.CarService;
 import com.jiebao.platfrom.common.annotation.Log;
@@ -27,7 +28,7 @@ public class CarController {
 
     @DeleteMapping(value = "delete/{id}")
     @Log("删除车辆信息")
-    public JiebaoResponse delete(Long carId) {
+    public JiebaoResponse delete(String carId) {
         return new JiebaoResponse().message(carService.removeById(carId) ? "删除成功" : "删除失败");
     }
 
