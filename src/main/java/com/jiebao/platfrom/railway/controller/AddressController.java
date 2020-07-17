@@ -55,7 +55,7 @@ public class AddressController extends BaseController {
      * @return JiebaoResponse 标准返回数据类型
      */
     @GetMapping
-    @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "根据部门查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public Map<String, Object> getAddressListByMapper(QueryRequest request, Dept dept) {
        /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         System.out.println("-------------------"+username+"-------------------");
@@ -64,6 +64,19 @@ public class AddressController extends BaseController {
         System.out.println("-------------------"+id+"-------------------");*/
         return this.addressService.getAddressLists(request, dept);
     }
+
+
+    @GetMapping("/byArea")
+    @ApiOperation(value = "根据地区分页查询所有数据List(此接口需优化，暂时不要测试)", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
+    public Map<String, Object> getAddressListByArea(QueryRequest request, Area area) {
+       /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        System.out.println("-------------------"+username+"-------------------");
+        //Object principal = SecurityUtils.getSubject().getPrincipal();
+        String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
+        System.out.println("-------------------"+id+"-------------------");*/
+        return this.addressService.getAddressListsByArea(request, area);
+    }
+
 
     /**
      * 分页查询
@@ -81,6 +94,7 @@ public class AddressController extends BaseController {
     @DeleteMapping("/{ids}")
     @Log("删除")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation(value = "批量删除", notes = "批量删除", httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
         try {
             Arrays.stream(ids).forEach(id -> {
@@ -94,6 +108,7 @@ public class AddressController extends BaseController {
 
     @PostMapping
     @Log("新增")
+    @ApiOperation(value = "新增通讯录", notes = "新增通讯录", httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public void addAddress(@Valid Address address) throws JiebaoException {
         try {
@@ -109,10 +124,10 @@ public class AddressController extends BaseController {
 
     @PutMapping
     @Log("修改通讯录")
+    @ApiOperation(value = "修改通讯录", notes = "修改通讯录", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
     public void updateAddress(@Valid Address address) throws JiebaoException {
         try {
-            System.out.println("+++++++++++++++++++++" + address + "++++++++++++++++++++++");
             this.addressService.updateByKey(address);
         } catch (Exception e) {
             message = "修改通讯录失败";
@@ -154,12 +169,23 @@ public class AddressController extends BaseController {
     }
 
 
-    @GetMapping("/{parentsId}")
-    @Log("根据部门查看通讯录")
-    @ApiOperation(value = "根据部门查看通讯录", notes = "根据部门查看通讯录", httpMethod = "GET")
+
+    @GetMapping("/{areaId}")
+    @Log("根据地区查看通讯录")
+    @ApiOperation(value = "根据地区查看通讯录", notes = "根据地区查看通讯录", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public List<Address> findById(@PathVariable String parentsId) {
-        return addressService.getByParentsId(parentsId);
+    public List<Address> findById(@PathVariable String areaId) {
+        return addressService.getByAreaId(areaId);
+    }
+
+
+    @GetMapping("/{iPageAreaId}")
+    @Log("根据地区分页查看通讯录")
+    @ApiOperation(value = "根据地区分页查看通讯录", notes = "根据地区分页查看通讯录", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse findByArea(QueryRequest request,@PathVariable String iPageAreaId) {
+        IPage<Address> areaList =addressService.getByArea(request,iPageAreaId);
+        return new JiebaoResponse().data(this.getDataTable(areaList));
     }
 
 }

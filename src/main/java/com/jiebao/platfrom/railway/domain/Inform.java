@@ -11,6 +11,7 @@ import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
 import java.util.Date;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Date;
 @Excel("通知公告")
 public class Inform {
 
-    @TableId(value = "id",type = IdType.UUID)
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
 
     @TableField(exist = false)
@@ -54,4 +55,6 @@ public class Inform {
      * 上级ID
      */
     private String parentId;
+
+    private Integer type;
 }

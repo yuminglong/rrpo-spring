@@ -74,6 +74,7 @@ public class FileController extends BaseController {
     @DeleteMapping("/{ids}")
     @Log("删除文件")
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation(value = "批量删除", notes = "批量删除", response = JiebaoResponse.class, httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
 
         try {
@@ -93,6 +94,7 @@ public class FileController extends BaseController {
 
     @PutMapping
     @Log("修改")
+    @ApiOperation(value = "修改", notes = "修改", response = JiebaoResponse.class, httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse updateFile(@Valid Files files) throws JiebaoException {
         try {
@@ -191,4 +193,7 @@ public class FileController extends BaseController {
     public List<Files> findById(@PathVariable String parentsId) {
         return fileService.getByParentsId(parentsId);
     }
+
+
+
 }

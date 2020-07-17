@@ -7,8 +7,10 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AreaMapper;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.railway.domain.Inform;
+import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.railway.service.AreaService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
@@ -20,9 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -39,6 +39,9 @@ public class AreaController extends BaseController {
 
     @Autowired
     private AreaService areaService;
+
+    @Autowired
+    private AddressService addressService;
 
     /**
      * 使用Mapper操作数据库
@@ -68,6 +71,7 @@ public class AreaController extends BaseController {
 
     @DeleteMapping("/{ids}")
     @Log("删除")
+    @ApiOperation(value = "批量删除", notes = "批量删除", response = JiebaoResponse.class, httpMethod = "DELETE")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
         try {
@@ -82,6 +86,7 @@ public class AreaController extends BaseController {
 
     @PostMapping
     @Log("新增")
+    @ApiOperation(value = "新增地区", notes = "新增地区", httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addArea(@Valid Area area) {
         areaService.save(area);
@@ -102,4 +107,20 @@ public class AreaController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+    @PutMapping
+    @Log("修改地区")
+    @ApiOperation(value = "修改地区", notes = "修改地区", httpMethod = "PUT")
+    @Transactional(rollbackFor = Exception.class)
+    public void updateArea(@Valid Area area) throws JiebaoException {
+        try {
+            this.areaService.updateByKey(area);
+        } catch (Exception e) {
+            message = "修改地区失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
+
+
 }

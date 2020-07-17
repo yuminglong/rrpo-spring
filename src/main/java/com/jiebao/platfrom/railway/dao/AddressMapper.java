@@ -23,6 +23,9 @@ public interface AddressMapper extends BaseMapper<Address> {
     //@Select("select * from rail_address r  join sys_dept d  on r.parents_id  = d.dept_id where r.parents_id = #{parentsId}")
     List<Address> getAddressList(@Param("parentsId") String parentsId);
 
+    @Select("select * from rail_address r  join rail_area d  on r.area_id  = d.id where r.area_id = #{areaId}")
+    List<Address> getAddressListByArea(@Param("areaId") String areaId);
+
 
     /**
      * 删除部门时，其部门下的通讯录将移入公共通讯录
@@ -34,7 +37,7 @@ public interface AddressMapper extends BaseMapper<Address> {
 
     int selectUser(String username);
 
-    @Select("SELECT * FROM `rail_address` r where r.parents_id =#{parentsId}")
-    List<Address> getByParentsId(String parentsId);
+    @Select("SELECT * FROM `rail_address` r where r.area_id =#{areaId}")
+    List<Address> getByAreaId(@Param("areaId")  String areaId);
 
 }

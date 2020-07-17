@@ -36,6 +36,9 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
     @Autowired
     AreaService areaService;
 
+    @Autowired
+    AreaMapper areaMapper;
+
     @Override
     public IPage<Area> getAreaList(QueryRequest request) {
         LambdaQueryWrapper<Area> lambdaQueryWrapper = new LambdaQueryWrapper();
@@ -60,7 +63,7 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
             map.put("rows", build);
             map.put("total", areas.size());
         } catch (Exception e) {
-            log.error("获取部门列表失败", e);
+            log.error("获取地区列表失败", e);
             map.put("rows", null);
             map.put("total", 0);
         }
@@ -129,6 +132,13 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements Ar
         root.setChildren(topNodes);
         root.setText("root");
         return root;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByKey(Area area){
+        this.areaMapper.updateById(area);
     }
 
 
