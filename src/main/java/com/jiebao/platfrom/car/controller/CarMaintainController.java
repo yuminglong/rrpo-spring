@@ -41,13 +41,22 @@ public class CarMaintainController {
 
     @GetMapping(value = "list")
     @Log("分页查询车辆送修")
-    public JiebaoResponse list(QueryRequest request, Integer state, String CarPlate,String deptId, boolean ziCha, Date startDate, Date endDate) { //状态 查询  车牌号直接查询   后面2个参数 开始时间  结束时间区间查询
-        return new JiebaoResponse().data(carMainService.getCarMaintainList(request, state, CarPlate, deptId, ziCha,  startDate,  endDate)).message("查询成功");
+    @ApiOperation(value = "分页查询车辆送修")
+    public JiebaoResponse list(QueryRequest request, Integer state, String CarPlate,String deptId, boolean ziCha, Date startDate, Date endDate,String order) { //状态 查询  车牌号直接查询   后面2个参数 开始时间  结束时间区间查询
+        return new JiebaoResponse().data(carMainService.getCarMaintainList(request, state, CarPlate, deptId, ziCha,  startDate,  endDate,order)).message("查询成功");
     }
 
     @GetMapping(value = "update")
     @Log("车辆送修 审核  维修完成后触发")
+    @ApiOperation(value = "车辆送修 审核  维修完成后触发")
     public JiebaoResponse update(String CarMainId, Integer state) { //状态 查询  车牌号直接查询  状态   0 未审核  1审核通过 2审核不通过 3 维修正在执行  4 维修完成
         return carMainService.update(CarMainId, state);
+    }
+
+    @GetMapping(value = "getCarMaintain")
+    @ApiOperation("查询车辆送修")
+    @Log(value = "查询用车辆送修")
+    private JiebaoResponse getCarMaintain(String id) {
+        return new JiebaoResponse().data(carMainService.getById(id)).message("查询成功");
     }
 }

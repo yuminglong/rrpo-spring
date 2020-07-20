@@ -8,10 +8,9 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "CarRecord")
@@ -49,9 +48,14 @@ public class CarRecordController {
     @ApiOperation(value = "用车记录多维度查询 ")
     //且修改汽车状态
     @Log("用车记录多维度查询")
-    public JiebaoResponse list(QueryRequest request, Integer state, boolean ziCha,String deptId) {
-        return new JiebaoResponse().data(carRecordService.getCarRecordList(request, state, ziCha,deptId));
+    public JiebaoResponse list(QueryRequest request, Integer state, boolean ziCha, String deptId, Date startDate, Date endDate, String order) {
+        return new JiebaoResponse().data(carRecordService.getCarRecordList(request, state, ziCha, deptId, order, startDate, endDate));
     }
 
-
+    @GetMapping(value = "getCarRecord")
+    @ApiOperation("查询用车记录")
+    @Log(value = "查询用车记录")
+    private JiebaoResponse getCarRecord(String id) {
+        return new JiebaoResponse().data(carRecordService.getById(id)).message("查询成功");
+    }
 }

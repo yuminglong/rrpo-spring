@@ -7,9 +7,11 @@ import com.jiebao.platfrom.car.domain.CarRecord;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
+import java.util.Date;
+
 public interface CarRecordService extends IService<CarRecord> {
 
-    IPage<CarRecord> getCarRecordList(QueryRequest request, Integer state, boolean ziCha,String deptId);
+    IPage<CarRecord> getCarRecordList(QueryRequest request, Integer state, boolean ziCha, String deptId, String order, Date startDate, Date endDate);
 
     JiebaoResponse add(CarRecord carRecord);
 

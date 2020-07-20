@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface CarService extends IService<Car> {
 
-    IPage<Car> getCarList(QueryRequest request, Integer state);  //分页查询
+    IPage<Car> getCarList(QueryRequest request, Integer state,String order);  //分页查询   order 字符串  "asc"  "dsc"  降序或者和升序
 
     JiebaoResponse addOrUpdate(Car car);
 
