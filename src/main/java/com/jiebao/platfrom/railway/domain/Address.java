@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.jiebao.platfrom.common.converter.TimeConverter;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -27,16 +28,23 @@ public class Address {
     @TableId(value = "id",type = IdType.UUID)
     private String id;
 
+    /**
+     * 部门ID
+     */
+    @ApiModelProperty(value ="和部门关联ID")
     private String parentsId;
 
     @ExcelField(value = "名称")
+    @ApiModelProperty(value ="名称")
     private String userName;
 
 
     @ExcelField(value = "电话")
+    @ApiModelProperty(value ="电话")
     private  String phone;
 
     @ExcelField(value = "手机")
+    @ApiModelProperty(value ="手机")
     private String telPhone;
 
     @ExcelField(value = "微信")
@@ -48,6 +56,7 @@ public class Address {
     /**
      * 序号
      */
+    @ApiModelProperty(value ="排序号")
     private Double numbers;
 
     @TableField(exist = false)
@@ -58,11 +67,16 @@ public class Address {
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date creatTime;
 
+    @ApiModelProperty(value ="和user关联ID")
     private String userId;
 
     /**
      * 状态1正常
      */
+    @ApiModelProperty(value ="状态")
     private Integer status;
+
+    @ApiModelProperty(value ="和地区关联ID")
+    private  String areaId;
 
 }

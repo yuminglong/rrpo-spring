@@ -18,4 +18,6 @@ public interface FileService extends IService<Files> {
     void updateByKey(Files files);
 
     List<Files> getByParentsId(String parentsId);
+
+    List<Files> findByUser(String userId);
 }

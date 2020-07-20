@@ -6,7 +6,7 @@
         select * from rail_address r join sys_dept d on r.parents_id = d.dept_id
         <where>
             <if test="parentsId != null">
-                  r.parents_id = #{parentsId}
+                r.parents_id = #{parentsId}
             </if>
 
         </where>
@@ -20,4 +20,24 @@
     <select id="selectUser" resultType="java.lang.Integer">
       select count(*) from rail_address where user_name=#{userName}
   </select>
+
+
+    <select id="getAddressByCondition" resultType="address">
+        select * from rail_address r
+        <where>
+            1=1
+            <if test="userName != null">
+                and r.user_name like CONCAT('%', #{userName},'%')
+            </if>
+            <if test="phone != null">
+                and (r.phone like CONCAT('%', #{phone},'%')
+                or r.tel_phone like CONCAT('%', #{phone},'%'))
+            </if>
+            <if test="areaId != null">
+                and r.area_id = #{areaId}
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

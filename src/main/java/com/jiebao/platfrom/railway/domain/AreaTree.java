@@ -48,6 +48,19 @@ public class AreaTree<T> {
     private String text;
 
 
+    private String weiXin;
+
+    private String userName;
+
+    private  String phone;
+
+    private String telPhone;
+
+    private String email;
+
+
+
+
     public void initChildren(){
         this.children = new ArrayList<>();
     }

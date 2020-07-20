@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.system.domain.Dept;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,8 @@ public interface AddressService extends IService<Address> {
 
     Map<String, Object> getAddressLists(QueryRequest request, Dept dept);
 
+    Map<String, Object> getAddressListsByArea(QueryRequest request, Area area);
+
     void updateByKey(Address address);
 
     List<Address> findAddresses(QueryRequest request, Address address);
@@ -30,6 +33,10 @@ public interface AddressService extends IService<Address> {
 
     List<Address> addressList();
 
-    List<Address> getByParentsId(String ParentsId);
+    List<Address> getByAreaId(String areaId);
+
+    IPage<Address> getByArea(QueryRequest request,String iPageAreaId,String userName,String telPhone);
+
+    List<Address> getAddressByCondition(String userName,String phone,String areaId);
 
 }
