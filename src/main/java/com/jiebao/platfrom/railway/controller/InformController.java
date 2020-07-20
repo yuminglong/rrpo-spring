@@ -122,7 +122,7 @@ public class InformController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/excel")
+   /* @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
     public void export(Inform inform, QueryRequest request, HttpServletResponse response) throws JiebaoException {
@@ -134,7 +134,7 @@ public class InformController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
-    }
+    }*/
 
 
     @PostMapping("/send")
@@ -160,6 +160,26 @@ public class InformController extends BaseController {
             }
         }
         return new JiebaoResponse().message("成功");
+    }
+
+
+    @PutMapping("/revoke")
+    @Log("撤销通知公告")
+    @Transactional(rollbackFor = Exception.class)
+    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "PUT")
+    public void revoke(String[] informIds) throws JiebaoException {
+        try {
+            if (informIds != null) {
+                Arrays.stream(informIds).forEach(deptId -> {
+
+                });
+            }
+
+        } catch (Exception e) {
+            message = "修改通讯录失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
     }
 
 }

@@ -45,5 +45,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, Files> implements F
         return fileMapper.getByParentsId(parentsId);
     }
 
-
+    @Override
+    public List<Files> findByUser(String userId) {
+        return fileMapper.findByUser(userId);
+    }
 }

@@ -38,6 +38,9 @@ public interface AddressMapper extends BaseMapper<Address> {
     int selectUser(String username);
 
     @Select("SELECT * FROM `rail_address` r where r.area_id =#{areaId}")
-    List<Address> getByAreaId(@Param("areaId")  String areaId);
+    List<Address> getByAreaId(@Param("areaId") String areaId);
+
+
+    List<Address> getAddressByCondition(String userName, String phone,String areaId);
 
 }

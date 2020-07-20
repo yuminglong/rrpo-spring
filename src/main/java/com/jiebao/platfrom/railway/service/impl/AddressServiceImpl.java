@@ -58,7 +58,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     @Autowired
     AreaService areaService;
 
-
+    private  String all ="all";
 
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
@@ -95,7 +95,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             List<Area> areas = areaService.getAreaList(request, area);
             //   List<Address> addresses = addressService.findAddresses(address, request);
             List<AreaTree<Area>> trees = new ArrayList<>();
-            buildAreaTrees(trees, areas,request);
+            buildAreaTrees(trees, areas, request);
             AreaTree<Area> areaTree = TreeUtil.buildArea(trees);
             result.put("rows", areaTree);
             result.put("total", areas.size());
@@ -106,7 +106,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         }
         return result;
     }
-
 
 
     @Override
@@ -170,12 +169,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
-    private void buildAreaTrees(List<AreaTree<Area>> trees, List<Area> areas,QueryRequest request) {
+    private void buildAreaTrees(List<AreaTree<Area>> trees, List<Area> areas, QueryRequest request) {
 
 
         areas.forEach(area -> {
             List<Address> address = addressMapper.getAddressListByArea(area.getId());
-           // IPage<Address> address = addressService.getByArea(request, area.getId());
+            // IPage<Address> address = addressService.getByArea(request, area.getId());
             AreaTree<Area> tree = new AreaTree<>();
             tree.setId(area.getId());
             tree.setKey(tree.getId());
@@ -185,7 +184,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             tree.setAreaCode(area.getAreaCode());
             tree.setUpdateUser(area.getUpdateUser());
             tree.setCreatTime(area.getCreatTime());
-
 
 
             List<AreaTree<Area>> childList = new ArrayList<>();
@@ -207,8 +205,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             trees.add(tree);
         });
     }
-
-
 
 
     @Override
@@ -294,17 +290,35 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public List<Address> getByAreaId(String areaId) {
-        return addressMapper.getByAreaId(areaId);
+        String all ="all";
+        if(all.equals(areaId)){
+            return addressService.list();
+        }else {
+            return addressMapper.getByAreaId(areaId);
+        }
     }
 
     @Override
-    public IPage<Address> getByArea(QueryRequest request,String iPageAreaId) {
+    public IPage<Address> getByArea(QueryRequest request, String iPageAreaId,String userName,String telPhone) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
+
+
         if (StringUtils.isNotBlank(iPageAreaId)) {
-            lambdaQueryWrapper.eq(Address::getAreaId, iPageAreaId);
+                lambdaQueryWrapper.eq(Address::getAreaId, iPageAreaId);
+        }
+        if (StringUtils.isNotBlank(userName)){
+            lambdaQueryWrapper.like(Address::getUserName,userName);
+        }
+        if (StringUtils.isNotBlank(telPhone)){
+            lambdaQueryWrapper.like(Address::getTelPhone,telPhone);
         }
         Page<Address> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Address::getId);
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<Address> getAddressByCondition(String userName, String phone,String areaId) {
+        return addressMapper.getAddressByCondition(userName, phone,areaId);
     }
 }

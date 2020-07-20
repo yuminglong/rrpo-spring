@@ -25,9 +25,19 @@ public interface FileMapper extends BaseMapper<Files> {
 
     /**
      * 根据部门ID查询文件
+     *
      * @param parentsId 部门id
      * @return
      */
     @Select("SELECT * FROM `rail_file` r where r.pid =#{parentsId}")
     List<Files> getByParentsId(String parentsId);
+
+    /**
+     * 根据userID查询文件信息
+     *
+     * @param userId userId
+     * @return
+     */
+    @Select("SELECT * FROM `rail_file` r ,rail_file_user u WHERE r.id = u.file_id AND u.user_id =#{userId}")
+    List<Files> findByUser(String userId);
 }

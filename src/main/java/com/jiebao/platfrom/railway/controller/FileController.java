@@ -12,6 +12,8 @@ import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Files;
 import com.jiebao.platfrom.railway.service.FileService;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,6 +48,9 @@ public class FileController extends BaseController {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 使用Mapper操作数据库
      *
@@ -52,8 +58,14 @@ public class FileController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
-    public Map<String, Object> getFileList(QueryRequest request, Dept dept) {
+    public Map<String, Object> getFileList() {
 
+        //根据userID查询相对应有哪些个人文件
+        List<User> list = userService.list();
+        for (User user : list
+        ) {
+            List<Files> byUser = fileService.findByUser(user.getUserId());
+        }
         return null;
     }
 
@@ -105,8 +117,6 @@ public class FileController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
-
-
     }
 
 
@@ -130,7 +140,6 @@ public class FileController extends BaseController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return new JiebaoResponse().message("上传成功");
     }
 
@@ -144,8 +153,9 @@ public class FileController extends BaseController {
         File file = new File(downloadFilePath);
         if (file.exists()) {
             response.setContentType("application/force-download");// 设置强制下载不打开  
+            response.setCharacterEncoding("utf-8");
             try {
-                response.addHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));
+                response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -193,7 +203,6 @@ public class FileController extends BaseController {
     public List<Files> findById(@PathVariable String parentsId) {
         return fileService.getByParentsId(parentsId);
     }
-
 
 
 }

@@ -35,6 +35,8 @@ public interface AddressService extends IService<Address> {
 
     List<Address> getByAreaId(String areaId);
 
-    IPage<Address> getByArea(QueryRequest request,String iPageAreaId);
+    IPage<Address> getByArea(QueryRequest request,String iPageAreaId,String userName,String telPhone);
+
+    List<Address> getAddressByCondition(String userName,String phone,String areaId);
 
 }

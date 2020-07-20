@@ -66,17 +66,17 @@ public class AddressController extends BaseController {
     }
 
 
-    @GetMapping("/byArea")
+   /* @GetMapping("/byArea")
     @ApiOperation(value = "根据地区分页查询所有数据List(此接口需优化，暂时不要测试)", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public Map<String, Object> getAddressListByArea(QueryRequest request, Area area) {
-       /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+       *//* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         System.out.println("-------------------"+username+"-------------------");
         //Object principal = SecurityUtils.getSubject().getPrincipal();
         String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+id+"-------------------");*/
+        System.out.println("-------------------"+id+"-------------------");*//*
         return this.addressService.getAddressListsByArea(request, area);
     }
-
+*/
 
     /**
      * 分页查询
@@ -169,23 +169,27 @@ public class AddressController extends BaseController {
     }
 
 
-
-    @GetMapping("/{areaId}")
+   /* @GetMapping("/{areaId}")
     @Log("根据地区查看通讯录")
     @ApiOperation(value = "根据地区查看通讯录", notes = "根据地区查看通讯录", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
     public List<Address> findById(@PathVariable String areaId) {
         return addressService.getByAreaId(areaId);
-    }
+    }*/
 
 
-    @GetMapping("/{iPageAreaId}")
+    @GetMapping("/iPage")
     @Log("根据地区分页查看通讯录")
     @ApiOperation(value = "根据地区分页查看通讯录", notes = "根据地区分页查看通讯录", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse findByArea(QueryRequest request,@PathVariable String iPageAreaId) {
-        IPage<Address> areaList =addressService.getByArea(request,iPageAreaId);
+    public JiebaoResponse findByArea(QueryRequest request,  String iPageAreaId,String userName,String telPhone) {
+        IPage<Address> areaList = addressService.getByArea(request, iPageAreaId,userName,telPhone);
         return new JiebaoResponse().data(this.getDataTable(areaList));
     }
 
+   /* @GetMapping("/condition")
+    @ApiOperation(value = "根据名字电话或手机查询数据", notes = "根据名字电话或手机查询数据", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<Address> getAddressByCondition(@RequestParam("userName") String userName, @RequestParam("phone")String phone,@RequestParam("areaId")String areaId) {
+        return addressService.getAddressByCondition(userName, phone,areaId);
+    }*/
 }
