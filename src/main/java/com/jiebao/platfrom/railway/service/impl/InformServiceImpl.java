@@ -59,4 +59,13 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
     }
 
 
+    @Override
+    public boolean revoke(String informId){
+       return informMapper.revoke(informId);
+    }
+
+    @Override
+    public boolean release(String informId){
+        return informMapper.release(informId);
+    }
 }

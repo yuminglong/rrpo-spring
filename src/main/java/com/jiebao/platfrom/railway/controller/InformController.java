@@ -163,23 +163,44 @@ public class InformController extends BaseController {
     }
 
 
-    @PutMapping("/revoke")
+    @PostMapping("/revoke/{informIds}")
     @Log("撤销通知公告")
     @Transactional(rollbackFor = Exception.class)
-    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "PUT")
-    public void revoke(String[] informIds) throws JiebaoException {
+    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse revoke(@PathVariable String[] informIds) throws JiebaoException {
         try {
             if (informIds != null) {
-                Arrays.stream(informIds).forEach(deptId -> {
-
+                Arrays.stream(informIds).forEach(informId -> {
+                    //状态status改为2
+                    informService.revoke(informId);
                 });
             }
-
         } catch (Exception e) {
-            message = "修改通讯录失败";
+            message = "撤销通知公告失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
+        return new JiebaoResponse().message("撤销通知公告成功");
     }
 
+
+    @PostMapping("/release/{informIds}")
+    @Log("发布通知公告")
+    @Transactional(rollbackFor = Exception.class)
+    @ApiOperation(value = "发布通知公告", notes = "发布通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse release(@PathVariable String[] informIds) throws JiebaoException {
+        try {
+            if (informIds != null) {
+                Arrays.stream(informIds).forEach(informId -> {
+                    //状态status改为3
+                    informService.release(informId);
+                });
+            }
+        } catch (Exception e) {
+            message = "发布通知公告失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+        return new JiebaoResponse().message("发布通知公告成功");
+    }
 }

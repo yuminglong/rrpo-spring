@@ -6,7 +6,8 @@ import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
-import com.jiebao.platfrom.railway.dao.FileMapper;
+import com.jiebao.platfrom.railway.dao.ExchangeFileMapper;
+import com.jiebao.platfrom.railway.domain.ExchangeFile;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Menu;
@@ -40,7 +41,7 @@ public class DeptController extends BaseController {
     private AddressMapper addressMapper;
 
     @Autowired
-    private FileMapper fileMapper;
+    private ExchangeFileMapper fileMapper;
 
     @GetMapping
     public Map<String, Object> deptList(QueryRequest request, Dept dept) {

@@ -12,15 +12,15 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 /**
- * 文件表
+ * 信息互递文件表
  *
  * @author yf
  */
 @Data
-@TableName("rail_file")
+@TableName("rail_exchange_file")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class Files {
+public class ExchangeFile {
 
     @TableId(value = "id",type = IdType.UUID)
     private String id;
@@ -32,26 +32,14 @@ public class Files {
 
     private String url;
 
-    /**
-     * 来源
-     */
-    @ApiModelProperty(value ="来源")
-    private String period;
-
     @ApiModelProperty(value ="创建人(后台直接获取)")
     private String createUser;
 
 
-    @ApiModelProperty(value ="和部门关联id")
-    private  String pid;
-
-    @ApiModelProperty(value ="和个人用户关联id")
-    private  String uid;
-
-
-    @ApiModelProperty(value ="类型")
+    @ApiModelProperty(value ="类型",example = "1")
     private Integer type;
 
-
+    @ApiModelProperty(value ="和信息互递关联id")
+    private String exchangeId;
 
 }

@@ -58,7 +58,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     @Autowired
     AreaService areaService;
 
-    private  String all ="all";
+    private String all = "all";
 
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
@@ -208,7 +208,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     @Override
-    public boolean addAddressList(MultipartFile file, String parentsId) throws Exception {
+    public boolean addAddressList(MultipartFile file, String deptId) throws Exception {
         boolean save = true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
@@ -227,7 +227,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Sheet sheet = wb.getSheetAt(0);
         if (sheet != null) {
             //getLastRowNum()返回最后一行的索引，即比行总数小1
-            for (int line = 2; line <= sheet.getLastRowNum(); line++) {
+            for (int line = 1; line <= sheet.getLastRowNum(); line++) {
                 Address address = new Address();
                 Row row = sheet.getRow(line);
                 if (row == null) {
@@ -255,7 +255,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setTelPhone(telPhone);
                 address.setWeiXin(weiXin);
                 address.setEmail(email);
-                address.setParentsId(parentsId);
+                address.setParentsId(deptId);
                 addressList.add(address);
             }
             for (Address addressInfo : addressList) {
@@ -281,8 +281,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         for (Address address : list
         ) {
             String parentsId = address.getParentsId();
-            Dept byId = deptService.getById(parentsId);
-            address.setDeptName(byId.getDeptName());
+            if (parentsId == null) {
+                address.setDeptName("");
+            } else {
+                Dept byId = deptService.getById(parentsId);
+                address.setDeptName(byId.getDeptName());
+            }
         }
         return list;
     }
@@ -290,27 +294,27 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public List<Address> getByAreaId(String areaId) {
-        String all ="all";
-        if(all.equals(areaId)){
+        String all = "all";
+        if (all.equals(areaId)) {
             return addressService.list();
-        }else {
+        } else {
             return addressMapper.getByAreaId(areaId);
         }
     }
 
     @Override
-    public IPage<Address> getByArea(QueryRequest request, String iPageAreaId,String userName,String telPhone) {
+    public IPage<Address> getByArea(QueryRequest request, String iPageAreaId, String userName, String telPhone) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
 
 
         if (StringUtils.isNotBlank(iPageAreaId)) {
-                lambdaQueryWrapper.eq(Address::getAreaId, iPageAreaId);
+            lambdaQueryWrapper.eq(Address::getAreaId, iPageAreaId);
         }
-        if (StringUtils.isNotBlank(userName)){
-            lambdaQueryWrapper.like(Address::getUserName,userName);
+        if (StringUtils.isNotBlank(userName)) {
+            lambdaQueryWrapper.like(Address::getUserName, userName);
         }
-        if (StringUtils.isNotBlank(telPhone)){
-            lambdaQueryWrapper.like(Address::getTelPhone,telPhone);
+        if (StringUtils.isNotBlank(telPhone)) {
+            lambdaQueryWrapper.like(Address::getTelPhone, telPhone);
         }
         Page<Address> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Address::getId);
@@ -318,7 +322,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
     @Override
-    public List<Address> getAddressByCondition(String userName, String phone,String areaId) {
-        return addressMapper.getAddressByCondition(userName, phone,areaId);
+    public List<Address> getAddressByCondition(String userName, String phone, String areaId) {
+        return addressMapper.getAddressByCondition(userName, phone, areaId);
     }
 }

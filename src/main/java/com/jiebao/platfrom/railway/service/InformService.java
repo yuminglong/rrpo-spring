@@ -17,4 +17,8 @@ public interface InformService extends IService<Inform> {
     void updateByKey(Inform inform);
 
     List<Inform> getInformLists(Inform inform, QueryRequest request);
+
+    boolean revoke(String informId);
+
+    boolean release(String informId);
 }
