@@ -88,6 +88,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     @Transactional
     public void updateMenu(Menu menu) throws Exception {
+        if (StringUtils.isEmpty(menu.getParentId())) {
+            menu.setParentId("0");
+        }
         menu.setModifyTime(new Date());
         setMenu(menu);
         baseMapper.updateById(menu);
