@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -37,15 +38,9 @@ public class Record implements Serializable {
      */
     private String roomId;
 
-    /**
-     * 会议附件绑定
-     */
-    private String fileId;
 
-    /**
-     * 会议绑定服务  瓜子 饮料 大鸡腿
-     */
-    private String serviceId;
+    private Date startDate;  //会议开始时间
 
+    private Date endDate; //会议结束时间
 
 }

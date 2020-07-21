@@ -3,6 +3,7 @@ package com.jiebao.platfrom.room.controller;
 
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.utils.uploadUtil;
 import com.jiebao.platfrom.room.service.IFilesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,15 +27,15 @@ import java.util.List;
 @Api(tags = "附件上传")
 public class FilesController {
     @Resource
-   IFilesService filesService;
+    IFilesService filesService;
 
     @ApiOperation("文件上传")
     @Log(value = "文件上传")
     @PostMapping("upload")
-    public List<String> fileImgSave(@RequestParam("filename") MultipartFile[] files, HttpServletRequest request) {
-        System.out.println(files);
-        List<String> upload =null; //uploadUtil.upload(files, request);
-        return upload;
+    public JiebaoResponse fileImgSave(@RequestParam("filename") MultipartFile files, HttpServletRequest request) {
+        MultipartFile[] m = new MultipartFile[]{files};
+        List<String> UrlList = uploadUtil.upload(m, request);  //返回路径
+        return new JiebaoResponse().data(filesService.saveList(UrlList)).message("上传成功");
     }
 
     @DeleteMapping(value = "delete/{id}")

@@ -27,7 +27,7 @@ public class RecordController {
 
     @PostMapping(value = "saveOrUpdate")
     @ApiOperation("会议的创建以及修改")
-    @Log(value = "会议室的创建以及修改")
+    @Log(value = "会议的创建以及修改")
     private JiebaoResponse saveOrUpdate(Record record) {
         return new JiebaoResponse().message(recordService.saveOrUpdate(record) ? "操作成功" : "操作失败");
     }
