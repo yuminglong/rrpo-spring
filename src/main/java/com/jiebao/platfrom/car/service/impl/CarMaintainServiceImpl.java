@@ -28,9 +28,13 @@ public class CarMaintainServiceImpl extends ServiceImpl<CarMaintainMapper, CarMa
     CarService carService;
 
     @Override
-    public IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate) {  //参数状态   车牌号
+    public IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate, String order) {  //参数状态   车牌号
         QueryWrapper<CarMaintain> carQueryWrapper = new QueryWrapper<>();
-        carQueryWrapper.orderByDesc("maintain_create_time");
+        if (order.equals("asc")) {
+            carQueryWrapper.orderByAsc("maintain_create_time");
+        } else {
+            carQueryWrapper.orderByDesc("maintain_create_time");
+        }
         if (state != null) {   //状态
             carQueryWrapper.eq("maintain_state", state);
         }
@@ -51,9 +55,9 @@ public class CarMaintainServiceImpl extends ServiceImpl<CarMaintainMapper, CarMa
         if (endDate != null) {  //结束时间不问空时
             carQueryWrapper.le("maintain_create_time", endDate);
         }
-        if(deptId!=null){   //更具部门查询
-            List<String>  userIdList = carService.userListByDeptId(deptId);
-            carQueryWrapper.in("maintain_car_id",userIdList);
+        if (deptId != null) {   //更具部门查询
+            List<String> userIdList = carService.userListByDeptId(deptId);
+            carQueryWrapper.in("maintain_car_id", userIdList);
         }
         Page<CarMaintain> page = new Page<>(request.getPageNum(), request.getPageSize());
         return this.baseMapper.selectPage(page, carQueryWrapper);

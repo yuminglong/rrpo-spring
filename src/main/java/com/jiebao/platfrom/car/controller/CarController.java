@@ -26,15 +26,24 @@ public class CarController {
         return carService.addOrUpdate(car);
     }
 
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping(value = "delete/{carId}")
     @Log("删除车辆信息")
+    @ApiOperation(value = "删除车辆信息")
     public JiebaoResponse delete(String carId) {
         return new JiebaoResponse().message(carService.removeById(carId) ? "删除成功" : "删除失败");
     }
 
     @GetMapping(value = "list")
+    @ApiOperation(value = "分页查询车辆")
     @Log("分页查询车辆")
-    public JiebaoResponse list(QueryRequest request, Integer state) { //0正在使用  1车辆送修  2车辆空闲
-        return new JiebaoResponse().data(carService.getCarList(request, state)).message("查询成功");
+    public JiebaoResponse list(QueryRequest request, Integer state, String order) { //0正在使用  1车辆送修  2车辆空闲
+        return new JiebaoResponse().data(carService.getCarList(request, state, order)).message("查询成功");
+    }
+
+    @GetMapping(value = "getCar")
+    @ApiOperation("查询车辆")
+    @Log(value = "查询用车辆")
+    private JiebaoResponse getCar(String id) {
+        return new JiebaoResponse().data(carService.getById(id)).message("查询成功");
     }
 }

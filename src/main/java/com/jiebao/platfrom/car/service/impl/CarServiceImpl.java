@@ -36,9 +36,13 @@ public class CarServiceImpl extends ServiceImpl<CarMapper, Car> implements CarSe
     UserService userService;
 
     @Override
-    public IPage<Car> getCarList(QueryRequest request, Integer state) {
+    public IPage<Car> getCarList(QueryRequest request, Integer state, String order) {
         QueryWrapper<Car> carQueryWrapper = new QueryWrapper<>();
-        carQueryWrapper.orderByDesc("car_create_time");
+        if (order.equals("asc")) {
+            carQueryWrapper.orderByAsc("car_create_time");
+        } else {
+            carQueryWrapper.orderByDesc("car_create_time");
+        }
         if (state != null) {
             carQueryWrapper.eq("car_state", state);
         }

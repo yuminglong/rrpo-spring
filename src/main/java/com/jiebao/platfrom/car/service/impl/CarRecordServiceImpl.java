@@ -31,9 +31,13 @@ public class CarRecordServiceImpl extends ServiceImpl<CarRecordMapper, CarRecord
 
 
     @Override
-    public IPage<CarRecord> getCarRecordList(QueryRequest request, Integer state, boolean ziCha,String deptId) {   //多维度查询   1 //部门   2//状态 0 未审核  1 审核通过 2审核未通过   3//自查 查询当前登陆人相关信息
+    public IPage<CarRecord> getCarRecordList(QueryRequest request, Integer state, boolean ziCha, String deptId, String order, Date startDate, Date endDate) {   //多维度查询   1 //部门   2//状态 0 未审核  1 审核通过 2审核未通过   3//自查 查询当前登陆人相关信息
         QueryWrapper<CarRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("record_create_time");
+        if (order.equals("asc")) {
+            queryWrapper.orderByAsc("record_create_time");
+        } else {
+            queryWrapper.orderByDesc("record_create_time");
+        }
         if (state != null) {
             queryWrapper.eq("record_state", state);
         }
@@ -44,12 +48,16 @@ public class CarRecordServiceImpl extends ServiceImpl<CarRecordMapper, CarRecord
 //        } else {
 //
 //        }
-
-        if(deptId!=null){  //部门查询
-            List<String>  userIdList = carService.userListByDeptId(deptId);
-            queryWrapper.in("record_user_id",userIdList);
+        if (startDate != null) {  //开始时间不问空时
+            queryWrapper.ge("record_create_time", startDate);
         }
-
+        if (endDate != null) {  //结束时间不问空时
+            queryWrapper.le("record_create_time", endDate);
+        }
+        if (deptId != null) {  //部门查询
+            List<String> userIdList = carService.userListByDeptId(deptId);
+            queryWrapper.in("record_user_id", userIdList);
+        }
         Page<CarRecord> page = new Page<>(request.getPageNum(), request.getPageSize());
         return this.baseMapper.selectPage(page, queryWrapper);
     }

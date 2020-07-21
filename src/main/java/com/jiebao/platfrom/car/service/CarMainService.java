@@ -12,7 +12,7 @@ import java.util.List;
 public interface CarMainService extends IService<CarMaintain> {
     JiebaoResponse add(CarMaintain carMaintain); //修改添加
 
-    IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate);//分页查询  ziCha  为true查询当前登陆人相关信息
+    IPage<CarMaintain> getCarMaintainList(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate,String order);//分页查询  ziCha  为true查询当前登陆人相关信息
 
     JiebaoResponse update(String CarMainId ,Integer state); //修改  //维修单  赋予状态
 }
