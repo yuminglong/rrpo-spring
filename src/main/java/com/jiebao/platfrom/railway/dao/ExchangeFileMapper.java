@@ -1,7 +1,7 @@
 package com.jiebao.platfrom.railway.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jiebao.platfrom.railway.domain.Files;
+import com.jiebao.platfrom.railway.domain.ExchangeFile;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * @author yf
  */
-public interface FileMapper extends BaseMapper<Files> {
+public interface ExchangeFileMapper extends BaseMapper<ExchangeFile> {
     //Mapper查询示例一
     //TODO: 可使用注解/xml配置来编写SQL语句
 
     @Select("SELECT * FROM rail_area")
-    List<Files> getFileList();
+    List<ExchangeFile> getFileList();
 
     /**
      * 删除部门时，其部门下的文件将移入公共文件夹
@@ -30,7 +30,7 @@ public interface FileMapper extends BaseMapper<Files> {
      * @return
      */
     @Select("SELECT * FROM `rail_file` r where r.pid =#{parentsId}")
-    List<Files> getByParentsId(String parentsId);
+    List<ExchangeFile> getByParentsId(String parentsId);
 
     /**
      * 根据userID查询文件信息
@@ -39,5 +39,5 @@ public interface FileMapper extends BaseMapper<Files> {
      * @return
      */
     @Select("SELECT * FROM `rail_file` r ,rail_file_user u WHERE r.id = u.file_id AND u.user_id =#{userId}")
-    List<Files> findByUser(String userId);
+    List<ExchangeFile> findByUser(String userId);
 }

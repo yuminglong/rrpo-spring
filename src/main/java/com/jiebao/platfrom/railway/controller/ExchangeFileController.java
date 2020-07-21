@@ -1,17 +1,12 @@
 package com.jiebao.platfrom.railway.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
-import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
-import com.jiebao.platfrom.railway.dao.FileMapper;
-import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Files;
-import com.jiebao.platfrom.railway.service.FileService;
-import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.railway.domain.Exchange;
+import com.jiebao.platfrom.railway.domain.ExchangeFile;
+import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
@@ -38,18 +33,23 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/file")
-@Api(tags = "文件共享")   //swagger2 api文档说明示例
-public class FileController extends BaseController {
+@RequestMapping(value = "/exchangeFile")
+@Api(tags = "文件共享（暂时不用）")   //swagger2 api文档说明示例
+public class ExchangeFileController extends BaseController {
 
 
     private String message;
 
     @Autowired
-    private FileService fileService;
+    private ExchangeFileService exchangeFileService;
 
     @Autowired
     private UserService userService;
+
+
+
+
+
 
     /**
      * 使用Mapper操作数据库
@@ -64,7 +64,7 @@ public class FileController extends BaseController {
         List<User> list = userService.list();
         for (User user : list
         ) {
-            List<Files> byUser = fileService.findByUser(user.getUserId());
+            List<ExchangeFile> byUser = exchangeFileService.findByUser(user.getUserId());
         }
         return null;
     }
@@ -91,12 +91,12 @@ public class FileController extends BaseController {
 
         try {
             Arrays.stream(ids).forEach(id -> {
-                Files byId = fileService.getById(id);
+                ExchangeFile byId = exchangeFileService.getById(id);
                 File file = new File(byId.getUrl());
                 if (file.exists()) {
                     file.delete();
                 }
-                fileService.removeById(id);
+                exchangeFileService.removeById(id);
             });
         } catch (Exception e) {
             throw new JiebaoException("删除失败");
@@ -108,9 +108,9 @@ public class FileController extends BaseController {
     @Log("修改")
     @ApiOperation(value = "修改", notes = "修改", response = JiebaoResponse.class, httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse updateFile(@Valid Files files) throws JiebaoException {
+    public JiebaoResponse updateFile(@Valid ExchangeFile files) throws JiebaoException {
         try {
-            fileService.updateByKey(files);
+            exchangeFileService.updateByKey(files);
             return new JiebaoResponse().message("成功");
         } catch (Exception e) {
             message = "修改通讯录失败";
@@ -122,7 +122,7 @@ public class FileController extends BaseController {
 
     @PostMapping("/upload")
     @ApiOperation(value = "文件上传", notes = "文件上传", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse upload(@RequestParam(value = "file", required = false) MultipartFile file, Files files) {
+    public JiebaoResponse upload(@RequestParam(value = "file", required = false) MultipartFile file, ExchangeFile files) {
         String path = null;
         if (file != null) {
             path = "D:/rrpo/download/" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "_" + file.getOriginalFilename();
@@ -130,7 +130,7 @@ public class FileController extends BaseController {
         files.setUrl(path);
         files.setTitle(file.getOriginalFilename());
         //files.setCreateUser();
-        fileService.save(files);
+        exchangeFileService.save(files);
         try {
             File fileSave = new File(path);
             if (!fileSave.getParentFile().exists()) {
@@ -147,7 +147,7 @@ public class FileController extends BaseController {
     @GetMapping("/downLoad/{id}")
     @ApiOperation(value = "文件下载", notes = "文件下载", response = JiebaoResponse.class, httpMethod = "GET")
     public void downLoad(HttpServletResponse response, @PathVariable String id) {
-        Files byId = fileService.getById(id);
+        ExchangeFile byId = exchangeFileService.getById(id);
         String downloadFilePath = byId.getUrl();
         String fileName = byId.getTitle();
         File file = new File(downloadFilePath);
@@ -200,8 +200,8 @@ public class FileController extends BaseController {
     @Log("根据部门查看文件")
     @ApiOperation(value = "根据部门查看文件", notes = "根据部门查看文件", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public List<Files> findById(@PathVariable String parentsId) {
-        return fileService.getByParentsId(parentsId);
+    public List<ExchangeFile> findById(@PathVariable String parentsId) {
+        return exchangeFileService.getByParentsId(parentsId);
     }
 
 

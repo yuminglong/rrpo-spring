@@ -27,7 +27,7 @@ public interface AddressService extends IService<Address> {
 
     List<Address> findAddresses(QueryRequest request, Address address);
 
-    boolean addAddressList(MultipartFile file, String parentsId) throws Exception;
+    boolean addAddressList(MultipartFile file, String deptId) throws Exception;
 
     int selectUserName(String userName);
 

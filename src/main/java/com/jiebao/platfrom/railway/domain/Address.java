@@ -64,7 +64,8 @@ public class Address {
     @ExcelField(value = "部门名")
     private String deptName;
 
-    @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
+   // @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
+   @ApiModelProperty(value ="创建时间")
     private Date creatTime;
 
     @ApiModelProperty(value ="和user关联ID")
@@ -73,7 +74,7 @@ public class Address {
     /**
      * 状态1正常
      */
-    @ApiModelProperty(value ="状态")
+    @ApiModelProperty(value ="状态",example = "1")
     private Integer status;
 
     @ApiModelProperty(value ="和地区关联ID")

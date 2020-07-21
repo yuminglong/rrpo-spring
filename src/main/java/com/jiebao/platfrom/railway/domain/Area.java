@@ -40,7 +40,7 @@ public class Area {
     /**
      * 地区阶级1、市级 2、区级 3、街道或镇级
      */
-    @ApiModelProperty(value = "地区阶级:  1、市级 2、区级 3、街道或镇级",example = "0")
+    @ApiModelProperty(value = "地区阶级:  1、市级 2、区级 3、街道或镇级",example = "1")
     private Integer rank;
 
     /**

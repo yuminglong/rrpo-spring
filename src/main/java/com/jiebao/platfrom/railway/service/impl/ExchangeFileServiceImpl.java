@@ -5,10 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.railway.dao.FileMapper;
-import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Files;
-import com.jiebao.platfrom.railway.service.FileService;
+import com.jiebao.platfrom.railway.dao.ExchangeFileMapper;
+import com.jiebao.platfrom.railway.domain.ExchangeFile;
+import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,34 +18,34 @@ import java.util.List;
 
 
 @Slf4j
-@Service("FileService")
+@Service("ExchangeFileService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
-public class FileServiceImpl extends ServiceImpl<FileMapper, Files> implements FileService {
+public class ExchangeFileServiceImpl extends ServiceImpl<ExchangeFileMapper, ExchangeFile> implements ExchangeFileService {
 
     @Autowired
-    FileMapper fileMapper;
+    ExchangeFileMapper fileMapper;
 
     @Override
-    public IPage<Files> getFileList(QueryRequest request) {
-        LambdaQueryWrapper<Files> lambdaQueryWrapper = new LambdaQueryWrapper();
-        Page<Files> page = new Page<>(request.getPageNum(), request.getPageSize());
-        lambdaQueryWrapper.orderByDesc(Files::getId);
+    public IPage<ExchangeFile> getFileList(QueryRequest request) {
+        LambdaQueryWrapper<ExchangeFile> lambdaQueryWrapper = new LambdaQueryWrapper();
+        Page<ExchangeFile> page = new Page<>(request.getPageNum(), request.getPageSize());
+        lambdaQueryWrapper.orderByDesc(ExchangeFile::getId);
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 
     @Override
     @Transactional
-    public void updateByKey(Files files) {
+    public void updateByKey(ExchangeFile files) {
         this.fileMapper.updateById(files);
     }
 
     @Override
-    public List<Files> getByParentsId(String parentsId) {
+    public List<ExchangeFile> getByParentsId(String parentsId) {
         return fileMapper.getByParentsId(parentsId);
     }
 
     @Override
-    public List<Files> findByUser(String userId) {
+    public List<ExchangeFile> findByUser(String userId) {
         return fileMapper.findByUser(userId);
     }
 }

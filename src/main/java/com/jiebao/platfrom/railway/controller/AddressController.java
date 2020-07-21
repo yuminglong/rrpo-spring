@@ -137,13 +137,13 @@ public class AddressController extends BaseController {
     }
 
 
-    @PostMapping(value = "/import")
-    @ApiOperation(value = "导入", notes = "导入", httpMethod = "POST")
+    @PostMapping(value = "/import/{deptId}")
+    @ApiOperation(value = "导入某个部门通讯录", notes = "导入某个部门通讯录", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
-    public String excelImport(@RequestParam(value = "file") MultipartFile file, String parentsId) {
+    public String excelImport(@RequestParam(value = "file") MultipartFile file, @PathVariable String deptId) {
         boolean result = false;
         try {
-            result = addressService.addAddressList(file, parentsId);
+            result = addressService.addAddressList(file, deptId);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import com.jiebao.platfrom.demo.domain.Demo;
 import com.jiebao.platfrom.railway.domain.Inform;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,5 +23,11 @@ public interface InformMapper extends BaseMapper<Inform> {
     boolean setInformDept(String deptId, String informId);
 
     @Insert("INSERT INTO rail_inform_user (user_id,inform_id) VALUES (#{userId},#{informId})")
-    boolean setInformUser(String userId,String informId);
+    boolean setInformUser(String userId, String informId);
+
+    @Update("UPDATE  rail_inform  r set  r.`status` = 2 WHERE r.id =#{informId}")
+    boolean revoke(String informId);
+
+    @Update("UPDATE  rail_inform  r set  r.`status` = 3 WHERE r.id =#{informId}")
+    boolean release(String informId);
 }
