@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.system.domain.Dept;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +20,7 @@ public interface AddressService extends IService<Address> {
 
     Map<String, Object> getAddressLists(QueryRequest request, Dept dept);
 
-    Map<String, Object> getAddressListsByArea(QueryRequest request, Area area);
+    Map<String, Object> getAddressListsByDept(QueryRequest request, Dept dept);
 
     void updateByKey(Address address);
 
@@ -29,14 +28,16 @@ public interface AddressService extends IService<Address> {
 
     boolean addAddressList(MultipartFile file, String deptId) throws Exception;
 
+    boolean addAddressListNotId(MultipartFile file) throws Exception;
+
     int selectUserName(String userName);
 
-    List<Address> addressList();
+    List<Address> addressList(Address address,QueryRequest request);
 
-    List<Address> getByAreaId(String areaId);
+    List<Address> getByDeptId(String deptId);
 
-    IPage<Address> getByArea(QueryRequest request,String iPageAreaId,String userName,String telPhone);
+    IPage<Address> getByDept(QueryRequest request,String iPageDeptId,String userName,String telPhone);
 
-    List<Address> getAddressByCondition(String userName,String phone,String areaId);
+    List<Address> getAddressByCondition(String userName,String phone,String deptId);
 
 }

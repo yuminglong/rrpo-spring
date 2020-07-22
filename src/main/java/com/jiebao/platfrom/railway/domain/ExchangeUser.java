@@ -31,14 +31,16 @@ public class ExchangeUser {
     @ExcelField(value = "和信息互递内容关联ID")
     private String exchangeId;
 
-    @ExcelField(value = "和用户关联ID")
-    private String userId;
+    @ExcelField(value = "接收信息的用户ID")
+    private String sendUserId;
 
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date creatTime;
 
 
-    @ExcelField(value = "信息互递信息状态")
-    private Integer status;
+    /**
+     * 1收件，2回收 回收站只放收件箱的信息
+     */
+    private String type;
 
 }

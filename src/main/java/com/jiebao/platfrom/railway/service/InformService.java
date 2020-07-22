@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Inform;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public interface InformService extends IService<Inform> {
 
-    IPage<Inform> getInformList(QueryRequest request, Inform inform);
+    IPage<Inform> getInformList(QueryRequest request, Inform inform, String startTime, String endTime);
 
     void updateByKey(Inform inform);
 

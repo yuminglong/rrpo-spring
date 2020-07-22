@@ -48,4 +48,10 @@ public class ExchangeFileServiceImpl extends ServiceImpl<ExchangeFileMapper, Exc
     public List<ExchangeFile> findByUser(String userId) {
         return fileMapper.findByUser(userId);
     }
+
+
+    @Override
+    public List<ExchangeFile> getByExchangeId(String exchangeId) {
+        return fileMapper.getByExchangeId(exchangeId);
+    }
 }

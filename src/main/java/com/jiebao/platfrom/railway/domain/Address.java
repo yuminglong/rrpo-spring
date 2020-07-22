@@ -59,10 +59,11 @@ public class Address {
     @ApiModelProperty(value ="排序号")
     private Double numbers;
 
+
+    @ExcelField(value = "组织机构名")
     @TableField(exist = false)
-   // @JsonProperty("title")
-    @ExcelField(value = "部门名")
     private String deptName;
+
 
    // @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
    @ApiModelProperty(value ="创建时间")
@@ -77,7 +78,7 @@ public class Address {
     @ApiModelProperty(value ="状态",example = "1")
     private Integer status;
 
-    @ApiModelProperty(value ="和地区关联ID")
-    private  String areaId;
+    @ApiModelProperty(value ="和组织机构关联ID")
+    private  String deptId;
 
 }

@@ -47,10 +47,6 @@ public class ExchangeFileController extends BaseController {
     private UserService userService;
 
 
-
-
-
-
     /**
      * 使用Mapper操作数据库
      *
@@ -88,7 +84,6 @@ public class ExchangeFileController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "批量删除", notes = "批量删除", response = JiebaoResponse.class, httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
-
         try {
             Arrays.stream(ids).forEach(id -> {
                 ExchangeFile byId = exchangeFileService.getById(id);
@@ -204,5 +199,35 @@ public class ExchangeFileController extends BaseController {
         return exchangeFileService.getByParentsId(parentsId);
     }
 
+
+    /*@PostMapping("/uploads")
+    @ApiOperation(value = "文件上传", notes = "文件上传", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse uploads(@RequestParam(value = "files", required = false) MultipartFile [] files,  ExchangeFile exchangeFile) {
+        String path = null;
+        if (files != null && files.length > 0) {
+            System.out.println("sdfdfsdf ");
+            for (MultipartFile file : files
+            ) {
+                path = "D:/rrpo/download/" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "_" + file.getOriginalFilename();
+                exchangeFile.setUrl(path);
+                exchangeFile.setTitle(file.getOriginalFilename());
+                exchangeFile.setCreateUser("暂未获取");
+                exchangeFile.setExchangeId(exchangeFile.getId());
+                exchangeFileService.save(exchangeFile);
+                try {
+                    File fileSave = new File(path);
+                    if (!fileSave.getParentFile().exists()) {
+                        fileSave.getParentFile().mkdirs();
+                    }
+                    file.transferTo(fileSave);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return new JiebaoResponse().message("上传成功");
+        }
+        return new JiebaoResponse().message("未上传任何文件");
+    }
+*/
 
 }

@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.jiebao.platfrom.common.converter.TimeConverter;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -38,8 +40,11 @@ public class Exchange {
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date createTime;
 
-
     @ExcelField(value = "创建人")
     private String createUser;
+
+    @ExcelField(value = "状态：1未发送 2撤销的 3已发布")
+    @ApiModelProperty(value ="状态：1未发送 2撤销的 3已发布")
+    private Integer status;
 
 }

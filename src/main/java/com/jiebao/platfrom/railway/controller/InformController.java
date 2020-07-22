@@ -7,26 +7,16 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.InformMapper;
-import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
-import com.jiebao.platfrom.system.domain.Dept;
-import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -72,8 +62,8 @@ public class InformController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getInformList(QueryRequest request, Inform inform) {
-        IPage<Inform> informList = informService.getInformList(request, inform);
+    public JiebaoResponse getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
+        IPage<Inform> informList = informService.getInformList(request, inform,startTime,endTime);
         List<Inform> records = informList.getRecords();
         for (Inform i : records
         ) {
@@ -137,70 +127,51 @@ public class InformController extends BaseController {
     }*/
 
 
-    @PostMapping("/send")
-    @Log("发送通知公告")
-    @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse sendInform(@Valid Inform inform, @PathVariable String[] deptIds, @PathVariable String[] userIds) {
-        inform.setStatus(1);
-        boolean result = informService.save(inform);
-
-        Integer type = inform.getType();
-        if (result) {
-            //暂假定为1为站内通知
-            if (type == 1) {
-                if (deptIds != null) {
-                    Arrays.stream(deptIds).forEach(deptId -> {
-                        informMapper.setInformDept(deptId, inform.getId());
-                    });
-                } else if (userIds != null) {
-                    Arrays.stream(userIds).forEach(userId -> {
-                        informMapper.setInformUser(userId, inform.getId());
-                    });
-                }
-            }
-        }
-        return new JiebaoResponse().message("成功");
-    }
 
 
-    @PostMapping("/revoke/{informIds}")
+
+    @GetMapping("/revoke/{informIds}")
     @Log("撤销通知公告")
     @Transactional(rollbackFor = Exception.class)
-    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse revoke(@PathVariable String[] informIds) throws JiebaoException {
         try {
             if (informIds != null) {
                 Arrays.stream(informIds).forEach(informId -> {
                     //状态status改为2
-                    informService.revoke(informId);
+                        informService.revoke(informId);
                 });
+                return new JiebaoResponse().message("撤销通知公告成功");
             }
+
         } catch (Exception e) {
             message = "撤销通知公告失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("撤销通知公告成功");
+            return new JiebaoResponse().message("通知公告撤销失败");
+
     }
 
 
-    @PostMapping("/release/{informIds}")
+    @GetMapping("/release/{informIds}")
     @Log("发布通知公告")
     @Transactional(rollbackFor = Exception.class)
-    @ApiOperation(value = "发布通知公告", notes = "发布通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    @ApiOperation(value = "发布通知公告", notes = "发布通知公告", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse release(@PathVariable String[] informIds) throws JiebaoException {
         try {
             if (informIds != null) {
                 Arrays.stream(informIds).forEach(informId -> {
                     //状态status改为3
-                    informService.release(informId);
+                        informService.release(informId);
                 });
+                return new JiebaoResponse().message("发布通知公告成功");
             }
         } catch (Exception e) {
             message = "发布通知公告失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("发布通知公告成功");
+        return new JiebaoResponse().message("发布通知公告失败");
     }
 }

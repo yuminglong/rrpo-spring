@@ -9,8 +9,8 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Area;
 import com.jiebao.platfrom.railway.service.AddressService;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
@@ -48,6 +48,9 @@ public class AddressController extends BaseController {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private DeptMapper deptMapper;
+
 
     /**
      * 使用Mapper操作数据库
@@ -55,7 +58,7 @@ public class AddressController extends BaseController {
      * @return JiebaoResponse 标准返回数据类型
      */
     @GetMapping
-    @ApiOperation(value = "根据部门查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "根据组织机构查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public Map<String, Object> getAddressListByMapper(QueryRequest request, Dept dept) {
        /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         System.out.println("-------------------"+username+"-------------------");
@@ -137,13 +140,18 @@ public class AddressController extends BaseController {
     }
 
 
-    @PostMapping(value = "/import/{deptId}")
-    @ApiOperation(value = "导入某个部门通讯录", notes = "导入某个部门通讯录", httpMethod = "POST")
+    @PostMapping(value = "/importAddress")
+    @ApiOperation(value = "导入某个组织机构通讯录", notes = "导入某个组织机构通讯录", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
-    public String excelImport(@RequestParam(value = "file") MultipartFile file, @PathVariable String deptId) {
+    public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
         try {
-            result = addressService.addAddressList(file, deptId);
+            if (deptId != null) {
+                result = addressService.addAddressList(file, deptId);
+            }
+            else {
+                result = addressService.addAddressListNotId(file);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,12 +162,27 @@ public class AddressController extends BaseController {
         }
     }
 
+
     @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
-    public void export(HttpServletResponse response) throws JiebaoException {
+    public void export(HttpServletResponse response, QueryRequest request,Address address) throws JiebaoException {
         try {
-            List<Address> addresses = this.addressService.addressList();
+            List<Address> addresses = this.addressService.addressList(address,request);
+            for (Address addr : addresses
+            ) {
+
+                if (addr.getDeptId() == null) {
+                    addr.setDeptName("");
+                } else {
+                    Dept byId = deptMapper.getById(addr.getDeptId());
+                    if (byId == null) {
+                        addr.setDeptName("");
+                    } else {
+                        addr.setDeptName(byId.getDeptName());
+                    }
+                }
+            }
             ExcelKit.$Export(Address.class, response).downXlsx(addresses, false);
         } catch (Exception e) {
             message = "导出Excel失败";
@@ -179,12 +202,12 @@ public class AddressController extends BaseController {
 
 
     @GetMapping("/iPage")
-    @Log("根据地区分页查看通讯录")
-    @ApiOperation(value = "根据地区分页查看通讯录", notes = "根据地区分页查看通讯录", httpMethod = "GET")
+    @Log("根据组织机构分页查看通讯录")
+    @ApiOperation(value = "根据组织机构分页查看通讯录", notes = "根据组织机构分页查看通讯录", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse findByArea(QueryRequest request,  String iPageAreaId,String userName,String telPhone) {
-        IPage<Address> areaList = addressService.getByArea(request, iPageAreaId,userName,telPhone);
-        return new JiebaoResponse().data(this.getDataTable(areaList));
+    public JiebaoResponse findByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
+        IPage<Address> deptList = addressService.getByDept(request, iPageDeptId, userName, telPhone);
+        return new JiebaoResponse().data(this.getDataTable(deptList));
     }
 
    /* @GetMapping("/condition")

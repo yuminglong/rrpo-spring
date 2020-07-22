@@ -24,7 +24,7 @@ spring:
           driver-class-name:  com.mysql.cj.jdbc.Driver #dm.jdbc.driver.DmDriver
           #url: jdbc:dm://192.168.20.122:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
           #url: jdbc:dm://127.0.0.1:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
-          url: jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+          url: jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         # 数据源-2，名称为 crm
         #crm:
         #  username: root
@@ -59,7 +59,8 @@ spring:
         max-active: 2000
         max-wait: 10000
     timeout: 0
-
+  resources:
+    static-locations: file:D:\OA\img\
 
 #mybatis plus 设置
 mybatis-plus:
@@ -88,7 +89,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/inform/**,/area/**,/address/**,/file/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/inform/**,/address/**,/exchangeFile/**,/room/**,/exchange/**,/dept/**
     # token有效期，单位秒
     jwtTimeOut: 3600
 

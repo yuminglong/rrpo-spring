@@ -37,7 +37,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             result.put("rows", deptTree);
             result.put("total", depts.size());
         } catch (Exception e) {
-            log.error("获取部门列表失败", e);
+            log.error("获取组织机构列表失败", e);
             result.put("rows", null);
             result.put("total", 0);
         }

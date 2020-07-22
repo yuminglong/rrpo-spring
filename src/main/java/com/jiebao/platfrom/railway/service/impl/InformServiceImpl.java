@@ -1,6 +1,5 @@
 package com.jiebao.platfrom.railway.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,7 +10,6 @@ import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.railway.dao.InformMapper;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
-import com.jiebao.platfrom.system.domain.Dept;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -31,10 +30,14 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
     InformMapper informMapper;
 
     @Override
-    public IPage<Inform> getInformList(QueryRequest request, Inform inform) {
+    public IPage<Inform> getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
         QueryWrapper<Inform> queryWrapper = new QueryWrapper();
+
         if (StringUtils.isNotBlank(inform.getTitle())) {
             queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank( endTime)) {
+            queryWrapper.lambda().ge(Inform::getCreateTime, startTime).le(Inform::getCreateTime, endTime);
         }
         Page<Inform> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "createTime", JiebaoConstant.ORDER_DESC, true);
@@ -60,12 +63,12 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
 
 
     @Override
-    public boolean revoke(String informId){
-       return informMapper.revoke(informId);
+    public boolean revoke(String informId) {
+        return informMapper.revoke(informId);
     }
 
     @Override
-    public boolean release(String informId){
+    public boolean release(String informId) {
         return informMapper.release(informId);
     }
 }
