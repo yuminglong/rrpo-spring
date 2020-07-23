@@ -29,11 +29,6 @@ public class Address {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    /**
-     * 部门ID
-     */
-    @ApiModelProperty(value = "和部门关联ID")
-    private String parentsId;
 
     @ExcelField(value = "名称")
     @ApiModelProperty(value = "名称")
@@ -53,12 +48,6 @@ public class Address {
 
     @ExcelField(value = "邮箱")
     private String email;
-
-    /**
-     * 序号
-     */
-    @ApiModelProperty(value = "排序号")
-    private Double numbers;
 
 
     @ExcelField(value = "组织机构名")

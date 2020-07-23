@@ -42,20 +42,11 @@ public class Inform {
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date createTime;
 
-    /**
-     * 来源
-     */
-    private String period;
 
     @ExcelField(value = "创建人")
     private String createUser;
 
     private String status;
-
-    /**
-     * 上级ID
-     */
-    private String parentId;
 
     /**
      * +

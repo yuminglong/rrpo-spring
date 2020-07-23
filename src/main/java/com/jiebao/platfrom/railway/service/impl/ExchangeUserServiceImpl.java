@@ -25,7 +25,6 @@ public class ExchangeUserServiceImpl extends ServiceImpl<ExchangeUserMapper, Exc
     @Override
     public boolean saveByUserId(String exchangeId, String sendUserId) {
         return exchangeUserMapper.saveByUserId(exchangeId, sendUserId);
-
     }
 
     @Override

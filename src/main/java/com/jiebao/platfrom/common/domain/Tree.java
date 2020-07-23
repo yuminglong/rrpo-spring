@@ -59,6 +59,12 @@ public class Tree<T> {
 
     private String email;
 
+    private String userId;
+
+    private String deptName;
+
+    private String deptId;
+
 
     public void initChildren(){
         this.children = new ArrayList<>();

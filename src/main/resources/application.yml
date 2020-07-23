@@ -89,7 +89,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/inform/**,/address/**,/exchangeFile/**,/room/**,/exchange/**,/dept/**,/exchangeType/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/demo/**,/address/**,/exchangeFile/**,/room/**,/exchange/**,/dept/**
     # token有效期，单位秒
     jwtTimeOut: 3600
 

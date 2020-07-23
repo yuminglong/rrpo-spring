@@ -2,6 +2,7 @@ package com.jiebao.platfrom.railway.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -16,6 +17,7 @@ import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -115,6 +117,15 @@ public class InformController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform) {
         inform.setStatus("1");
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        System.out.println("-------------------"+username+"-------------------");
+        inform.setCreateUser(username);
+
+
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        System.out.println("---------------------用户名："+user.getUsername()+"    "+"用户ID："+user.getUserId()
+        +"邮箱："+user.getEmail()+"--------------------");
         informService.save(inform);
         return new JiebaoResponse().message("成功");
     }
@@ -125,7 +136,6 @@ public class InformController extends BaseController {
     @ApiOperation(value = "修改", notes = "修改", response = JiebaoResponse.class, httpMethod = "PUT")
     public void updateInform(@Valid Inform inform) throws JiebaoException {
         try {
-
             this.informService.updateByKey(inform);
         } catch (Exception e) {
             message = "修改通讯录失败";
@@ -184,4 +194,11 @@ public class InformController extends BaseController {
         }
         return new JiebaoResponse().message("发布通知公告失败");
     }
+
+    @GetMapping(value = "/getList")
+    @ApiOperation(value = "List", notes = "List列表", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<Inform> getList(Inform inform, QueryRequest request) {
+        return informService.getInformLists(inform,request);
+    }
+
 }

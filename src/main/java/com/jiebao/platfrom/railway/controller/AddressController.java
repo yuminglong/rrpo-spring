@@ -44,7 +44,6 @@ public class AddressController extends BaseController {
 
     private String message;
 
-
     @Autowired
     private AddressService addressService;
 
@@ -127,11 +126,7 @@ public class AddressController extends BaseController {
     public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
         try {
-            if (deptId != null) {
                 result = addressService.addAddressList(file, deptId);
-            } else {
-                result = addressService.addAddressListNotId(file);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,7 +140,6 @@ public class AddressController extends BaseController {
 
     @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    //@RequiresPermissions("inform:export")
     public void export(HttpServletResponse response, QueryRequest request, Address address) throws JiebaoException {
         try {
             List<Address> addresses = this.addressService.addressList(address, request);
@@ -180,6 +174,4 @@ public class AddressController extends BaseController {
         IPage<Address> deptList = addressService.getByDept(request, iPageDeptId, userName, telPhone);
         return new JiebaoResponse().data(this.getDataTable(deptList));
     }
-
-
 }

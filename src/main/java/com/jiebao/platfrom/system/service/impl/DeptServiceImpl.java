@@ -8,11 +8,15 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.common.utils.TreeUtil;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,9 @@ import java.util.*;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements DeptService {
 
+
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public Map<String, Object> findDepts(QueryRequest request, Dept dept) {
@@ -47,7 +54,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<Dept> findDepts(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(Dept::getStatus,1);
+        queryWrapper.lambda().eq(Dept::getStatus, 1);
         if (StringUtils.isNotBlank(dept.getDeptName()))
             queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
         if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo()))
@@ -75,8 +82,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Transactional
     public void createDept(Dept dept) {
         String parentId = dept.getParentId();
-       // if (parentId == null)
-        if(StringUtils.isEmpty(parentId))
+        // if (parentId == null)
+        if (StringUtils.isEmpty(parentId))
             dept.setParentId("0");
         dept.setCreateTime(new Date());
         this.save(dept);
@@ -114,6 +121,44 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             tree.setOrder(dept.getOrderNum());
             tree.setTitle(tree.getText());
             tree.setValue(tree.getId());
+            trees.add(tree);
+        });
+    }
+
+
+    @Override
+    public Tree<Dept> findDeptUser(QueryRequest request, Dept dept) {
+        List<Dept> depts = findDepts(dept, request);
+        List<Tree<Dept>> trees = new ArrayList<>();
+        buildDeptUserTrees(trees, depts);
+        Tree<Dept> build = TreeUtil.build(trees);
+        return build;
+    }
+
+    private void buildDeptUserTrees(List<Tree<Dept>> trees, List<Dept> depts) {
+        depts.forEach(dept -> {
+            Tree<Dept> tree = new Tree<>();
+            tree.setId(dept.getDeptId());
+            tree.setKey(tree.getId());
+            tree.setParentId(dept.getParentId());
+            tree.setText(dept.getDeptName());
+            tree.setCreateTime(dept.getCreateTime());
+            tree.setModifyTime(dept.getModifyTime());
+            tree.setOrder(dept.getOrderNum());
+            tree.setTitle(tree.getText());
+            tree.setValue(tree.getId());
+
+            List<User> user = userMapper.getUserList(dept.getDeptId());
+            List<Tree<Dept>> childList = new ArrayList<>();
+            for (int i = 0; i < user.size(); i++) {
+                Tree<Dept> data = new Tree<>();
+                User info = user.get(i);
+                data.setId(info.getId());
+                data.setUserId(info.getUserId());
+                data.setUserName(info.getUsername());
+                childList.add(data);
+            }
+            tree.setChildren(childList);
             trees.add(tree);
         });
     }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
@@ -99,5 +100,11 @@ public class DeptController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
+    }
+
+
+    @GetMapping("deptUser")
+    public Tree<Dept> deptUserList(QueryRequest request, Dept dept) {
+        return this.deptService.findDeptUser(request, dept);
     }
 }

@@ -35,6 +35,7 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
         QueryWrapper<Inform> queryWrapper = new QueryWrapper();
         //查询状态不为4，4：假删除状态
         queryWrapper.lambda().ne(Inform::getStatus, 4);
+
         if (StringUtils.isNotBlank(inform.getTitle())) {
             queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
         }

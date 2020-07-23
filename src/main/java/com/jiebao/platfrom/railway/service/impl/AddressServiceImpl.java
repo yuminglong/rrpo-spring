@@ -58,7 +58,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     AddressService addressService;
 
 
-    private String all = "all";
 
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
@@ -87,23 +86,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return result;
     }
 
-    @Override
-    public Map<String, Object> getAddressListsByDept(QueryRequest request, Dept dept) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            List<Dept> depts = deptService.findDepts(dept, request);
-            List<Tree<Dept>> trees = new ArrayList<>();
-            buildTrees(trees, depts);
-            Tree<Dept> tree = TreeUtil.build(trees);
-            result.put("rows", tree);
-            result.put("total", depts.size());
-        } catch (Exception e) {
-            log.error("获取部门列表失败", e);
-            result.put("rows", null);
-            result.put("total", 0);
-        }
-        return result;
-    }
 
 
     @Override
@@ -152,13 +134,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 data.setKey(info.getId());
                 data.setWeiXin(info.getWeiXin());
                 data.setUserName(info.getUserName());
-                data.setOrder(info.getNumbers());
-                data.setTitle(info.getDeptName());
+                data.setDeptName(info.getDeptName());
                 data.setCreateTime(info.getCreatTime());
                 data.setPhone(info.getPhone());
                 data.setTelPhone(info.getTelPhone());
                 data.setEmail(info.getEmail());
-                data.setParentId(info.getParentsId());
+                data.setDeptId(info.getDeptId());
                 childList.add(data);
             }
             tree.setChildren(childList);
@@ -215,7 +196,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setTelPhone(telPhone);
                 address.setWeiXin(weiXin);
                 address.setEmail(email);
-                address.setDeptId(deptId);
+                if(StringUtils.isNotBlank(deptId)){
+                    address.setDeptId(deptId);
+                }
                 addressList.add(address);
             }
             for (Address address : addressList) {
@@ -225,69 +208,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return save;
     }
 
-
-    @Override
-    public boolean addAddressListNotId(MultipartFile file) throws Exception {
-        boolean save = true;
-        List<Address> addressList = new ArrayList<>();
-        String filename = file.getOriginalFilename();
-        String sub = filename.substring(filename.lastIndexOf(".") + 1);
-        InputStream inputStream = file.getInputStream();
-        Workbook wb = null;
-        /**
-         * HSSFWorkbook:是操作Excel2003以前（包括2003）的版本，扩展名是.xls
-         * XSSFWorkbook:是操作Excel2007的版本，扩展名是.xlsx
-         */
-        if ("xlsx".equals(sub)) {
-            wb = new XSSFWorkbook(inputStream);
-        } else {
-            wb = new HSSFWorkbook(inputStream);
-        }
-        Sheet sheet = wb.getSheetAt(0);
-        if (sheet != null) {
-            //getLastRowNum()返回最后一行的索引，即比行总数小1
-            for (int line = 1; line <= sheet.getLastRowNum(); line++) {
-                Address address = new Address();
-                Row row = sheet.getRow(line);
-                if (row == null) {
-                    continue;
-                }
-                row.getCell(0).setCellType(CellType.STRING);
-                if (CellType.STRING != row.getCell(0).getCellTypeEnum()) {
-                    throw new Exception("单元格类型不是文本类型");
-                }
-                /**
-                 * 获取第一个单元格的内容
-                 */
-                String userName = row.getCell(0).getStringCellValue();
-                row.getCell(1).setCellType(CellType.STRING);
-                row.getCell(2).setCellType(CellType.STRING);
-                row.getCell(3).setCellType(CellType.STRING);
-                row.getCell(4).setCellType(CellType.STRING);
-
-                String phone = row.getCell(1).getStringCellValue();
-                String telPhone = row.getCell(2).getStringCellValue();
-                String weiXin = row.getCell(3).getStringCellValue();
-                String email = row.getCell(4).getStringCellValue();
-                address.setUserName(userName);
-                address.setPhone(phone);
-                address.setTelPhone(telPhone);
-                address.setWeiXin(weiXin);
-                address.setEmail(email);
-                addressList.add(address);
-            }
-            for (Address address : addressList) {
-                save = addressService.save(address);
-            }
-        }
-        return save;
-    }
-
-
-    @Override
-    public int selectUserName(String userName) {
-        return addressMapper.selectUser(userName);
-    }
 
 
     @Override
@@ -302,15 +222,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
-    @Override
-    public List<Address> getByDeptId(String deptId) {
-        String all = "all";
-        if (all.equals(deptId)) {
-            return addressService.list();
-        } else {
-            return addressMapper.getByDeptId(deptId);
-        }
-    }
 
     @Override
     public IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
@@ -329,8 +240,5 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 
-    @Override
-    public List<Address> getAddressByCondition(String userName, String phone, String deptId) {
-        return addressMapper.getAddressByCondition(userName, phone, deptId);
-    }
+
 }
