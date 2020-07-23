@@ -74,7 +74,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Map<String, Object> result = new HashMap<>();
         try {
             List<Dept> depts = deptService.findDept(dept, request);
-            //   List<Address> addresses = addressService.findAddresses(address, request);
             List<Tree<Dept>> trees = new ArrayList<>();
             buildTrees(trees, depts);
             Tree<Dept> deptTree = TreeUtil.builds(trees);
@@ -93,7 +92,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Map<String, Object> result = new HashMap<>();
         try {
             List<Dept> depts = deptService.findDepts(dept, request);
-            //   List<Address> addresses = addressService.findAddresses(address, request);
             List<Tree<Dept>> trees = new ArrayList<>();
             buildTrees(trees, depts);
             Tree<Dept> tree = TreeUtil.build(trees);
@@ -168,44 +166,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         });
     }
 
-
-   /* private void buildTrees(List<AreaTree<Area>> trees, List<Area> areas, QueryRequest request) {
-
-
-        areas.forEach(area -> {
-            List<Address> address = addressMapper.getAddressListByArea(area.getId());
-            // IPage<Address> address = addressService.getByArea(request, area.getId());
-            AreaTree<Area> tree = new AreaTree<>();
-            tree.setId(area.getId());
-            tree.setKey(tree.getId());
-            tree.setParentId(area.getParentId());
-            tree.setAreaName(area.getAreaName());
-            tree.setRank(area.getRank());
-            tree.setAreaCode(area.getAreaCode());
-            tree.setUpdateUser(area.getUpdateUser());
-            tree.setCreatTime(area.getCreatTime());
-
-
-            List<AreaTree<Area>> childList = new ArrayList<>();
-            for (int i = 0; i < address.size(); i++) {
-                AreaTree<Area> data = new AreaTree<>();
-                Address info = address.get(i);
-                data.setId(info.getId());
-                data.setKey(info.getId());
-                data.setWeiXin(info.getWeiXin());
-                data.setUserName(info.getUserName());
-                data.setCreatTime(info.getCreatTime());
-                data.setPhone(info.getPhone());
-                data.setTelPhone(info.getTelPhone());
-                data.setEmail(info.getEmail());
-                data.setParentId(info.getParentsId());
-                childList.add(data);
-            }
-            tree.setChildren(childList);
-            trees.add(tree);
-        });
-    }
-*/
 
     @Override
     public boolean addAddressList(MultipartFile file, String deptId) throws Exception {
@@ -331,7 +291,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     @Override
-    public List<Address> addressList(Address address,QueryRequest request) {
+    public List<Address> addressList(Address address, QueryRequest request) {
 
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(address.getDeptId())) {

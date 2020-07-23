@@ -24,13 +24,13 @@ public class ExchangeUserServiceImpl extends ServiceImpl<ExchangeUserMapper, Exc
 
     @Override
     public boolean saveByUserId(String exchangeId, String sendUserId) {
-       return exchangeUserMapper.saveByUserId(exchangeId,sendUserId);
+        return exchangeUserMapper.saveByUserId(exchangeId, sendUserId);
 
     }
 
     @Override
     public boolean deleteByExchangeId(String exchangeId) {
-        boolean result = exchangeUserMapper.deleteByExchangeId(exchangeId)&& exchangeUserMapper.deleteFileByExchangeId(exchangeId);
+        boolean result = exchangeUserMapper.deleteByExchangeId(exchangeId) && exchangeUserMapper.deleteFileByExchangeId(exchangeId);
         return result;
     }
 }

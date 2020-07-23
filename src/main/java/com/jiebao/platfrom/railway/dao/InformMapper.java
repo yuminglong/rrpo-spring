@@ -15,9 +15,6 @@ import java.util.List;
 public interface InformMapper extends BaseMapper<Inform> {
 
 
-    @Select("SELECT * FROM rail_inform")
-    List<Inform> getInformList();
-
 
     @Insert("INSERT INTO rail_inform_dept (dept_id,inform_id) VALUES (#{deptId},#{informId})")
     boolean setInformDept(String deptId, String informId);
@@ -30,4 +27,7 @@ public interface InformMapper extends BaseMapper<Inform> {
 
     @Update("UPDATE  rail_inform  r set  r.`status` = 3 WHERE r.id =#{informId}")
     boolean release(String informId);
+
+    @Update("UPDATE  rail_inform  r set  r.`status` = 4 WHERE r.id =#{informId}")
+    boolean updateStatus(String informId);
 }

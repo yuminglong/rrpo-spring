@@ -27,15 +27,12 @@ public interface AddressMapper extends BaseMapper<Address> {
     List<Address> getAddressListByDept(@Param("deptId") String deptId);
 
 
-
-
-
     int selectUser(String username);
 
     @Select("SELECT * FROM `rail_address` r where r.dept_id =#{deptId}")
     List<Address> getByDeptId(@Param("deptId") String deptId);
 
 
-    List<Address> getAddressByCondition(String userName, String phone,String deptId);
+    List<Address> getAddressByCondition(String userName, String phone, String deptId);
 
 }

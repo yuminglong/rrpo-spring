@@ -12,7 +12,7 @@ public interface ExchangeUserService extends IService<ExchangeUser> {
     /**
      *  信息互递选定要发送的的用户存入数据库
      * @param exchangeId 信息互递id
-     * @param userId  用户ID
+     * @param sendUserId  用户ID
      * @return
      */
         boolean saveByUserId(String exchangeId,String sendUserId);

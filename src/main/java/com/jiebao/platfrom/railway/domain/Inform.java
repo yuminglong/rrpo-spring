@@ -50,12 +50,27 @@ public class Inform {
     @ExcelField(value = "创建人")
     private String createUser;
 
-    private Integer status;
+    private String status;
 
     /**
      * 上级ID
      */
     private String parentId;
 
-    private Integer type;
+    /**
+     * +
+     * 是否为站内通知
+     */
+    private Integer station;
+
+    /**
+     * 是否为小程序通知
+     */
+    private Integer applets;
+
+    /**
+     * 是否同步到门户网站
+     */
+    private Integer synchronizeWeb;
+
 }

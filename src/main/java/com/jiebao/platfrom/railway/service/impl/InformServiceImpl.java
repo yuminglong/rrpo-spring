@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.railway.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,12 +33,16 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
     @Override
     public IPage<Inform> getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
         QueryWrapper<Inform> queryWrapper = new QueryWrapper();
-
+        //查询状态不为4，4：假删除状态
+        queryWrapper.lambda().ne(Inform::getStatus, 4);
         if (StringUtils.isNotBlank(inform.getTitle())) {
             queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
         }
-        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank( endTime)) {
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Inform::getCreateTime, startTime).le(Inform::getCreateTime, endTime);
+        }
+        if (StringUtils.isNotBlank(inform.getStatus())) {
+            queryWrapper.lambda().eq(Inform::getStatus, inform.getStatus());
         }
         Page<Inform> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "createTime", JiebaoConstant.ORDER_DESC, true);

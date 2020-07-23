@@ -73,12 +73,6 @@ public class ExchangeFileController extends BaseController {
      * @Parameters sortField  according to order by Field
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC
      */
-  /*  @PostMapping("/getFileList")
-    @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse getFileList(QueryRequest request) {
-        IPage<Files> fileList = fileService.getFileList(request);
-        return new JiebaoResponse().data(this.getDataTable(fileList));
-    }*/
     @DeleteMapping("/{ids}")
     @Log("删除文件")
     @Transactional(rollbackFor = Exception.class)
@@ -199,35 +193,5 @@ public class ExchangeFileController extends BaseController {
         return exchangeFileService.getByParentsId(parentsId);
     }
 
-
-    /*@PostMapping("/uploads")
-    @ApiOperation(value = "文件上传", notes = "文件上传", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse uploads(@RequestParam(value = "files", required = false) MultipartFile [] files,  ExchangeFile exchangeFile) {
-        String path = null;
-        if (files != null && files.length > 0) {
-            System.out.println("sdfdfsdf ");
-            for (MultipartFile file : files
-            ) {
-                path = "D:/rrpo/download/" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "_" + file.getOriginalFilename();
-                exchangeFile.setUrl(path);
-                exchangeFile.setTitle(file.getOriginalFilename());
-                exchangeFile.setCreateUser("暂未获取");
-                exchangeFile.setExchangeId(exchangeFile.getId());
-                exchangeFileService.save(exchangeFile);
-                try {
-                    File fileSave = new File(path);
-                    if (!fileSave.getParentFile().exists()) {
-                        fileSave.getParentFile().mkdirs();
-                    }
-                    file.transferTo(fileSave);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return new JiebaoResponse().message("上传成功");
-        }
-        return new JiebaoResponse().message("未上传任何文件");
-    }
-*/
 
 }

@@ -7,8 +7,12 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.InformMapper;
+import com.jiebao.platfrom.railway.dao.InformUserMapper;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
+import com.jiebao.platfrom.railway.service.InformUserService;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +40,15 @@ public class InformController extends BaseController {
     @Autowired
     private InformService informService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private InformUserMapper informUserMapper;
+
+    @Autowired
+    private InformUserService informUserService;
+
     /**
      * 使用Mapper操作数据库
      *
@@ -44,7 +57,7 @@ public class InformController extends BaseController {
     @PostMapping(value = "/getInformListByMapper")
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse getInformListByMapper() {
-        List<Inform> list = informMapper.getInformList();
+        List<Inform> list = informService.list();
         for (Inform i : list
         ) {
             i.setKey(i.getId());
@@ -63,7 +76,7 @@ public class InformController extends BaseController {
     @GetMapping
     @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
-        IPage<Inform> informList = informService.getInformList(request, inform,startTime,endTime);
+        IPage<Inform> informList = informService.getInformList(request, inform, startTime, endTime);
         List<Inform> records = informList.getRecords();
         for (Inform i : records
         ) {
@@ -79,7 +92,16 @@ public class InformController extends BaseController {
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
         try {
             Arrays.stream(ids).forEach(id -> {
-                informService.removeById(id);
+                Inform byId = informService.getById(id);
+                //未发布时才能删掉本体信息,否则只改状态为4
+                if ("1".equals(byId.getStatus())) {
+                    informService.removeById(id);
+                } else if ("2".equals(byId.getStatus())) {
+                    informService.removeById(id);
+                    informUserService.removeById(id);
+                } else {
+                    informMapper.updateStatus(id);
+                }
             });
         } catch (Exception e) {
             throw new JiebaoException("删除失败");
@@ -92,7 +114,7 @@ public class InformController extends BaseController {
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform) {
-        inform.setStatus(1);
+        inform.setStatus("1");
         informService.save(inform);
         return new JiebaoResponse().message("成功");
     }
@@ -101,7 +123,7 @@ public class InformController extends BaseController {
     @Log("修改通知公告")
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "修改", notes = "修改", response = JiebaoResponse.class, httpMethod = "PUT")
-    public void updateAddress(@Valid Inform inform) throws JiebaoException {
+    public void updateInform(@Valid Inform inform) throws JiebaoException {
         try {
 
             this.informService.updateByKey(inform);
@@ -111,23 +133,6 @@ public class InformController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
-   /* @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    //@RequiresPermissions("inform:export")
-    public void export(Inform inform, QueryRequest request, HttpServletResponse response) throws JiebaoException {
-        try {
-            List<Inform> informs = this.informService.getInformLists(inform, request);
-            ExcelKit.$Export(Inform.class, response).downXlsx(informs, false);
-        } catch (Exception e) {
-            message = "导出Excel失败";
-            log.error(message, e);
-            throw new JiebaoException(message);
-        }
-    }*/
-
-
-
 
 
     @GetMapping("/revoke/{informIds}")
@@ -139,7 +144,7 @@ public class InformController extends BaseController {
             if (informIds != null) {
                 Arrays.stream(informIds).forEach(informId -> {
                     //状态status改为2
-                        informService.revoke(informId);
+                    informService.revoke(informId);
                 });
                 return new JiebaoResponse().message("撤销通知公告成功");
             }
@@ -149,7 +154,7 @@ public class InformController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
-            return new JiebaoResponse().message("通知公告撤销失败");
+        return new JiebaoResponse().message("通知公告撤销失败");
 
     }
 
@@ -163,7 +168,12 @@ public class InformController extends BaseController {
             if (informIds != null) {
                 Arrays.stream(informIds).forEach(informId -> {
                     //状态status改为3
-                        informService.release(informId);
+                    informService.release(informId);
+                    List<User> list = userService.list();
+                    for (User user : list
+                    ) {
+                        informUserMapper.sendUser(user.getUserId(), informId);
+                    }
                 });
                 return new JiebaoResponse().message("发布通知公告成功");
             }

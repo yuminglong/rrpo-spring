@@ -14,15 +14,13 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 /**
- *
- *
  * @author yf
  */
 @Data
 @TableName("rail_exchange_user")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@Excel("信息互递")
+@Excel("信息互递接收人")
 public class ExchangeUser {
 
     @TableId(value = "id", type = IdType.UUID)

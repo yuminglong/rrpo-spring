@@ -32,12 +32,12 @@ public interface AddressService extends IService<Address> {
 
     int selectUserName(String userName);
 
-    List<Address> addressList(Address address,QueryRequest request);
+    List<Address> addressList(Address address, QueryRequest request);
 
     List<Address> getByDeptId(String deptId);
 
-    IPage<Address> getByDept(QueryRequest request,String iPageDeptId,String userName,String telPhone);
+    IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone);
 
-    List<Address> getAddressByCondition(String userName,String phone,String deptId);
+    List<Address> getAddressByCondition(String userName, String phone, String deptId);
 
 }

@@ -13,8 +13,6 @@
     </select>
 
 
-
-
     <select id="selectUser" resultType="java.lang.Integer">
       select count(*) from rail_address where user_name=#{userName}
   </select>

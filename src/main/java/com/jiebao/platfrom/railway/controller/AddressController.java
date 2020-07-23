@@ -69,18 +69,6 @@ public class AddressController extends BaseController {
     }
 
 
-   /* @GetMapping("/byArea")
-    @ApiOperation(value = "根据地区分页查询所有数据List(此接口需优化，暂时不要测试)", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
-    public Map<String, Object> getAddressListByArea(QueryRequest request, Area area) {
-       *//* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+username+"-------------------");
-        //Object principal = SecurityUtils.getSubject().getPrincipal();
-        String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+id+"-------------------");*//*
-        return this.addressService.getAddressListsByArea(request, area);
-    }
-*/
-
     /**
      * 分页查询
      *
@@ -88,12 +76,6 @@ public class AddressController extends BaseController {
      * @Parameters sortField  according to order by Field
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC
      */
-  /*  @PostMapping("/getAddressList")
-    @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse getAddressList(QueryRequest request) {
-        IPage<Address> List = addressService.getAddressList(request);
-        return new JiebaoResponse().data(this.getDataTable(List));
-    }*/
     @DeleteMapping("/{ids}")
     @Log("删除")
     @Transactional(rollbackFor = Exception.class)
@@ -141,15 +123,13 @@ public class AddressController extends BaseController {
 
 
     @PostMapping(value = "/importAddress")
-    @ApiOperation(value = "导入某个组织机构通讯录", notes = "导入某个组织机构通讯录", httpMethod = "POST")
-    //@RequiresPermissions("inform:export")
+    @ApiOperation(value = "导入通讯录", notes = "导入通讯录", httpMethod = "POST")
     public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
         try {
             if (deptId != null) {
                 result = addressService.addAddressList(file, deptId);
-            }
-            else {
+            } else {
                 result = addressService.addAddressListNotId(file);
             }
         } catch (Exception e) {
@@ -166,9 +146,9 @@ public class AddressController extends BaseController {
     @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
     //@RequiresPermissions("inform:export")
-    public void export(HttpServletResponse response, QueryRequest request,Address address) throws JiebaoException {
+    public void export(HttpServletResponse response, QueryRequest request, Address address) throws JiebaoException {
         try {
-            List<Address> addresses = this.addressService.addressList(address,request);
+            List<Address> addresses = this.addressService.addressList(address, request);
             for (Address addr : addresses
             ) {
 
@@ -192,15 +172,6 @@ public class AddressController extends BaseController {
     }
 
 
-   /* @GetMapping("/{areaId}")
-    @Log("根据地区查看通讯录")
-    @ApiOperation(value = "根据地区查看通讯录", notes = "根据地区查看通讯录", httpMethod = "GET")
-    @Transactional(rollbackFor = Exception.class)
-    public List<Address> findById(@PathVariable String areaId) {
-        return addressService.getByAreaId(areaId);
-    }*/
-
-
     @GetMapping("/iPage")
     @Log("根据组织机构分页查看通讯录")
     @ApiOperation(value = "根据组织机构分页查看通讯录", notes = "根据组织机构分页查看通讯录", httpMethod = "GET")
@@ -210,9 +181,5 @@ public class AddressController extends BaseController {
         return new JiebaoResponse().data(this.getDataTable(deptList));
     }
 
-   /* @GetMapping("/condition")
-    @ApiOperation(value = "根据名字电话或手机查询数据", notes = "根据名字电话或手机查询数据", response = JiebaoResponse.class, httpMethod = "GET")
-    public List<Address> getAddressByCondition(@RequestParam("userName") String userName, @RequestParam("phone")String phone,@RequestParam("areaId")String areaId) {
-        return addressService.getAddressByCondition(userName, phone,areaId);
-    }*/
+
 }
