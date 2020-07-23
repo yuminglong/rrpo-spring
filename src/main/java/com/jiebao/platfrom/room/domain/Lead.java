@@ -19,7 +19,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("room_lead")
-public class Lead implements Serializable {
+public class Lead implements Serializable {  //绑定领导
 
     private static final long serialVersionUID = 1L;
 

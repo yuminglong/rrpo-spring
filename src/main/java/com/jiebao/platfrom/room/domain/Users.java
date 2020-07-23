@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -19,12 +19,12 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("room_user")
-public class Users implements Serializable {
+public class Users implements Serializable {   //会议绑定人员
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 会议id  
+     * 会议id
      */
     private String meetingId;
 
@@ -32,6 +32,17 @@ public class Users implements Serializable {
      * 人员id
      */
     private String userId;
+
+
+    /**
+     * 是否参加  回执 是否参加  0  不参加  1参加
+     */
+    private Integer status;
+
+    /**
+     * 代替参会
+     */
+    private String takeUserId;
 
 
 }

@@ -31,11 +31,11 @@ public class FilesController {
 
     @ApiOperation("文件上传")
     @Log(value = "文件上传")
-    @PostMapping("upload")
-    public JiebaoResponse fileImgSave(@RequestParam("filename") MultipartFile files, HttpServletRequest request) {
+    @PostMapping(value = "upload")
+    public JiebaoResponse fileImgSave(@RequestParam(value = "filename",required = false) MultipartFile files, HttpServletRequest request,Integer state) { //0公开  1非公开  附件是否公开
         MultipartFile[] m = new MultipartFile[]{files};
         List<String> UrlList = uploadUtil.upload(m, request);  //返回路径
-        return new JiebaoResponse().data(filesService.saveList(UrlList)).message("上传成功");
+        return new JiebaoResponse().data(filesService.saveList(UrlList,state)).message("上传成功");
     }
 
     @DeleteMapping(value = "delete/{id}")

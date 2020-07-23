@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -26,7 +26,7 @@ public class Record implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id",type = IdType.UUID)
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
     /**
      * 会议名称 主题
@@ -34,7 +34,7 @@ public class Record implements Serializable {
     private String name;
 
     /**
-     *  会议室绑定
+     * 会议室绑定
      */
     private String roomId;
 
@@ -43,4 +43,8 @@ public class Record implements Serializable {
 
     private Date endDate; //会议结束时间
 
+
+    private String createUser;  //会议创建人主键
+
+    private Date creatDate;
 }

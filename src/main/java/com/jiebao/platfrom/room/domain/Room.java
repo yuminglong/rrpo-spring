@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("room_room")
-public class Room implements Serializable {
+public class Room implements Serializable {  //会议室
 
     private static final long serialVersionUID = 1L;
 @TableId(value = "id",type = IdType.UUID)
