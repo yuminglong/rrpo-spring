@@ -13,11 +13,10 @@ import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.common.utils.TreeUtil;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Area;
-import com.jiebao.platfrom.railway.domain.AreaTree;
+
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.AddressService;
-import com.jiebao.platfrom.railway.service.AreaService;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.impl.DeptServiceImpl;
@@ -53,12 +52,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     DeptService deptService;
 
     @Autowired
-    AddressService addressService;
+    DeptMapper deptMapper;
 
     @Autowired
-    AreaService areaService;
+    AddressService addressService;
 
-    private String all = "all";
+
 
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
@@ -74,7 +73,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Map<String, Object> result = new HashMap<>();
         try {
             List<Dept> depts = deptService.findDept(dept, request);
-            //   List<Address> addresses = addressService.findAddresses(address, request);
             List<Tree<Dept>> trees = new ArrayList<>();
             buildTrees(trees, depts);
             Tree<Dept> deptTree = TreeUtil.builds(trees);
@@ -88,34 +86,16 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return result;
     }
 
-    @Override
-    public Map<String, Object> getAddressListsByArea(QueryRequest request, Area area) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            List<Area> areas = areaService.getAreaList(request, area);
-            //   List<Address> addresses = addressService.findAddresses(address, request);
-            List<AreaTree<Area>> trees = new ArrayList<>();
-            buildAreaTrees(trees, areas, request);
-            AreaTree<Area> areaTree = TreeUtil.buildArea(trees);
-            result.put("rows", areaTree);
-            result.put("total", areas.size());
-        } catch (Exception e) {
-            log.error("获取部门列表失败", e);
-            result.put("rows", null);
-            result.put("total", 0);
-        }
-        return result;
-    }
 
 
     @Override
     public List<Address> findAddresses(QueryRequest request, Address address) {
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-        SortUtil.handleWrapperSort(request, queryWrapper, "parentsId", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "creat_time", JiebaoConstant.ORDER_DESC, true);
         List<Address> addresses = baseMapper.selectList(queryWrapper);
         for (Address s : addresses) {
-            String parentsId = s.getParentsId();
-            Dept byId = deptService.getById(parentsId);
+            String deptId = s.getDeptId();
+            Dept byId = deptService.getById(deptId);
             s.setDeptName(byId.getDeptName());
         }
         return addresses;
@@ -154,51 +134,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 data.setKey(info.getId());
                 data.setWeiXin(info.getWeiXin());
                 data.setUserName(info.getUserName());
-                data.setOrder(info.getNumbers());
-                data.setTitle(info.getDeptName());
+                data.setDeptName(info.getDeptName());
                 data.setCreateTime(info.getCreatTime());
                 data.setPhone(info.getPhone());
                 data.setTelPhone(info.getTelPhone());
                 data.setEmail(info.getEmail());
-                data.setParentId(info.getParentsId());
-                childList.add(data);
-            }
-            tree.setChildren(childList);
-            trees.add(tree);
-        });
-    }
-
-
-    private void buildAreaTrees(List<AreaTree<Area>> trees, List<Area> areas, QueryRequest request) {
-
-
-        areas.forEach(area -> {
-            List<Address> address = addressMapper.getAddressListByArea(area.getId());
-            // IPage<Address> address = addressService.getByArea(request, area.getId());
-            AreaTree<Area> tree = new AreaTree<>();
-            tree.setId(area.getId());
-            tree.setKey(tree.getId());
-            tree.setParentId(area.getParentId());
-            tree.setAreaName(area.getAreaName());
-            tree.setRank(area.getRank());
-            tree.setAreaCode(area.getAreaCode());
-            tree.setUpdateUser(area.getUpdateUser());
-            tree.setCreatTime(area.getCreatTime());
-
-
-            List<AreaTree<Area>> childList = new ArrayList<>();
-            for (int i = 0; i < address.size(); i++) {
-                AreaTree<Area> data = new AreaTree<>();
-                Address info = address.get(i);
-                data.setId(info.getId());
-                data.setKey(info.getId());
-                data.setWeiXin(info.getWeiXin());
-                data.setUserName(info.getUserName());
-                data.setCreatTime(info.getCreatTime());
-                data.setPhone(info.getPhone());
-                data.setTelPhone(info.getTelPhone());
-                data.setEmail(info.getEmail());
-                data.setParentId(info.getParentsId());
+                data.setDeptId(info.getDeptId());
                 childList.add(data);
             }
             tree.setChildren(childList);
@@ -255,60 +196,38 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setTelPhone(telPhone);
                 address.setWeiXin(weiXin);
                 address.setEmail(email);
-                address.setParentsId(deptId);
+                if(StringUtils.isNotBlank(deptId)){
+                    address.setDeptId(deptId);
+                }
                 addressList.add(address);
             }
-            for (Address addressInfo : addressList) {
-                String userName = addressInfo.getUserName();
-                int count = addressService.selectUserName(userName);
-                if (count == 0) {
-                    save = addressService.save(addressInfo);
-                }
+            for (Address address : addressList) {
+                save = addressService.save(address);
             }
         }
         return save;
     }
 
-    @Override
-    public int selectUserName(String userName) {
-        return addressMapper.selectUser(userName);
-    }
 
 
     @Override
-    public List<Address> addressList() {
-        List<Address> list = addressService.list();
-        for (Address address : list
-        ) {
-            String parentsId = address.getParentsId();
-            if (parentsId == null) {
-                address.setDeptName("");
-            } else {
-                Dept byId = deptService.getById(parentsId);
-                address.setDeptName(byId.getDeptName());
-            }
+    public List<Address> addressList(Address address, QueryRequest request) {
+
+        QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(address.getDeptId())) {
+            queryWrapper.lambda().eq(Address::getDeptId, address.getDeptId());
         }
-        return list;
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
+        return this.baseMapper.selectList(queryWrapper);
     }
 
 
-    @Override
-    public List<Address> getByAreaId(String areaId) {
-        String all = "all";
-        if (all.equals(areaId)) {
-            return addressService.list();
-        } else {
-            return addressMapper.getByAreaId(areaId);
-        }
-    }
 
     @Override
-    public IPage<Address> getByArea(QueryRequest request, String iPageAreaId, String userName, String telPhone) {
+    public IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
-
-
-        if (StringUtils.isNotBlank(iPageAreaId)) {
-            lambdaQueryWrapper.eq(Address::getAreaId, iPageAreaId);
+        if (StringUtils.isNotBlank(iPageDeptId)) {
+            lambdaQueryWrapper.eq(Address::getDeptId, iPageDeptId);
         }
         if (StringUtils.isNotBlank(userName)) {
             lambdaQueryWrapper.like(Address::getUserName, userName);
@@ -321,8 +240,5 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 
-    @Override
-    public List<Address> getAddressByCondition(String userName, String phone, String areaId) {
-        return addressMapper.getAddressByCondition(userName, phone, areaId);
-    }
+
 }

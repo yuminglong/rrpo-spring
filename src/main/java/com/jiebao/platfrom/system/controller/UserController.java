@@ -179,4 +179,11 @@ public class UserController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+    @GetMapping("userList")
+    public List<User> userList() {
+        return userService.list();
+    }
+
+
 }

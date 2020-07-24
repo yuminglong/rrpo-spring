@@ -19,4 +19,6 @@ public interface ExchangeFileService extends IService<ExchangeFile> {
     List<ExchangeFile> getByParentsId(String parentsId);
 
     List<ExchangeFile> findByUser(String userId);
+
+    List<ExchangeFile> getByExchangeId(String exchangeId);
 }

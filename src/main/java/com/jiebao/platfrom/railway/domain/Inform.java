@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jiebao.platfrom.common.converter.TimeConverter;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
@@ -41,20 +42,26 @@ public class Inform {
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date createTime;
 
-    /**
-     * 来源
-     */
-    private String period;
 
     @ExcelField(value = "创建人")
     private String createUser;
 
-    private Integer status;
+    private String status;
 
     /**
-     * 上级ID
+     * +
+     * 是否为站内通知
      */
-    private String parentId;
+    private Integer station;
 
-    private Integer type;
+    /**
+     * 是否为小程序通知
+     */
+    private Integer applets;
+
+    /**
+     * 是否同步到门户网站
+     */
+    private Integer synchronizeWeb;
+
 }

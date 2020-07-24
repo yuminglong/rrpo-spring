@@ -47,10 +47,6 @@ public class ExchangeFileController extends BaseController {
     private UserService userService;
 
 
-
-
-
-
     /**
      * 使用Mapper操作数据库
      *
@@ -77,18 +73,11 @@ public class ExchangeFileController extends BaseController {
      * @Parameters sortField  according to order by Field
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC
      */
-  /*  @PostMapping("/getFileList")
-    @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse getFileList(QueryRequest request) {
-        IPage<Files> fileList = fileService.getFileList(request);
-        return new JiebaoResponse().data(this.getDataTable(fileList));
-    }*/
     @DeleteMapping("/{ids}")
     @Log("删除文件")
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "批量删除", notes = "批量删除", response = JiebaoResponse.class, httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
-
         try {
             Arrays.stream(ids).forEach(id -> {
                 ExchangeFile byId = exchangeFileService.getById(id);

@@ -22,24 +22,24 @@ import java.util.Date;
 @Accessors(chain = true)
 public class ExchangeFile {
 
-    @TableId(value = "id",type = IdType.UUID)
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ApiModelProperty(value ="名称")
+    @ApiModelProperty(value = "名称")
     private String title;
 
     private Date createTime;
 
     private String url;
 
-    @ApiModelProperty(value ="创建人(后台直接获取)")
+    @ApiModelProperty(value = "创建人(后台直接获取)")
     private String createUser;
 
 
-    @ApiModelProperty(value ="类型",example = "1")
+    @ApiModelProperty(value = "类型", example = "1")
     private Integer type;
 
-    @ApiModelProperty(value ="和信息互递关联id")
+    @ApiModelProperty(value = "和信息互递关联id")
     private String exchangeId;
 
 }

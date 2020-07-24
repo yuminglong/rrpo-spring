@@ -4,21 +4,17 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
-import com.jiebao.platfrom.railway.dao.AddressMapper;
-import com.jiebao.platfrom.railway.dao.ExchangeFileMapper;
-import com.jiebao.platfrom.railway.domain.ExchangeFile;
-import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.Menu;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.wuwenze.poi.ExcelKit;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -30,6 +26,7 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("dept")
+@Api(tags = "组织机构")   //swagger2 api文档说明示例
 public class DeptController extends BaseController {
 
     private String message;
@@ -37,18 +34,13 @@ public class DeptController extends BaseController {
     @Autowired
     private DeptService deptService;
 
-    @Autowired
-    private AddressMapper addressMapper;
-
-    @Autowired
-    private ExchangeFileMapper fileMapper;
 
     @GetMapping
     public Map<String, Object> deptList(QueryRequest request, Dept dept) {
         return this.deptService.findDepts(request, dept);
     }
 
-    @Log("新增部门")
+    @Log("新增组织机构")
     @PostMapping
     @RequiresPermissions("dept:add")
     public void addDept(@Valid Dept dept) throws JiebaoException {
@@ -56,13 +48,13 @@ public class DeptController extends BaseController {
             dept.setStatus(1);
             this.deptService.createDept(dept);
         } catch (Exception e) {
-            message = "新增部门失败";
+            message = "新增组织机构失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
     }
 
-    @Log("删除部门")
+    @Log("删除组织机构")
     @DeleteMapping("/{deptIds}")
     @RequiresPermissions("dept:delete")
     public void deleteDepts(@NotBlank(message = "{required}") @PathVariable String deptIds) throws JiebaoException {
@@ -75,25 +67,23 @@ public class DeptController extends BaseController {
                         deptService.removeById(dept.getDeptId());
                     });
                 }
-                fileMapper.updateByIds(id);
-                addressMapper.updateByIds(id);
                 deptService.removeById(id);
             });
         } catch (Exception e) {
-            message = "删除部门失败";
+            message = "删除组织机构失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
     }
 
-    @Log("修改部门")
+    @Log("修改组织机构")
     @PutMapping
     @RequiresPermissions("dept:update")
     public void updateDept(@Valid Dept dept) throws JiebaoException {
         try {
             this.deptService.updateDept(dept);
         } catch (Exception e) {
-            message = "修改部门失败";
+            message = "修改组织机构失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
@@ -110,5 +100,11 @@ public class DeptController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
+    }
+
+
+    @GetMapping("deptUser")
+    public Tree<Dept> deptUserList(QueryRequest request, Dept dept) {
+        return this.deptService.findDeptUser(request, dept);
     }
 }

@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
 import java.util.Date;
 
 /**
@@ -25,26 +26,21 @@ import java.util.Date;
 @Excel("通讯录")
 public class Address {
 
-    @TableId(value = "id",type = IdType.UUID)
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    /**
-     * 部门ID
-     */
-    @ApiModelProperty(value ="和部门关联ID")
-    private String parentsId;
 
     @ExcelField(value = "名称")
-    @ApiModelProperty(value ="名称")
+    @ApiModelProperty(value = "名称")
     private String userName;
 
 
     @ExcelField(value = "电话")
-    @ApiModelProperty(value ="电话")
-    private  String phone;
+    @ApiModelProperty(value = "电话")
+    private String phone;
 
     @ExcelField(value = "手机")
-    @ApiModelProperty(value ="手机")
+    @ApiModelProperty(value = "手机")
     private String telPhone;
 
     @ExcelField(value = "微信")
@@ -53,31 +49,26 @@ public class Address {
     @ExcelField(value = "邮箱")
     private String email;
 
-    /**
-     * 序号
-     */
-    @ApiModelProperty(value ="排序号")
-    private Double numbers;
 
+    @ExcelField(value = "组织机构名")
     @TableField(exist = false)
-   // @JsonProperty("title")
-    @ExcelField(value = "部门名")
     private String deptName;
 
-   // @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
-   @ApiModelProperty(value ="创建时间")
+
+    // @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
+    @ApiModelProperty(value = "创建时间")
     private Date creatTime;
 
-    @ApiModelProperty(value ="和user关联ID")
+    @ApiModelProperty(value = "和user关联ID")
     private String userId;
 
     /**
      * 状态1正常
      */
-    @ApiModelProperty(value ="状态",example = "1")
+    @ApiModelProperty(value = "状态", example = "1")
     private Integer status;
 
-    @ApiModelProperty(value ="和地区关联ID")
-    private  String areaId;
+    @ApiModelProperty(value = "和组织机构关联ID")
+    private String deptId;
 
 }

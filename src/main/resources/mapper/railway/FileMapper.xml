@@ -3,8 +3,4 @@
 <mapper namespace="com.jiebao.platfrom.railway.dao.FileMapper">
 
 
-
-    <update id="updateByIds">
-            UPDATE rail_file r SET r.pid = 'fc1a198f11198e91c593723c6a51ac97' WHERE r.pid = #{parentsId}
-    </update>
 </mapper>

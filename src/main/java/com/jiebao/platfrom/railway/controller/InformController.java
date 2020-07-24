@@ -2,31 +2,27 @@ package com.jiebao.platfrom.railway.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.InformMapper;
-import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.railway.dao.InformUserMapper;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
-import com.jiebao.platfrom.system.domain.Dept;
-import com.wuwenze.poi.ExcelKit;
+import com.jiebao.platfrom.railway.service.InformUserService;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -46,6 +42,15 @@ public class InformController extends BaseController {
     @Autowired
     private InformService informService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private InformUserMapper informUserMapper;
+
+    @Autowired
+    private InformUserService informUserService;
+
     /**
      * 使用Mapper操作数据库
      *
@@ -54,7 +59,7 @@ public class InformController extends BaseController {
     @PostMapping(value = "/getInformListByMapper")
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse getInformListByMapper() {
-        List<Inform> list = informMapper.getInformList();
+        List<Inform> list = informService.list();
         for (Inform i : list
         ) {
             i.setKey(i.getId());
@@ -72,8 +77,8 @@ public class InformController extends BaseController {
      */
     @GetMapping
     @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getInformList(QueryRequest request, Inform inform) {
-        IPage<Inform> informList = informService.getInformList(request, inform);
+    public JiebaoResponse getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
+        IPage<Inform> informList = informService.getInformList(request, inform, startTime, endTime);
         List<Inform> records = informList.getRecords();
         for (Inform i : records
         ) {
@@ -89,7 +94,16 @@ public class InformController extends BaseController {
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
         try {
             Arrays.stream(ids).forEach(id -> {
-                informService.removeById(id);
+                Inform byId = informService.getById(id);
+                //未发布时才能删掉本体信息,否则只改状态为4
+                if ("1".equals(byId.getStatus())) {
+                    informService.removeById(id);
+                } else if ("2".equals(byId.getStatus())) {
+                    informService.removeById(id);
+                    informUserService.removeById(id);
+                } else {
+                    informMapper.updateStatus(id);
+                }
             });
         } catch (Exception e) {
             throw new JiebaoException("删除失败");
@@ -102,7 +116,16 @@ public class InformController extends BaseController {
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform) {
-        inform.setStatus(1);
+        inform.setStatus("1");
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        System.out.println("-------------------"+username+"-------------------");
+        inform.setCreateUser(username);
+
+
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        System.out.println("---------------------用户名："+user.getUsername()+"    "+"用户ID："+user.getUserId()
+        +"邮箱："+user.getEmail()+"--------------------");
         informService.save(inform);
         return new JiebaoResponse().message("成功");
     }
@@ -111,9 +134,8 @@ public class InformController extends BaseController {
     @Log("修改通知公告")
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "修改", notes = "修改", response = JiebaoResponse.class, httpMethod = "PUT")
-    public void updateAddress(@Valid Inform inform) throws JiebaoException {
+    public void updateInform(@Valid Inform inform) throws JiebaoException {
         try {
-
             this.informService.updateByKey(inform);
         } catch (Exception e) {
             message = "修改通讯录失败";
@@ -122,51 +144,11 @@ public class InformController extends BaseController {
         }
     }
 
-   /* @PostMapping(value = "/excel")
-    @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    //@RequiresPermissions("inform:export")
-    public void export(Inform inform, QueryRequest request, HttpServletResponse response) throws JiebaoException {
-        try {
-            List<Inform> informs = this.informService.getInformLists(inform, request);
-            ExcelKit.$Export(Inform.class, response).downXlsx(informs, false);
-        } catch (Exception e) {
-            message = "导出Excel失败";
-            log.error(message, e);
-            throw new JiebaoException(message);
-        }
-    }*/
 
-
-    @PostMapping("/send")
-    @Log("发送通知公告")
-    @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse sendInform(@Valid Inform inform, @PathVariable String[] deptIds, @PathVariable String[] userIds) {
-        inform.setStatus(1);
-        boolean result = informService.save(inform);
-
-        Integer type = inform.getType();
-        if (result) {
-            //暂假定为1为站内通知
-            if (type == 1) {
-                if (deptIds != null) {
-                    Arrays.stream(deptIds).forEach(deptId -> {
-                        informMapper.setInformDept(deptId, inform.getId());
-                    });
-                } else if (userIds != null) {
-                    Arrays.stream(userIds).forEach(userId -> {
-                        informMapper.setInformUser(userId, inform.getId());
-                    });
-                }
-            }
-        }
-        return new JiebaoResponse().message("成功");
-    }
-
-
-    @PostMapping("/revoke/{informIds}")
+    @GetMapping("/revoke/{informIds}")
     @Log("撤销通知公告")
     @Transactional(rollbackFor = Exception.class)
-    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    @ApiOperation(value = "撤销通知公告", notes = "撤销通知公告", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse revoke(@PathVariable String[] informIds) throws JiebaoException {
         try {
             if (informIds != null) {
@@ -174,33 +156,49 @@ public class InformController extends BaseController {
                     //状态status改为2
                     informService.revoke(informId);
                 });
+                return new JiebaoResponse().message("撤销通知公告成功");
             }
+
         } catch (Exception e) {
             message = "撤销通知公告失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("撤销通知公告成功");
+        return new JiebaoResponse().message("通知公告撤销失败");
+
     }
 
 
-    @PostMapping("/release/{informIds}")
+    @GetMapping("/release/{informIds}")
     @Log("发布通知公告")
     @Transactional(rollbackFor = Exception.class)
-    @ApiOperation(value = "发布通知公告", notes = "发布通知公告", response = JiebaoResponse.class, httpMethod = "POST")
+    @ApiOperation(value = "发布通知公告", notes = "发布通知公告", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse release(@PathVariable String[] informIds) throws JiebaoException {
         try {
             if (informIds != null) {
                 Arrays.stream(informIds).forEach(informId -> {
                     //状态status改为3
                     informService.release(informId);
+                    List<User> list = userService.list();
+                    for (User user : list
+                    ) {
+                        informUserMapper.sendUser(user.getUserId(), informId);
+                    }
                 });
+                return new JiebaoResponse().message("发布通知公告成功");
             }
         } catch (Exception e) {
             message = "发布通知公告失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("发布通知公告成功");
+        return new JiebaoResponse().message("发布通知公告失败");
     }
+
+    @GetMapping(value = "/getList")
+    @ApiOperation(value = "List", notes = "List列表", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<Inform> getList(Inform inform, QueryRequest request) {
+        return informService.getInformLists(inform,request);
+    }
+
 }

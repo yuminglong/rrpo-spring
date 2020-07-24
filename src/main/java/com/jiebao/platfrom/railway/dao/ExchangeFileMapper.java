@@ -16,12 +16,6 @@ public interface ExchangeFileMapper extends BaseMapper<ExchangeFile> {
     @Select("SELECT * FROM rail_area")
     List<ExchangeFile> getFileList();
 
-    /**
-     * 删除部门时，其部门下的文件将移入公共文件夹
-     *
-     * @param parentsId
-     */
-    void updateByIds(String parentsId);
 
     /**
      * 根据部门ID查询文件
@@ -38,6 +32,9 @@ public interface ExchangeFileMapper extends BaseMapper<ExchangeFile> {
      * @param userId userId
      * @return
      */
-    @Select("SELECT * FROM `rail_file` r ,rail_file_user u WHERE r.id = u.file_id AND u.user_id =#{userId}")
+    @Select("SELECT * FROM `rail_file` r ,rail_file_user u WHERE r.id = u.file_id AND u.user_id = #{userId}")
     List<ExchangeFile> findByUser(String userId);
+
+    @Select("SELECT * FROM `rail_exchange_file` r  WHERE r.exchange_id = #{exchangeId}")
+    List<ExchangeFile> getByExchangeId(String exchangeId);
 }
