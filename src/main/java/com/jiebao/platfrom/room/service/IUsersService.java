@@ -20,7 +20,7 @@ import java.util.List;
 public interface IUsersService extends IService<Users> {
     JiebaoResponse addLead(String id, List<String> LeadListId);
 
-    Boolean deleteByListId(String id, List<String> idList);
+    Boolean deleteByListId( List<String> idList);
 
     IPage<Users> list(QueryRequest queryRequest, String id);
 

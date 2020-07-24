@@ -21,7 +21,7 @@ public interface ILeadService extends IService<Lead> {
 
     Boolean addLead(String id, List<String> LeadListId);
 
-    Boolean deleteByListId(String id, List<String> idList);
+    Boolean deleteByListId( List<String> idList);
 
     IPage<Lead> list(QueryRequest request, String id);
 }

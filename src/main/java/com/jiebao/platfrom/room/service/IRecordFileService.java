@@ -17,7 +17,7 @@ import java.util.List;
 public interface IRecordFileService extends IService<RecordFile> {
     Boolean addLead(String id, List<String> LeadListId);
 
-    Boolean deleteByListId(String id, List<String> idList);
+    Boolean deleteByListId( List<String> idList);
 
     List<RecordFile> list(String id);
 }

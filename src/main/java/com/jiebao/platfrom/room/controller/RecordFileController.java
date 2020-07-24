@@ -41,8 +41,8 @@ public class RecordFileController {
     @GetMapping(value = "delete")
     @ApiOperation("批量 附件绑定删除")
     @Log(value = "附件绑定删除")
-    private JiebaoResponse deleteById(String id, List<String> idList) {
-        return new JiebaoResponse().message(recordFileService.deleteByListId(id, idList) ? "操作成功" : "操作失败");
+    private JiebaoResponse deleteById(List<String> idList) {
+        return new JiebaoResponse().message(recordFileService.deleteByListId( idList) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")

@@ -45,11 +45,8 @@ public class RecordSeviceServiceImpl extends ServiceImpl<RecordSeviceMapper, Rec
 
 
     @Override
-    public Boolean deleteByListId(String id, List<String> idList) {
-        QueryWrapper<RecordSevice> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("room_file_id", idList);
-        queryWrapper.eq("room_record_id", id);
-        this.baseMapper.delete(queryWrapper);
+    public Boolean deleteByListId( List<String> idList) {
+        this.baseMapper.deleteBatchIds(idList);
         return null;
     }
 

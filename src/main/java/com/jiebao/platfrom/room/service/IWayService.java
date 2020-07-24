@@ -17,7 +17,7 @@ import java.util.List;
 public interface IWayService extends IService<Way> {
     Boolean addLead(String id, List<Integer> LeadListId);
 
-    Boolean deleteByListId(String id, List<String> idList);
+    Boolean deleteByListId( List<String> idList);
 
     List<Way> list(String id);
 }

@@ -62,11 +62,8 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Override
-    public Boolean deleteByListId(String id, List<String> idList) {
-        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("user_id", idList);
-        queryWrapper.eq("metting_id", id);
-        this.baseMapper.delete(queryWrapper);
+    public Boolean deleteByListId(List<String> idList) {
+        this.baseMapper.deleteBatchIds(idList);
         return null;
     }
 

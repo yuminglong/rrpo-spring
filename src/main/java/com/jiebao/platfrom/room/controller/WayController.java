@@ -41,8 +41,8 @@ public class WayController {
     @GetMapping(value = "delete")
     @ApiOperation("批量 绑定消息发送方式")
     @Log(value = "领导删除")
-    private JiebaoResponse deleteById(String id, List<String> idList) {
-        return new JiebaoResponse().message(wayService.deleteByListId(id, idList) ? "操作成功" : "操作失败");
+    private JiebaoResponse deleteById( List<String> idList) {
+        return new JiebaoResponse().message(wayService.deleteByListId(idList) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")

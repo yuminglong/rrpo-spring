@@ -19,7 +19,7 @@ import java.util.List;
 public interface IRecordSeviceService extends IService<RecordSevice> {
     Boolean addLead(String id, List<String> LeadListId);
 
-    Boolean deleteByListId(String id, List<String> idList);
+    Boolean deleteByListId( List<String> idList);
 
     IPage<RecordSevice> list(QueryRequest queryRequest, String id);
 }

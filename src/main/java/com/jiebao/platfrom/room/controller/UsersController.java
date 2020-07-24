@@ -41,8 +41,8 @@ public class UsersController {
     @GetMapping(value = "delete")
     @ApiOperation("批量 参会人员")
     @Log(value = "领导删除")
-    private JiebaoResponse deleteById(String id, List<String> idList) {
-        return new JiebaoResponse().message(usersService.deleteByListId(id, idList) ? "操作成功" : "操作失败");
+    private JiebaoResponse deleteById( List<String> idList) {
+        return new JiebaoResponse().message(usersService.deleteByListId(idList) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")

@@ -44,11 +44,8 @@ public class LeadServiceImpl extends ServiceImpl<LeadMapper, Lead> implements IL
     }
 
     @Override
-    public Boolean deleteByListId(String id, List<String> idList) {
-        QueryWrapper<Lead> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("user_lead_id", idList);
-        queryWrapper.eq("metting_id", id);
-        this.baseMapper.delete(queryWrapper);
+    public Boolean deleteByListId( List<String> idList) {
+        this.baseMapper.deleteBatchIds(idList);
         return null;
     }
 

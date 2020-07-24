@@ -44,11 +44,8 @@ public class WayServiceImpl extends ServiceImpl<WayMapper, Way> implements IWayS
     }
 
     @Override
-    public Boolean deleteByListId(String id, List<String> idList) {
-        QueryWrapper<Way> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("way", idList);
-        queryWrapper.eq("room_reord_id", id);
-        this.baseMapper.delete(queryWrapper);
+    public Boolean deleteByListId( List<String> idList) {
+        this.baseMapper.deleteBatchIds(idList);
         return null;
     }
 
