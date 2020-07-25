@@ -24,12 +24,13 @@ import java.util.List;
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files> implements IFilesService {
 
     @Override
-    public JiebaoResponse saveList(List<String> list) {
+    public JiebaoResponse saveList(List<String> list, Integer state) {
         List<Files> fileList = new ArrayList<>();
         for (String url : list
         ) {
             Files files = new Files();
             files.setUrl(url);
+            files.setState(state);
             fileList.add(files);
         }
         return new JiebaoResponse().data(fileList).message(saveBatch(fileList) ? "操作成功" : "操作失败");

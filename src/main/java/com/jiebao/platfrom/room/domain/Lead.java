@@ -1,5 +1,7 @@
 package com.jiebao.platfrom.room.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +11,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -19,10 +21,11 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("room_lead")
-public class Lead implements Serializable {
+public class Lead implements Serializable {  //绑定领导
 
     private static final long serialVersionUID = 1L;
-
+    @TableId(value = "id", type = IdType.UUID)
+    private String id;
     /**
      * 会议id
      */

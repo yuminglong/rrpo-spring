@@ -20,8 +20,8 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("room_service")
-public class Service implements Serializable {
+@TableName("room_service")//服务
+public class Service implements Serializable {  //
 
     private static final long serialVersionUID = 1L;
 

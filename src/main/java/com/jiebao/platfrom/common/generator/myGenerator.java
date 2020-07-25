@@ -26,14 +26,14 @@ public class myGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/src/main/java");
-        gc.setAuthor("yf");
+        gc.setAuthor("qta");
         gc.setOpen(false);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai");
+        dsc.setUrl("jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
@@ -42,7 +42,7 @@ public class myGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("railway");   //改
+        pc.setModuleName("room");   //该
         pc.setParent("com.jiebao.platfrom");
         mpg.setPackageInfo(pc);
 
@@ -111,7 +111,7 @@ public class myGenerator {
 //        strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
         // 写于父类中的公共字段
         strategy.setSuperEntityColumns("id");
-        String[] str = new String[]{"rail_prize_user","rail_prize"};
+        String[] str = new String[]{"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way","room_message"};
         strategy.setInclude(str);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

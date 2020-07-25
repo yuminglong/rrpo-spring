@@ -17,6 +17,6 @@ import java.util.List;
  */
 public interface IFilesService extends IService<Files> {
 
-    JiebaoResponse saveList(List<String> list);  //内存地址
+    JiebaoResponse saveList(List<String> list,Integer state);  //state 是否 可以公开
 
 }
