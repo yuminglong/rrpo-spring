@@ -34,7 +34,7 @@ public class UsersController {
     @Log(value = "创建会议参会人员")
     @PostMapping(value = "addLead")
     public JiebaoResponse addLead(String id, List<String> leadListId) {
-        return usersService.addLead(id, leadListId);
+        return usersService.addUSer(id, leadListId);
     }
 
 
@@ -48,7 +48,7 @@ public class UsersController {
     @GetMapping(value = "select")
     @ApiOperation("根据会议查询 参会人员")
     @Log(value = "根据会议查询 领导")
-    private JiebaoResponse getFile(String id, QueryRequest queryRequest) {
-        return new JiebaoResponse().data(usersService.list(queryRequest,id)).message("查询成功");
+    private JiebaoResponse getFile(String id, QueryRequest queryRequest,Integer leadIf) {
+        return new JiebaoResponse().data(usersService.list(queryRequest,id,leadIf)).message("查询成功");
     }
 }

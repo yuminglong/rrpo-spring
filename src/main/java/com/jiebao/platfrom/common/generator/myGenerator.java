@@ -111,7 +111,8 @@ public class myGenerator {
 //        strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
         // 写于父类中的公共字段
         strategy.setSuperEntityColumns("id");
-        String[] str = new String[]{"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way","room_message"};
+        //"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way",
+        String[] str = new String[]{"room_message"};
         strategy.setInclude(str);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

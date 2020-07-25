@@ -7,6 +7,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.dao.RecordMapper;
 import com.jiebao.platfrom.room.domain.Record;
+import com.jiebao.platfrom.room.domain.Users;
 import com.jiebao.platfrom.room.service.*;
 import com.jiebao.platfrom.system.domain.User;
 import org.apache.shiro.SecurityUtils;
@@ -27,8 +28,6 @@ import java.util.List;
 @Service
 public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> implements IRecordService {
     @Autowired
-    ILeadService leadService;
-    @Autowired
     IUsersService usersService;
     @Autowired
     IServiceService serviceService;
@@ -36,21 +35,16 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     IWayService wayService;
     @Autowired
     IFilesService filesService;
+    @Autowired
+    IMessageService messageService;
 
     @Override
-    public JiebaoResponse addRecord(Record record, List<String> leadListId, List<String> userListId, List<String> fileListId, List<String> serviceListId, List<String> wayListId, Integer fileState) {
+    public JiebaoResponse addRecord(Record record) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (record.getStartDate() == null || record.getEndDate() == null) {
             return jiebaoResponse.message("请选择开会时间区间");
         }
-        if (record.getId() == null) {   //添加操作
-            boolean save = save(record);
-
-        } else {
-
-        }
-
-        return null;
+        return new JiebaoResponse().message(save(record) ? "创建成功" : "创建会议失败");
     }
 
     @Override
@@ -70,13 +64,20 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return new JiebaoResponse().data(this.baseMapper.selectPage(page, queryWrapper));
     }
 
-    private void add() {
-
+    @Override
+    public JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
+        if (listUserID == null) {  //如果没有传入  执行 全部人员
+            QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("meeting_id", recordId);  //对应会议
+            List<Users> list = usersService.list(queryWrapper);//得到本次会议  相关人员
+            for (Users u : list  //收集id
+            ) {
+                listUserID.add(u.getId());
+            }
+        }
+        return messageService.addList(recordId, listUserID, message, inviteIf);
     }
 
-    private void updates() {
-
-    }
 
     @Override
     public boolean saveOrUpdate(Record entity) {

@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.dao.UsersMapper;
-import com.jiebao.platfrom.room.domain.Lead;
 import com.jiebao.platfrom.room.domain.Record;
 import com.jiebao.platfrom.room.domain.Room;
 import com.jiebao.platfrom.room.domain.Users;
@@ -36,16 +35,16 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     IRoomService roomService;
 
     @Override
-    public JiebaoResponse addLead(String id, List<String> LeadListId) {  //绑定 会议 人员
-        int size = listByRecordId(id).size();  //会议现阶段邀请人数
+    public JiebaoResponse addUSer(String id, List<String> userListId) {  //绑定 会议 人员
+        int size = listByRecordId(id, null).size();  //会议现阶段邀请人数
         Record record = recordService.getById(id);
         Room room = roomService.getById(record.getRoomId());  //得到对应的会议室
-        if (size + LeadListId.size() > room.getPeopleNum()) {  //当 绑定 已经已存在人数 大于最大容纳人数时
-            return new JiebaoResponse().message("超出最大容纳人数" + (size + LeadListId.size() - room.getPeopleNum()));
+        if (size + userListId.size() > room.getPeopleNum()) {  //当 绑定 已经已存在人数 大于最大容纳人数时
+            return new JiebaoResponse().message("超出最大容纳人数" + (size + userListId.size() - room.getPeopleNum()));
         }
         List<Users> list = new ArrayList<>();  //储存对象
         QueryWrapper<Users> queryWrapper = null;
-        for (String userId : LeadListId
+        for (String userId : userListId
         ) {
             Users Users = new Users();
             Users.setMeetingId(id);
@@ -58,7 +57,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
                 list.add(Users);
             }
         }
-        return new JiebaoResponse().message(saveBatch(list) ? "添加成员成功" : "添加成员失败s");
+        return new JiebaoResponse().message(saveBatch(list) ? "添加成员成功" : "添加成员失败");
     }
 
     @Override
@@ -69,16 +68,26 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
 
     @Override
-    public IPage<Users> list(QueryRequest queryRequest, String id) {
+    public IPage<Users> list(QueryRequest queryRequest, String id, Integer leadIf) {
         QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("metting_id", id);
-        Page<Users> page = new Page<>(queryRequest.getPageNum(),queryRequest.getPageSize());
+        if (id != null) {
+            queryWrapper.eq("metting_id", id);
+        }
+        if (leadIf != null) {
+            queryWrapper.eq("lead_if", id);
+        }
+        Page<Users> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 
-    public List<Users> listByRecordId(String id) {
+    public List<Users> listByRecordId(String id, Integer leadIf) {
         QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("metting_id", id);
+        if (id != null) {
+            queryWrapper.eq("metting_id", id);
+        }
+        if (leadIf != null) {
+            queryWrapper.eq("lead_if", id);
+        }
         return list(queryWrapper);
     }
 }
