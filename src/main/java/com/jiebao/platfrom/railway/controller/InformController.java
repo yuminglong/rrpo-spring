@@ -112,20 +112,13 @@ public class InformController extends BaseController {
     }
 
     @PostMapping
-    @Log("新增通知公告")
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform) {
         inform.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+username+"-------------------");
+        System.out.println("-------------------"+username+"：调用了该接口。。。。-------------------");
         inform.setCreateUser(username);
-
-
-
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-        System.out.println("---------------------用户名："+user.getUsername()+"    "+"用户ID："+user.getUserId()
-        +"邮箱："+user.getEmail()+"--------------------");
         informService.save(inform);
         return new JiebaoResponse().message("成功");
     }

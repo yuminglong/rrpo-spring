@@ -153,9 +153,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             for (int i = 0; i < user.size(); i++) {
                 Tree<Dept> data = new Tree<>();
                 User info = user.get(i);
-                data.setId(info.getId());
-                data.setUserId(info.getUserId());
-                data.setUserName(info.getUsername());
+                data.setId(info.getUserId());
+                data.setTitle(info.getUsername());
                 childList.add(data);
             }
             tree.setChildren(childList);

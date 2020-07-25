@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.system.domain.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -23,9 +24,19 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 部门下所有人员
+     *
      * @param deptId
      * @return
      */
     @Select(" select * from sys_user r join sys_dept d on r.dept_id = d.dept_id where  r.dept_id = #{deptId}")
     List<User> getUserList(String deptId);
+
+    /**
+     * 根据部门查人员
+     * @param deptId
+     * @return
+     */
+
+    @Select("select * from sys_user r  where  r.dept_id = #{deptId}")
+    List<User> getByDept(String deptId);
 }

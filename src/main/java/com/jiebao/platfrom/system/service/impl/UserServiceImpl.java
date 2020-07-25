@@ -43,6 +43,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserRoleService userRoleService;
     @Autowired
     private UserManager userManager;
+    @Autowired
+    private UserMapper userMapper;
 
 
     @Override
@@ -200,6 +202,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     }
 
+
+
     private void setUserRoles(User user, String[] roles) {
         Arrays.stream(roles).forEach(roleId -> {
             UserRole ur = new UserRole();
@@ -207,5 +211,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ur.setRoleId(roleId);
             this.userRoleMapper.insert(ur);
         });
+    }
+
+
+    @Override
+    public List<User> getByDept(String deptId) {
+        return userMapper.getByDept(deptId);
     }
 }

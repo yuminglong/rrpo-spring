@@ -61,6 +61,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
+
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         Page<Address> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Address::getId);
@@ -90,6 +91,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public List<Address> findAddresses(QueryRequest request, Address address) {
+
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
         SortUtil.handleWrapperSort(request, queryWrapper, "creat_time", JiebaoConstant.ORDER_DESC, true);
         List<Address> addresses = baseMapper.selectList(queryWrapper);
@@ -110,7 +112,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     private void buildTrees(List<Tree<Dept>> trees, List<Dept> depts) {
-
 
         depts.forEach(dept -> {
             List<Address> address = addressMapper.getAddressList(dept.getDeptId());
@@ -150,6 +151,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public boolean addAddressList(MultipartFile file, String deptId) throws Exception {
+
         boolean save = true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
@@ -225,6 +227,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
+
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         if (StringUtils.isNotBlank(iPageDeptId)) {
             lambdaQueryWrapper.eq(Address::getDeptId, iPageDeptId);
@@ -239,6 +242,4 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         lambdaQueryWrapper.orderByDesc(Address::getId);
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
-
-
 }

@@ -2,7 +2,9 @@ package com.jiebao.platfrom.system.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.common.utils.MD5Util;
@@ -11,8 +13,10 @@ import com.jiebao.platfrom.system.domain.UserConfig;
 import com.jiebao.platfrom.system.service.UserConfigService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +26,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +66,11 @@ public class UserController extends BaseController {
     @RequiresPermissions("user:add")
     public void addUser(@Valid User user) throws JiebaoException {
         try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            if (username.equals(user.getUsername())){
+                message = "用户名重复";
+                throw new JiebaoException(message);
+            }
             this.userService.createUser(user);
         } catch (Exception e) {
             message = "新增用户失败";
@@ -186,4 +198,15 @@ public class UserController extends BaseController {
     }
 
 
+
+    @GetMapping("getByDept/{deptIds}")
+    @ApiOperation(value = "根据部门查人员", notes = "根据部门查人员", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<User> getByDept( @NotBlank(message = "{required}") @PathVariable String [] deptIds) {
+        List<User> users = new ArrayList();
+        Arrays.stream(deptIds).forEach(deptId -> {
+            List<User> byDept = userService.getByDept(deptId);
+            users.addAll(byDept);
+        });
+       return users;
+    }
 }

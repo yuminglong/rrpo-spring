@@ -3,6 +3,7 @@ package com.jiebao.platfrom.railway.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -20,6 +21,7 @@ import com.jiebao.platfrom.system.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -60,8 +62,12 @@ public class ExchangeController extends BaseController {
     @ApiOperation(value = "创建一条信息互递", notes = "创建一条信息互递", response = JiebaoResponse.class, httpMethod = "POST")
     public void creatExchange(@Valid Exchange exchange, @PathVariable String[] sendUserIds) throws JiebaoException {
         try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             //把信息互递先设置为未发送状态
             exchange.setStatus("1");
+            if (username != null) {
+                exchange.setCreatUser(username);
+            }
             boolean save = exchangeService.save(exchange);
             if (save) {
                 Arrays.stream(sendUserIds).forEach(sendUserId -> {
@@ -144,8 +150,8 @@ public class ExchangeController extends BaseController {
     @GetMapping
     @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
-        IPage<Exchange> informList = exchangeService.getExchangeList(request, exchange, startTime, endTime);
-        return new JiebaoResponse().data(this.getDataTable(informList));
+        IPage<Exchange> exchangeList = exchangeService.getExchangeList(request, exchange, startTime, endTime);
+        return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }
 
 

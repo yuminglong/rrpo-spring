@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.User;
 
+import java.util.List;
+
 
 public interface UserService extends IService<User> {
 
@@ -91,4 +93,10 @@ public interface UserService extends IService<User> {
      */
     void resetPassword(String[] usernames) throws Exception;
 
+    /**
+     * 根据组织机构查用户
+     * @param deptId
+     * @return
+     */
+    List<User> getByDept(String deptId);
 }

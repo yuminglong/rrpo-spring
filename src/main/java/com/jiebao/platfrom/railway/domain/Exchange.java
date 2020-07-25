@@ -10,6 +10,7 @@ import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -46,5 +47,9 @@ public class Exchange {
     @ExcelField(value = "状态：1未发送 2撤销的 3已发布")
     @ApiModelProperty(value = "状态：1未发送 2撤销的 3已发布")
     private String status;
+
+    @ExcelField(value = "绑定用户ID")
+    @ApiModelProperty(value = "绑定用户ID")
+    private String userId;
 
 }

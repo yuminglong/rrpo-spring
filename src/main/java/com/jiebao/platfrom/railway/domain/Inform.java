@@ -49,7 +49,7 @@ public class Inform {
     private String status;
 
     /**
-     * +
+     *
      * 是否为站内通知
      */
     private Integer station;
