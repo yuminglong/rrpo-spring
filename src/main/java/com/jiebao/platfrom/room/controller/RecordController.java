@@ -4,6 +4,7 @@ package com.jiebao.platfrom.room.controller;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.room.domain.Record;
+import com.jiebao.platfrom.room.domain.Room;
 import com.jiebao.platfrom.room.service.IMessageService;
 import com.jiebao.platfrom.room.service.IRecordService;
 import io.swagger.annotations.Api;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,13 @@ public class RecordController {
     @Log(value = "发送会议信息")
     private  JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID){
 
+        return null;
+    }
+    
+    @GetMapping("getRecordByRoomIdOrDateOrUserId")
+    @ApiOperation("通过会议室查询所属绑定会议")
+    @Log("通过会议室查询所属绑定会议")
+    private JiebaoResponse getRecordByRoomIdOrDateOrUserId(Room roomId, Date date,String userId){
         return null;
     }
 }
