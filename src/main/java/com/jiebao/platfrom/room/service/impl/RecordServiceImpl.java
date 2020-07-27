@@ -7,6 +7,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.dao.RecordMapper;
 import com.jiebao.platfrom.room.domain.Record;
+import com.jiebao.platfrom.room.domain.Room;
 import com.jiebao.platfrom.room.domain.Users;
 import com.jiebao.platfrom.room.service.*;
 import com.jiebao.platfrom.system.domain.User;
@@ -76,6 +77,11 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             }
         }
         return messageService.addList(recordId, listUserID, message, inviteIf);
+    }
+
+    @Override
+    public JiebaoResponse getRecordByRoomIdOrDateOrUserId(Room roomId, Date date, String userId) {
+        return null;
     }
 
 
