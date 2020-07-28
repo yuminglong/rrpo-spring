@@ -3,6 +3,7 @@ package com.jiebao.platfrom.room.controller;
 
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.domain.Record;
 import com.jiebao.platfrom.room.domain.Room;
 import com.jiebao.platfrom.room.service.IMessageService;
@@ -31,6 +32,7 @@ public class RecordController {
     IRecordService recordService;
     @Autowired
     IMessageService messageService;
+
     @PostMapping(value = "saveOrUpdate")
     @ApiOperation("会议的创建以及修改")
     @Log(value = "会议的创建以及修改")
@@ -62,15 +64,17 @@ public class RecordController {
     @GetMapping("sendEmail")
     @ApiOperation("发送会议信息")
     @Log(value = "发送会议信息")
-    private  JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID){
+    private JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
 
         return null;
     }
-    
+
     @GetMapping("getRecordByRoomIdOrDateOrUserId")
     @ApiOperation("通过会议室查询所属绑定会议")
     @Log("通过会议室查询所属绑定会议")
-    private JiebaoResponse getRecordByRoomIdOrDateOrUserId(Room roomId, Date date,String userId){
-        return null;
+    private JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, Room roomId, Date date, String userId, String order) {
+        return recordService.getRecordByRoomIdOrDateOrUserId(queryRequest, roomId, date, userId, order);
     }
+
+
 }

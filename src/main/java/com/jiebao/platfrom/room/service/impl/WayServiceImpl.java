@@ -44,8 +44,7 @@ public class WayServiceImpl extends ServiceImpl<WayMapper, Way> implements IWayS
 
     @Override
     public Boolean deleteByListId(List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+        return removeByIds(idList);
     }
 
 

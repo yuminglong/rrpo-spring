@@ -45,17 +45,16 @@ public class RecordSeviceServiceImpl extends ServiceImpl<RecordSeviceMapper, Rec
 
 
     @Override
-    public Boolean deleteByListId( List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+    public Boolean deleteByListId(List<String> idList) {
+        return removeByIds(idList);
     }
 
 
     @Override
-    public IPage<RecordSevice> list(QueryRequest queryRequest,String id) {
+    public IPage<RecordSevice> list(QueryRequest queryRequest, String id) {
         QueryWrapper<RecordSevice> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("room_record_id", id);
-        Page<RecordSevice> page = new Page<>(queryRequest.getPageNum(),queryRequest.getPageSize());
-        return this.baseMapper.selectPage(page,queryWrapper);
+        Page<RecordSevice> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return this.baseMapper.selectPage(page, queryWrapper);
     }
 }

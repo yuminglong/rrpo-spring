@@ -62,8 +62,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
     @Override
     public Boolean deleteByListId(List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+        return removeByIds(idList);
     }
 
 

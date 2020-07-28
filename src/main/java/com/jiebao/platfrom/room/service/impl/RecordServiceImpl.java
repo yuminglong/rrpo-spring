@@ -39,13 +39,35 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     @Autowired
     IMessageService messageService;
 
+//    @Override
+//    public JiebaoResponse addRecord(Record record) {
+//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        if (record.getStartDate() == null || record.getEndDate() == null) {
+//            return jiebaoResponse.message("请选择开会时间区间");
+//        }
+//        return new JiebaoResponse().message(save(record) ? "创建成功" : "创建会议失败");
+//    }
+
+
     @Override
-    public JiebaoResponse addRecord(Record record) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+    public JiebaoResponse addOrUpdate(Record record) {
         if (record.getStartDate() == null || record.getEndDate() == null) {
-            return jiebaoResponse.message("请选择开会时间区间");
+            return new JiebaoResponse().message("请选择开会日期");
         }
-        return new JiebaoResponse().message(save(record) ? "创建成功" : "创建会议失败");
+        if (record.getId() == null) {
+            User user = (User) SecurityUtils.getSubject().getPrincipal();
+            record.setCreateUser(user.getUserId());
+            record.setCreatDate(new Date());
+        }
+        //判断时间是否冲突
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("start_date", record.getStartDate());
+        queryWrapper.le("end_date", record.getEndDate());
+        queryWrapper.eq("room_id", record.getRoomId());
+        if (this.baseMapper.selectOne(queryWrapper) != null) {
+            return new JiebaoResponse().message("会议时间冲突");
+        }
+        return new JiebaoResponse().message(super.saveOrUpdate(record) ? "操作成功" : "操作失败");
     }
 
     @Override
@@ -80,18 +102,34 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     }
 
     @Override
-    public JiebaoResponse getRecordByRoomIdOrDateOrUserId(Room roomId, Date date, String userId) {
-        return null;
-    }
-
-
-    @Override
-    public boolean saveOrUpdate(Record entity) {
-        if (entity.getId() == null) {
-            entity.setCreatDate(new Date());
+    public JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, Room roomId, Date date, String userId, String order) {
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        if ((roomId == null)) {
+            queryWrapper.eq("room_id", roomId);
         }
-        return super.saveOrUpdate(entity);
+        if (date != null) {
+            queryWrapper.like("creat_date", date);
+        }
+        if (userId != null) {
+            queryWrapper.eq("create_user", userId);
+        }
+        if (order.equals("asc")) {
+            queryWrapper.orderByAsc("creat_date");
+        } else {
+            queryWrapper.orderByDesc("creat_date");
+        }
+        Page<Record> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return new JiebaoResponse().data(this.baseMapper.selectPage(page, queryWrapper)).message("查询成功");
     }
+
+
+//    @Override
+//    public boolean saveOrUpdate(Record entity) {
+//        if (entity.getId() == null) {
+//            entity.setCreatDate(new Date());
+//        }
+//        return super.saveOrUpdate(entity);
+//    }
 
 
 }

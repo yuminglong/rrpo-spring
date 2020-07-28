@@ -42,8 +42,7 @@ public class RecordFileServiceImpl extends ServiceImpl<RecordFileMapper, RecordF
 
     @Override
     public Boolean deleteByListId(List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+        return removeByIds(idList);
     }
 
     @Override
