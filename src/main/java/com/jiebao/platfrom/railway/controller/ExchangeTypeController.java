@@ -78,7 +78,7 @@ public class ExchangeTypeController extends BaseController {
         try {
             this.exchangeTypeService.updateById(exchangeType);
         } catch (Exception e) {
-            message = "修改通讯录失败";
+            message = "修改失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
@@ -92,8 +92,8 @@ public class ExchangeTypeController extends BaseController {
      */
     @GetMapping(value = "/getInformListByMapper")
     @ApiOperation(value = "查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getExchangeTypeListByMapper() {
+    public List<ExchangeType> getExchangeTypeListByMapper() {
         List<ExchangeType> list = exchangeTypeService.list();
-        return new JiebaoResponse().data(list).message("查询成功").put("remake", "其他数据返回");
+        return list;
     }
 }

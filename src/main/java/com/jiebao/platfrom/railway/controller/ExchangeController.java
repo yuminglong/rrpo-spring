@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.util.*;
@@ -58,16 +59,17 @@ public class ExchangeController extends BaseController {
     /**
      * 创建一条信息互递
      */
-    @PostMapping("/{sendUserIds}")
+    @PostMapping("/creat")
     @ApiOperation(value = "创建一条信息互递", notes = "创建一条信息互递", response = JiebaoResponse.class, httpMethod = "POST")
-    public void creatExchange(@Valid Exchange exchange, @PathVariable String[] sendUserIds) throws JiebaoException {
+    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             //把信息互递先设置为未发送状态
-            exchange.setStatus("1");
             if (username != null) {
                 exchange.setCreatUser(username);
             }
+            exchange.setStatus("1");
+
             boolean save = exchangeService.save(exchange);
             if (save) {
                 Arrays.stream(sendUserIds).forEach(sendUserId -> {
@@ -75,10 +77,11 @@ public class ExchangeController extends BaseController {
                     exchangeUserService.saveByUserId(exchange.getId(), sendUserId);
                 });
             }
+            return new JiebaoResponse().message("创建一条信息互递成功");
         } catch (Exception e) {
             message = "创建信息互递失败";
             log.error(message, e);
-            throw new JiebaoException(message);
+            return new JiebaoResponse().message("创建一条信息互递失败");
         }
     }
 
@@ -105,8 +108,8 @@ public class ExchangeController extends BaseController {
 
 
     @DeleteMapping("/{exchangeIds}")
-    @ApiOperation(value = "删除信息", notes = "删除信息", response = JiebaoResponse.class, httpMethod = "DELETE")
-    public void deleteExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
+    @ApiOperation(value = "批量删除信息（完全删除未发送的，假删除已发送的）", notes = "批量删除信息（完全删除未发送的，假删除已发送的）", response = JiebaoResponse.class, httpMethod = "DELETE")
+    public JiebaoResponse deleteExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
         try {
             Arrays.stream(exchangeIds).forEach(exchangeId -> {
                 List<ExchangeFile> exchangeFiles = exchangeFileService.getByExchangeId(exchangeId);
@@ -127,30 +130,49 @@ public class ExchangeController extends BaseController {
                     exchangeMapper.updateStatus(exchangeId);
                 }
             });
+            return new JiebaoResponse().message("批量删除信息成功");
         } catch (Exception e) {
             message = "删除发件箱失败";
             log.error(message, e);
-            throw new JiebaoException(message);
+            return new JiebaoResponse().message("批量删除信息失败");
         }
     }
 
-    @PutMapping
+    @PutMapping("{sendUserIds}")
     @ApiOperation(value = "修改未发送的信息互递", notes = "修改未发送的信息互递", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public void updateExchange(@Valid Exchange exchange) throws JiebaoException {
+    public JiebaoResponse updateExchange(@Valid Exchange exchange, @PathVariable String[] sendUserIds) throws JiebaoException {
         try {
             this.exchangeService.updateById(exchange);
+            //先删除掉原有发送人
+            exchangeUserService.deleteByExchangeId(exchange.getId());
+            //重新添加
+            Arrays.stream(sendUserIds).forEach(sendUserId -> {
+                //把要发送的用户保存到数据库
+                exchangeUserService.saveByUserId(exchange.getId(), sendUserId);
+            });
+            return new JiebaoResponse().message("修改未发送的信息互递成功");
         } catch (Exception e) {
             message = "修改信息互递失败";
             log.error(message, e);
-            throw new JiebaoException(message);
+            return new JiebaoResponse().message("修改未发送的信息互递失败");
         }
     }
 
     @GetMapping
-    @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "分页查询（查询未发送和已发送的）", notes = "查询分页数据（查询未发送和已发送的）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         IPage<Exchange> exchangeList = exchangeService.getExchangeList(request, exchange, startTime, endTime);
+        return new JiebaoResponse().data(this.getDataTable(exchangeList));
+    }
+
+
+
+
+    @GetMapping("/inbox")
+    @ApiOperation(value = "分页查询（查询收件箱）", notes = "查询分页数据（查询收件箱）", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
+        IPage<Exchange> exchangeList = exchangeService.getExchangeInboxList(request, exchange, startTime, endTime);
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }
 

@@ -30,7 +30,7 @@ public class PrizeUser {
     private String id;
 
     /**
-     * 关联的一事一奖内容
+     * 关联的一事一奖内容id
      */
     private String prizeId;
 
@@ -43,8 +43,8 @@ public class PrizeUser {
     /**
      * 推送给谁
      */
-    @ApiModelProperty(value = "推送给谁")
-    private String sendUser;
+    @ApiModelProperty(value = "推送给哪个组织机构")
+    private String sendDept;
 
     /**
      * 审核时间

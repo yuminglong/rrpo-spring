@@ -2,12 +2,9 @@ package com.jiebao.platfrom.railway.domain;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.jiebao.platfrom.common.converter.TimeConverter;
 import com.wuwenze.poi.annotation.Excel;
-import com.wuwenze.poi.annotation.ExcelField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,19 +18,19 @@ import java.util.Date;
  * @author yf
  */
 @Data
-@TableName("rail_exchange_type")
+@TableName("rail_prize_type")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@Excel("信息互递自定义类别")
-public class ExchangeType {
+@Excel("一事一奖自定义天数")
+public class PrizeType {
 
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ApiModelProperty(value = "类别名")
-    private String typeName;
+    @ApiModelProperty(value = "设定的天数")
+    private String days;
 
-
+    @ApiModelProperty(value = "创建时间")
     private Date creatTime;
 
 

@@ -98,5 +98,6 @@ public interface UserService extends IService<User> {
      * @param deptId
      * @return
      */
-    List<User> getByDept(String deptId);
+
+    List<User> getByDepts(String deptId);
 }

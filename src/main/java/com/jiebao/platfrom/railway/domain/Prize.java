@@ -34,6 +34,7 @@ public class Prize {
     /**
      * 事迹简要描述
      */
+
     private String content;
 
     /**
@@ -42,6 +43,7 @@ public class Prize {
     @ApiModelProperty(value = "创建时间")
     private Date creatTime;
 
+    @ApiModelProperty(value = "创建人")
     private String creatUser;
 
     /**
@@ -86,5 +88,9 @@ public class Prize {
     @ApiModelProperty(value = "编号")
     private String number;
 
-
+    /**
+     * 状态3，已发送   4已删除
+     */
+    @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除")
+    private String status;
 }

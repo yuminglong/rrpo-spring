@@ -52,4 +52,8 @@ public class Exchange {
     @ApiModelProperty(value = "绑定用户ID")
     private String userId;
 
+
+    @ExcelField(value = "绑定类型ID")
+    @ApiModelProperty(value = "绑定类型ID")
+    private String typeId;
 }

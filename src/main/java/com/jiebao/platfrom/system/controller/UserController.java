@@ -201,10 +201,10 @@ public class UserController extends BaseController {
 
     @GetMapping("getByDept/{deptIds}")
     @ApiOperation(value = "根据部门查人员", notes = "根据部门查人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public List<User> getByDept( @NotBlank(message = "{required}") @PathVariable String [] deptIds) {
+    public List<User> getByDept( @PathVariable String [] deptIds) {
         List<User> users = new ArrayList();
         Arrays.stream(deptIds).forEach(deptId -> {
-            List<User> byDept = userService.getByDept(deptId);
+            List<User> byDept = userService.getByDepts(deptId);
             users.addAll(byDept);
         });
        return users;

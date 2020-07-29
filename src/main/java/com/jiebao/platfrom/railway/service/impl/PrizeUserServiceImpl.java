@@ -26,8 +26,18 @@ public class PrizeUserServiceImpl extends ServiceImpl<PrizeUserMapper, PrizeUser
     private PrizeUserMapper prizeUserMapper;
 
     @Override
-    public boolean saveByUser(String prizeId, String sendUser) {
-        return prizeUserMapper.saveByUser(prizeId,sendUser);
+    public boolean saveByDept(String prizeId, String sendDept) {
+        return prizeUserMapper.saveByDept(prizeId,sendDept);
+    }
+
+    @Override
+    public boolean ByPrizeId(String prizeId) {
+        return prizeUserMapper.ByPrizeId(prizeId);
+    }
+
+    @Override
+    public boolean updateByPrizeId(String prizeId, String deptId,String auditOpinion,String money) {
+        return prizeUserMapper.updateByPrizeId(prizeId,deptId,auditOpinion,money);
     }
 
     @Override
@@ -36,8 +46,8 @@ public class PrizeUserServiceImpl extends ServiceImpl<PrizeUserMapper, PrizeUser
     }
 
     @Override
-    public boolean updateByPrizeId(String prizeId, String userName,String auditOpinion,String money) {
-        return prizeUserMapper.updateByPrizeId(prizeId,userName,auditOpinion,money);
+    public boolean deleteOpinion(String prizeId, String deptId) {
+        return prizeUserMapper.deleteOpinion(prizeId,deptId);
     }
 
 

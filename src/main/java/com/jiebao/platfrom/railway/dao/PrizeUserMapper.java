@@ -19,27 +19,47 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * 发送人保存到数据库
      *
      * @param prizeId    一事一奖内容ID
-     * @param sendUser 接收人
+     * @param sendDept 接收人
      * @return
      */
-    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_user) VALUES (#{prizeId},#{sendUser})")
-    boolean saveByUser(String prizeId, String sendUser);
+    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_dept) VALUES (#{prizeId},#{sendDept})")
+    boolean saveByDept(String prizeId, String sendDept);
 
     /**
-     * 根据prizeId删除相应的接收人
+     * 根据prizeId改状为已删除态
+     * @param prizeId
+     * @return
+     */
+    @Delete("UPDATE  rail_prize set status = '4' where id = #{prizeId}")
+    boolean ByPrizeId(String prizeId);
+
+    /**
+     * 发表审核意见
+     * @param prizeId
+     * @param deptId
+     * @param auditOpinion
+     * @param money
+     * @return
+     */
+    @Update("UPDATE `rail_prize_user` set audit_opinion = #{auditOpinion} ,money = #{money} where prize_id =#{prizeId} and send_dept = #{deptId}")
+    boolean updateByPrizeId(String prizeId, String deptId,String auditOpinion,String money);
+
+
+    /**
+     * 删除接收人
      * @param prizeId
      * @return
      */
     @Delete("DELETE FROM rail_prize_user WHERE prize_id =#{prizeId}")
     boolean deleteByPrizeId(String prizeId);
 
+
     /**
-     * 发表审核意见
+     * 把意见金额设置为null
      * @param prizeId
-     * @param userName
-     * @param auditOpinion
+     * @param deptId
      * @return
      */
-    @Update("UPDATE `rail_prize_user` set audit_opinion = #{auditOpinion} ,money = #{money} where prize_id =#{prizeId} and send_user= #{userName}")
-    boolean updateByPrizeId(String prizeId, String userName,String auditOpinion,String money);
+    @Update("UPDATE `rail_prize_user` set audit_opinion = null,money = null where prize_id =#{prizeId} and send_dept = #{deptId}")
+    boolean deleteOpinion(String prizeId, String deptId);
 }

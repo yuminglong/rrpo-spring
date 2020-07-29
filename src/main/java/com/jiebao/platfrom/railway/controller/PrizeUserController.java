@@ -7,8 +7,9 @@ import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.jiebao.platfrom.railway.domain.PrizeUser;
 import com.jiebao.platfrom.railway.service.PrizeUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,43 @@ public class PrizeUserController extends BaseController {
     private String message;
     @Autowired
     private PrizeUserService prizeUserService;
+    @Autowired
+    private UserService userService;
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "auditOpinion", value = "审核意见"),
+            @ApiImplicitParam(name = "prizeId", value = "一事一奖内容id")
+    })
     @PutMapping("/{prizeId}")
     @ApiOperation(value = "发表或修改审核意见", notes = "发表或修改审核意见", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public void updatePrize(@PathVariable String prizeId, String auditOpinion,String money) throws JiebaoException {
+    public void updatePrize(@PathVariable String prizeId, String auditOpinion, String money) throws JiebaoException {
         try {
-           // String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            String userName ="sinliz";
-            this.prizeUserService.updateByPrizeId(prizeId, userName, auditOpinion,money);
+            // String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            String deptId = "1";
+            this.prizeUserService.updateByPrizeId(prizeId, deptId, auditOpinion, money);
+        } catch (Exception e) {
+            message = "发表或修改审核意见失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
+
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "prizeId", value = "一事一奖内容id")
+    })
+    @PutMapping("/delete/{prizeId}")
+    @ApiOperation(value = "删除审核意见和金额", notes = "删除审核意见和金额", httpMethod = "PUT")
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePrize(@PathVariable String prizeId) throws JiebaoException {
+        try {
+          /*  String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(userName);
+            String deptId = byName.getDeptId();*/
+            String deptId = "1";
+            //名义上是删除，实际上是设置为null
+            this.prizeUserService.deleteOpinion(prizeId, deptId);
         } catch (Exception e) {
             message = "发表或修改审核意见失败";
             log.error(message, e);

@@ -215,7 +215,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
-    public List<User> getByDept(String deptId) {
-        return userMapper.getByDept(deptId);
+    public List<User> getByDepts(String deptId) {
+        return userMapper.getByDepts(deptId);
     }
 }

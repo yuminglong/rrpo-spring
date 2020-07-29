@@ -3,6 +3,7 @@ package com.jiebao.platfrom.system.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -33,10 +34,13 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 根据部门查人员
+     *
      * @param deptId
      * @return
      */
 
     @Select("select * from sys_user r  where  r.dept_id = #{deptId}")
-    List<User> getByDept(String deptId);
+    List<User> getByDepts(String deptId);
+
+
 }
