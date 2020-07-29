@@ -7,6 +7,7 @@ import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,18 +31,21 @@ public class MenusController {
     IMenusService menusService;
 
     @PostMapping("addOrUpdate")
+    @ApiOperation("添加修改考核项")
     @Log("添加修改考核项")
     public JiebaoResponse addOrUpdate(Menus menus) {
         return menusService.addOrUpdate(menus);
     }
 
     @GetMapping("deleteById")
+    @ApiOperation("删除")
     @Log("删除")
     public JiebaoResponse deleteById(String menusId) {
         return menusService.deleteById(menusId);
     }
 
     @GetMapping("lists")
+    @ApiOperation("获取树形列表")
     @Log("获取树形列表")
     public JiebaoResponse lists() {
         return menusService.lists();

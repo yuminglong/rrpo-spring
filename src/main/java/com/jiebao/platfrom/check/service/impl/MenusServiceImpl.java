@@ -26,7 +26,7 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
     @Override
     public JiebaoResponse addOrUpdate(Menus menus) {
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("content", menus.getContent());
+        queryWrapper.eq("content", menus.getContent());
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("数据库内容重复");
         }

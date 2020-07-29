@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.SimpleFormatter;
 
@@ -66,14 +67,13 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         String formatYear = simpleFormatter.format(date);
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         // queryWrapper.eq(("user_id"), user.getUserId());
-        //  queryWrapper.eq("user_id",user.getUserId());
         queryWrapper.eq("year_date", formatYear);
         List<Grade> list = list(queryWrapper);
         QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
         queryWrapper.eq("name", "基础工作");
         Menus menusJc = menusService.getOne(queryWrapper1);//基础工作父类
         queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("name", "工作失效");
+        queryWrapper.eq("name", "工作效果");
         Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
@@ -106,6 +106,36 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         num.setYearDate(formatYear);
         num.setNumber(20 + JCKF + JCJF + SXKF);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
+    }
+
+    @Override
+    public JiebaoResponse selectByUserIdOrDateYear(Date dateYear, String userId) {  //必填 时间   对象id
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+        String formatYear = simpleDateFormat.format(dateYear);
+        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("year_date", formatYear);
+        queryWrapper.eq("userId", userId);
+        List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
+        QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper.eq("name", "基础工作");
+        Menus menusJc = menusService.getOne(queryWrapper1);//基础工作父类
+        queryWrapper1 = new QueryWrapper<>();
+        queryWrapper.eq("name", "工作效果");
+        Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
+        HashMap<String, Double> jcMap = new HashMap<>();   //储存基础map
+        HashMap<String, Double> sxMap = new HashMap<>();   //储存工作实效map
+        HashMap<String, HashMap<String, Double>> map = new HashMap<>();   //总map
+        for (Grade grade : list) {
+            Menus menus = menusService.getById(grade.getCheckId());
+            if (menus.getParentId().equals(menusJc.getMenusId())) {  //基础工作模块
+                jcMap.put(menus.getContent(), grade.getNum());
+            } else {  //工作失效模块
+                sxMap.put(menus.getContent(), grade.getNum());
+            }
+        }
+        map.put("基础工作", jcMap);
+        map.put("工作效果", jcMap);
+        return new JiebaoResponse().data(map).message("操作成功");
     }
 
 
