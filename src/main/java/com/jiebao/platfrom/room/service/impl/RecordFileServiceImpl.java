@@ -3,7 +3,6 @@ package com.jiebao.platfrom.room.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.room.dao.RecordFileMapper;
-import com.jiebao.platfrom.room.domain.Lead;
 import com.jiebao.platfrom.room.domain.RecordFile;
 import com.jiebao.platfrom.room.service.IRecordFileService;
 import org.springframework.stereotype.Service;
@@ -43,8 +42,7 @@ public class RecordFileServiceImpl extends ServiceImpl<RecordFileMapper, RecordF
 
     @Override
     public Boolean deleteByListId(List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+        return removeByIds(idList);
     }
 
     @Override

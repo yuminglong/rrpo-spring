@@ -48,5 +48,6 @@ public class Users implements Serializable {   //会议绑定人员
      */
     private String takeUserId;
 
+    private Integer leadIf;   //是否是领导  0  是 1 不是
 
 }

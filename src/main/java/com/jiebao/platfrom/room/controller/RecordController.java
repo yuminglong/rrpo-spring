@@ -3,12 +3,18 @@ package com.jiebao.platfrom.room.controller;
 
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.domain.Record;
+import com.jiebao.platfrom.room.domain.Room;
+import com.jiebao.platfrom.room.service.IMessageService;
 import com.jiebao.platfrom.room.service.IRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -24,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 public class RecordController {
     @Autowired
     IRecordService recordService;
+    @Autowired
+    IMessageService messageService;
 
     @PostMapping(value = "saveOrUpdate")
     @ApiOperation("会议的创建以及修改")
@@ -52,4 +60,21 @@ public class RecordController {
     private JiebaoResponse getRecord(String id) {
         return new JiebaoResponse().data(recordService.getById(id)).message("查询成功");
     }
+
+    @GetMapping("sendEmail")
+    @ApiOperation("发送会议信息")
+    @Log(value = "发送会议信息")
+    private JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
+
+        return null;
+    }
+
+    @GetMapping("getRecordByRoomIdOrDateOrUserId")
+    @ApiOperation("通过会议室查询所属绑定会议")
+    @Log("通过会议室查询所属绑定会议")
+    private JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, Room roomId, Date date, String userId, String order) {
+        return recordService.getRecordByRoomIdOrDateOrUserId(queryRequest, roomId, date, userId, order);
+    }
+
+
 }

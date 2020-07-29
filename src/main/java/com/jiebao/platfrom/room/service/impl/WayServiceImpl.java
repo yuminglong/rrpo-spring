@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author qta
@@ -21,7 +21,6 @@ import java.util.List;
  */
 @Service
 public class WayServiceImpl extends ServiceImpl<WayMapper, Way> implements IWayService {
-
 
 
     @Override
@@ -44,11 +43,9 @@ public class WayServiceImpl extends ServiceImpl<WayMapper, Way> implements IWayS
     }
 
     @Override
-    public Boolean deleteByListId( List<String> idList) {
-        this.baseMapper.deleteBatchIds(idList);
-        return null;
+    public Boolean deleteByListId(List<String> idList) {
+        return removeByIds(idList);
     }
-
 
 
     @Override

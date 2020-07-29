@@ -8,7 +8,7 @@ import com.jiebao.platfrom.room.service.IServiceService;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author qta

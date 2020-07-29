@@ -51,4 +51,6 @@ public class RecordFileController {
     private JiebaoResponse getFile(String id) {
         return new JiebaoResponse().data(recordFileService.list(id)).message("查询成功");
     }
+
+
 }

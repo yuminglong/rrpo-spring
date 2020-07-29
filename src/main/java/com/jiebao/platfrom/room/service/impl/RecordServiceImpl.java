@@ -7,6 +7,8 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.dao.RecordMapper;
 import com.jiebao.platfrom.room.domain.Record;
+import com.jiebao.platfrom.room.domain.Room;
+import com.jiebao.platfrom.room.domain.Users;
 import com.jiebao.platfrom.room.service.*;
 import com.jiebao.platfrom.system.domain.User;
 import org.apache.shiro.SecurityUtils;
@@ -27,8 +29,6 @@ import java.util.List;
 @Service
 public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> implements IRecordService {
     @Autowired
-    ILeadService leadService;
-    @Autowired
     IUsersService usersService;
     @Autowired
     IServiceService serviceService;
@@ -36,21 +36,38 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     IWayService wayService;
     @Autowired
     IFilesService filesService;
+    @Autowired
+    IMessageService messageService;
+
+//    @Override
+//    public JiebaoResponse addRecord(Record record) {
+//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        if (record.getStartDate() == null || record.getEndDate() == null) {
+//            return jiebaoResponse.message("请选择开会时间区间");
+//        }
+//        return new JiebaoResponse().message(save(record) ? "创建成功" : "创建会议失败");
+//    }
+
 
     @Override
-    public JiebaoResponse addRecord(Record record, List<String> leadListId, List<String> userListId, List<String> fileListId, List<String> serviceListId, List<String> wayListId, Integer fileState) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+    public JiebaoResponse addOrUpdate(Record record) {
         if (record.getStartDate() == null || record.getEndDate() == null) {
-            return jiebaoResponse.message("请选择开会时间区间");
+            return new JiebaoResponse().message("请选择开会日期");
         }
-        if (record.getId() == null) {   //添加操作
-            boolean save = save(record);
-
-        } else {
-
+        if (record.getId() == null) {
+            User user = (User) SecurityUtils.getSubject().getPrincipal();
+            record.setCreateUser(user.getUserId());
+            record.setCreatDate(new Date());
         }
-
-        return null;
+        //判断时间是否冲突
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("start_date", record.getStartDate());
+        queryWrapper.le("end_date", record.getEndDate());
+        queryWrapper.eq("room_id", record.getRoomId());
+        if (this.baseMapper.selectOne(queryWrapper) != null) {
+            return new JiebaoResponse().message("会议时间冲突");
+        }
+        return new JiebaoResponse().message(super.saveOrUpdate(record) ? "操作成功" : "操作失败");
     }
 
     @Override
@@ -70,21 +87,49 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return new JiebaoResponse().data(this.baseMapper.selectPage(page, queryWrapper));
     }
 
-    private void add() {
-
-    }
-
-    private void updates() {
-
+    @Override
+    public JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
+        if (listUserID == null) {  //如果没有传入  执行 全部人员
+            QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("meeting_id", recordId);  //对应会议
+            List<Users> list = usersService.list(queryWrapper);//得到本次会议  相关人员
+            for (Users u : list  //收集id
+            ) {
+                listUserID.add(u.getId());
+            }
+        }
+        return messageService.addList(recordId, listUserID, message, inviteIf);
     }
 
     @Override
-    public boolean saveOrUpdate(Record entity) {
-        if (entity.getId() == null) {
-            entity.setCreatDate(new Date());
+    public JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, Room roomId, Date date, String userId, String order) {
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        if ((roomId == null)) {
+            queryWrapper.eq("room_id", roomId);
         }
-        return super.saveOrUpdate(entity);
+        if (date != null) {
+            queryWrapper.like("creat_date", date);
+        }
+        if (userId != null) {
+            queryWrapper.eq("create_user", userId);
+        }
+        if (order.equals("asc")) {
+            queryWrapper.orderByAsc("creat_date");
+        } else {
+            queryWrapper.orderByDesc("creat_date");
+        }
+        Page<Record> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return new JiebaoResponse().data(this.baseMapper.selectPage(page, queryWrapper)).message("查询成功");
     }
+
+
+//    @Override
+//    public boolean saveOrUpdate(Record entity) {
+//        if (entity.getId() == null) {
+//            entity.setCreatDate(new Date());
+//        }
+//        return super.saveOrUpdate(entity);
+//    }
 
 
 }
