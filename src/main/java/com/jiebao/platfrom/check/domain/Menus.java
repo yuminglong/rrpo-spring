@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,24 +36,21 @@ public class Menus implements Serializable {
     @TableId(value = "menus_id", type = IdType.UUID)
     private String menusId;
 
-    /**
-     * 考核名字
-     */
-    private String name;
-
+    @ApiModelProperty(value = "考核父类")
     private String parentId;
 
     /**
      * 考核模块分数
      */
+    @ApiModelProperty(value = "最大分值")
     private double grade;
 
-
+    @ApiModelProperty(value = "最小分值")
     private double minGrade;
-
+    @ApiModelProperty(value = "考核项 最大分值")
     private double maxGrade;
     @TableField(exist = false)
     private List<Menus> childMenus;
-
+    @ApiModelProperty(value = "考核内容")
     private String content;
 }

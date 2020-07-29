@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,15 +33,17 @@ public class Grade implements Serializable {
     /**
      * 具体年限
      */
+    @ApiModelProperty(value = "年份 后端生成不用传")
     private String yearDate;
-
+    @ApiModelProperty(value = "人员id  暂定")
     private String userId;
 
     /**
      * 对应考核id
      */
+    @ApiModelProperty(value = "对应的考核项id")
     private String checkId;
 
-
+    @ApiModelProperty(value = "分数")
     private double num;
 }
