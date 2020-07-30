@@ -3,6 +3,8 @@ package com.jiebao.platfrom.check.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,21 +33,25 @@ public class Num implements Serializable {
     /**
      * 存年份
      */
+    @ApiModelProperty(value = "年份 后端生成")
     private String yearDate;
 
     /**
      * 人员id
      */
+    @ApiModelProperty(value = "人员id  暂定")
     private String userId;
 
     /**
      * 年度分数
      */
+    @ApiModelProperty(value = "年度分数")
     private Double number;
 
     /**
      * 所属组织结构或地区
      */
+    @ApiModelProperty(value = "所属组织机构")
     private String deptId;
 
 
