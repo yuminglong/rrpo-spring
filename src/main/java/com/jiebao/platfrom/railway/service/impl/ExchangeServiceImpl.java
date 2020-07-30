@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,11 +50,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
 
     public IPage<Exchange> getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
-       
-
         queryWrapper.lambda().ne(Exchange::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        if (username !=null){
+        if (StringUtils.isNotBlank(username)){
             queryWrapper.lambda().eq(Exchange::getCreatUser,username);
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {
@@ -74,30 +74,29 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
     @Override
     public IPage<Exchange> getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Exchange::getStatus, 3).or().eq(Exchange::getStatus, 4));
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        User byName = userService.findByName(username);
-        List<ExchangeUser> bySendUserId = exchangeUserMapper.getBySendUserId(byName.getUserId());
-        for (ExchangeUser exchangeUser:bySendUserId
-        ) {
-            String exchangeId = exchangeUser.getExchangeId();
-            queryWrapper.lambda().eq(Exchange::getId,exchangeId);
+        if (StringUtils.isNotBlank(username)){
+            User byName = userService.findByName(username);
+            List<ExchangeUser> bySendUserId = exchangeUserMapper.getBySendUserId(byName.getUserId());
+            ArrayList<String> exchangeUserIds = new ArrayList<>();
+            for (ExchangeUser exchangeUser:bySendUserId
+            ) {
+                String exchangeId = exchangeUser.getExchangeId();
+                exchangeUserIds.add(exchangeId);
+            }
+            if (exchangeUserIds.size() > 0){
+                queryWrapper.lambda().in(Exchange::getId,exchangeUserIds);
+            }
         }
-        queryWrapper.lambda().ne(Exchange::getStatus, 4);
-
         if (StringUtils.isNotBlank(exchange.getTitle())) {
             queryWrapper.lambda().eq(Exchange::getTitle, exchange.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
-            queryWrapper.lambda().ge(Exchange::getCreatTime, startTime).le(Exchange::getCreatTime, endTime);
-        }
-        if (StringUtils.isNotBlank(exchange.getStatus())) {
-            queryWrapper.lambda().eq(Exchange::getStatus, exchange.getStatus());
+            queryWrapper.lambda().ge(Exchange::getReleaseTime, startTime).le(Exchange::getReleaseTime, endTime);
         }
         Page<Exchange> page = new Page<>(request.getPageNum(), request.getPageSize());
-       // SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
-
-
-
 }

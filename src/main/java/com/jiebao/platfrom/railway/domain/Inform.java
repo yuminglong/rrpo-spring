@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jiebao.platfrom.common.converter.TimeConverter;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -46,22 +47,32 @@ public class Inform {
     @ExcelField(value = "创建人")
     private String createUser;
 
+    @ApiModelProperty(value = "状态：1未发送 2撤销的 3已发布 4已删除")
     private String status;
 
     /**
      *
      * 是否为站内通知
      */
+    @ApiModelProperty(value = "是否为站内通知")
     private Integer station;
 
     /**
      * 是否为小程序通知
      */
+    @ApiModelProperty(value = "是否为小程序通知")
     private Integer applets;
 
     /**
      * 是否同步到门户网站
      */
+    @ApiModelProperty(value = "是否同步到门户网站")
     private Integer synchronizeWeb;
+
+    /**
+     * 发布时间
+     */
+    @ApiModelProperty(value = "发布时间")
+    private Date releaseTime;
 
 }

@@ -25,7 +25,7 @@ public interface InformMapper extends BaseMapper<Inform> {
     @Update("UPDATE  rail_inform  r set  r.`status` = 2 WHERE r.id =#{informId}")
     boolean revoke(String informId);
 
-    @Update("UPDATE  rail_inform  r set  r.`status` = 3 WHERE r.id =#{informId}")
+    @Update("UPDATE  rail_inform  r set  r.`status` = 3 ,r.release_time = now() WHERE r.id =#{informId}")
     boolean release(String informId);
 
     @Update("UPDATE  rail_inform  r set  r.`status` = 4 WHERE r.id =#{informId}")

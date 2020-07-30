@@ -23,4 +23,12 @@ public interface ExchangeUserService extends IService<ExchangeUser> {
      * @return
      */
     boolean deleteByExchangeId(String exchangeId);
+
+
+    /**
+     * 根据信息互递ID和发送人删除收件箱记录
+     * @param sendUserId
+     * @param exchangeId
+     */
+    boolean removeBySendUserId(String sendUserId,String exchangeId);
 }

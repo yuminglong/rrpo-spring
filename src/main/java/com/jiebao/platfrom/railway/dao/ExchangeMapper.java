@@ -17,7 +17,7 @@ public interface ExchangeMapper extends BaseMapper<Exchange> {
     boolean updateStatus(String exchangeId);
 
 
-    @Update("UPDATE  rail_exchange  r set  r.`status` = 3 WHERE r.id =#{exchangeId}")
+    @Update("UPDATE  rail_exchange  r set  r.`status` = 3 ,r.release_time = now() WHERE r.id =#{exchangeId}")
     boolean release(String exchangeId);
 
 }

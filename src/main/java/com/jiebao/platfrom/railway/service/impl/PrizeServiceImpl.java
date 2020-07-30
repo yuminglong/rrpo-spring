@@ -7,6 +7,7 @@ import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.SortUtil;
+import com.jiebao.platfrom.railway.dao.PrizeOrderMapper;
 import com.jiebao.platfrom.railway.domain.Exchange;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.jiebao.platfrom.railway.dao.PrizeMapper;
@@ -34,6 +35,11 @@ import org.springframework.stereotype.Service;
 public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements PrizeService {
 
 
+
+    @Autowired
+    PrizeMapper prizeMapper;
+
+
     @Override
     public IPage<Prize> getPrizeList(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
@@ -52,4 +58,8 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         SortUtil.handleWrapperSort(request,queryWrapper,"creatTime", JiebaoConstant.ORDER_DESC,true);
         return this.baseMapper.selectPage(page,queryWrapper);
     }
+
+
+
+
 }

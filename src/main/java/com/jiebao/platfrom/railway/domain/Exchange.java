@@ -56,4 +56,8 @@ public class Exchange {
     @ExcelField(value = "绑定类型ID")
     @ApiModelProperty(value = "绑定类型ID")
     private String typeId;
+
+    @ExcelField(value = "发布时间")
+    @ApiModelProperty(value = "发布时间")
+    private Date releaseTime;
 }

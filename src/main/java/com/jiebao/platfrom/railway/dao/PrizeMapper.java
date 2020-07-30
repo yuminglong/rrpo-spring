@@ -3,6 +3,7 @@ package com.jiebao.platfrom.railway.dao;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
@@ -20,7 +21,10 @@ public interface PrizeMapper extends BaseMapper<Prize> {
      * @param prizeId
      * @return
      */
-    @Update("UPDATE  rail_prize set status = '3' where id = #{prizeId}")
+    @Update("UPDATE  rail_prize set status = '3',release_time = now() where id = #{prizeId}")
     boolean release(String prizeId);
 
+
+
 }
+

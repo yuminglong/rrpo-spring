@@ -76,9 +76,22 @@ public class InformController extends BaseController {
      * @Parameters sortOrder  JiebaoConstant.ORDER_ASC or JiebaoConstant.ORDER_DESC
      */
     @GetMapping
-    @ApiOperation(value = "分页查询", notes = "查询分页数据", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "分页查询(发件箱)", notes = "查询分页数据（发件箱）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getInformList(QueryRequest request, Inform inform, String startTime, String endTime) {
         IPage<Inform> informList = informService.getInformList(request, inform, startTime, endTime);
+        List<Inform> records = informList.getRecords();
+        for (Inform i : records
+        ) {
+            i.setKey(i.getId());
+        }
+        return new JiebaoResponse().data(this.getDataTable(informList));
+    }
+
+
+    @GetMapping("/inbox")
+    @ApiOperation(value = "分页查询(收件箱)", notes = "查询分页数据（收件箱）", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getInformInboxList(QueryRequest request, Inform inform, String startTime, String endTime) {
+        IPage<Inform> informList = informService.getInformInboxList(request, inform, startTime, endTime);
         List<Inform> records = informList.getRecords();
         for (Inform i : records
         ) {
@@ -117,7 +130,6 @@ public class InformController extends BaseController {
     public JiebaoResponse addInform(@Valid Inform inform) {
         inform.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+username+"：调用了该接口。。。。-------------------");
         inform.setCreateUser(username);
         informService.save(inform);
         return new JiebaoResponse().message("成功");
@@ -151,7 +163,6 @@ public class InformController extends BaseController {
                 });
                 return new JiebaoResponse().message("撤销通知公告成功");
             }
-
         } catch (Exception e) {
             message = "撤销通知公告失败";
             log.error(message, e);
@@ -192,6 +203,23 @@ public class InformController extends BaseController {
     @ApiOperation(value = "List", notes = "List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public List<Inform> getList(Inform inform, QueryRequest request) {
         return informService.getInformLists(inform,request);
+    }
+
+    @DeleteMapping("/inbox/{ids}")
+    @Log("删除通知公告(收件箱)")
+    @ApiOperation(value = "批量删除(收件箱)", notes = "批量删除(收件箱)", response = JiebaoResponse.class, httpMethod = "DELETE")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse deleteInbox(@PathVariable String[] ids) throws JiebaoException {
+        try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            Arrays.stream(ids).forEach(id -> {
+             informUserService.removeBySendUserId(byName.getUserId(),id);
+            });
+        } catch (Exception e) {
+            throw new JiebaoException("删除失败");
+        }
+        return new JiebaoResponse().message("删除成功");
     }
 
 }

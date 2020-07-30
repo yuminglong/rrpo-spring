@@ -32,4 +32,9 @@ public class ExchangeUserServiceImpl extends ServiceImpl<ExchangeUserMapper, Exc
         boolean result = exchangeUserMapper.deleteByExchangeId(exchangeId) && exchangeUserMapper.deleteFileByExchangeId(exchangeId);
         return result;
     }
+
+    @Override
+    public boolean removeBySendUserId(String sendUserId,String exchangeId){
+        return exchangeUserMapper.removeBySendUserId(sendUserId,exchangeId);
+    }
 }

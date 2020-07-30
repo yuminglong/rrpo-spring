@@ -34,4 +34,13 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
      */
     @Select("SELECT * FROM `rail_exchange_user` WHERE send_user_id = #{sendUserId}")
     List<ExchangeUser> getBySendUserId(String sendUserId);
+
+
+    /**
+     * 根据信息互递ID和发送人删除收件箱记录
+     * @param sendUserId
+     * @param exchangeId
+     */
+    @Delete("DELETE FROM rail_exchange_user WHERE exchange_id = #{exchangeId} and  send_user_id = #{sendUserId}")
+    boolean removeBySendUserId(String sendUserId,String exchangeId);
 }

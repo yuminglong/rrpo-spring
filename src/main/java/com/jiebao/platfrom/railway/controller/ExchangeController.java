@@ -18,6 +18,7 @@ import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,9 @@ public class ExchangeController extends BaseController {
 
     @Autowired
     private ExchangeMapper exchangeMapper;
+
+    @Autowired
+    UserService userService;
 
     /**
      * 创建一条信息互递
@@ -174,6 +178,24 @@ public class ExchangeController extends BaseController {
     public JiebaoResponse getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         IPage<Exchange> exchangeList = exchangeService.getExchangeInboxList(request, exchange, startTime, endTime);
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
+    }
+
+
+    @DeleteMapping("/inbox/{exchangeIds}")
+    @ApiOperation(value = "批量删除信息（收件箱）", notes = "批量删除信息（收件箱）", response = JiebaoResponse.class, httpMethod = "DELETE")
+    public JiebaoResponse deleteInboxExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
+        try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            Arrays.stream(exchangeIds).forEach(exchangeId -> {
+               exchangeUserService.removeBySendUserId(byName.getUserId(),exchangeId);
+            });
+            return new JiebaoResponse().message("批量删除信息成功");
+        } catch (Exception e) {
+            message = "删除发件箱失败";
+            log.error(message, e);
+            return new JiebaoResponse().message("批量删除信息失败");
+        }
     }
 
 

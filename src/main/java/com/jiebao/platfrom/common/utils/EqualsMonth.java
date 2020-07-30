@@ -41,4 +41,6 @@ public class EqualsMonth {
         System.out.println("之前时间或以后时间："+yearBefore + "年" + monthBefore + "月" + dayBefore + "号 " + hourBefore + ":" + minBefore + ":" + secBefore);
         return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
     }
+
+
 }

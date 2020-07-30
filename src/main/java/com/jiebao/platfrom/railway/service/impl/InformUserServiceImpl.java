@@ -19,5 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class InformUserServiceImpl extends ServiceImpl<InformUserMapper, InformUser> implements InformUserService {
 
+    @Autowired
+    InformUserMapper informUserMapper;
 
+    @Override
+    public boolean removeBySendUserId(String sendUserId, String informId) {
+        return informUserMapper.removeBySendUserId(sendUserId,informId);
+    }
 }

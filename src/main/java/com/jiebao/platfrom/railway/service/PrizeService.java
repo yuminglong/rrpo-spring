@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface PrizeService extends IService<Prize> {
     /**
-     * 查询
+     * 查询发件箱
      * @param request
      * @param prize
      * @param startTime
@@ -24,5 +24,8 @@ public interface PrizeService extends IService<Prize> {
      * @return
      */
     IPage<Prize> getPrizeList(QueryRequest request, Prize prize , String startTime, String endTime);
+
+
+
 
 }
