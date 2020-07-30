@@ -34,9 +34,9 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
                 queryWrapper.eq("user_id", deptId);
             }
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
-        String formatYear = simpleDateFormat.format(dateYear);
         if (dateYear != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+            String formatYear = simpleDateFormat.format(dateYear);
             queryWrapper.eq("year_date", formatYear);
         }
         Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
