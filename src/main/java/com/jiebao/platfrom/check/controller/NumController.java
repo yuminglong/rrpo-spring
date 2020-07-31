@@ -26,7 +26,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/check/num")
-@Api(tags = "年终考核统计分数表")
+@Api(tags = "check-年终考核统计分数表")
 public class NumController {
     @Autowired
     INumService numService;
@@ -34,7 +34,7 @@ public class NumController {
     @GetMapping("")
     @ApiOperation("获得数据 年终考核 ")
     @Log("获得数据 年终考核")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String userId, String deptId, Date dateYear) {
-        return numService.pageList(queryRequest, userId, deptId, dateYear);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String userName, String deptId, String dateYear) {
+        return numService.pageList(queryRequest, userName, deptId, dateYear);
     }
 }

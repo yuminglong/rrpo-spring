@@ -10,6 +10,7 @@ import com.jiebao.platfrom.system.domain.Menu;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +31,9 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("数据库内容重复");
         }
-
+        if (menus.getMenusId() == null) {
+            menus.setDate(new Date());
+        }
 
 //        if (menus.getParentId().equals("主级")) {  //顶级菜单
 //            QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
@@ -75,6 +78,7 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
         for (Menus menus : menusList
         ) {
             QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
+            queryWrapper.orderByDesc("date");
             queryWrapper.eq("parent_id", menus.getMenusId());
             List<Menus> list = list(queryWrapper);
             menus.setChildMenus(list);

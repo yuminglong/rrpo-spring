@@ -11,9 +11,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(value = "car")
-@Api(tags = "车辆信息")
+@RequestMapping(value = "/car/car")
+@Api(tags = "car-车辆信息")
 public class CarController {
 
     @Autowired
@@ -31,6 +33,13 @@ public class CarController {
     @ApiOperation(value = "删除车辆信息")
     public JiebaoResponse delete(String carId) {
         return new JiebaoResponse().message(carService.removeById(carId) ? "删除成功" : "删除失败");
+    }
+
+    @DeleteMapping(value = "delete/{carIds}")
+    @Log("批量")
+    @ApiOperation(value = "批量")
+    public JiebaoResponse deleteList(List<String> carIds) {
+        return new JiebaoResponse().message(carService.removeByIds(carIds) ? "删除成功" : "删除失败");
     }
 
     @GetMapping(value = "list")

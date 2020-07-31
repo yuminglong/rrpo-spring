@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/file")
-@Api(tags = "附件上传")
+@Api(tags = "room-附件上传")
 public class FilesController {
     @Resource
     IFilesService filesService;
@@ -43,6 +43,13 @@ public class FilesController {
     @Log(value = "附件删除")
     private JiebaoResponse deleteById(String id) {
         return new JiebaoResponse().message(filesService.removeById(id) ? "操作成功" : "操作失败");
+    }
+
+    @DeleteMapping(value = "delete/{ids}")
+    @ApiOperation("批量附件删除")
+    @Log(value = "批量附件删除")
+    private JiebaoResponse deleteList(List<String> ids) {
+        return new JiebaoResponse().message(filesService.removeByIds(ids) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "getFile")

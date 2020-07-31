@@ -18,4 +18,6 @@ public interface CarRecordService extends IService<CarRecord> {
     JiebaoResponse update(String CarRecordId, Integer state); //0 未审核  1 审核通过 2审核未通过
 
     JiebaoResponse fina(String carRecordId);//用车完毕后 归还 统计
+
+    CarRecord selectRecordId(String recordId);
 }

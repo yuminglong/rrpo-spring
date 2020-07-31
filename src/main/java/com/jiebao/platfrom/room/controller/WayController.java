@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/way")
-@Api(tags = "消息发送方式")
+@Api(tags = "room-消息发送方式")
 public class WayController {
     @Autowired
     IWayService wayService;
@@ -38,9 +38,9 @@ public class WayController {
     }
 
 
-    @GetMapping(value = "delete")
+    @GetMapping(value = "delete/{idList}")
     @ApiOperation("批量 绑定消息发送方式")
-    @Log(value = "领导删除")
+    @Log(value = "批量 绑定消息发送方式")
     private JiebaoResponse deleteById( List<String> idList) {
         return new JiebaoResponse().message(wayService.deleteByListId(idList) ? "操作成功" : "操作失败");
     }

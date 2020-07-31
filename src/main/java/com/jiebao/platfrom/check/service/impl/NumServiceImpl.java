@@ -8,10 +8,15 @@ import com.jiebao.platfrom.check.service.INumService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -23,23 +28,27 @@ import java.util.Date;
  */
 @Service
 public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumService {
+    @Autowired
+    UserService userService;
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String userId, String deptId, Date dateYear) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String userName, String deptId, String dateYear) {
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (deptId != null) {
             queryWrapper.eq("dept_id", deptId);
-        } else {
-            if (userId != null) {
-                queryWrapper.eq("user_id", deptId);
-            }
+        }
+        if (userName != null) {
+            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+            userQueryWrapper.eq("username", userName);
+            List<User> list = userService.list(userQueryWrapper);
+            List<String> IdList = new ArrayList<>();
+            queryWrapper.in("user_id", IdList);
         }
         if (dateYear != null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
-            String formatYear = simpleDateFormat.format(dateYear);
-            queryWrapper.eq("year_date", formatYear);
+            ;
+            queryWrapper.eq("year_date", dateYear);
         }
         Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.pageList(page, queryWrapper)).message("查询成功");
     }
 }

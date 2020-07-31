@@ -6,6 +6,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.room.service.IRecordFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/record-file")
-@Api(tags = "附件绑定")
+@Api(tags = "room-附件绑定")
 public class RecordFileController {
     @Autowired
     IRecordFileService recordFileService;
@@ -38,7 +39,7 @@ public class RecordFileController {
     }
 
 
-    @GetMapping(value = "delete")
+    @Delete(value = "delete/{idList}")
     @ApiOperation("批量 附件绑定删除")
     @Log(value = "附件绑定删除")
     private JiebaoResponse deleteById(List<String> idList) {

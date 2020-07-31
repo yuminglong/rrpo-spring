@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/record")
-@Api(tags = "会议申请")
+@Api(tags = "room-会议申请")
 public class RecordController {
     @Autowired
     IRecordService recordService;
@@ -65,8 +65,7 @@ public class RecordController {
     @ApiOperation("发送会议信息")
     @Log(value = "发送会议信息")
     private JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
-
-        return null;
+        return recordService.sendEmail(recordId, message, inviteIf, listUserID);
     }
 
     @GetMapping("getRecordByRoomIdOrDateOrUserId")

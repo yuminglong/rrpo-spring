@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/room/message")
-@Api(tags = "信息")
+@Api(tags = "room-信息")
 public class MessageController {
 
 

@@ -8,6 +8,7 @@ import com.jiebao.platfrom.room.service.IRecordService;
 import com.jiebao.platfrom.room.service.IRecordSeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/record-sevice")
-@Api(tags = "服务项绑定")
+@Api(tags = "room-服务项绑定")
 public class RecordSeviceController {
  @Autowired
     IRecordSeviceService recordSeviceService;
@@ -35,12 +36,11 @@ public class RecordSeviceController {
     @Log(value = "创建服务项绑定")
     @PostMapping(value = "addLead")
     public JiebaoResponse addLead(String id, List<String> leadListId) {
-
         return new JiebaoResponse().message(recordSeviceService.addLead(id, leadListId) ? "添加成功" : "上传成功");
     }
 
 
-    @GetMapping(value = "delete")
+    @Delete(value = "delete/{idList}")
     @ApiOperation("批量 服务项绑定删除")
     @Log(value = "服务项绑定删除")
     private JiebaoResponse deleteById( List<String> idList) {

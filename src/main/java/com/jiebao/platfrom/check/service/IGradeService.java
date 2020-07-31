@@ -19,6 +19,6 @@ public interface IGradeService extends IService<Grade> {
 
     JiebaoResponse commit();//最后提交  分数统计生成表
 
-    JiebaoResponse selectByUserIdOrDateYear(Date dateYear, String userId);
+    JiebaoResponse selectByUserIdOrDateYear(String dateYear, String userId);
 
 }

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/room/service")
-@Api(tags = "会议服务")
+@Api(tags = "room-会议服务")
 public class ServiceController {
     @Autowired
     IServiceService serviceService;

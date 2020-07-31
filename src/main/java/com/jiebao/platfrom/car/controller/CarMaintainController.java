@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "CarMain")
-@Api(tags = "车辆维修记录")
+@RequestMapping(value = "/car/CarMain")
+@Api(tags = "car-车辆维修记录")
 public class CarMaintainController {
     //欠缺  审计部分
     @Autowired
@@ -42,8 +42,8 @@ public class CarMaintainController {
     @GetMapping(value = "list")
     @Log("分页查询车辆送修")
     @ApiOperation(value = "分页查询车辆送修")
-    public JiebaoResponse list(QueryRequest request, Integer state, String CarPlate,String deptId, boolean ziCha, Date startDate, Date endDate,String order) { //状态 查询  车牌号直接查询   后面2个参数 开始时间  结束时间区间查询
-        return new JiebaoResponse().data(carMainService.getCarMaintainList(request, state, CarPlate, deptId, ziCha,  startDate,  endDate,order)).message("查询成功");
+    public JiebaoResponse list(QueryRequest request, Integer state, String CarPlate, String deptId, boolean ziCha, Date startDate, Date endDate, String order) { //状态 查询  车牌号直接查询   后面2个参数 开始时间  结束时间区间查询
+        return new JiebaoResponse().data(carMainService.getCarMaintainList(request, state, CarPlate, deptId, ziCha, startDate, endDate, order)).message("查询成功");
     }
 
     @GetMapping(value = "update")
@@ -57,6 +57,6 @@ public class CarMaintainController {
     @ApiOperation("查询车辆送修")
     @Log(value = "查询用车辆送修")
     private JiebaoResponse getCarMaintain(String id) {
-        return new JiebaoResponse().data(carMainService.getById(id)).message("查询成功");
+        return new JiebaoResponse().data(carMainService.selectMaintainId(id)).message("查询成功");
     }
 }
