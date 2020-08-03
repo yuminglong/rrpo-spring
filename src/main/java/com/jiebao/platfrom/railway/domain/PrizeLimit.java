@@ -32,7 +32,7 @@ public class PrizeLimit {
     @ApiModelProperty(value = "组织机构ID")
     private String deptId;
 
-    @ApiModelProperty(value = "限制次数")
+    @ApiModelProperty(value = "限制次数",example = "1")
     private Integer limitNumber;
 
     @ApiModelProperty(value = "组织机构名")

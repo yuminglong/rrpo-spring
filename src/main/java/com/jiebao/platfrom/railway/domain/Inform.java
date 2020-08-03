@@ -54,19 +54,19 @@ public class Inform {
      *
      * 是否为站内通知
      */
-    @ApiModelProperty(value = "是否为站内通知")
+    @ApiModelProperty(value = "是否为站内通知",example = "1")
     private Integer station;
 
     /**
      * 是否为小程序通知
      */
-    @ApiModelProperty(value = "是否为小程序通知")
+    @ApiModelProperty(value = "是否为小程序通知",example = "1")
     private Integer applets;
 
     /**
      * 是否同步到门户网站
      */
-    @ApiModelProperty(value = "是否同步到门户网站")
+    @ApiModelProperty(value = "是否同步到门户网站",example = "1")
     private Integer synchronizeWeb;
 
     /**

@@ -33,7 +33,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/prizeLimit")
-@Api(tags = "一事一奖上报限制次数")   //swagger2 api文档说明示例
+@Api(tags = "railWay-一事一奖上报限制次数")   //swagger2 api文档说明示例
 public class PrizeLimitController extends BaseController {
 
 

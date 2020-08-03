@@ -26,7 +26,7 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("dept")
-@Api(tags = "组织机构")   //swagger2 api文档说明示例
+@Api(tags = "railWay-组织机构")   //swagger2 api文档说明示例
 public class DeptController extends BaseController {
 
     private String message;

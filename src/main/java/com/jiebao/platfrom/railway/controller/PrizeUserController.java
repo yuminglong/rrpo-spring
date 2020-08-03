@@ -33,7 +33,7 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/prizeUser")
-@Api(tags = "一事一奖推送人意见")
+@Api(tags = "railWay-一事一奖推送人意见")
 public class PrizeUserController extends BaseController {
 
     private String message;

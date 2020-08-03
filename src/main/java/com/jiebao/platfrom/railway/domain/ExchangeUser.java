@@ -46,7 +46,7 @@ public class ExchangeUser {
     @ApiModelProperty(value = "放在该用户的哪个箱：1收件，2回收")
     private String type;
 
-    @ApiModelProperty(value = "阅读状态")
+    @ApiModelProperty(value = "阅读状态",example = "1")
     private Integer isRead;
 
     @ApiModelProperty(value = "接收时间")

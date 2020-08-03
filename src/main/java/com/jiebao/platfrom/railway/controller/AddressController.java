@@ -39,7 +39,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "address")
-@Api(tags = "通讯录")   //swagger2 api文档说明示例
+@Api(tags = "railWay-通讯录")   //swagger2 api文档说明示例
 public class AddressController extends BaseController {
 
     private String message;

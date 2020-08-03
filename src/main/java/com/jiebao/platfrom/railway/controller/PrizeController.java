@@ -45,7 +45,7 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping("/prize")
-@Api(tags = "一事一奖")   //swagger2 api文档说明示例
+@Api(tags = "railWay-一事一奖")   //swagger2 api文档说明示例
 public class PrizeController extends BaseController {
 
 

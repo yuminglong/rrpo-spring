@@ -40,10 +40,10 @@ public class PrizeOrder {
     private String prizeId;
 
 
-    @ApiModelProperty(value = "发布的次数")
+    @ApiModelProperty(value = "发布的次数",example = "1")
     private Integer releaseNumber;
 
-    @ApiModelProperty(value = "限制次数（不同的组织机构可配置）")
+    @ApiModelProperty(value = "限制次数（不同的组织机构可配置）",example = "1")
     private Integer limitNumber;
 
 }

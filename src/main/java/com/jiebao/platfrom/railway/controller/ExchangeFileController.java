@@ -34,7 +34,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/exchangeFile")
-@Api(tags = "文件共享（暂时不用）")   //swagger2 api文档说明示例
+@Api(tags = "railWay-文件共享（暂时不用）")   //swagger2 api文档说明示例
 public class ExchangeFileController extends BaseController {
 
 

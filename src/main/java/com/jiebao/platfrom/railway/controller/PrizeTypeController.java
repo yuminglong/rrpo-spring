@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/prizeType")
-@Api(tags = "一事一奖自定义天数")   //swagger2 api文档说明示例
+@Api(tags = "railWay-一事一奖自定义天数")   //swagger2 api文档说明示例
 public class PrizeTypeController extends BaseController {
 
 

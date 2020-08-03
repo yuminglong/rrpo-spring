@@ -36,7 +36,7 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping(value = "/exchange")
-@Api(tags = "信息互递")   //swagger2 api文档说明示例
+@Api(tags = "railWay-信息互递")   //swagger2 api文档说明示例
 public class ExchangeController extends BaseController {
 
 

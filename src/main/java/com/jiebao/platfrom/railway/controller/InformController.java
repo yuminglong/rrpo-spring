@@ -32,7 +32,7 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping(value = "/inform")
-@Api(tags = "通知公告")   //swagger2 api文档说明示例
+@Api(tags = "railWay-通知公告")   //swagger2 api文档说明示例
 public class InformController extends BaseController {
 
     private String message;

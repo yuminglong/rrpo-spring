@@ -36,7 +36,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/exchangeType")
-@Api(tags = "信息互递自定义类别")   //swagger2 api文档说明示例
+@Api(tags = "railWay-信息互递自定义类别")   //swagger2 api文档说明示例
 public class ExchangeTypeController extends BaseController {
 
 
