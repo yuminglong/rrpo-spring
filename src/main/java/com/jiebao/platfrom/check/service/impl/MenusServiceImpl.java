@@ -28,13 +28,23 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
     public JiebaoResponse addOrUpdate(Menus menus) {
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("content", menus.getContent());
-        if (getOne(queryWrapper) != null) {
-            return new JiebaoResponse().message("数据库内容重复");
+        if (menus.getMenusId() == null) {
+            if (getOne(queryWrapper) != null) {
+                return new JiebaoResponse().message("数据库内容重复");
+            }
+        } else {
+            Menus menus1 = getById(menus.getMenusId());  //通过id查询已存在
+            if (!menus1.getContent().equals(menus)) { //当本对象内容被修改时
+                if (getOne(queryWrapper) != null) {
+                    return new JiebaoResponse().message("数据库内容重复");
+                }
+            }
         }
+
+
         if (menus.getMenusId() == null) {
             menus.setDate(new Date());
         }
-
 //        if (menus.getParentId().equals("主级")) {  //顶级菜单
 //            QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
 //            queryWrapper.eq("parent_id", menus.getParentId());

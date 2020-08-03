@@ -77,7 +77,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
-        double SXKF = 0;//工作失效扣分项
+        double SXKF = 0;//工作效果扣分项
         for (Grade grade : list) {
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
@@ -103,6 +103,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         num.setDeptId(user.getUserId());
         num.setDeptId(user.getDeptId());
+        num.setJcWork(JCKF + JCJF);
+        num.setXgWork(SXKF);
         num.setYearDate(formatYear);
         num.setNumber(20 + JCKF + JCJF + SXKF);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
