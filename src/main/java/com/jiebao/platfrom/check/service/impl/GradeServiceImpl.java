@@ -109,11 +109,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse selectByUserIdOrDateYear(Date dateYear, String userId) {  //必填 时间   对象id
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
-        String formatYear = simpleDateFormat.format(dateYear);
+    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String userId) {  //必填 时间   对象id
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_date", formatYear);
+        queryWrapper.eq("year_date", dateYear);
         queryWrapper.eq("userId", userId);
         List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
         QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();

@@ -25,7 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/check/grade")
-@Api(tags = "人员对象 扣分项绑定")
+@Api(tags = "check-人员对象 扣分项绑定")
 public class GradeController {
     @Autowired
     IGradeService iGradeService;
@@ -38,7 +38,7 @@ public class GradeController {
     @GetMapping("selectByUserIdOrDateYear")
     @ApiOperation("获得对应人员 对应年份 细节数据")
     @Log("获得对应人员 对应年份 细节数据")
-    public JiebaoResponse selectByUserIdOrDateYear(Date dateYear, String userId) {
+    public JiebaoResponse selectByUserIdOrDateYear(String  dateYear, String userId) {
         return iGradeService.selectByUserIdOrDateYear(dateYear, userId);
     }
 

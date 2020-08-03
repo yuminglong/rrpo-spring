@@ -59,7 +59,7 @@ public class CarRecordServiceImpl extends ServiceImpl<CarRecordMapper, CarRecord
             queryWrapper.in("record_user_id", userIdList);
         }
         Page<CarRecord> page = new Page<>(request.getPageNum(), request.getPageSize());
-        return this.baseMapper.selectPage(page, queryWrapper);
+        return this.baseMapper.pageList(page, queryWrapper);
     }
 
 
@@ -104,6 +104,11 @@ public class CarRecordServiceImpl extends ServiceImpl<CarRecordMapper, CarRecord
         car.setCarState(2);//空闲
         carService.updateById(car);
         return new JiebaoResponse().message(updateById(carRecord) ? "操作成功" : "操作失败");
+    }
+
+    @Override
+    public CarRecord selectRecordId(String recordId) {
+        return this.baseMapper.selectRecordId(recordId);
     }
 
 

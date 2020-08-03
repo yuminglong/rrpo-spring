@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -49,8 +50,11 @@ public class Menus implements Serializable {
     private double minGrade;
     @ApiModelProperty(value = "考核项 最大分值")
     private double maxGrade;
-    @TableField(exist = false)
-    private List<Menus> childMenus;
     @ApiModelProperty(value = "考核内容")
     private String content;
+    @ApiModelProperty(value = "创建时间")
+    private Date date;
+    @TableField(exist = false)
+    private List<Menus> childMenus;
+
 }

@@ -60,7 +60,7 @@ public class CarMaintainServiceImpl extends ServiceImpl<CarMaintainMapper, CarMa
             carQueryWrapper.in("maintain_car_id", userIdList);
         }
         Page<CarMaintain> page = new Page<>(request.getPageNum(), request.getPageSize());
-        return this.baseMapper.selectPage(page, carQueryWrapper);
+        return this.baseMapper.pageList(page, carQueryWrapper);
     }
 
     @Override
@@ -73,6 +73,11 @@ public class CarMaintainServiceImpl extends ServiceImpl<CarMaintainMapper, CarMa
             carService.updateById(car);
         }
         return new JiebaoResponse().message(updateById(carMaintain) ? "操作成功" : "操作失败");
+    }
+
+    @Override
+    public CarMaintain selectMaintainId(String maintainId) {
+        return this.selectMaintainId(maintainId);
     }
 
     @Override

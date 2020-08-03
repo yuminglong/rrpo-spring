@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
-@RequestMapping(value = "CarRecord")
-@Api(tags = "用车记录")
+@RequestMapping(value = "/car/CarRecord")
+@Api(tags = "car-用车记录")
 public class CarRecordController {
 
     @Autowired
@@ -56,6 +56,6 @@ public class CarRecordController {
     @ApiOperation("查询用车记录")
     @Log(value = "查询用车记录")
     private JiebaoResponse getCarRecord(String id) {
-        return new JiebaoResponse().data(carRecordService.getById(id)).message("查询成功");
+        return new JiebaoResponse().data(carRecordService.selectRecordId(id)).message("查询成功");
     }
 }

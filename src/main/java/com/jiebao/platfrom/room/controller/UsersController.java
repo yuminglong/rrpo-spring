@@ -7,6 +7,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.room.service.IUsersService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/room/user")
-@Api(tags = "参会人员")
+@Api(tags = "room-参会人员")
 public class UsersController {
     @Autowired
     IUsersService usersService;
@@ -38,7 +39,7 @@ public class UsersController {
     }
 
 
-    @GetMapping(value = "delete")
+    @Delete(value = "delete/{idList}")
     @ApiOperation("批量 参会人员")
     @Log(value = "领导删除")
     private JiebaoResponse deleteById( List<String> idList) {
@@ -47,7 +48,7 @@ public class UsersController {
 
     @GetMapping(value = "select")
     @ApiOperation("根据会议查询 参会人员")
-    @Log(value = "根据会议查询 领导")
+    @Log(value = "根据会议查询 参会人员")
     private JiebaoResponse getFile(String id, QueryRequest queryRequest,Integer leadIf) {
         return new JiebaoResponse().data(usersService.list(queryRequest,id,leadIf)).message("查询成功");
     }
