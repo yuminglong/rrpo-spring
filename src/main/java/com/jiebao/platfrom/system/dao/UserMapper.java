@@ -9,9 +9,12 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface UserMapper extends BaseMapper<User> {
+
+
 
     IPage<User> findUserDetail(Page page, @Param("user") User user);
 

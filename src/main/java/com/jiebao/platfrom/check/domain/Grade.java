@@ -33,17 +33,17 @@ public class Grade implements Serializable {
     /**
      * 具体年限
      */
-    @ApiModelProperty(value = "年份 后端生成不用传")
+    @ApiModelProperty(value = "年份 后端生成不用传",example = "哈哈")
     private String yearDate;
-    @ApiModelProperty(value = "人员id  暂定")
+    @ApiModelProperty(value = "人员id  暂定",example = "哈哈")
     private String userId;
 
     /**
      * 对应考核id
      */
-    @ApiModelProperty(value = "对应的考核项id")
+    @ApiModelProperty(value = "对应的考核项id",example = "哈哈")
     private String checkId;
 
-    @ApiModelProperty(value = "分数")
+    @ApiModelProperty(value = "分数",example = "2.0")
     private double num;
 }
