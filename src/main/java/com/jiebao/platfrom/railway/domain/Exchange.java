@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 信息互递内容表
@@ -60,4 +61,7 @@ public class Exchange {
     @ExcelField(value = "发布时间")
     @ApiModelProperty(value = "发布时间")
     private Date releaseTime;
+
+    @TableField(exist = false)
+    private String [] sendUserIds;
 }

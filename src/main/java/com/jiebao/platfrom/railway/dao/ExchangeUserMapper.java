@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,4 +44,8 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
      */
     @Delete("DELETE FROM rail_exchange_user WHERE exchange_id = #{exchangeId} and  send_user_id = #{sendUserId}")
     boolean removeBySendUserId(String sendUserId,String exchangeId);
+
+
+    @Insert("UPDATE rail_exchange_user set creat_time = now()  WHERE exchange_id =#{exchangeId}")
+    boolean setCreatTime(String exchangeId);
 }

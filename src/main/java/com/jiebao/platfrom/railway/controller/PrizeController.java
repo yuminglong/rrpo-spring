@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.railway.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -8,9 +9,13 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.common.utils.EqualsMonth;
+import com.jiebao.platfrom.railway.dao.PrizeLimitMapper;
 import com.jiebao.platfrom.railway.dao.PrizeMapper;
+import com.jiebao.platfrom.railway.dao.PrizeUserMapper;
 import com.jiebao.platfrom.railway.domain.Prize;
+import com.jiebao.platfrom.railway.domain.PrizeLimit;
 import com.jiebao.platfrom.railway.domain.PrizeOrder;
+import com.jiebao.platfrom.railway.service.PrizeLimitService;
 import com.jiebao.platfrom.railway.service.PrizeOrderService;
 import com.jiebao.platfrom.railway.service.PrizeService;
 import com.jiebao.platfrom.railway.service.PrizeUserService;
@@ -27,9 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * <p>
@@ -62,7 +65,14 @@ public class PrizeController extends BaseController {
     private PrizeOrderService prizeOrderService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private PrizeLimitMapper prizeLimitMapper;
+
+    @Autowired
+    private PrizeUserMapper prizeUserMapper;
+
 
     /**
      * 创建一条一事一奖
@@ -108,38 +118,36 @@ public class PrizeController extends BaseController {
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                 User byName = userService.findByName(username);
-                //获取当前用户所在的的组织机构的发布记录，离当前时间最近的一条记录
-               /* PrizeOrder prizeOrder = prizeOrderService.selectRecent(byName.getDeptId());
-                //判断该组织机构最近的一条发布记录是否为同年同月（order表的creatTime=prize表的release_time）
-                boolean result = EqualsMonth.equals(prizeOrder.getCreatTime(), new Date());
-
-                Calendar instance = Calendar.getInstance();
-                int month = instance.get(Calendar.MONTH);
-                int year = instance.get(Calendar.YEAR);*/
-
-                    //获取当前年月，该组织机构已经发布条数 ，然后+1，set进releaseNumber
+                //获取当前年月，该组织机构已经发布条数 ，然后+1，set进releaseNumber
                 Integer countByDept = prizeOrderService.getCountByDept(byName.getDeptId());
                 Prize byId = prizeService.getById(prizeId);
                 PrizeOrder prizeOrderSet = new PrizeOrder();
-                if (countByDept <= 30){
+                PrizeLimit prizeLimit = prizeLimitMapper.selectOne(new LambdaQueryWrapper<PrizeLimit>().eq(PrizeLimit::getDeptId, byName.getDeptId()));
+                Integer limitNumber;
+                if (prizeLimit == null) {
+                    //如果无记录，则设置默认限制上报次数为30
+                    limitNumber = 30;
+                } else {
+                    limitNumber = prizeLimit.getLimitNumber();
+                }
+                if (countByDept <= limitNumber) {
                     prizeOrderSet.setDeptId(byName.getDeptId());
                     prizeOrderSet.setCreatTime(byId.getReleaseTime());
                     prizeOrderSet.setPrizeId(prizeId);
-                    prizeOrderSet.setReleaseNumber(countByDept+1);
-                    //可配置限制天数
-                   // prizeOrderSet.setLimitNumber();
-                prizeOrderService.save(prizeOrderSet);
+                    prizeOrderSet.setReleaseNumber(countByDept + 1);
+                    prizeOrderService.save(prizeOrderSet);
+                    //把status改为3,并创建发布时间
+                    prizeMapper.release(prizeId);
+                    prizeUserMapper.setCreatTime(prizeId);
                 }
-
-                //把status改为3,并创建发布时间
-                prizeMapper.release(prizeId);
+              else {
+                    return ;
+                }
             });
             //发送成功
             return new JiebaoResponse().message("发布一事一奖成功");
         } catch (Exception e) {
-            message = "发布一事一奖失败";
-            log.error(message, e);
-            return new JiebaoResponse().message("发布一事一奖失败");
+            throw new JiebaoException("发布一事一奖失败");
         }
     }
 
@@ -205,8 +213,6 @@ public class PrizeController extends BaseController {
         IPage<Prize> prizeList = prizeService.getPrizeList(request, prize, startTime, endTime);
         return new JiebaoResponse().data(this.getDataTable(prizeList));
     }
-
-
 
 
 }

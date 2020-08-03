@@ -62,4 +62,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      */
     @Update("UPDATE `rail_prize_user` set audit_opinion = null,money = null where prize_id =#{prizeId} and send_dept = #{deptId}")
     boolean deleteOpinion(String prizeId, String deptId);
+
+    @Update("UPDATE  rail_prize_user  r set  r.creat_time = now() WHERE r.prize_id =#{prizeId}")
+    boolean setCreatTime(String prizeId);
 }

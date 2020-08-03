@@ -53,7 +53,7 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
             queryWrapper.lambda().eq(Inform::getCreateUser, username);
         }
         if (StringUtils.isNotBlank(inform.getTitle())) {
-            queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
+            queryWrapper.lambda().like(Inform::getTitle, inform.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Inform::getCreateTime, startTime).le(Inform::getCreateTime, endTime);
@@ -87,7 +87,7 @@ public class InformServiceImpl extends ServiceImpl<InformMapper, Inform> impleme
             }
         }
         if (StringUtils.isNotBlank(inform.getTitle())) {
-            queryWrapper.lambda().eq(Inform::getTitle, inform.getTitle());
+            queryWrapper.lambda().like(Inform::getTitle, inform.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Inform::getReleaseTime, startTime).le(Inform::getReleaseTime, endTime);

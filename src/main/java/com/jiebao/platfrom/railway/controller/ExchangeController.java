@@ -10,10 +10,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.ExchangeMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
-import com.jiebao.platfrom.railway.domain.Address;
-import com.jiebao.platfrom.railway.domain.Exchange;
-import com.jiebao.platfrom.railway.domain.ExchangeFile;
-import com.jiebao.platfrom.railway.domain.Inform;
+import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
@@ -58,7 +55,10 @@ public class ExchangeController extends BaseController {
     private ExchangeMapper exchangeMapper;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private ExchangeUserMapper exchangeUserMapper;
 
     /**
      * 创建一条信息互递
@@ -99,6 +99,7 @@ public class ExchangeController extends BaseController {
                 Arrays.stream(exchangeIds).forEach(exchangeId -> {
                     //状态status改为3
                     exchangeMapper.release(exchangeId);
+                    exchangeUserMapper.setCreatTime(exchangeId);
                 });
                 return new JiebaoResponse().message("发布通知公告成功");
             }
@@ -112,7 +113,7 @@ public class ExchangeController extends BaseController {
 
 
     @DeleteMapping("/{exchangeIds}")
-    @ApiOperation(value = "批量删除信息（完全删除未发送的，假删除已发送的）", notes = "批量删除信息（完全删除未发送的，假删除已发送的）", response = JiebaoResponse.class, httpMethod = "DELETE")
+    @ApiOperation(value = "批量删除信息（完全删除未发送的，假删除已发送的）(发件箱)", notes = "批量删除信息（完全删除未发送的，假删除已发送的）(发件箱)", response = JiebaoResponse.class, httpMethod = "DELETE")
     public JiebaoResponse deleteExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
         try {
             Arrays.stream(exchangeIds).forEach(exchangeId -> {
@@ -199,4 +200,23 @@ public class ExchangeController extends BaseController {
     }
 
 
+    @GetMapping(value = "/getInfoById/{exchangeId}")
+    @ApiOperation(value = "根据ID查info", notes = "根据ID查info", response = JiebaoResponse.class, httpMethod = "GET")
+    public Exchange getInfoById(@PathVariable String exchangeId) {
+        System.out.println("+++++++++++++++++++"+exchangeId+"+++++++++++++++++++");
+        Exchange byId = exchangeService.getById(exchangeId);
+        Map<String,Object> columnMap = new HashMap<>();
+        //列exchange_id为数据库中的列名，不是实体类中的属性名
+        columnMap.put("exchange_id",exchangeId);
+        List list = new ArrayList();
+        List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(columnMap);
+        for (ExchangeUser eu:exchangeUsers
+             ) {
+            list.add(eu.getSendUserId());
+        }
+        System.out.println(list);
+        String[] array = (String[]) list.toArray(new String[0]);
+        byId.setSendUserIds(array);
+        return byId;
+    }
 }

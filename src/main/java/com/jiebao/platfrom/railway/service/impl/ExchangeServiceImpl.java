@@ -56,7 +56,7 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
             queryWrapper.lambda().eq(Exchange::getCreatUser,username);
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {
-            queryWrapper.lambda().eq(Exchange::getTitle, exchange.getTitle());
+            queryWrapper.lambda().like(Exchange::getTitle, exchange.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Exchange::getCreatTime, startTime).le(Exchange::getCreatTime, endTime);
@@ -90,7 +90,7 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
             }
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {
-            queryWrapper.lambda().eq(Exchange::getTitle, exchange.getTitle());
+            queryWrapper.lambda().like(Exchange::getTitle, exchange.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Exchange::getReleaseTime, startTime).le(Exchange::getReleaseTime, endTime);

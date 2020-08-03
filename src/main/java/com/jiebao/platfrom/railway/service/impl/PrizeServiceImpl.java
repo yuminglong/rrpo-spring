@@ -49,7 +49,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
             queryWrapper.lambda().eq(Prize::getCreatUser,username);
         }
         if (StringUtils.isNotBlank(prize.getTitle())) {
-            queryWrapper.lambda().eq(Prize::getTitle, prize.getTitle());
+            queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getCreatTime, startTime).le(Prize::getCreatTime, endTime);
