@@ -34,7 +34,7 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
             }
         } else {
             Menus menus1 = getById(menus.getMenusId());  //通过id查询已存在
-            if (!menus1.getContent().equals(menus)) { //当本对象内容被修改时
+            if (!menus1.getContent().equals(menus.getContent())) { //当本对象内容被修改时
                 if (getOne(queryWrapper) != null) {
                     return new JiebaoResponse().message("数据库内容重复");
                 }
