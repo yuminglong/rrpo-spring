@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +39,10 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     INumService numService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, double number) {  //menusId  既是 扣分项id
-        Date date = new Date();
-        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy");
-        String formatYear = simpleFormatter.format(date);
+    public JiebaoResponse addGrade(String menusId, double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
-        queryWrapper.eq("year_date", formatYear);//年份
+        queryWrapper.eq("year_date", yearDate);//年份
 //        User user = (User)SecurityUtils.getSubject().getPrincipal();  //当前登陆人
 //        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
@@ -54,20 +52,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade = new Grade();
             grade.setNum(number);
             grade.setCheckId(menusId);
-            //   one.setUserId(user.getUserId());
+            grade.setDeptId(deptId);
         }
         return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败");
     }
 
     @Override
-    public JiebaoResponse commit() {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();  //当前登陆人
-        Date date = new Date();
-        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy");
-        String formatYear = simpleFormatter.format(date);
+    public JiebaoResponse commit(String yearDate, String deptId) {
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         // queryWrapper.eq(("user_id"), user.getUserId());
-        queryWrapper.eq("year_date", formatYear);
+        queryWrapper.eq("year_date", yearDate);
         List<Grade> list = list(queryWrapper);
         QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
         queryWrapper.eq("name", "基础工作");
@@ -92,29 +86,33 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         JCKF = JCKF < -20 ? -20 : JCKF;  //扣分  20为限
         if (JCJF > 40) {
-            JCJF = JCJF + (JCJF - 40) / 15;  //40分为限  超过40分  折价  15：1
+            double dx = (JCJF - 40) / 15;  //溢出部分抵消扣分
+            JCKF = JCKF + dx;  //抵消后的分数
+            if (JCKF > 0) {
+                JCKF = 0;
+            }
+            JCJF = 40;  //40分为限  超过40分  折价  15：1
         }
         QueryWrapper<Num> numQueryWrapper = new QueryWrapper<>();
-        numQueryWrapper.eq("year_date", formatYear);
-        numQueryWrapper.eq("user_id", user.getUserId());
+        numQueryWrapper.eq("year_date", yearDate);
+        numQueryWrapper.eq("dept_id", deptId);
         Num num = numService.getOne(numQueryWrapper);  //年度考核表储存对象
         if (num == null) {
             num = new Num();  //为空创造对象
         }
-        num.setDeptId(user.getUserId());
-        num.setDeptId(user.getDeptId());
+        num.setDeptId(deptId);
         num.setJcWork(JCKF + JCJF);
         num.setXgWork(SXKF);
-        num.setYearDate(formatYear);
+        num.setYearDate(yearDate);
         num.setNumber(20 + JCKF + JCJF + SXKF);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
     }
 
     @Override
-    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String userId) {  //必填 时间   对象id
+    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId) {  //必填 时间   对象id
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("year_date", dateYear);
-        queryWrapper.eq("userId", userId);
+        queryWrapper.eq("dept_id", DeptId);
         List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
         QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
         queryWrapper.eq("name", "基础工作");
@@ -122,21 +120,21 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         queryWrapper1 = new QueryWrapper<>();
         queryWrapper.eq("name", "工作效果");
         Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
-        HashMap<String, Double> jcMap = new HashMap<>();   //储存基础map
-        HashMap<String, Double> sxMap = new HashMap<>();   //储存工作实效map
-        HashMap<String, HashMap<String, Double>> map = new HashMap<>();   //总map
+        List<Menus> jcList = new ArrayList<>(); //储存基础map
+        List<Menus> xgList = new ArrayList<>();   //储存工作实效map
+        HashMap<String, List<Menus>> map = new HashMap<>();   //总map
         for (Grade grade : list) {
             Menus menus = menusService.getById(grade.getCheckId());
+            menus.setNumber(grade.getNum());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //基础工作模块
-                jcMap.put(menus.getContent(), grade.getNum());
-            } else {  //工作失效模块
-                sxMap.put(menus.getContent(), grade.getNum());
+                jcList.add(menus);
+            } else {  //工作效果模块
+                xgList.add(menus);
             }
         }
-        map.put("基础工作", jcMap);
-        map.put("工作效果", jcMap);
+        map.put("JCgz", jcList);
+        map.put("GZxg", xgList);
         return new JiebaoResponse().data(map).message("操作成功");
     }
-
 
 }

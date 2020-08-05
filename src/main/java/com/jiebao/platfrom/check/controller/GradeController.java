@@ -38,23 +38,23 @@ public class GradeController {
     @GetMapping("selectByUserIdOrDateYear")
     @ApiOperation("获得对应人员 对应年份 细节数据")
     @Log("获得对应人员 对应年份 细节数据")
-    public JiebaoResponse selectByUserIdOrDateYear(String  dateYear, String userId) {
-        return iGradeService.selectByUserIdOrDateYear(dateYear, userId);
+    public JiebaoResponse selectByUserIdOrDateYear(String  dateYear, String DeptId) {
+        return iGradeService.selectByUserIdOrDateYear(dateYear, DeptId);
     }
 
     @PostMapping("addGrade")
     @ApiOperation("绑定关系")
     @Log("绑定关系")
-    public JiebaoResponse addGrade(String menusId, double number) {
-        return iGradeService.addGrade(menusId, number);
+    public JiebaoResponse addGrade(String menusId, double number,String yearDate,String deptId) {
+        return iGradeService.addGrade(menusId, number,yearDate,deptId);
     }
 
 
     @GetMapping("commit")
     @ApiOperation("最后提交  分数统计生成表")
     @Log("最后提交  分数统计生成表")
-    public JiebaoResponse commit() {
-        return iGradeService.commit();
+    public JiebaoResponse commit(String yearDate,String deptId) {
+        return iGradeService.commit(yearDate,deptId);
     }
 
 }

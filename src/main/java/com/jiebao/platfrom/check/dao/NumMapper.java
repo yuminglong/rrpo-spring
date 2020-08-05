@@ -21,14 +21,12 @@ import java.sql.Wrapper;
 public interface NumMapper extends BaseMapper<Num> {
     @Select("select * from check_num ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
             @Result(property = "dept", column = "dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     IPage<Num> pageList(Page<Num> page, @Param("ew") QueryWrapper wrapper);
 
     @Select("select * from check_num where num_id=#{numId}")
     @Results({
-            @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
             @Result(property = "dept", column = "dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     Num selectByNumId(String numId);

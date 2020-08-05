@@ -15,10 +15,10 @@ import java.util.Date;
  * @since 2020-07-28
  */
 public interface IGradeService extends IService<Grade> {
-    JiebaoResponse addGrade(String menusId, double number);
+    JiebaoResponse addGrade(String menusId, double number,String yearDate,String deptId);
 
-    JiebaoResponse commit();//最后提交  分数统计生成表
+    JiebaoResponse commit(String yearDate,String deptId);//最后提交  分数统计生成表
 
-    JiebaoResponse selectByUserIdOrDateYear(String dateYear, String userId);
+    JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId);
 
 }

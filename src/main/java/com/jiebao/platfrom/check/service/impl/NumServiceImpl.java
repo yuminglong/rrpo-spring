@@ -32,17 +32,10 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     UserService userService;
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String userName, String deptId, String dateYear) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String dateYear) {
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (deptId != null) {
             queryWrapper.eq("dept_id", deptId);
-        }
-        if (userName != null) {
-            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-            userQueryWrapper.eq("username", userName);
-            List<User> list = userService.list(userQueryWrapper);
-            List<String> IdList = new ArrayList<>();
-            queryWrapper.in("user_id", IdList);
         }
         if (dateYear != null) {
             ;

@@ -40,8 +40,6 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
                 }
             }
         }
-
-
         if (menus.getMenusId() == null) {
             menus.setDate(new Date());
         }

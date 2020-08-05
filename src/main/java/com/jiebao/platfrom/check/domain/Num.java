@@ -40,13 +40,7 @@ public class Num implements Serializable {
     @ApiModelProperty(value = "年份 后端生成", example = "2018")
     private String yearDate;
 
-    /**
-     * 人员id
-     */
-    @ApiModelProperty(value = "人员id  暂定", example = "哈哈")
-    private String userId;
-    @TableField(exist = false)
-    private User user;
+
     /**
      * 年度分数
      */
