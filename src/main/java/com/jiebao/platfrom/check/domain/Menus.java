@@ -37,24 +37,26 @@ public class Menus implements Serializable {
     @TableId(value = "menus_id", type = IdType.UUID)
     private String menusId;
 
-    @ApiModelProperty(value = "考核父类",example = "哈哈")
+    @ApiModelProperty(value = "考核父类", example = "哈哈")
     private String parentId;
 
     /**
      * 考核模块分数
      */
-    @ApiModelProperty(value = "最大分值",example = "23")
+    @ApiModelProperty(value = "最大分值", example = "23")
     private double grade;
 
-    @ApiModelProperty(value = "最小分值",example = "23")
+    @ApiModelProperty(value = "最小分值", example = "23")
     private double minGrade;
-    @ApiModelProperty(value = "考核项 最大分值",example = "23")
+    @ApiModelProperty(value = "考核项 最大分值", example = "23")
     private double maxGrade;
-    @ApiModelProperty(value = "考核内容",example = "哈哈")
+    @ApiModelProperty(value = "考核内容", example = "哈哈")
     private String content;
-    @ApiModelProperty(value = "创建时间",example = "2020/04/03 12:15:12")
+    @ApiModelProperty(value = "创建时间", example = "2020/04/03 12:15:12")
     private Date date;
     @TableField(exist = false)
     private List<Menus> childMenus;
 
+    @TableField(exist = false)
+    private double number;
 }

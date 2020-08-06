@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -38,8 +39,8 @@ public class CarController {
     @DeleteMapping(value = "delete/{carIds}")
     @Log("批量")
     @ApiOperation(value = "批量")
-    public JiebaoResponse deleteList(List<String> carIds) {
-        return new JiebaoResponse().message(carService.removeByIds(carIds) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteList(@PathVariable String[] carIds) {
+        return new JiebaoResponse().message(carService.removeByIds(Arrays.asList(carIds)) ? "删除成功" : "删除失败");
     }
 
     @GetMapping(value = "list")

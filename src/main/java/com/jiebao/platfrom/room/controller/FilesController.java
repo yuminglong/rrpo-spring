@@ -48,7 +48,7 @@ public class FilesController {
     @DeleteMapping(value = "delete/{ids}")
     @ApiOperation("批量附件删除")
     @Log(value = "批量附件删除")
-    private JiebaoResponse deleteList(List<String> ids) {
+    private JiebaoResponse deleteList(@PathVariable List<String> ids) {
         return new JiebaoResponse().message(filesService.removeByIds(ids) ? "操作成功" : "操作失败");
     }
 

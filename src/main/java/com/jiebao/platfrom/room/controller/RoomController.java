@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * <p>
  * 前端控制器
@@ -33,11 +35,11 @@ public class RoomController {
         return new JiebaoResponse().message(roomService.saveOrUpdate(room) ? "操作成功" : "操作失败");
     }
 
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping(value = "delete/{ids}")
     @ApiOperation("会议室删除")
     @Log(value = "会议室删除")
-    private JiebaoResponse deleteById(String id) {
-        return new JiebaoResponse().message(roomService.removeById(id) ? "操作成功" : "操作失败");
+    private JiebaoResponse deleteById(@PathVariable String[] ids) {
+        return new JiebaoResponse().message(roomService.removeByIds(Arrays.asList(ids)) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "list")

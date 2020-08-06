@@ -10,12 +10,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,19 +37,6 @@ public class MenusController {
         return menusService.addOrUpdate(menus);
     }
 
-    @Delete("deleteById/{menusId}")
-    @ApiOperation("删除")
-    @Log("删除")
-    public JiebaoResponse deleteById(String menusId) {
-        return menusService.deleteById(menusId);
-    }
-
-    @Delete("deleteListById/{menusIdS}")
-    @ApiOperation("集合删除")
-    @Log("集合删除")
-    public JiebaoResponse deleteListById(List<String> menusIdS) {
-        return new JiebaoResponse().message(menusService.removeByIds(menusIdS) ? "删除成功" : "删除失败");
-    }
 
     @GetMapping("lists")
     @ApiOperation("获取树形列表")
@@ -66,5 +50,19 @@ public class MenusController {
     @Log("查询对应扣分项")
     public JiebaoResponse selectById(String menusId) {
         return new JiebaoResponse().data(menusService.getById(menusId)).message("查询成功");
+    }
+
+    @DeleteMapping("deleteById/{menusId}")
+    @ApiOperation("删除")
+    @Log("删除")
+    public JiebaoResponse deleteById(String menusId) {
+        return menusService.deleteById(menusId);
+    }
+
+    @DeleteMapping("deleteListById/{menusIdS}")
+    @ApiOperation("集合删除")
+    @Log("集合删除")
+    public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
+        return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
     }
 }

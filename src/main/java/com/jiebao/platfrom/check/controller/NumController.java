@@ -34,7 +34,7 @@ public class NumController {
     @GetMapping("")
     @ApiOperation("获得数据 年终考核 ")
     @Log("获得数据 年终考核")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String userName, String deptId, String dateYear) {
-        return numService.pageList(queryRequest, userName, deptId, dateYear);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String dateYear) {
+        return numService.pageList(queryRequest,  deptId, dateYear);
     }
 }
