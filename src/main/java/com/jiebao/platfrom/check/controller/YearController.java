@@ -43,8 +43,8 @@ public class YearController {
 
     @GetMapping("pageList")
     @ApiOperation("集合")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String yearDate) {
-        return new JiebaoResponse().data(yearService.pageList(queryRequest, yearDate)).message("查询成功");
+    public JiebaoResponse pageList(QueryRequest queryRequest, String dateYear) {
+        return new JiebaoResponse().data(yearService.pageList(queryRequest, dateYear)).message("查询成功");
     }
 
     @DeleteMapping("deleteByLists/{lists}")

@@ -38,8 +38,8 @@ public class GradeController {
     @GetMapping("selectByUserIdOrDateYear")
     @ApiOperation("获得对应人员 对应年份 细节数据")
     @Log("获得对应人员 对应年份 细节数据")
-    public JiebaoResponse selectByUserIdOrDateYear(String  dateYear, String DeptId) {
-        return iGradeService.selectByUserIdOrDateYear(dateYear, DeptId);
+    public JiebaoResponse selectByUserIdOrDateYear(String  dateYear,String deptId) {
+        return iGradeService.selectByUserIdOrDateYear(dateYear, deptId);
     }
 
     @PostMapping("addGrade")

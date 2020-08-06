@@ -43,6 +43,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
+        queryWrapper.eq("dept_id", deptId);
 //        User user = (User)SecurityUtils.getSubject().getPrincipal();  //当前登陆人
 //        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
@@ -53,6 +54,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setNum(number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
+            grade.setYearDate(yearDate);
         }
         return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败");
     }
@@ -60,18 +62,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     @Override
     public JiebaoResponse commit(String yearDate, String deptId) {
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        // queryWrapper.eq(("user_id"), user.getUserId());
+        queryWrapper.eq(("dept_id"), deptId);
         queryWrapper.eq("year_date", yearDate);
         List<Grade> list = list(queryWrapper);
-        QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("name", "基础工作");
-        Menus menusJc = menusService.getOne(queryWrapper1);//基础工作父类
-        queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("name", "工作效果");
-        Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
+        QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
+        queryWrapperJC.eq("content", "基础工作");
+        Menus menusJc = menusService.getOne(queryWrapperJC);//基础工作父类
+        QueryWrapper<Menus> queryWrapperXG = new QueryWrapper<>();
+        queryWrapperXG.eq("content", "工作效果");//效果
+        Menus menusSX = menusService.getOne(queryWrapperXG);//工作失效父类
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
-        double SXKF = 0;//工作效果扣分项
+        double SGKF = 0;//工作效果扣分项
         for (Grade grade : list) {
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
@@ -81,9 +83,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                     JCKF += grade.getNum();
                 }
             } else {
-                SXKF += grade.getNum();
+                SGKF += grade.getNum();
             }
         }
+        SGKF = 40 + SGKF;
+        SGKF = SGKF < 0 ? 0 : SGKF;
         JCKF = JCKF < -20 ? -20 : JCKF;  //扣分  20为限
         if (JCJF > 40) {
             double dx = (JCJF - 40) / 15;  //溢出部分抵消扣分
@@ -102,9 +106,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         num.setDeptId(deptId);
         num.setJcWork(JCKF + JCJF);
-        num.setXgWork(SXKF);
+        num.setXgWork(SGKF);
         num.setYearDate(yearDate);
-        num.setNumber(20 + JCKF + JCJF + SXKF);
+        num.setNumber(20 + JCKF + JCJF + SGKF);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
     }
 
@@ -114,12 +118,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         queryWrapper.eq("year_date", dateYear);
         queryWrapper.eq("dept_id", DeptId);
         List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
-        QueryWrapper<Menus> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("name", "基础工作");
-        Menus menusJc = menusService.getOne(queryWrapper1);//基础工作父类
-        queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("name", "工作效果");
-        Menus menusSX = menusService.getOne(queryWrapper1);//工作失效父类
+        for (Grade g : list
+        ) {
+            System.out.println(g);
+        }
+        QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
+        queryWrapperJC.eq("content", "基础工作");
+        Menus menusJc = menusService.getOne(queryWrapperJC);//基础工作父类
+        QueryWrapper<Menus> queryWrapperXG = new QueryWrapper<>();
+        queryWrapperXG.eq("content", "工作效果");//效果
+        Menus menusSX = menusService.getOne(queryWrapperXG);//工作失效父类
         List<Menus> jcList = new ArrayList<>(); //储存基础map
         List<Menus> xgList = new ArrayList<>();   //储存工作实效map
         HashMap<String, List<Menus>> map = new HashMap<>();   //总map
