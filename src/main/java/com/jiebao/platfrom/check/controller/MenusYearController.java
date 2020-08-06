@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,10 +43,10 @@ public class MenusYearController {
         return new JiebaoResponse().data(menusYearService.List(yearId)).message("查询成功");
     }
 
-    @DeleteMapping("deleteByLists")
+    @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
-    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
-        return new JiebaoResponse().message(menusYearService.removeByIds(lists) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteByLists(@PathVariable String[] listS) {
+        return new JiebaoResponse().message(menusYearService.removeByIds(Arrays.asList(listS)) ? "删除成功" : "删除失败");
     }
 }

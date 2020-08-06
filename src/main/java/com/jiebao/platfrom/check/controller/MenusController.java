@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,7 +52,7 @@ public class MenusController {
         return new JiebaoResponse().data(menusService.getById(menusId)).message("查询成功");
     }
 
-    @DeleteMapping( "deleteById/{menusId}")
+    @DeleteMapping("deleteById/{menusId}")
     @ApiOperation("删除")
     @Log("删除")
     public JiebaoResponse deleteById(String menusId) {
@@ -61,7 +62,7 @@ public class MenusController {
     @DeleteMapping("deleteListById/{menusIdS}")
     @ApiOperation("集合删除")
     @Log("集合删除")
-    public JiebaoResponse deleteListById(@RequestParam("menusIdS") List<String> menusIdS) {
-        return new JiebaoResponse().message(menusService.removeByIds(menusIdS) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
+        return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
     }
 }
