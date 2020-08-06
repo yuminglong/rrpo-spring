@@ -43,8 +43,8 @@ public class PrizeUser {
     /**
      * 推送给谁
      */
-    @ApiModelProperty(value = "推送给哪个组织机构")
-    private String sendDept;
+    @ApiModelProperty(value = "推送给谁")
+    private String sendUser;
 
     /**
      * 审核时间

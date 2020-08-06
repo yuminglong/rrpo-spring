@@ -65,7 +65,7 @@ public class Address {
     /**
      * 状态1正常
      */
-    @ApiModelProperty(value = "状态", example = "1")
+    @ApiModelProperty(value = "状态1是创建的，2为导入的", example = "1")
     private Integer status;
 
     @ApiModelProperty(value = "和组织机构关联ID")

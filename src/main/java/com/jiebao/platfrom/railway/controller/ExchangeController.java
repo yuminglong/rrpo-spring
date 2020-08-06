@@ -64,28 +64,42 @@ public class ExchangeController extends BaseController {
      * 创建一条信息互递
      */
     @PostMapping("/creat")
-    @ApiOperation(value = "创建一条信息互递", notes = "创建一条信息互递", response = JiebaoResponse.class, httpMethod = "POST")
+    @ApiOperation(value = "创建一条信息互递或创建并发送", notes = "创建一条信息互递或创建并发送", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            //把信息互递先设置为未发送状态
             if (username != null) {
                 exchange.setCreatUser(username);
             }
-            exchange.setStatus("1");
-
-            boolean save = exchangeService.save(exchange);
-            if (save) {
-                Arrays.stream(sendUserIds).forEach(sendUserId -> {
-                    //把要发送的用户保存到数据库
-                    exchangeUserService.saveByUserId(exchange.getId(), sendUserId);
-                });
+            if ("1".equals(exchange.getStatus())){
+                boolean save = exchangeService.saveOrUpdate(exchange);
+                if (save) {
+                    Arrays.stream(sendUserIds).forEach(sendUserId -> {
+                        //把要发送的用户保存到数据库
+                        User byId = userService.getById(sendUserId);
+                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId ,byId.getUsername());
+                    });
+                }
+                return new JiebaoResponse().message("创建一条信息互递成功");
             }
-            return new JiebaoResponse().message("创建一条信息互递成功");
+            else if("3".equals(exchange.getStatus())){
+                boolean save = exchangeService.saveOrUpdate(exchange);
+                if (save) {
+                    Arrays.stream(sendUserIds).forEach(sendUserId -> {
+                        //把要发送的用户保存到数据库
+                        User byId = userService.getById(sendUserId);
+                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId,byId.getUsername());
+                    });
+                }
+                exchangeMapper.releaseSave(exchange.getId());
+                exchangeUserMapper.setCreatTime(exchange.getId());
+                return new JiebaoResponse().message("创建并发布一条信息互递成功");
+            }
+            return new JiebaoResponse().message("系统错误");
         } catch (Exception e) {
             message = "创建信息互递失败";
             log.error(message, e);
-            return new JiebaoResponse().message("创建一条信息互递失败");
+            throw new JiebaoException("创建一条信息互递失败");
         }
     }
 
@@ -154,13 +168,14 @@ public class ExchangeController extends BaseController {
             //重新添加
             Arrays.stream(sendUserIds).forEach(sendUserId -> {
                 //把要发送的用户保存到数据库
-                exchangeUserService.saveByUserId(exchange.getId(), sendUserId);
+                User byId = userService.getById(sendUserId);
+                exchangeUserService.saveByUserId(exchange.getId(), sendUserId,byId.getUsername());
             });
             return new JiebaoResponse().message("修改未发送的信息互递成功");
         } catch (Exception e) {
             message = "修改信息互递失败";
             log.error(message, e);
-            return new JiebaoResponse().message("修改未发送的信息互递失败");
+            throw new JiebaoException("修改失败");
         }
     }
 
@@ -201,22 +216,51 @@ public class ExchangeController extends BaseController {
 
 
     @GetMapping(value = "/getInfoById/{exchangeId}")
-    @ApiOperation(value = "根据ID查info", notes = "根据ID查info", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "根据ID查信息info", notes = "根据ID查信息info", response = JiebaoResponse.class, httpMethod = "GET")
     public Exchange getInfoById(@PathVariable String exchangeId) {
-        System.out.println("+++++++++++++++++++"+exchangeId+"+++++++++++++++++++");
         Exchange byId = exchangeService.getById(exchangeId);
         Map<String,Object> columnMap = new HashMap<>();
         //列exchange_id为数据库中的列名，不是实体类中的属性名
         columnMap.put("exchange_id",exchangeId);
-        List list = new ArrayList();
+        List listId = new ArrayList();
+        List listName = new ArrayList();
         List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(columnMap);
         for (ExchangeUser eu:exchangeUsers
              ) {
-            list.add(eu.getSendUserId());
+            listId.add(eu.getSendUserId());
+            User user = userService.getById(eu.getSendUserId());
+            listName.add(user.getUsername());
         }
-        System.out.println(list);
-        String[] array = (String[]) list.toArray(new String[0]);
-        byId.setSendUserIds(array);
+        String[] array = (String[]) listId.toArray(new String[0]);
+        String[] arrayName = (String[]) listName.toArray(new String[0]);
+        byId.setUserId(array);
+        byId.setUserName(arrayName);
         return byId;
     }
+
+
+    @GetMapping(value = "/getUserInfo")
+    @ApiOperation(value = "根据ID查接收info（发件箱）", notes = "根据ID查接收info（发件箱）", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getUserInfo(QueryRequest request, ExchangeUser exchangeUser){
+        IPage<ExchangeUser> exchangeUserList = exchangeUserService.getExchangeUserList(request, exchangeUser);
+        return new JiebaoResponse().data(this.getDataTable(exchangeUserList));
+    }
+
+
+    @PutMapping("/receive")
+    @ApiOperation(value = "意见回复或修改", notes = "意见回复或修改", httpMethod = "PUT")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse receive(@Valid ExchangeUser exchangeUser) throws JiebaoException {
+        try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            this.exchangeUserService.updateByExchangeId(byName.getUserId(),exchangeUser.getExchangeId(),exchangeUser.getOpinion());
+            return new JiebaoResponse().message("意见回复或修改成功");
+        } catch (Exception e) {
+            message = "意见回复或修改失败";
+            log.error(message, e);
+            throw new JiebaoException("意见回复或修改失败");
+        }
+    }
+
 }

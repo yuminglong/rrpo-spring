@@ -81,6 +81,8 @@ management:
 
 jiebao:
   host: http://114.115.147.159:9527
+  #host: http://192.168.10.104
+
   # 是否异步记录用户操作日志
   openAopLog: true
   # 单次最大批量入库数量
@@ -90,7 +92,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/exchangeFile/**,/room/**,/exchange/**,/dept/**,/user/**,/prize/**,/prizeUser/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html/**,/v2/**,/jbx/cdn/image/**,/demo/**,/exchangeFile/**,/room/**
     # token有效期，单位秒
     jwtTimeOut: 3600
 

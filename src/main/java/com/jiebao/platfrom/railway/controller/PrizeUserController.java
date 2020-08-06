@@ -51,8 +51,10 @@ public class PrizeUserController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public void updatePrize(@PathVariable String prizeId, String auditOpinion, String money) throws JiebaoException {
         try {
-            // String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            String deptId = "1";
+            String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(userName);
+            String deptId = byName.getDeptId();
+            //String deptId = "1";
             this.prizeUserService.updateByPrizeId(prizeId, deptId, auditOpinion, money);
         } catch (Exception e) {
             message = "发表或修改审核意见失败";
@@ -70,10 +72,10 @@ public class PrizeUserController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public void deletePrize(@PathVariable String prizeId) throws JiebaoException {
         try {
-          /*  String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(userName);
-            String deptId = byName.getDeptId();*/
-            String deptId = "1";
+            String deptId = byName.getDeptId();
+           // String deptId = "1";
             //名义上是删除，实际上是设置为null
             this.prizeUserService.deleteOpinion(prizeId, deptId);
         } catch (Exception e) {

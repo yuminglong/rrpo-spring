@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.railway.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Exchange;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
 
@@ -15,7 +17,7 @@ public interface ExchangeUserService extends IService<ExchangeUser> {
      * @param sendUserId  用户ID
      * @return
      */
-        boolean saveByUserId(String exchangeId,String sendUserId);
+        boolean saveByUserId(String exchangeId,String sendUserId,String sendUserName);
 
     /**
      * 删除掉选定的用户
@@ -31,4 +33,19 @@ public interface ExchangeUserService extends IService<ExchangeUser> {
      * @param exchangeId
      */
     boolean removeBySendUserId(String sendUserId,String exchangeId);
+
+    /**
+     * 根据ID查接收info（发件箱）
+     * @param request
+     * @param exchangeUser
+     * @return
+     */
+    IPage<ExchangeUser> getExchangeUserList(QueryRequest request, ExchangeUser exchangeUser);
+
+
+    /**
+     * 回复意见
+     * @return
+     */
+    boolean updateByExchangeId(String SendUserId ,String exchangeId,String opinion);
 }
