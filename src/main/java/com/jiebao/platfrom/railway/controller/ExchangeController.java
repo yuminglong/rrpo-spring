@@ -255,12 +255,25 @@ public class ExchangeController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             this.exchangeUserService.updateByExchangeId(byName.getUserId(),exchangeUser.getExchangeId(),exchangeUser.getOpinion());
-            return new JiebaoResponse().message("意见回复或修改成功");
+            return new JiebaoResponse().message("意见回复或修改成功").put("status", "200");
         } catch (Exception e) {
             message = "意见回复或修改失败";
             log.error(message, e);
-            throw new JiebaoException("意见回复或修改失败");
+            throw new JiebaoException(message);
         }
     }
 
+
+    @GetMapping("/getReceive")
+    @ApiOperation(value = "查看回复", notes = "查看回复", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse getReceive(String exchangeId){
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        ExchangeUser byNameAndId = exchangeUserMapper.findByNameAndId(exchangeId, byName.getUserId());
+        if (byNameAndId.getIsRead() == 0){
+            exchangeUserMapper.updateIsRead(exchangeId, byName.getUserId());
+        }
+        return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
+    }
 }

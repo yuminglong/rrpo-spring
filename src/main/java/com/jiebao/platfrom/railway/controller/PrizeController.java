@@ -21,8 +21,12 @@ import com.jiebao.platfrom.railway.service.PrizeService;
 import com.jiebao.platfrom.railway.service.PrizeUserService;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Role;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.RoleService;
+import com.jiebao.platfrom.system.service.UserRoleService;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -82,6 +86,11 @@ public class PrizeController extends BaseController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private UserRoleService userRoleService;
+    
+
+
 
     /**
      * 创建一条一事一奖
@@ -98,12 +107,10 @@ public class PrizeController extends BaseController {
             if (username != null) {
                 prize.setCreatUser(username);
             }
-            //初始化为1，未发送状态
             boolean save = prizeService.save(prize);
             User byName = userService.findByName(username);
-            //获取用户角色1、省 2、护路办 3、市 4、区 5、街道
-
-       /*     if (role == 4) {
+            UserRole userRole = userRoleService.getById(byName.getUserId());
+          if (userRole.getRoleId() == "1") {
                 //获取该区县组织机构，则getParentId就是获取它上级组织机构ID
                 Dept byId = deptService.getById(byName.getDeptId());
                 Map<String, Object> columnMap = new HashMap<>();
@@ -116,7 +123,7 @@ public class PrizeController extends BaseController {
                         prizeUserService.saveByUser(prize.getId(), user.getUserId());
                     }
                 }
-            } else if (role == 3) {
+            } else if (userRole.getRoleId() == "2") {
                 Map<String, Object> columnMap = new HashMap<>();
                 columnMap.put("dept_id", sendDept);
                 List<User> users = userMapper.selectByMap(columnMap);
@@ -130,7 +137,7 @@ public class PrizeController extends BaseController {
             }
             else{
                 return new JiebaoResponse().message("无权限");
-            }*/
+            }
             return new JiebaoResponse().message("创建一条一事一奖成功");
 
         } catch (Exception e) {
@@ -231,9 +238,9 @@ public class PrizeController extends BaseController {
                 prize.setCreatUser(username);
             }
             User byName = userService.findByName(username);
-            //获取用户角色1、省 2、护路办 3、市 4、区 5、街道
-          /*  Integer role = byName.getRole();
-            if (role == 3){
+            UserRole userRole = userRoleService.getById(byName.getUserId());
+
+            if (userRole.getRoleId() == "1"){
                 Map<String, Object> columnMap = new HashMap<>();
                 columnMap.put("dept_id", sendDept);
                 List<User> users = userMapper.selectByMap(columnMap);
@@ -245,7 +252,7 @@ public class PrizeController extends BaseController {
                 //再重新获取，把要发送的用户保存到数据库
                 prizeUserService.saveByUser(prize.getId(), sendDept);
             }
-*/
+
 
             return new JiebaoResponse().message("修改未发送的一事一奖成功");
         } catch (Exception e) {

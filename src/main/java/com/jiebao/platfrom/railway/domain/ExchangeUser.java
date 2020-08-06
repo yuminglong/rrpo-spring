@@ -58,4 +58,7 @@ public class ExchangeUser {
     @ApiModelProperty(value = "发送给某用户姓名")
     private String sendUserName;
 
+    @ApiModelProperty(value = "回复时间")
+    private Date replyTime;
+
 }
