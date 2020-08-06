@@ -43,7 +43,7 @@ public class MenusYearController {
         return new JiebaoResponse().data(menusYearService.List(yearId)).message("查询成功");
     }
 
-    @DeleteMapping("deleteByLists/{lists}")
+    @DeleteMapping("deleteByLists/{listS}")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
     public JiebaoResponse deleteByLists(@PathVariable String[] listS) {
