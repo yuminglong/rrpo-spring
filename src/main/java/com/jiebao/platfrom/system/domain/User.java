@@ -104,6 +104,7 @@ public class User implements Serializable {
 
     private transient String id;
 
+
     /**
      * shiro-redis v3.1.0 必须要有 getAuthCacheKey()或者 getId()方法
      * # Principal id field name. The field which you can get unique id to identify this principal.
@@ -116,4 +117,6 @@ public class User implements Serializable {
     public String getAuthCacheKey() {
         return userId;
     }
+
+
 }

@@ -49,9 +49,6 @@ public class Exchange {
     @ApiModelProperty(value = "状态：1未发送 2撤销的 3已发布")
     private String status;
 
-    @ExcelField(value = "绑定用户ID")
-    @ApiModelProperty(value = "绑定用户ID")
-    private String userId;
 
 
     @ExcelField(value = "绑定类型ID")
@@ -63,5 +60,15 @@ public class Exchange {
     private Date releaseTime;
 
     @TableField(exist = false)
-    private String [] sendUserIds;
+    private String [] userId;
+
+    @TableField(exist = false)
+    private String [] userName;
+
+    @ApiModelProperty(value = "要求回复时间")
+    private Date claimTime;
+
+    @ApiModelProperty(value = "是否添加回复时间" )
+    private String isTime;
+
 }

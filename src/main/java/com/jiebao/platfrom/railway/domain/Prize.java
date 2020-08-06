@@ -73,8 +73,8 @@ public class Prize {
     /**
      * 发布地点
      */
-    @ApiModelProperty(value = "发布地点")
-    private String releasePlace;
+    @ApiModelProperty(value = "事件发生地点")
+    private String place;
 
     /**
      * 由谁发布：本人、他人
@@ -93,4 +93,12 @@ public class Prize {
      */
     @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除")
     private String status;
+
+    @ApiModelProperty(value = "限制天数id")
+    private String typeId;
+
+    @ApiModelProperty(value = "事件发生时间")
+    private Date happenTime;
+
+
 }

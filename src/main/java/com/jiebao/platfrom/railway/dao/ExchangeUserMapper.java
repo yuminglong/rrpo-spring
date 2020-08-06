@@ -19,8 +19,8 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
     /**
      * parent_id =1  实际上创建信息时，信息就已经发送到接收用户的收件箱，但是exchange的status为未发送状态，发布时改下status即可批量发送
      */
-    @Insert("INSERT INTO `rail_exchange_user` (exchange_id,send_user_id,is_read,type) VALUES (#{exchangeId},#{sendUserId},0,1)")
-    boolean saveByUserId(String exchangeId, String sendUserId);
+    @Insert("INSERT INTO `rail_exchange_user` (exchange_id,send_user_id,send_user_name,is_read,type) VALUES (#{exchangeId},#{sendUserId},#{sendUserName},0,1)")
+    boolean saveByUserId(String exchangeId, String sendUserId, String sendUserName);
 
     @Delete("DELETE FROM rail_exchange_user WHERE exchange_id =#{exchangeId}")
     boolean deleteByExchangeId(String exchangeId);
@@ -30,6 +30,7 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
 
     /**
      * 根据接收人查询他所接收到的信息
+     *
      * @param sendUserId
      * @return
      */
@@ -39,13 +40,18 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
 
     /**
      * 根据信息互递ID和发送人删除收件箱记录
+     *
      * @param sendUserId
      * @param exchangeId
      */
     @Delete("DELETE FROM rail_exchange_user WHERE exchange_id = #{exchangeId} and  send_user_id = #{sendUserId}")
-    boolean removeBySendUserId(String sendUserId,String exchangeId);
+    boolean removeBySendUserId(String sendUserId, String exchangeId);
 
 
     @Insert("UPDATE rail_exchange_user set creat_time = now()  WHERE exchange_id =#{exchangeId}")
     boolean setCreatTime(String exchangeId);
+
+
+    @Update("UPDATE rail_exchange_user set opinion = #{opinion}  WHERE exchange_id =#{exchangeId} and send_user_id =#{SendUserId}")
+    boolean updateByExchangeId(String SendUserId, String exchangeId ,String opinion);
 }

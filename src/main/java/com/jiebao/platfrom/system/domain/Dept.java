@@ -44,4 +44,6 @@ public class Dept implements Serializable {
 
     private Integer status;
 
+    private Integer rank;
+
 }

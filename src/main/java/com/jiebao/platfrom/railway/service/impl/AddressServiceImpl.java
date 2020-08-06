@@ -173,7 +173,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             for (int line = 1; line <= sheet.getLastRowNum(); line++) {
                 Address address = new Address();
                 Row row = sheet.getRow(line);
-                if (row == null) {
+                if (row == null ) {
                     continue;
                 }
                 row.getCell(0).setCellType(CellType.STRING);
@@ -193,15 +193,16 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 String telPhone = row.getCell(2).getStringCellValue();
                 String weiXin = row.getCell(3).getStringCellValue();
                 String email = row.getCell(4).getStringCellValue();
-                address.setUserName(userName);
-                address.setPhone(phone);
-                address.setTelPhone(telPhone);
-                address.setWeiXin(weiXin);
-                address.setEmail(email);
-                if(StringUtils.isNotBlank(deptId)){
+                if(StringUtils.isNotBlank(deptId) && !"".equals(userName)){
+                    address.setUserName(userName);
+                    address.setPhone(phone);
+                    address.setTelPhone(telPhone);
+                    address.setWeiXin(weiXin);
+                    address.setEmail(email);
                     address.setDeptId(deptId);
+                    address.setStatus(2);
+                    addressList.add(address);
                 }
-                addressList.add(address);
             }
             for (Address address : addressList) {
                 save = addressService.save(address);

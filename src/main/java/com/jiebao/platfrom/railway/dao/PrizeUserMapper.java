@@ -19,11 +19,11 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * 发送人保存到数据库
      *
      * @param prizeId    一事一奖内容ID
-     * @param sendDept 接收人
+     * @param sendUser 接收人
      * @return
      */
-    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_dept) VALUES (#{prizeId},#{sendDept})")
-    boolean saveByDept(String prizeId, String sendDept);
+    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_user) VALUES (#{prizeId},#{sendUser})")
+    boolean saveByUser(String prizeId, String sendUser);
 
     /**
      * 根据prizeId改状为已删除态

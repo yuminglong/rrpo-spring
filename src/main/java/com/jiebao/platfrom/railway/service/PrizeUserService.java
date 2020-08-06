@@ -17,10 +17,10 @@ public interface PrizeUserService extends IService<PrizeUser> {
      * 发送人保存到数据库
      *
      * @param prizeId    一事一奖内容ID
-     * @param sendDept 接收人
+     * @param sendUser 接收人
      * @return
      */
-    boolean saveByDept(String prizeId, String sendDept);
+    boolean saveByUser(String prizeId, String sendUser);
 
     /**
      * 根据prizeId删除相应的接收人
