@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,11 +37,11 @@ public class CaseController {
         return new JiebaoResponse().message(caseService.saveOrUpdate(ca) ? "操作成功" : "操作失败");
     }
 
-    @DeleteMapping("deleteByLists")
+    @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除事故信息")
     @Log("集合删除事故信息")
-    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
-        return new JiebaoResponse().message(caseService.removeByIds(lists) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteByLists(@PathVariable String[] lists) {
+        return new JiebaoResponse().message(caseService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
     }
 
     @GetMapping("listPage")

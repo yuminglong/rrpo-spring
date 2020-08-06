@@ -40,7 +40,7 @@ public class LineController {
         return new JiebaoResponse().data(lineService.list()).message("查询成功");
     }
 
-    @DeleteMapping("deleteByLists")
+    @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
     public JiebaoResponse deleteByLists(List<String> lists) {
         return new JiebaoResponse().message(lineService.removeByIds(lists) ? "删除成功" : "删除失败");

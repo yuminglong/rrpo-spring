@@ -10,11 +10,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,8 +41,8 @@ public class RecordSeviceController {
     @Delete(value = "delete/{idList}")
     @ApiOperation("批量 服务项绑定删除")
     @Log(value = "服务项绑定删除")
-    private JiebaoResponse deleteById( List<String> idList) {
-        return new JiebaoResponse().message(recordSeviceService.deleteByListId( idList) ? "操作成功" : "操作失败");
+    private JiebaoResponse deleteById(@PathVariable String[] idList) {
+        return new JiebaoResponse().message(recordSeviceService.deleteByListId(Arrays.asList(idList) ) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")

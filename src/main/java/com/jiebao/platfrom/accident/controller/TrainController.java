@@ -39,7 +39,7 @@ public class TrainController {
         return new JiebaoResponse().data(trainService.list()).message("查询成功");
     }
 
-    @DeleteMapping("deleteByLists")
+    @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
     public JiebaoResponse deleteByLists(List<String> lists) {
         return new JiebaoResponse().message(trainService.removeByIds(lists) ? "删除成功" : "删除失败");

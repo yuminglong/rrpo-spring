@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,10 +47,10 @@ public class YearController {
         return new JiebaoResponse().data(yearService.pageList(queryRequest, yearDate)).message("查询成功");
     }
 
-    @DeleteMapping("deleteByLists")
+    @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
-    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
-        return new JiebaoResponse().message(yearService.removeByIds(lists) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteByLists(@PathVariable String[] lists) {
+        return new JiebaoResponse().message(yearService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
     }
 
 }
