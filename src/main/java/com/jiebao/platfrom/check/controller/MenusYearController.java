@@ -31,7 +31,7 @@ public class MenusYearController {
     @PostMapping("add")
     @ApiOperation("添加  考核年份规则生成")
     @Log("添加  考核年份规则生成")
-    public JiebaoResponse add(String yearID, List<String> menusId) {
+    public JiebaoResponse add(String yearID,@RequestParam("menusId") List<String> menusId) {
         return menusYearService.add(yearID, menusId);
     }
 
@@ -45,7 +45,7 @@ public class MenusYearController {
     @DeleteMapping("deleteByLists")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
-    public JiebaoResponse deleteByLists(List<String> lists) {
+    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
         return new JiebaoResponse().message(menusYearService.removeByIds(lists) ? "删除成功" : "删除失败");
     }
 }

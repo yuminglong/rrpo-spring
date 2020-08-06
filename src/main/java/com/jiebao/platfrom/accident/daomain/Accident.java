@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.accident.daomain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class Accident implements Serializable {
     /**
      * 事故记录id
      */
+    @TableId(value = "accident_id",type = IdType.UUID)
     private String accidentId;
 
     /**

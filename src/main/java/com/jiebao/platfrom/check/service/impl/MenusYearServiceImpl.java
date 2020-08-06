@@ -36,14 +36,12 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     public JiebaoResponse add(String yearID, List<String> menusIds) {
         QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIds);
-        queryWrapper.eq("year_id", menusIds);
+        queryWrapper.eq("year_id", yearID);
         List<MenusYear> list = list(queryWrapper);
-        if (list.size() > 0) {  //有重复的   执行去除重复项
-            for (MenusYear menusYear : list
-            ) {
-                if (menusIds.contains(menusYear.getMenusId())) {//如果存在
-                    menusIds.remove(menusYear.getMenusId());  //删除
-                }
+        for (MenusYear menusYear : list
+        ) {
+            if (menusIds.contains(menusYear.getMenusId())) {//如果存在
+                menusIds.remove(menusYear.getMenusId());  //删除
             }
         }
         ArrayList<MenusYear> menusYearArrayList = new ArrayList<>();
@@ -54,10 +52,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             menusYear.setYearId(yearID);
             menusYearArrayList.add(menusYear);
         }
-
         return new JiebaoResponse().message(saveBatch(menusYearArrayList) ? "绑定成功" : "绑定失败");
     }
-
     @Override
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
         List<String> menusIdList = this.baseMapper.getMenusIdList(yearId);

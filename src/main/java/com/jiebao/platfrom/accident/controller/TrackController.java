@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/accident/track")
-@Api(tags = "公务段")
+@Api(tags = "accident-公务段")
 public class TrackController {
     @Autowired
     ITrackService trackService;

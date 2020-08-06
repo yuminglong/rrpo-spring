@@ -5,6 +5,7 @@ import com.jiebao.platfrom.accident.daomain.Track;
 import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.service.IYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class YearController {
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改  考核年份规则生成")
     public JiebaoResponse saveOrUpdate(Year year) {
-        return new JiebaoResponse().message(yearService.saveOrUpdate(year) ? "操作成功" : "操作失败");
+        return yearService.addOrUpdate(year);
     }
 
     @GetMapping("list")
@@ -39,9 +40,15 @@ public class YearController {
         return new JiebaoResponse().data(yearService.list()).message("查询成功");
     }
 
+    @GetMapping("pageList")
+    @ApiOperation("集合")
+    public JiebaoResponse pageList(QueryRequest queryRequest, String yearDate) {
+        return new JiebaoResponse().data(yearService.pageList(queryRequest, yearDate)).message("查询成功");
+    }
+
     @DeleteMapping("deleteByLists")
     @ApiOperation("集合删除")
-    public JiebaoResponse deleteByLists(List<String> lists) {
+    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
         return new JiebaoResponse().message(yearService.removeByIds(lists) ? "删除成功" : "删除失败");
     }
 

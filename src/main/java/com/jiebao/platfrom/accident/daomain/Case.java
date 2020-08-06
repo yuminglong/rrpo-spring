@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.accident.daomain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class Case implements Serializable {
     /**
      * 涉铁主键
      */
+    @TableId(value = "case_id", type = IdType.UUID)
     private String caseId;
 
     /**

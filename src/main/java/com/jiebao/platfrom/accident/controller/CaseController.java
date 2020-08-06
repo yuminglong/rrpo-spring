@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/accident/case")
-@Api(tags = "设铁案")
+@Api(tags = "accident-设铁案")
 public class CaseController {
    @Autowired
     ICaseService caseService;
@@ -39,7 +39,7 @@ public class CaseController {
     @DeleteMapping("deleteByLists")
     @ApiOperation("集合删除事故信息")
     @Log("集合删除事故信息")
-    public JiebaoResponse deleteByLists(List<String> lists) {
+    public JiebaoResponse deleteByLists(@RequestParam("lists") List<String> lists) {
         return new JiebaoResponse().message(caseService.removeByIds(lists) ? "删除成功" : "删除失败");
     }
 

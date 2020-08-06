@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/accident/line")
-@Api(tags = "线路段")
+@Api(tags = "accident-线路段")
 public class LineController {
 
    @Autowired

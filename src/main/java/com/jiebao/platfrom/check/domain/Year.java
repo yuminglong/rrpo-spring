@@ -1,5 +1,7 @@
 package com.jiebao.platfrom.check.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
@@ -25,6 +27,7 @@ public class Year implements Serializable {
     /**
      * 年度考核id
      */
+    @TableId(value = "year_id",type = IdType.UUID)
     private String yearId;
 
     /**

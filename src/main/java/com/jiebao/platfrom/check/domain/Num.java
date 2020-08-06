@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.check.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class Num implements Serializable {
     /**
      * 分数总结id
      */
+    @TableId(value = "num_id",type = IdType.UUID)
     private String numId;
 
     /**
