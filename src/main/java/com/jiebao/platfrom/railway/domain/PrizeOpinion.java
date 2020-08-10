@@ -1,9 +1,5 @@
 package com.jiebao.platfrom.railway.domain;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -12,9 +8,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * <p>
- * 一事一奖推送人表
+ * 一事一奖意见表
  * </p>
  *
  * @author yf
@@ -22,11 +20,11 @@ import lombok.experimental.Accessors;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("rail_prize_user")
+@TableName("rail_prize_opinion")
 @Accessors(chain = true)
-public class PrizeUser {
+public class PrizeOpinion {
 
-    @TableId(value = "id")
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
 
     /**
@@ -34,17 +32,25 @@ public class PrizeUser {
      */
     private String prizeId;
 
-    /**
-     * 推送时间
-     */
-    @ApiModelProperty(value = "推送时间")
-    private Date creatTime;
 
     /**
-     * 推送给谁
+     * 审核时间
      */
-    @ApiModelProperty(value = "推送给谁")
-    private String sendUser;
+    @ApiModelProperty(value = "审核时间")
+    private Date auditTime;
 
+    /**
+     * 审核意见
+     */
+    @ApiModelProperty(value = "审核意见")
+    private String auditOpinion;
 
+    /**
+     * 金额
+     */
+    @ApiModelProperty(value = "金额")
+    private String money;
+
+    @ApiModelProperty(value = "组织机构等级")
+    private Integer rank;
 }
