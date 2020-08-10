@@ -25,6 +25,12 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     @Override
     public JiebaoResponse addOrUpdate(Year year) {
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
+        if (year.getYearId() != null) {
+            Year year1 = getById(year.getYearId());  //还未修改的 数据
+            if (year1.getName() == year.getName()) {   //本次修改并未修改名字
+                return new JiebaoResponse().message(super.saveOrUpdate(year) ? "操作成功" : "操作失败");
+            }
+        }
         queryWrapper.eq("year_date", year.getYearDate());
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("年份重复");

@@ -54,9 +54,24 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         }
         return new JiebaoResponse().message(saveBatch(menusYearArrayList) ? "绑定成功" : "绑定失败");
     }
+
     @Override
-    public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
-        List<String> menusIdList = this.baseMapper.getMenusIdList(yearId);
+    public JiebaoResponse List(String yearId, String yearDate) {  //通过 年份考核 查询 对应的年内考核项
+        List<String> menusIdList = null;
+        if (yearId != null) {
+            menusIdList = this.baseMapper.getMenusIdList(yearId);
+        }
+        if (yearDate != null) {
+            QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_date", yearDate);
+            MenusYear one = getOne(queryWrapper);
+            if (one != null) {
+                menusIdList = this.baseMapper.getMenusIdList(one.getYearId());
+            }
+        }
+        if (menusIdList.size() == 0) {
+            new JiebaoResponse().message("本规则还未绑定任何扣分项");
+        }
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIdList);
         List<Menus> list = menusService.list(queryWrapper);

@@ -39,7 +39,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     INumService numService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
@@ -51,7 +51,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setNum(number);
         } else {
             grade = new Grade();
-            grade.setNum(number);
+            grade.setNum(number == null ? 0 : number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearDate(yearDate);
@@ -60,7 +60,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse commit(String yearDate, String deptId) {
+    public JiebaoResponse commit(String yearDate, String deptId) {   //  生成报表
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(("dept_id"), deptId);
         queryWrapper.eq("year_date", yearDate);
