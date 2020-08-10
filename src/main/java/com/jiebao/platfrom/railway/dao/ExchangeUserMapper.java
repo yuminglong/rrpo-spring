@@ -52,6 +52,15 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
     boolean setCreatTime(String exchangeId);
 
 
-    @Update("UPDATE rail_exchange_user set opinion = #{opinion}  WHERE exchange_id =#{exchangeId} and send_user_id =#{SendUserId}")
-    boolean updateByExchangeId(String SendUserId, String exchangeId ,String opinion);
+    @Update("UPDATE rail_exchange_user set opinion = #{opinion}, is_read = 2,reply_time =now()  WHERE exchange_id =#{exchangeId} and send_user_id =#{SendUserId}")
+    boolean updateByExchangeId(String SendUserId, String exchangeId, String opinion);
+
+    @Select("SELECT * FROM `rail_exchange_user` WHERE exchange_id =#{exchangeId} and send_user_id = #{sendUserId}")
+    ExchangeUser findByNameAndId(String exchangeId,String sendUserId);
+
+    @Update("UPDATE rail_exchange_user set is_read = 1,receive_time =now()  WHERE exchange_id =#{exchangeId} and send_user_id =#{sendUserId}")
+    boolean updateIsRead(String exchangeId,String sendUserId);
+
+    @Select("SELECT * FROM `rail_exchange_user` WHERE send_user_id = #{sendUserId} and exchange_id = #{exchangeId}")
+    ExchangeUser getIsRead(String sendUserId ,String exchangeId);
 }

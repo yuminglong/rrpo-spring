@@ -56,7 +56,7 @@ public class ExchangeUserServiceImpl extends ServiceImpl<ExchangeUserMapper, Exc
         QueryWrapper<ExchangeUser> queryWrapper = new QueryWrapper();
         queryWrapper.lambda().eq(ExchangeUser::getExchangeId, exchangeUser.getExchangeId());
         if (StringUtils.isNotBlank(exchangeUser.getSendUserName())) {
-            queryWrapper.lambda().eq(ExchangeUser::getSendUserName, exchangeUser.getSendUserName());
+            queryWrapper.lambda().like(ExchangeUser::getSendUserName, exchangeUser.getSendUserName());
         }
         if (exchangeUser.getIsRead() != null) {
             queryWrapper.lambda().eq(ExchangeUser::getIsRead, exchangeUser.getIsRead());
