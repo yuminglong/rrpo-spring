@@ -193,6 +193,15 @@ public class ExchangeController extends BaseController {
     @ApiOperation(value = "分页查询（查询收件箱）", notes = "查询分页数据（查询收件箱）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         IPage<Exchange> exchangeList = exchangeService.getExchangeInboxList(request, exchange, startTime, endTime);
+        List<Exchange> records = exchangeList.getRecords();
+        for (Exchange e:records
+             ) {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            ExchangeUser exchangeUser = exchangeUserMapper.getIsRead(byName.getUserId(),e.getId());
+            System.out.println(exchangeUser.getId());
+            e.setIsRead(exchangeUser.getIsRead());
+        }
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }
 

@@ -71,4 +71,7 @@ public class Exchange {
     @ApiModelProperty(value = "是否添加回复时间" )
     private String isTime;
 
+    @TableField(exist = false)
+    private Integer isRead;
+
 }
