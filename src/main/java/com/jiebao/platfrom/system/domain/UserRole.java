@@ -13,6 +13,9 @@ public class UserRole implements Serializable{
 
 	private String userId;
 
+	/**
+	 * 用户角色1、省 2、护路办 3、市 4、区 5、街道
+	 */
 	private String roleId;
 
 }

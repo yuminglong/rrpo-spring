@@ -96,12 +96,10 @@ public class PrizeController extends BaseController {
      * 创建一条一事一奖
      */
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "sendDepts", value = "要发送的组织机构（多个）")
-    })
+
     @PostMapping("/save")
     @ApiOperation(value = "创建一条一事一奖", notes = "创建一条一事一奖", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatPrize(@Valid Prize prize, String sendDept) throws JiebaoException {
+    public JiebaoResponse creatPrize(@Valid Prize prize) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
@@ -110,11 +108,12 @@ public class PrizeController extends BaseController {
             boolean save = prizeService.save(prize);
             User byName = userService.findByName(username);
             UserRole userRole = userRoleService.getById(byName.getUserId());
+            //模拟1是区级
           if (userRole.getRoleId() == "1") {
                 //获取该区县组织机构，则getParentId就是获取它上级组织机构ID
                 Dept byId = deptService.getById(byName.getDeptId());
                 Map<String, Object> columnMap = new HashMap<>();
-                columnMap.put("dept_id", byId.getParentId());
+                columnMap.put("parent_id", byId.getParentId());
                 List<User> users = userMapper.selectByMap(columnMap);
                 if (save) {
                     for (User user : users
@@ -123,9 +122,11 @@ public class PrizeController extends BaseController {
                         prizeUserService.saveByUser(prize.getId(), user.getUserId());
                     }
                 }
+                //模拟2是市级
             } else if (userRole.getRoleId() == "2") {
+              Dept byId = deptService.getById(byName.getDeptId());
                 Map<String, Object> columnMap = new HashMap<>();
-                columnMap.put("dept_id", sendDept);
+                columnMap.put("parent_id", byId.getParentId());
                 List<User> users = userMapper.selectByMap(columnMap);
                 if (save) {
                     for (User user : users
@@ -134,7 +135,17 @@ public class PrizeController extends BaseController {
                         prizeUserService.saveByUser(prize.getId(), user.getUserId());
                     }
                 }
-            }
+              Map<String, Object> map = new HashMap<>();
+              map.put("dept_id", byId.getDeptId());
+              List<User> OwnUsers = userMapper.selectByMap(map);
+              if (save) {
+                  for (User u : OwnUsers
+                  ) {
+                      //把要发送的用户ID保存到数据库
+                      prizeUserService.saveByUser(prize.getId(), u.getUserId());
+                  }
+              }
+          }
             else{
                 return new JiebaoResponse().message("无权限");
             }
