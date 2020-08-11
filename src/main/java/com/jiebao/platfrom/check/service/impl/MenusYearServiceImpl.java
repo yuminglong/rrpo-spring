@@ -39,15 +39,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     @Override
     public JiebaoResponse add(String yearID, List<String> menusIds) {
         QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("menus_id", menusIds);
         queryWrapper.eq("year_id", yearID);
-        List<MenusYear> list = list(queryWrapper);
-        for (MenusYear menusYear : list
-        ) {
-            if (menusIds.contains(menusYear.getMenusId())) {//如果存在
-                menusIds.remove(menusYear.getMenusId());  //删除
-            }
-        }
+        remove(queryWrapper);
         ArrayList<MenusYear> menusYearArrayList = new ArrayList<>();
         for (String menusId : menusIds
         ) {
@@ -74,7 +67,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             }
         }
         if (menusIdList.size() == 0) {
-          return   new JiebaoResponse().message("本规则还未绑定任何扣分项");
+            return new JiebaoResponse().message("本规则还未绑定任何扣分项");
         }
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIdList);
