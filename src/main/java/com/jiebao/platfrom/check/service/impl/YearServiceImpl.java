@@ -46,4 +46,11 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
 
         return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
     }
+
+    @Override
+    public JiebaoResponse yearStringList() {
+        return new JiebaoResponse().data(this.baseMapper.yearStringList()).message("查询成功");
+    }
+
+
 }
