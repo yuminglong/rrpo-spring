@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -46,14 +47,12 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
     UserService userService;
 
     @Override
-
-
     public IPage<Exchange> getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
         queryWrapper.lambda().ne(Exchange::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        if (StringUtils.isNotBlank(username)){
-            queryWrapper.lambda().eq(Exchange::getCreatUser,username);
+        if (StringUtils.isNotBlank(username)) {
+            queryWrapper.lambda().eq(Exchange::getCreatUser, username);
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {
             queryWrapper.lambda().like(Exchange::getTitle, exchange.getTitle());
@@ -65,7 +64,32 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
             queryWrapper.lambda().eq(Exchange::getStatus, exchange.getStatus());
         }
         Page<Exchange> page = new Page<>(request.getPageNum(), request.getPageSize());
-       SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public IPage<Exchange> getExchangeListForCheck(QueryRequest request, Exchange exchange,String[] ids, String startTime, String endTime) {
+        QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
+        Arrays.stream(ids).forEach(id -> {
+            queryWrapper.lambda().and(wrapper -> wrapper.or().eq(Exchange::getId,id));
+        });
+        queryWrapper.lambda().ne(Exchange::getStatus, 4);
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        if (StringUtils.isNotBlank(username)) {
+            queryWrapper.lambda().eq(Exchange::getCreatUser, username);
+        }
+        if (StringUtils.isNotBlank(exchange.getTitle())) {
+            queryWrapper.lambda().like(Exchange::getTitle, exchange.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Exchange::getCreatTime, startTime).le(Exchange::getCreatTime, endTime);
+        }
+        if (StringUtils.isNotBlank(exchange.getStatus())) {
+            queryWrapper.lambda().eq(Exchange::getStatus, exchange.getStatus());
+        }
+        Page<Exchange> page = new Page<>(request.getPageNum(), request.getPageSize());
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 
@@ -76,17 +100,17 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
         queryWrapper.lambda().and(wrapper -> wrapper.eq(Exchange::getStatus, 3).or().eq(Exchange::getStatus, 4));
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        if (StringUtils.isNotBlank(username)){
+        if (StringUtils.isNotBlank(username)) {
             User byName = userService.findByName(username);
             List<ExchangeUser> bySendUserId = exchangeUserMapper.getBySendUserId(byName.getUserId());
             ArrayList<String> exchangeUserIds = new ArrayList<>();
-            for (ExchangeUser exchangeUser:bySendUserId
+            for (ExchangeUser exchangeUser : bySendUserId
             ) {
                 String exchangeId = exchangeUser.getExchangeId();
                 exchangeUserIds.add(exchangeId);
             }
-            if (exchangeUserIds.size() > 0){
-                queryWrapper.lambda().in(Exchange::getId,exchangeUserIds);
+            if (exchangeUserIds.size() > 0) {
+                queryWrapper.lambda().in(Exchange::getId, exchangeUserIds);
             }
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {

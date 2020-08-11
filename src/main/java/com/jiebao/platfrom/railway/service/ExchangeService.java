@@ -16,4 +16,6 @@ public interface ExchangeService extends IService<Exchange> {
     IPage<Exchange> getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime);
 
     IPage<Exchange> getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime);
+
+    IPage<Exchange> getExchangeListForCheck(QueryRequest request, Exchange exchange,String[] ids, String startTime, String endTime);
 }
