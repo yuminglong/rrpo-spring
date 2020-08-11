@@ -11,6 +11,7 @@ import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.User;
+import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,8 +40,10 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     INumService numService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
-
+    public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+        if (number == null) {
+            return new JiebaoResponse().message("未填分数");
+        }
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
@@ -49,7 +52,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 //        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
-            grade.setNum(number==null?0:number);
+            grade.setNum(number);
         } else {
             grade = new Grade();
             grade.setNum(number == null ? 0 : number);
@@ -144,6 +147,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         map.put("JCgz", jcList);
         map.put("GZxg", xgList);
         return new JiebaoResponse().data(map).message("操作成功");
+    }
+
+    @Override
+    public JiebaoResponse putZz(String gradeId, Integer type, String id) {
+        return null;
     }
 
 }
