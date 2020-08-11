@@ -27,8 +27,8 @@ public class GradeZzController {
 
     @GetMapping("list")
     @ApiOperation("佐证查询  参数每条扣分记录id")
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId) {
-        return gradeZzService.list(gradeId, yearDate, deptId, menusId);
+    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusIds) {
+        return gradeZzService.list(gradeId, yearDate, deptId, menusIds);
     }
 
     @DeleteMapping("delete/{list}")
