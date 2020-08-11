@@ -15,9 +15,9 @@ import java.util.Date;
  * @since 2020-07-28
  */
 public interface IGradeService extends IService<Grade> {
-    JiebaoResponse addGrade(String menusId, Double number,String yearDate,String deptId);    //扣分绑定
+    JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId);    //扣分绑定
 
-    JiebaoResponse commit(String yearDate,String deptId);//最后提交  分数统计生成表
+    JiebaoResponse commit(String yearDate, String deptId);//最后提交  分数统计生成表
 
     JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId);
 

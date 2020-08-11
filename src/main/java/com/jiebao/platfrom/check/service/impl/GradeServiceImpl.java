@@ -40,6 +40,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
@@ -48,7 +49,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 //        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
-            grade.setNum(number);
+            grade.setNum(number==null?0:number);
         } else {
             grade = new Grade();
             grade.setNum(number == null ? 0 : number);
@@ -56,7 +57,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setDeptId(deptId);
             grade.setYearDate(yearDate);
         }
-        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败");
+        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
     @Override

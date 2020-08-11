@@ -52,5 +52,10 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         return new JiebaoResponse().data(this.baseMapper.yearStringList()).message("查询成功");
     }
 
+    @Override
+    public JiebaoResponse putZz() {
+        return null;
+    }
+
 
 }
