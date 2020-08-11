@@ -27,7 +27,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
         if (year.getYearId() != null) {
             Year year1 = getById(year.getYearId());  //还未修改的 数据
-            if (year1.getYearDate() == year.getYearDate()) {   //本次修改并未修改名字
+            if (year1.getYearDate().equals(year.getYearDate())) {   //本次修改并未修改名字
                 return new JiebaoResponse().message(super.saveOrUpdate(year) ? "操作成功" : "操作失败");
             }
         }
