@@ -3,10 +3,12 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.domain.Grade;
 import com.jiebao.platfrom.check.dao.GradeMapper;
+import com.jiebao.platfrom.check.domain.GradeZz;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.Num;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -38,6 +40,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Autowired
     INumService numService;
+    @Autowired
+    IGradeZzService gradeZzService;
 
     @Override
     public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
@@ -151,7 +155,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse putZz(String gradeId, Integer type, String id) {
-        return null;
+        GradeZz gradeZz = new GradeZz();
+        gradeZz.setGradeId(gradeId);
+        gradeZz.setType(type);
+        gradeZz.setZzId(id);
+        return new JiebaoResponse().message(gradeZzService.save(gradeZz) ? "添加成功" : "添加失败");
     }
 
 }
