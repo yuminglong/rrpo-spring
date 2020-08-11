@@ -168,45 +168,61 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade = new Grade();
         }
         String gradeId = grade.getGradeId();
-        for (String fileId : ids  //
-        ) {
-            File file = fileService.getById(fileId);
-            file.setRefId(gradeId);
-            file.setRefType("4");
-            list.add(file);
+        if (ids != null) {
+            for (String fileId : ids  //
+            ) {
+                File file = fileService.getById(fileId);
+                file.setRefId(gradeId);
+                file.setRefType("4");
+                list.add(file);
+            }
         }
-        for (String xXhdId : xXhd
-        ) {
-            GradeZz gradeZz = new GradeZz();
-            gradeZz.setType(1);
-            gradeZz.setGradeId(gradeId);
-            gradeZz.setZzId(xXhdId);
-            gradeZzList.add(gradeZz);
+        if (ids != null) {
+            for (String xXhdId : xXhd
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(1);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(xXhdId);
+                gradeZzList.add(gradeZz);
+            }
         }
-        for (String ySyjId : ySyj
-        ) {
-            GradeZz gradeZz = new GradeZz();
-            gradeZz.setType(2);
-            gradeZz.setGradeId(gradeId);
-            gradeZz.setZzId(ySyjId);
-            gradeZzList.add(gradeZz);
+
+        if (ids != null) {
+            for (String ySyjId : ySyj
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(2);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(ySyjId);
+                gradeZzList.add(gradeZz);
+            }
         }
-        for (String tZggId : tZgg
-        ) {
-            GradeZz gradeZz = new GradeZz();
-            gradeZz.setType(3);
-            gradeZz.setGradeId(gradeId);
-            gradeZz.setZzId(tZggId);
-            gradeZzList.add(gradeZz);
+
+        if (ids != null) {
+
+            for (String tZggId : tZgg
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(3);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(tZggId);
+                gradeZzList.add(gradeZz);
+            }
         }
-        for (String gGxxId : gGxx
-        ) {
-            GradeZz gradeZz = new GradeZz();
-            gradeZz.setType(4);
-            gradeZz.setGradeId(gradeId);
-            gradeZz.setZzId(gGxxId);
-            gradeZzList.add(gradeZz);
+        if (ids != null) {
+
+            for (String gGxxId : gGxx
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(4);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(gGxxId);
+                gradeZzList.add(gradeZz);
+            }
         }
+
+
         return new JiebaoResponse().message(fileService.saveBatch(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
     }
 
