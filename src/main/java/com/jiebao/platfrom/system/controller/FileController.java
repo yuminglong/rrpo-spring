@@ -75,6 +75,13 @@ public class FileController extends BaseController {
     @Autowired
     private FileService fileService;
 
+
+    @GetMapping("selectById")
+    @ApiOperation("指定文件查询信息")
+    public JiebaoResponse selectById(String fileId) {
+        return new JiebaoResponse().data(fileService.getById(fileId));
+    }
+
     /**
      * 富文本编辑器图片上传
      * 仅用于上传编辑器图片
@@ -106,6 +113,7 @@ public class FileController extends BaseController {
 
     /**
      * 读取附件
+     *
      * @param refId 文件库文件的关联ID
      * @return
      */
@@ -122,11 +130,12 @@ public class FileController extends BaseController {
 
     /**
      * 文件下载
-     * @param fileId    文件ID
+     *
+     * @param fileId 文件ID
      */
     @ApiOperation("文件下载接口")
     @PostMapping("/downloadFile")
-    public void downloadFile (String fileId, HttpServletResponse response) {
+    public void downloadFile(String fileId, HttpServletResponse response) {
         File file = fileService.getById(fileId);
         java.io.File downloadFile = new java.io.File(file.getFileUrl() + file.getNewName());
         if (downloadFile.exists()) {
@@ -149,12 +158,13 @@ public class FileController extends BaseController {
 
     /**
      * 文件删除
+     *
      * @param fileId
      * @return
      */
     @ApiOperation("文件删除接口")
     @PostMapping("/deleteFile")
-    public JiebaoResponse deleteFile (String fileId) {
+    public JiebaoResponse deleteFile(String fileId) {
         File file = fileService.getById(fileId);
         if (null != file) {
             java.io.File deleteFile = new java.io.File(file.getFileUrl() + file.getNewName());
@@ -229,7 +239,7 @@ public class FileController extends BaseController {
                 }
             } else {
                 if (type.equals(this.IMAGE_FILE_TYPE)) {
-                    return new JiebaoResponse().message("图片文件超出最大上传限制：" + maxSize  + "MB！").put("status", false);
+                    return new JiebaoResponse().message("图片文件超出最大上传限制：" + maxSize + "MB！").put("status", false);
                 } else {
                     return new JiebaoResponse().message("文件超出最大上传限制：" + maxSize + "MB！").put("status", false);
                 }
@@ -303,7 +313,7 @@ public class FileController extends BaseController {
      * @param uploadType 上传文件允许类型
      * @return boolean 上传文件是否属于允许上传文件类型
      */
-    private boolean checkFileType(MultipartFile file, String uploadType)  {
+    private boolean checkFileType(MultipartFile file, String uploadType) {
         String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         List<String> list = Stream.of(uploadType.split(",")).collect(Collectors.toList());
         return list.contains(suffix);

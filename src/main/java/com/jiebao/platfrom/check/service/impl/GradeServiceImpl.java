@@ -12,7 +12,9 @@ import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.FileService;
 import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     INumService numService;
     @Autowired
     IGradeZzService gradeZzService;
+    @Autowired
+    FileService fileService;
 
     @Override
     public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
@@ -52,8 +56,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
         queryWrapper.eq("dept_id", deptId);
-//        User user = (User)SecurityUtils.getSubject().getPrincipal();  //当前登陆人
-//        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
             grade.setNum(number);
@@ -154,12 +156,71 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String gradeId, Integer type, String id) {
-        GradeZz gradeZz = new GradeZz();
-        gradeZz.setGradeId(gradeId);
-        gradeZz.setType(type);
-        gradeZz.setZzId(id);
-        return new JiebaoResponse().message(gradeZzService.save(gradeZz) ? "添加成功" : "添加失败");
+    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
+        List<File> list = new ArrayList<>();
+        List<GradeZz> gradeZzList = new ArrayList<>();
+        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("check_id", menusId);//对应的扣分项
+        queryWrapper.eq("year_date", yearDate);//年份
+        queryWrapper.eq("dept_id", deptId);
+        Grade grade = getOne(queryWrapper);  //对应考核项具体扣分情况
+        if (grade == null) {
+            grade = new Grade();
+        }
+        String gradeId = grade.getGradeId();
+        if (ids != null) {
+            for (String fileId : ids  //
+            ) {
+                File file = fileService.getById(fileId);
+                file.setRefId(gradeId);
+                file.setRefType("4");
+                list.add(file);
+            }
+        }
+        if (xXhd != null) {
+            for (String xXhdId : xXhd
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(1);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(xXhdId);
+                gradeZzList.add(gradeZz);
+            }
+        }
+
+        if (ySyj != null) {
+            for (String ySyjId : ySyj
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(2);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(ySyjId);
+                gradeZzList.add(gradeZz);
+            }
+        }
+        if (tZgg != null) {
+            for (String tZggId : tZgg
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(3);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(tZggId);
+                gradeZzList.add(gradeZz);
+            }
+        }
+
+        if (gGxx != null) {
+            for (String gGxxId : gGxx
+            ) {
+                GradeZz gradeZz = new GradeZz();
+                gradeZz.setType(4);
+                gradeZz.setGradeId(gradeId);
+                gradeZz.setZzId(gGxxId);
+                gradeZzList.add(gradeZz);
+            }
+        }
+        return new JiebaoResponse().message(fileService.updateBatchById(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
     }
+
 
 }
