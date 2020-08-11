@@ -36,6 +36,9 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
             queryWrapper1.eq("dept_id", deptId);
             queryWrapper1.eq("check_id", menusId);
             Grade grade = gradeService.getOne(queryWrapper1);
+            if (grade == null) {
+                return new JiebaoResponse().message("无对象");
+            }
             gradeId = grade.getGradeId();
         }
         queryWrapper.eq("grade_id", gradeId);

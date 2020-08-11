@@ -219,9 +219,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-
-
-        return new JiebaoResponse().message(fileService.saveBatch(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
+        return new JiebaoResponse().message(fileService.updateBatchById(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
     }
 
 
