@@ -42,6 +42,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     public JiebaoResponse pageList(QueryRequest queryRequest, String yearDate) {
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("year_date", yearDate);
+        queryWrapper.orderByDesc("year_date");
         Page<Year> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
 
         return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
@@ -50,11 +51,6 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     @Override
     public JiebaoResponse yearStringList() {
         return new JiebaoResponse().data(this.baseMapper.yearStringList()).message("查询成功");
-    }
-
-    @Override
-    public JiebaoResponse putZz() {
-        return null;
     }
 
 

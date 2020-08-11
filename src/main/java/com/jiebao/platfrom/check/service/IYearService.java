@@ -20,6 +20,6 @@ public interface IYearService extends IService<Year> {
 
     JiebaoResponse yearStringList();//已存入的年份集合
 
-    JiebaoResponse putZz();//上传佐证
+
 
 }
