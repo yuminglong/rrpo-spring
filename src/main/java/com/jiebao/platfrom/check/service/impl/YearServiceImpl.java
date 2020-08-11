@@ -32,6 +32,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             }
         }
         queryWrapper.eq("year_date", year.getYearDate());
+        queryWrapper.orderByDesc("year_date");
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("年份重复");
         }
