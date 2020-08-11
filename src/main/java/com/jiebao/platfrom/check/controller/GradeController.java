@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -52,8 +53,8 @@ public class GradeController {
     @PostMapping("addZz")
     @ApiOperation("佐证上传")
     @Log("佐证上传  参数 gradeid  类型 目标id")
-    public JiebaoResponse addZz(String gradeId, Integer type, String id) {
-        return iGradeService.putZz(gradeId, type, id);
+    public JiebaoResponse addZz(String gradeId, String[] ids) {
+        return iGradeService.putZz(gradeId, Arrays.asList(ids));
     }
 
     @GetMapping("commit")

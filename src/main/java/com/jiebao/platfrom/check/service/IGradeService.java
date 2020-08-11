@@ -6,6 +6,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import io.swagger.models.auth.In;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -22,6 +23,6 @@ public interface IGradeService extends IService<Grade> {
 
     JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId);
 
-    JiebaoResponse putZz(String gradeId, Integer type, String id);//上传佐证操作
+    JiebaoResponse putZz(String gradeId, List<String> ids);//上传佐证操作
 
 }

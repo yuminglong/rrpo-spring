@@ -12,7 +12,9 @@ import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.FileService;
 import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     INumService numService;
     @Autowired
     IGradeZzService gradeZzService;
+    @Autowired
+    FileService fileService;
 
     @Override
     public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
@@ -154,12 +158,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String gradeId, Integer type, String id) {
-        GradeZz gradeZz = new GradeZz();
-        gradeZz.setGradeId(gradeId);
-        gradeZz.setType(type);
-        gradeZz.setZzId(id);
-        return new JiebaoResponse().message(gradeZzService.save(gradeZz) ? "添加成功" : "添加失败");
+    public JiebaoResponse putZz(String gradeId, List<String> ids) {
+        List<File> list = new ArrayList<>();
+        for (String fileId : ids
+        ) {
+            File file = fileService.getById(fileId);
+            file.setRefId(gradeId);
+            file.setRefType("4");
+            list.add(file);
+        }
+        return new JiebaoResponse().message(fileService.saveBatch(list) ? "添加成功" : "添加失败");
     }
 
 }
