@@ -156,7 +156,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, List<String> ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
+    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();

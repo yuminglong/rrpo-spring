@@ -23,6 +23,6 @@ public interface IGradeService extends IService<Grade> {
 
     JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId);
 
-    JiebaoResponse putZz(String yearDate, String deptId, String menusId, List<String> ids,String[] xXhd,String[] ySyj,String[] tZgg,String[] gGxx);//上传佐证操作
+    JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids,String[] xXhd,String[] ySyj,String[] tZgg,String[] gGxx);//上传佐证操作
 
 }
