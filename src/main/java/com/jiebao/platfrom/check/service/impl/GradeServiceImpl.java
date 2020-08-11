@@ -3,14 +3,17 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.domain.Grade;
 import com.jiebao.platfrom.check.dao.GradeMapper;
+import com.jiebao.platfrom.check.domain.GradeZz;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.Num;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.User;
+import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,9 +40,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Autowired
     INumService numService;
+    @Autowired
+    IGradeZzService gradeZzService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+        if (number == null) {
+            return new JiebaoResponse().message("未填分数");
+        }
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
@@ -51,16 +59,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setNum(number);
         } else {
             grade = new Grade();
-            grade.setNum(number);
+            grade.setNum(number == null ? 0 : number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearDate(yearDate);
         }
-        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败");
+        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
     @Override
-    public JiebaoResponse commit(String yearDate, String deptId) {
+    public JiebaoResponse commit(String yearDate, String deptId) {   //  生成报表
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(("dept_id"), deptId);
         queryWrapper.eq("year_date", yearDate);
@@ -143,6 +151,15 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         map.put("JCgz", jcList);
         map.put("GZxg", xgList);
         return new JiebaoResponse().data(map).message("操作成功");
+    }
+
+    @Override
+    public JiebaoResponse putZz(String gradeId, Integer type, String id) {
+        GradeZz gradeZz = new GradeZz();
+        gradeZz.setGradeId(gradeId);
+        gradeZz.setType(type);
+        gradeZz.setZzId(id);
+        return new JiebaoResponse().message(gradeZzService.save(gradeZz) ? "添加成功" : "添加失败");
     }
 
 }

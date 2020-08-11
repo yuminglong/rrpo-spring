@@ -17,4 +17,9 @@ public interface IYearService extends IService<Year> {
     JiebaoResponse addOrUpdate(Year year);  //年份考核规则
 
     JiebaoResponse pageList(QueryRequest queryRequest, String yearDate);//年份查询
+
+    JiebaoResponse yearStringList();//已存入的年份集合
+
+    JiebaoResponse putZz();//上传佐证
+
 }

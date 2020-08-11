@@ -59,4 +59,6 @@ public class Menus implements Serializable {
 
     @TableField(exist = false)
     private double number;
+
+    private Integer accessory;//是否可传附件 0  不可传   1 可传
 }

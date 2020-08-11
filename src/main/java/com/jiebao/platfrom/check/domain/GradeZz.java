@@ -14,33 +14,30 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author qta
- * @since 2020-08-05
+ * @since 2020-08-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("check_menus_year")
-public class MenusYear implements Serializable {
+@TableName("check_grade_zz")
+public class GradeZz implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 年度  菜单 挂钩
+     * 扣分佐证id
      */
-    @TableId(value = "menus_year_id",type = IdType.UUID)
-    private String menusYearId;
+    @TableId(value = "grade_zz_id",type = IdType.UUID)
+    private String gradeZzId;
+
+    private String gradeId;
+
+    private Integer type;
 
     /**
-     * 菜单
+     * 佐证id
      */
-    private String menusId;
-
-    /**
-     * 年份表id
-     */
-    private String yearId;
-
-
+    private String zzId;
 
 
 }

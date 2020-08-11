@@ -5,9 +5,11 @@ import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.service.IYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,19 +33,14 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     MenusMapper menusMapper;
     @Autowired
     IMenusService menusService;
+    @Autowired
+    IYearService yearService;
 
     @Override
     public JiebaoResponse add(String yearID, List<String> menusIds) {
         QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("menus_id", menusIds);
         queryWrapper.eq("year_id", yearID);
-        List<MenusYear> list = list(queryWrapper);
-        for (MenusYear menusYear : list
-        ) {
-            if (menusIds.contains(menusYear.getMenusId())) {//如果存在
-                menusIds.remove(menusYear.getMenusId());  //删除
-            }
-        }
+        remove(queryWrapper);
         ArrayList<MenusYear> menusYearArrayList = new ArrayList<>();
         for (String menusId : menusIds
         ) {
@@ -54,9 +51,24 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         }
         return new JiebaoResponse().message(saveBatch(menusYearArrayList) ? "绑定成功" : "绑定失败");
     }
+
     @Override
-    public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
-        List<String> menusIdList = this.baseMapper.getMenusIdList(yearId);
+    public JiebaoResponse List(String yearId, String yearDate) {  //通过 年份考核 查询 对应的年内考核项
+        List<String> menusIdList = null;
+        if (yearId != null) {
+            menusIdList = this.baseMapper.getMenusIdList(yearId);
+        }
+        if (yearDate != null) {
+            QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_date", yearDate);
+            Year one = yearService.getOne(queryWrapper);
+            if (one != null) {
+                menusIdList = this.baseMapper.getMenusIdList(one.getYearId());
+            }
+        }
+        if (menusIdList.size() == 0) {
+            return new JiebaoResponse().message("本规则还未绑定任何扣分项");
+        }
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIdList);
         List<Menus> list = menusService.list(queryWrapper);

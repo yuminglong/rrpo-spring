@@ -53,4 +53,9 @@ public class YearController {
         return new JiebaoResponse().message(yearService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
     }
 
+    @GetMapping("yearStringList")
+    @ApiOperation("年份集合")
+    public JiebaoResponse yearStringList() {
+        return new JiebaoResponse().data(yearService.yearStringList()).message("查询成功");
+    }
 }

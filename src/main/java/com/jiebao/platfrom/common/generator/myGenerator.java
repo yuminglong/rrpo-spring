@@ -42,7 +42,7 @@ public class myGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("accident");   //该
+        pc.setModuleName("check");   //该
         pc.setParent("com.jiebao.platfrom");
         mpg.setPackageInfo(pc);
 
@@ -112,7 +112,7 @@ public class myGenerator {
         // 写于父类中的公共字段
         strategy.setSuperEntityColumns("id");
         //"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way",
-        String[] str = new String[]{"accident_case"};
+        String[] str = new String[]{"check_grade_zz"};
         strategy.setInclude(str);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
