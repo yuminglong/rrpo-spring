@@ -56,8 +56,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
         queryWrapper.eq("dept_id", deptId);
-//        User user = (User)SecurityUtils.getSubject().getPrincipal();  //当前登陆人
-//        queryWrapper.eq(("user_id"), user.getUserId());
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
             grade.setNum(number);
@@ -158,9 +156,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String gradeId, List<String> ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
+    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, List<String> ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
+        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("check_id", menusId);//对应的扣分项
+        queryWrapper.eq("year_date", yearDate);//年份
+        queryWrapper.eq("dept_id", deptId);
+        Grade grade = getOne(queryWrapper);  //对应考核项具体扣分情况
+        if (grade == null) {
+            grade = new Grade();
+        }
+        String gradeId = grade.getGradeId();
         for (String fileId : ids  //
         ) {
             File file = fileService.getById(fileId);
