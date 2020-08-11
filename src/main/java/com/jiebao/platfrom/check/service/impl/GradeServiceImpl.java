@@ -177,7 +177,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 list.add(file);
             }
         }
-        if (ids != null) {
+        if (xXhd != null) {
             for (String xXhdId : xXhd
             ) {
                 GradeZz gradeZz = new GradeZz();
@@ -188,7 +188,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             }
         }
 
-        if (ids != null) {
+        if (ySyj != null) {
             for (String ySyjId : ySyj
             ) {
                 GradeZz gradeZz = new GradeZz();
@@ -198,9 +198,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-
-        if (ids != null) {
-
+        if (tZgg != null) {
             for (String tZggId : tZgg
             ) {
                 GradeZz gradeZz = new GradeZz();
@@ -210,8 +208,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-        if (ids != null) {
 
+        if (gGxx != null) {
             for (String gGxxId : gGxx
             ) {
                 GradeZz gradeZz = new GradeZz();
