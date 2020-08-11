@@ -186,6 +186,12 @@ public class ExchangeController extends BaseController {
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }
 
+    @GetMapping("/forCheck")
+    @ApiOperation(value = "分页查询（查询未发送和已发送的给年度考核）", notes = "查询分页数据（查询未发送和已发送的给年度考核）", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getExchangeListForCheck(QueryRequest request, Exchange exchange, String[] ids,String startTime, String endTime) {
+        IPage<Exchange> exchangeList = exchangeService.getExchangeListForCheck(request, exchange, ids, startTime, endTime);
+        return new JiebaoResponse().data(this.getDataTable(exchangeList));
+    }
 
 
 
