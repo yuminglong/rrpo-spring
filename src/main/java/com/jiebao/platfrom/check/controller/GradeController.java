@@ -49,6 +49,12 @@ public class GradeController {
         return iGradeService.addGrade(menusId, number, yearDate, deptId);
     }
 
+    @PostMapping("addZz")
+    @ApiOperation("佐证上传")
+    @Log("佐证上传  参数 gradeid  类型 目标id")
+    public JiebaoResponse addZz(String gradeId, Integer type, String id) {
+        return iGradeService.putZz(gradeId, type, id);
+    }
 
     @GetMapping("commit")
     @ApiOperation("最后提交  分数统计生成表")
