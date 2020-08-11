@@ -5,9 +5,11 @@ import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.service.IYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     MenusMapper menusMapper;
     @Autowired
     IMenusService menusService;
+    @Autowired
+    IYearService yearService;
 
     @Override
     public JiebaoResponse add(String yearID, List<String> menusIds) {
@@ -62,15 +66,15 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             menusIdList = this.baseMapper.getMenusIdList(yearId);
         }
         if (yearDate != null) {
-            QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
+            QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_date", yearDate);
-            MenusYear one = getOne(queryWrapper);
+            Year one = yearService.getOne(queryWrapper);
             if (one != null) {
                 menusIdList = this.baseMapper.getMenusIdList(one.getYearId());
             }
         }
         if (menusIdList.size() == 0) {
-            new JiebaoResponse().message("本规则还未绑定任何扣分项");
+          return   new JiebaoResponse().message("本规则还未绑定任何扣分项");
         }
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIdList);
