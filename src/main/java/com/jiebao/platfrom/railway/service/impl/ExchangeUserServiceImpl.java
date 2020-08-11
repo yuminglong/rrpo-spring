@@ -70,4 +70,9 @@ public class ExchangeUserServiceImpl extends ServiceImpl<ExchangeUserMapper, Exc
     public boolean updateByExchangeId(String SendUserId, String exchangeId,String opinion) {
         return exchangeUserMapper.updateByExchangeId(SendUserId,exchangeId,opinion);
     }
+
+    @Override
+    public boolean upDateBySendUserId(String sendUserId, String exchangeId) {
+        return exchangeUserMapper.upDateBySendUserId(sendUserId,exchangeId);
+    }
 }

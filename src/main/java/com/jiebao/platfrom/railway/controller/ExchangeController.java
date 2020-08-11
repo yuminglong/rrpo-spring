@@ -216,11 +216,28 @@ public class ExchangeController extends BaseController {
             });
             return new JiebaoResponse().message("批量删除信息成功");
         } catch (Exception e) {
-            message = "删除发件箱失败";
             log.error(message, e);
-            return new JiebaoResponse().message("批量删除信息失败");
+            throw new JiebaoException("批量删除信息失败");
         }
     }
+
+  /*  @DeleteMapping("/outbox/{exchangeIds}")
+    @ApiOperation(value = "批量删除信息（收件箱）", notes = "批量删除信息（收件箱）", response = JiebaoResponse.class, httpMethod = "DELETE")
+    public JiebaoResponse updateInboxExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
+        try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            Arrays.stream(exchangeIds).forEach(exchangeId -> {
+                exchangeUserService.upDateBySendUserId(byName.getUserId(),exchangeId);
+            });
+            return new JiebaoResponse().message("批量删除信息成功");
+        } catch (Exception e) {
+            log.error(message, e);
+            throw new JiebaoException("批量删除信息失败");
+        }
+    }*/
+
+
 
 
     @GetMapping(value = "/getInfoById/{exchangeId}")

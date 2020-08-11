@@ -100,5 +100,14 @@ public class Prize {
     @ApiModelProperty(value = "事件发生时间")
     private Date happenTime;
 
+    @ApiModelProperty(value = "事件类型")
+    private String types;
+
+    @ApiModelProperty(value = "自身意见")
+    private String ownOpinion;
+
+    @ApiModelProperty(value = "金额")
+    private String ownMoney;
+
 
 }

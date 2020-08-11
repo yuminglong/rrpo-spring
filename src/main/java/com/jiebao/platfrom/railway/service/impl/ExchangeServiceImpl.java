@@ -50,7 +50,6 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
 
     public IPage<Exchange> getExchangeList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
-
         queryWrapper.lambda().ne(Exchange::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         if (StringUtils.isNotBlank(username)){

@@ -43,11 +43,11 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     @Override
     public IPage<Prize> getPrizeList(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
-       /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         queryWrapper.lambda().ne(Prize::getStatus, 4);
         if (username !=null){
             queryWrapper.lambda().eq(Prize::getCreatUser,username);
-        }*/
+        }
         if (StringUtils.isNotBlank(prize.getTitle())) {
             queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
         }
@@ -58,8 +58,4 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         SortUtil.handleWrapperSort(request,queryWrapper,"creatTime", JiebaoConstant.ORDER_DESC,true);
         return this.baseMapper.selectPage(page,queryWrapper);
     }
-
-
-
-
 }

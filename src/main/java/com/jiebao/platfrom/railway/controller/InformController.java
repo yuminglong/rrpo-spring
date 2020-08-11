@@ -132,14 +132,12 @@ public class InformController extends BaseController {
     @PostMapping
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addInform(@Valid Inform inform, String [] file) {
-        System.out.println(Arrays.toString(file));
+    public JiebaoResponse addInform(@Valid Inform inform,  String [] fileId) {
+
         inform.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         inform.setCreateUser(username);
-       informService.save(inform);
-
-
+        informService.save(inform);
         return new JiebaoResponse().message("成功");
     }
 
@@ -210,7 +208,7 @@ public class InformController extends BaseController {
     @GetMapping(value = "/getList")
     @ApiOperation(value = "List", notes = "List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public List<Inform> getList(Inform inform, QueryRequest request) {
-        return informService.getInformLists(inform,request);
+        return informService.getInformLists(inform, request);
     }
 
     @DeleteMapping("/inbox/{ids}")
@@ -222,7 +220,7 @@ public class InformController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             Arrays.stream(ids).forEach(id -> {
-             informUserService.removeBySendUserId(byName.getUserId(),id);
+                informUserService.removeBySendUserId(byName.getUserId(), id);
             });
         } catch (Exception e) {
             throw new JiebaoException("删除失败");

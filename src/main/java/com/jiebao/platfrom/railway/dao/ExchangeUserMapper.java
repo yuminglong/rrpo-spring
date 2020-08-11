@@ -63,4 +63,7 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
 
     @Select("SELECT * FROM `rail_exchange_user` WHERE send_user_id = #{sendUserId} and exchange_id = #{exchangeId}")
     ExchangeUser getIsRead(String sendUserId ,String exchangeId);
+
+    @Update("UPDATE rail_exchange_user set type = 2  WHERE exchange_id =#{exchangeId} and send_user_id =#{sendUserId}")
+    boolean upDateBySendUserId(String sendUserId, String exchangeId);
 }

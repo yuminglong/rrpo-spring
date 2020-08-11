@@ -51,6 +51,6 @@ public class PrizeOpinion {
     @ApiModelProperty(value = "金额")
     private String money;
 
-    @ApiModelProperty(value = "组织机构等级")
+    @ApiModelProperty(value = "组织机构等级",example = "1")
     private Integer rank;
 }
