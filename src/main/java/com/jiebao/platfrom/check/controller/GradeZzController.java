@@ -34,6 +34,9 @@ public class GradeZzController {
     @DeleteMapping("delete/{list}")
     @ApiOperation("删除佐证")
     public JiebaoResponse delete(@PathVariable String[] list) {
+        if (list == null) {
+            return new JiebaoResponse().message("未传值");
+        }
         return new JiebaoResponse().message(gradeZzService.removeByIds(Arrays.asList(list)) ? "操作成功" : "操作失败");
     }
 
