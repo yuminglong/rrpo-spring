@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.check.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.accident.daomain.Track;
 import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.service.IYearService;
@@ -38,7 +39,9 @@ public class YearController {
     @GetMapping("list")
     @ApiOperation("集合")
     public JiebaoResponse list() {
-        return new JiebaoResponse().data(yearService.list()).message("查询成功");
+        QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("year_date");
+        return new JiebaoResponse().data(yearService.list(queryWrapper)).message("查询成功");
     }
 
     @GetMapping("pageList")

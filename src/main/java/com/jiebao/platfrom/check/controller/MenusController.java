@@ -6,6 +6,7 @@ import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
@@ -39,10 +40,10 @@ public class MenusController {
 
 
     @GetMapping("lists")
-    @ApiOperation("获取树形列表")
+    @ApiOperation("通过主级 父类 查找子项")
     @Log("获取树形列表")
-    public JiebaoResponse lists() {
-        return menusService.lists();
+    public JiebaoResponse lists(QueryRequest queryRequest, String menusId) {
+        return menusService.lists(queryRequest, menusId);
     }
 
     @GetMapping("selectById")
@@ -64,5 +65,11 @@ public class MenusController {
     @Log("集合删除")
     public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
         return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
+    }
+
+    @GetMapping("fatherList")
+    @ApiOperation("获取主菜单")
+    public JiebaoResponse fatherList() {
+        return menusService.fatherList();
     }
 }

@@ -27,13 +27,16 @@ public class GradeZzController {
 
     @GetMapping("list")
     @ApiOperation("佐证查询  参数每条扣分记录id")
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId) {
-        return gradeZzService.list(gradeId, yearDate, deptId, menusId);
+    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusIds) {
+        return gradeZzService.list(gradeId, yearDate, deptId, menusIds);
     }
 
     @DeleteMapping("delete/{list}")
     @ApiOperation("删除佐证")
     public JiebaoResponse delete(@PathVariable String[] list) {
+        if (list == null) {
+            return new JiebaoResponse().message("未传值");
+        }
         return new JiebaoResponse().message(gradeZzService.removeByIds(Arrays.asList(list)) ? "操作成功" : "操作失败");
     }
 

@@ -30,10 +30,6 @@ public class Year implements Serializable {
     @TableId(value = "year_id",type = IdType.UUID)
     private String yearId;
 
-    /**
-     * 名字
-     */
-    private String name;
 
     /**
      * 对应年份

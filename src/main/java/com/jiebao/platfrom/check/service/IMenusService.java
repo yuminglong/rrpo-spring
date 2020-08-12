@@ -18,5 +18,7 @@ public interface IMenusService extends IService<Menus> {
 
     JiebaoResponse deleteById(String menusId);
 
-    JiebaoResponse lists();   //树形列表
+    JiebaoResponse lists(QueryRequest queryRequest, String menusId);   //树形列表
+
+    JiebaoResponse fatherList();
 }
