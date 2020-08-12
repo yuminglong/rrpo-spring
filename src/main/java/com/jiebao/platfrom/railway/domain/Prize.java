@@ -3,8 +3,10 @@ package com.jiebao.platfrom.railway.domain;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -109,5 +111,7 @@ public class Prize {
     @ApiModelProperty(value = "金额")
     private String ownMoney;
 
-
+    @ApiModelProperty(value = "意见")
+    @TableField(exist = false)
+    private List<PrizeOpinion> opinions;
 }

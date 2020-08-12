@@ -22,7 +22,7 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
     @Insert("INSERT INTO `rail_exchange_user` (exchange_id,send_user_id,send_user_name,is_read,type) VALUES (#{exchangeId},#{sendUserId},#{sendUserName},0,1)")
     boolean saveByUserId(String exchangeId, String sendUserId, String sendUserName);
 
-    @Delete("DELETE FROM rail_exchange_user WHERE exchange_id =#{exchangeId}")
+    @Delete("DELETE FROM rail_exchange_user WHERE exchange_id = #{exchangeId}")
     boolean deleteByExchangeId(String exchangeId);
 
     @Delete("DELETE FROM rail_exchange_file WHERE exchange_id =#{exchangeId}")
@@ -56,13 +56,13 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
     boolean updateByExchangeId(String SendUserId, String exchangeId, String opinion);
 
     @Select("SELECT * FROM `rail_exchange_user` WHERE exchange_id =#{exchangeId} and send_user_id = #{sendUserId}")
-    ExchangeUser findByNameAndId(String exchangeId,String sendUserId);
+    ExchangeUser findByNameAndId(String exchangeId, String sendUserId);
 
     @Update("UPDATE rail_exchange_user set is_read = 1,receive_time =now()  WHERE exchange_id =#{exchangeId} and send_user_id =#{sendUserId}")
-    boolean updateIsRead(String exchangeId,String sendUserId);
+    boolean updateIsRead(String exchangeId, String sendUserId);
 
     @Select("SELECT * FROM `rail_exchange_user` WHERE send_user_id = #{sendUserId} and exchange_id = #{exchangeId}")
-    ExchangeUser getIsRead(String sendUserId ,String exchangeId);
+    ExchangeUser getIsRead(String sendUserId, String exchangeId);
 
     @Update("UPDATE rail_exchange_user set type = 2  WHERE exchange_id =#{exchangeId} and send_user_id =#{sendUserId}")
     boolean upDateBySendUserId(String sendUserId, String exchangeId);

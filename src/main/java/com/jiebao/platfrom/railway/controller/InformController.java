@@ -12,6 +12,7 @@ import com.jiebao.platfrom.railway.dao.InformUserMapper;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.InformService;
 import com.jiebao.platfrom.railway.service.InformUserService;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.FileService;
@@ -54,7 +55,8 @@ public class InformController extends BaseController {
     private InformUserService informUserService;
 
     @Autowired
-    private FileService fileService;
+    private FileMapper fileMapper;
+
 
     /**
      * 使用Mapper操作数据库
@@ -132,8 +134,10 @@ public class InformController extends BaseController {
     @PostMapping
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addInform(@Valid Inform inform,  String [] fileId) {
-
+    public JiebaoResponse addInform(@Valid Inform inform,  String [] fileIds) {
+        Arrays.stream(fileIds).forEach(fileId ->{
+            fileMapper.updateInformByFileId(fileId,inform.getId());
+        });
         inform.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         inform.setCreateUser(username);

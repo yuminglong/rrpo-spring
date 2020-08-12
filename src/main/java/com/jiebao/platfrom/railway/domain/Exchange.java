@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
+import com.jiebao.platfrom.system.domain.File;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +71,14 @@ public class Exchange {
     @ApiModelProperty(value = "是否添加回复时间" )
     private String isTime;
 
+    @ApiModelProperty(value = "是否关联机构组织" )
+    private String isCheck;
+
     @TableField(exist = false)
     private Integer isRead;
+
+    @TableField(exist = false)
+    private List refIds;
+
 
 }
