@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -27,23 +28,29 @@ import lombok.experimental.Accessors;
 public class Grade implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableId(value = "grade_id",type = IdType.UUID)
+    @TableId(value = "grade_id", type = IdType.UUID)
     private String gradeId;
 
     /**
      * 具体年限
      */
-    @ApiModelProperty(value = "年份 后端生成不用传",example = "哈哈")
+    @ApiModelProperty(value = "年份 后端生成不用传", example = "哈哈")
     private String yearDate;
-    @ApiModelProperty(value = "部门id  暂定",example = "哈哈")
+    @ApiModelProperty(value = "部门id  暂定", example = "哈哈")
     private String deptId;
 
     /**
      * 对应考核id
      */
-    @ApiModelProperty(value = "对应的考核项id",example = "哈哈")
+    @ApiModelProperty(value = "对应的考核项id", example = "哈哈")
     private String checkId;
 
-    @ApiModelProperty(value = "分数",example = "2.0")
-    private double num;
+    @ApiModelProperty(value = "分数", example = "2.0")
+    private Double num;
+
+    private Double fpNum;
+
+    private String message;
+
+    private String fpMessage;
 }

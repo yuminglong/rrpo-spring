@@ -46,7 +46,7 @@ public class GradeController {
     @PostMapping("addGrade")
     @ApiOperation("绑定关系")
     @Log("绑定关系")
-    public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {
+    public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId) {
         return iGradeService.addGrade(menusId, number, yearDate, deptId);
     }
 

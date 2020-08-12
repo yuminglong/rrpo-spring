@@ -48,7 +48,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     FileService fileService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, Integer number, String yearDate, String deptId) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId) {  //menusId  既是 扣分项id
         if (number == null) {
             return new JiebaoResponse().message("未填分数");
         }
