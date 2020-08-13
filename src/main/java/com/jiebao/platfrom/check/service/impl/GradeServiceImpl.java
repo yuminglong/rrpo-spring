@@ -90,23 +90,35 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
         double SGKF = 0;//工作效果扣分项
-        double fpJcKf = 0, fpJcJf = 0, fpSgKf;
+        double fpJcKf = 0, fpJcJf = 0, fpSgK = 0;
         for (Grade grade : list) {
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
                 if (grade.getNum() > 0) {  //如果大于0 证明为加分项
                     JCJF += grade.getNum();
-                    fpJcKf += grade.getNum();
+                    fpJcJf += grade.getFpNum();
                 } else {  //反之 为扣分项
                     JCKF += grade.getNum();
+                    fpJcKf += grade.getFpNum();
+
                 }
             } else {
                 SGKF += grade.getNum();
+                fpSgK += grade.getNum();
             }
         }
         SGKF = 40 + SGKF;
+
+        fpSgK = 40 + fpSgK;
+
         SGKF = SGKF < 0 ? 0 : SGKF;
+
+        fpSgK = fpSgK < 0 ? 0 : fpSgK;
+
         JCKF = JCKF < -20 ? -20 : JCKF;  //扣分  20为限
+
+        fpJcKf = fpJcKf < -20 ? -20 : fpJcKf;  //扣分  20为限
+
         if (JCJF > 40) {
             double dx = (JCJF - 40) / 15;  //溢出部分抵消扣分
             JCKF = JCKF + dx;  //抵消后的分数
@@ -114,6 +126,15 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 JCKF = 0;
             }
             JCJF = 40;  //40分为限  超过40分  折价  15：1
+        }
+
+        if (fpJcJf > 40) {
+            double dx = (fpJcJf - 40) / 15;  //溢出部分抵消扣分
+            fpJcKf = JCKF + dx;  //抵消后的分数
+            if (fpJcKf > 0) {
+                fpJcKf = 0;
+            }
+            fpJcJf = 40;  //40分为限  超过40分  折价  15：1
         }
         QueryWrapper<Num> numQueryWrapper = new QueryWrapper<>();
         numQueryWrapper.eq("year_date", yearDate);
@@ -123,10 +144,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             num = new Num();  //为空创造对象
         }
         num.setDeptId(deptId);
+        num.setYearDate(yearDate);
         num.setJcWork(JCKF + JCJF);
         num.setXgWork(SGKF);
-        num.setYearDate(yearDate);
         num.setNumber(20 + JCKF + JCJF + SGKF);
+
+        num.setFpJcWork(fpJcKf + fpJcJf);
+        num.setFpXgWork(fpSgK);
+        num.setFpNumber(20 + fpJcKf + fpJcJf + fpSgK);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
     }
 
@@ -237,13 +262,13 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-        boolean a=true, b=true;
+        boolean a = true, b = true;
         if (list.size() != 0) {
             a = fileService.updateBatchById(list);
         }
         if (gradeZzList.size() != 0) {
             b = gradeZzService.saveBatch(gradeZzList);
         }
-        return new JiebaoResponse().message(a&& b ? "添加成功" : "添加失败");
+        return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败");
     }
 }
