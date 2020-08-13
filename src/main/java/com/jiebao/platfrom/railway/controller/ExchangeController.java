@@ -14,7 +14,11 @@ import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
+import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,35 +64,48 @@ public class ExchangeController extends BaseController {
     @Autowired
     private ExchangeUserMapper exchangeUserMapper;
 
+    @Autowired
+    private FileMapper fileMapper;
+
+    @Autowired
+    private DeptService deptService;
+
+
     /**
      * 创建一条信息互递
      */
     @PostMapping("/creat")
-    @ApiOperation(value = "创建一条信息互递或创建并发送", notes = "创建一条信息互递或创建并发送", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds) throws JiebaoException {
+    @ApiOperation(value = "创建一条信息互递或创建并发送(修改)", notes = "创建一条信息互递或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds, String[] fileIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
                 exchange.setCreatUser(username);
             }
-            if ("1".equals(exchange.getStatus())){
+            if ("1".equals(exchange.getStatus())) {
                 boolean save = exchangeService.saveOrUpdate(exchange);
+                Arrays.stream(fileIds).forEach(fileId -> {
+                    fileMapper.updateByFileId(fileId, exchange.getId());
+                });
+                exchangeUserService.deleteByExchangeId(exchange.getId());
                 if (save) {
                     Arrays.stream(sendUserIds).forEach(sendUserId -> {
                         //把要发送的用户保存到数据库
                         User byId = userService.getById(sendUserId);
-                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId ,byId.getUsername());
+                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId, byId.getUsername());
                     });
                 }
                 return new JiebaoResponse().message("创建一条信息互递成功");
-            }
-            else if("3".equals(exchange.getStatus())){
+            } else if ("3".equals(exchange.getStatus())) {
                 boolean save = exchangeService.saveOrUpdate(exchange);
+                Arrays.stream(fileIds).forEach(fileId -> {
+                    fileMapper.updateByFileId(fileId, exchange.getId());
+                });
                 if (save) {
                     Arrays.stream(sendUserIds).forEach(sendUserId -> {
                         //把要发送的用户保存到数据库
                         User byId = userService.getById(sendUserId);
-                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId,byId.getUsername());
+                        exchangeUserService.saveByUserId(exchange.getId(), sendUserId, byId.getUsername());
                     });
                 }
                 exchangeMapper.releaseSave(exchange.getId());
@@ -162,16 +179,20 @@ public class ExchangeController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse updateExchange(@Valid Exchange exchange, @PathVariable String[] sendUserIds) throws JiebaoException {
         try {
-            this.exchangeService.updateById(exchange);
+            exchangeService.updateById(exchange);
             //先删除掉原有发送人
-            exchangeUserService.deleteByExchangeId(exchange.getId());
+            boolean b = exchangeUserService.deleteByExchangeId(exchange.getId());
             //重新添加
-            Arrays.stream(sendUserIds).forEach(sendUserId -> {
-                //把要发送的用户保存到数据库
-                User byId = userService.getById(sendUserId);
-                exchangeUserService.saveByUserId(exchange.getId(), sendUserId,byId.getUsername());
-            });
-            return new JiebaoResponse().message("修改未发送的信息互递成功");
+            if (b) {
+                Arrays.stream(sendUserIds).forEach(sendUserId -> {
+                    //把要发送的用户保存到数据库
+                    User byId = userService.getById(sendUserId);
+                    exchangeUserService.saveByUserId(exchange.getId(), sendUserId, byId.getUsername());
+                });
+                return new JiebaoResponse().message("修改未发送的信息互递成功");
+            } else {
+                return new JiebaoResponse().message("修改未发送的信息互递失败");
+            }
         } catch (Exception e) {
             message = "修改信息互递失败";
             log.error(message, e);
@@ -188,11 +209,10 @@ public class ExchangeController extends BaseController {
 
     @GetMapping("/forCheck")
     @ApiOperation(value = "分页查询（查询未发送和已发送的给年度考核）", notes = "查询分页数据（查询未发送和已发送的给年度考核）", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getExchangeListForCheck(QueryRequest request, Exchange exchange, String[] ids,String startTime, String endTime) {
-        IPage<Exchange> exchangeList = exchangeService.getExchangeListForCheck(request, exchange, ids, startTime, endTime);
+    public JiebaoResponse getExchangeListForCheck(QueryRequest request, Exchange exchange, String id, String startTime, String endTime) {
+        IPage<Exchange> exchangeList = exchangeService.getExchangeListForCheck(request, exchange, id, startTime, endTime);
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }
-
 
 
     @GetMapping("/inbox")
@@ -200,11 +220,11 @@ public class ExchangeController extends BaseController {
     public JiebaoResponse getExchangeInboxList(QueryRequest request, Exchange exchange, String startTime, String endTime) {
         IPage<Exchange> exchangeList = exchangeService.getExchangeInboxList(request, exchange, startTime, endTime);
         List<Exchange> records = exchangeList.getRecords();
-        for (Exchange e:records
-             ) {
+        for (Exchange e : records
+        ) {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
-            ExchangeUser exchangeUser = exchangeUserMapper.getIsRead(byName.getUserId(),e.getId());
+            ExchangeUser exchangeUser = exchangeUserMapper.getIsRead(byName.getUserId(), e.getId());
             e.setIsRead(exchangeUser.getIsRead());
         }
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
@@ -218,7 +238,7 @@ public class ExchangeController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             Arrays.stream(exchangeIds).forEach(exchangeId -> {
-               exchangeUserService.removeBySendUserId(byName.getUserId(),exchangeId);
+                exchangeUserService.removeBySendUserId(byName.getUserId(), exchangeId);
             });
             return new JiebaoResponse().message("批量删除信息成功");
         } catch (Exception e) {
@@ -244,20 +264,19 @@ public class ExchangeController extends BaseController {
     }*/
 
 
-
-
     @GetMapping(value = "/getInfoById/{exchangeId}")
     @ApiOperation(value = "根据ID查信息info", notes = "根据ID查信息info", response = JiebaoResponse.class, httpMethod = "GET")
     public Exchange getInfoById(@PathVariable String exchangeId) {
         Exchange byId = exchangeService.getById(exchangeId);
-        Map<String,Object> columnMap = new HashMap<>();
+        Map<String, Object> columnMap = new HashMap<>();
         //列exchange_id为数据库中的列名，不是实体类中的属性名
-        columnMap.put("exchange_id",exchangeId);
+        columnMap.put("exchange_id", exchangeId);
         List listId = new ArrayList();
         List listName = new ArrayList();
+    //    List listDeptName = new ArrayList();
         List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(columnMap);
-        for (ExchangeUser eu:exchangeUsers
-             ) {
+        for (ExchangeUser eu : exchangeUsers
+        ) {
             listId.add(eu.getSendUserId());
             User user = userService.getById(eu.getSendUserId());
             listName.add(user.getUsername());
@@ -266,14 +285,30 @@ public class ExchangeController extends BaseController {
         String[] arrayName = (String[]) listName.toArray(new String[0]);
         byId.setUserId(array);
         byId.setUserName(arrayName);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ref_id", exchangeId);
+        List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
+        ArrayList<String> refIds = new ArrayList<>();
+        for (com.jiebao.platfrom.system.domain.File f : files
+        ) {
+            refIds.add(f.getRefId());
+        }
+        byId.setRefIds(refIds);
         return byId;
     }
 
 
     @GetMapping(value = "/getUserInfo")
     @ApiOperation(value = "根据ID查接收info（发件箱）", notes = "根据ID查接收info（发件箱）", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getUserInfo(QueryRequest request, ExchangeUser exchangeUser){
+    public JiebaoResponse getUserInfo(QueryRequest request, ExchangeUser exchangeUser) {
         IPage<ExchangeUser> exchangeUserList = exchangeUserService.getExchangeUserList(request, exchangeUser);
+        List<ExchangeUser> records = exchangeUserList.getRecords();
+        for (ExchangeUser e: records
+             ) {
+            User byId = userService.getById(e.getSendUserId());
+            Dept byDeptId = deptService.getById(byId.getDeptId());
+          e.setDeptName(byDeptId.getDeptName());
+        }
         return new JiebaoResponse().data(this.getDataTable(exchangeUserList));
     }
 
@@ -285,7 +320,7 @@ public class ExchangeController extends BaseController {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
-            this.exchangeUserService.updateByExchangeId(byName.getUserId(),exchangeUser.getExchangeId(),exchangeUser.getOpinion());
+            this.exchangeUserService.updateByExchangeId(byName.getUserId(), exchangeUser.getExchangeId(), exchangeUser.getOpinion());
             return new JiebaoResponse().message("意见回复或修改成功").put("status", "200");
         } catch (Exception e) {
             message = "意见回复或修改失败";
@@ -298,11 +333,11 @@ public class ExchangeController extends BaseController {
     @GetMapping("/getReceive")
     @ApiOperation(value = "查看回复", notes = "查看回复", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse getReceive(String exchangeId){
+    public JiebaoResponse getReceive(String exchangeId) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         ExchangeUser byNameAndId = exchangeUserMapper.findByNameAndId(exchangeId, byName.getUserId());
-        if (byNameAndId.getIsRead() == 0){
+        if (byNameAndId.getIsRead() == 0) {
             exchangeUserMapper.updateIsRead(exchangeId, byName.getUserId());
         }
         return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");

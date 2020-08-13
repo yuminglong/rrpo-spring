@@ -2,6 +2,7 @@ package com.jiebao.platfrom.railway.domain;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jiebao.platfrom.common.converter.TimeConverter;
@@ -60,5 +61,9 @@ public class ExchangeUser {
 
     @ApiModelProperty(value = "回复时间")
     private Date replyTime;
+
+    @ApiModelProperty(value = "部门名")
+    @TableField(exist = false)
+    private String deptName;
 
 }

@@ -69,11 +69,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
     }
 
     @Override
-    public IPage<Exchange> getExchangeListForCheck(QueryRequest request, Exchange exchange,String[] ids, String startTime, String endTime) {
+    public IPage<Exchange> getExchangeListForCheck(QueryRequest request, Exchange exchange,String id, String startTime, String endTime) {
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper();
-        Arrays.stream(ids).forEach(id -> {
-            queryWrapper.lambda().and(wrapper -> wrapper.or().eq(Exchange::getId,id));
-        });
+            queryWrapper.lambda().eq(Exchange::getId,id);
         queryWrapper.lambda().ne(Exchange::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         if (StringUtils.isNotBlank(username)) {
