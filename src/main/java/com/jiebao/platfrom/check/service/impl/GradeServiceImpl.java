@@ -58,13 +58,19 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         queryWrapper.eq("dept_id", deptId);
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
-            grade.setNum(number);
+            grade.setNum(number == null ? 0 : number);
+            grade.setFpNum(fpNumber == null ? 0 : fpNumber);
+            grade.setMessage(message);
+            grade.setFpMessage(fpMessage);
         } else {
             grade = new Grade();
             grade.setNum(number == null ? 0 : number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearDate(yearDate);
+            grade.setFpNum(fpNumber == null ? 0 : fpNumber);
+            grade.setMessage(message);
+            grade.setFpMessage(fpMessage);
         }
         return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
     }
@@ -84,6 +90,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
         double SGKF = 0;//工作效果扣分项
+        double fpJcKf = 0, fpJcJf = 0, fpSgKf;
         for (Grade grade : list) {
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
@@ -156,7 +163,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx,String[] qt) {
+    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx, String[] qt) {
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
@@ -231,6 +238,4 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         return new JiebaoResponse().message(fileService.updateBatchById(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
     }
-
-
 }
