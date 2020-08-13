@@ -33,7 +33,7 @@ public class GradeZzController {
 
     @DeleteMapping("delete/{list}")
     @ApiOperation("删除佐证")
-    public JiebaoResponse delete(@PathVariable String[] list) {
+    public JiebaoResponse delete( String[] list) {
         if (list == null) {
             return new JiebaoResponse().message("未传值");
         }

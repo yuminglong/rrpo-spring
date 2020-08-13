@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -94,4 +95,17 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return new JiebaoResponse().data(map).message("查询成功");
     }
 
+    @Override
+    public JiebaoResponse deleteByListAndYearDate(String[] list, String yearDate) {
+        if (list == null) {
+            return new JiebaoResponse().message("请选择选出对象");
+        }
+        QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("year_date", yearDate);
+        Year year = yearService.getOne(queryWrapper);
+        QueryWrapper<MenusYear> queryWrapper1 = new QueryWrapper<>();  //绑定表
+        queryWrapper1.eq("year_id", year.getYearId());
+        queryWrapper1.in("menus_id", Arrays.asList(list));
+        return new JiebaoResponse().message(remove(queryWrapper1) ? "删除成功" : "删除失败");
+    }
 }

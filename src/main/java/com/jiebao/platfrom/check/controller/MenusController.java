@@ -63,7 +63,7 @@ public class MenusController {
     @DeleteMapping("deleteListById/{menusIdS}")
     @ApiOperation("集合删除")
     @Log("集合删除")
-    public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
+    public JiebaoResponse deleteListById( String[] menusIdS) {
         return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
     }
 

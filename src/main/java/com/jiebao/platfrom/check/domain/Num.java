@@ -50,6 +50,7 @@ public class Num implements Serializable {
     @ApiModelProperty(value = "年度分数", example = "23.23")
     private Double number;
 
+    private Double fpNumber;  //复评分数
     /**
      * 所属组织结构或地区
      */
@@ -62,6 +63,9 @@ public class Num implements Serializable {
     @ApiModelProperty(value = "基础工作分数", example = "23.23")
     private Double jcWork;
 
+    private Double fpJcWork;
     @ApiModelProperty(value = "工作效果分数", example = "23.23")
     private Double xgWork;
+
+    private Double fpXgWork;
 }

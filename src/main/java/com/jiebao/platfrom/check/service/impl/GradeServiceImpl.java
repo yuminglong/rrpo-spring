@@ -96,6 +96,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
                 if (grade.getNum() > 0) {  //如果大于0 证明为加分项
                     JCJF += grade.getNum();
+                    fpJcKf += grade.getNum();
                 } else {  //反之 为扣分项
                     JCKF += grade.getNum();
                 }
@@ -236,6 +237,13 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-        return new JiebaoResponse().message(fileService.updateBatchById(list) && gradeZzService.saveBatch(gradeZzList) ? "添加成功" : "添加失败");
+        boolean a=true, b=true;
+        if (list.size() != 0) {
+            a = fileService.updateBatchById(list);
+        }
+        if (gradeZzList.size() != 0) {
+            b = gradeZzService.saveBatch(gradeZzList);
+        }
+        return new JiebaoResponse().message(a&& b ? "添加成功" : "添加失败");
     }
 }

@@ -46,7 +46,7 @@ public class MenusYearController {
     @DeleteMapping("deleteByLists/{listS}")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
-    public JiebaoResponse deleteByLists(@PathVariable String[] listS) {
-        return new JiebaoResponse().message(menusYearService.removeByIds(Arrays.asList(listS)) ? "删除成功" : "删除失败");
+    public JiebaoResponse deleteByLists( String[] listS,String yearDate) {
+        return menusYearService.deleteByListAndYearDate(listS,yearDate);
     }
 }
