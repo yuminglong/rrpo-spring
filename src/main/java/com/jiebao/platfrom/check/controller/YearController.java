@@ -52,7 +52,7 @@ public class YearController {
 
     @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
-    public JiebaoResponse deleteByLists( String[] lists) {
+    public JiebaoResponse deleteByLists(@PathVariable String[] lists) {
         return new JiebaoResponse().message(yearService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
     }
 
