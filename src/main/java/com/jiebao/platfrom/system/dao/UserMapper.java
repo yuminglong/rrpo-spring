@@ -15,7 +15,6 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
 
-
     IPage<User> findUserDetail(Page page, @Param("user") User user);
 
     /**
@@ -45,5 +44,11 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("select * from sys_user r  where  r.dept_id = #{deptId}")
     List<User> getByDepts(String deptId);
 
+
+    @Select("select username from sys_user r  where  r.dept_id = #{deptId}")
+    List<String> getUserIdByDepts(String deptId);
+
+    @Select("select dept_id from sys_user r  where  r.username = #{userName}")
+    String getUser(String userName);
 
 }

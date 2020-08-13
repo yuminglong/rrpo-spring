@@ -189,7 +189,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx, String[] qt) {
+    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
@@ -252,16 +252,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-        if (qt != null) {
-            for (String gGxxId : qt
-            ) {
-                GradeZz gradeZz = new GradeZz();
-                gradeZz.setType(5);
-                gradeZz.setGradeId(gradeId);
-                gradeZz.setZzId(gGxxId);
-                gradeZzList.add(gradeZz);
-            }
-        }
+
         boolean a = true, b = true;
         if (list.size() != 0) {
             a = fileService.updateBatchById(list);
