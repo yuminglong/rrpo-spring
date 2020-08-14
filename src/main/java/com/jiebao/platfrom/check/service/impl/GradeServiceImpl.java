@@ -265,6 +265,10 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
+        if (gradeId == null) {
+            return new JiebaoResponse().failMessage("未传值");
+        }
+
         return null;
     }
 }

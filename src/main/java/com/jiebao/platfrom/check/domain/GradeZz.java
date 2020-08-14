@@ -41,6 +41,7 @@ public class GradeZz implements Serializable {
      */
     private String zzId;
 
-    private Integer isQualified;//0合格  1不合格
+    private Integer status;     //0  0 正常  1不正常
+
 
 }

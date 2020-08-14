@@ -20,7 +20,9 @@ import com.jiebao.platfrom.railway.service.InformService;
 import com.jiebao.platfrom.railway.service.PrizeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,8 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     PublicFileService publicFileService;
     @Autowired
     GradeZzMapper gradeZzMapper;
+    @Autowired
+    FileService fileService;
 
     @Override
     public JiebaoResponse deleteByGradeIdAndZzId(String[] list, String gradeId) {
@@ -108,13 +112,13 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
             return new JiebaoResponse().data(informService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
         }
 
-//        if (type == 4) {
-//            //公共信息
-//            Page<Exchange> page = new Page<>();
-//            QueryWrapper<Exchange> queryWrapper = new QueryWrapper<>();
-//            queryWrapper.in("id",zzId);
-//            return new JiebaoResponse().data(publicFileService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
-//        }
+        if (type == 4) {
+            //公共信息
+            Page<File> page = new Page<>();
+            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+            queryWrapper.in("file_id", zzId);
+            return new JiebaoResponse().data(fileService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+        }
 
         return null;
     }
@@ -122,13 +126,14 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     @Override
     public JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//当前市州相关人员
+        List<String> userNameByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
+        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
         if (type == 1)
-            return new JiebaoResponse().data(ExchangeList(userIdByDepts, status, queryRequest));
+            return new JiebaoResponse().data(ExchangeList(userNameByDepts, status, queryRequest));
         if (type == 2)
-            return new JiebaoResponse().data(PrizeList(userIdByDepts, status, queryRequest));
+            return new JiebaoResponse().data(PrizeList(userNameByDepts, status, queryRequest));
         if (type == 3)
-            return new JiebaoResponse().data(InformList(userIdByDepts, status, queryRequest));
+            return new JiebaoResponse().data(InformList(userNameByDepts, status, queryRequest));
         if (type == 4)
             return new JiebaoResponse().data(PublicFileList(userIdByDepts, status, queryRequest));
         return null;
@@ -159,12 +164,12 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
         return informService.list(queryWrapper);
     }
 
-    private List<PublicFile> PublicFileList(List<String> Username, Integer status, QueryRequest queryRequest) { //公共信息  //未写好
-        QueryWrapper<PublicFile> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("creat_user", Username);
+    private List<File> PublicFileList(List<String> UserId, Integer status, QueryRequest queryRequest) { //公共信息  //未写好
+        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("user_id", UserId);
         queryWrapper.eq("is_check", status);
-        return publicFileService.list(queryWrapper);
+        Page<File> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return fileService.list(queryWrapper);
     }
-
 
 }
