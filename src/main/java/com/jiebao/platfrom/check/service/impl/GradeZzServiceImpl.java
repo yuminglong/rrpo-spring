@@ -8,6 +8,7 @@ import com.jiebao.platfrom.check.dao.GradeZzMapper;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Exchange;
@@ -120,8 +121,9 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
 
     @Override
     public JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest) {
-        String userName = (String) SecurityUtils.getSubject().getPrincipal();
-        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(userName));//当前市州相关人员
+//        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//当前市州相关人员
         if (type == 1)
             return new JiebaoResponse().data(ExchangeList(userIdByDepts, status, queryRequest));
         if (type == 2)

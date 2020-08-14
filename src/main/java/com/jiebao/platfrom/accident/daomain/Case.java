@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Dict;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -39,75 +40,94 @@ public class Case implements Serializable {
     /**
      * 发生时间
      */
-    private LocalDateTime date;
+    @ApiModelProperty(value = "创建时间", example = "2020/04/03 12:15:12")
+    private String date;
 
     /**
      * 发生城市
      */
+    @ApiModelProperty(value = "发生城市", example = "哈哈")
     private String cityCsId;
     @TableField(exist = false)
     private Dept deptCs;
     /**
      * 发生县区
      */
+    @ApiModelProperty(value = "发生县区", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "2020/04/03 12:15:12")
     private Dept deptQx;
     /**
      * 发生乡镇村
      */
+    @ApiModelProperty(value = "发生乡镇村", example = "哈哈")
     private String cityXc;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "2020/04/03 12:15:12")
+    private Dept deptXc;
     /**
      * 派出所
      */
+    @ApiModelProperty(value = "创建时间", example = "哈哈")
     private String policeId;
     @TableField(exist = false)
     private Dept deptPolice;
     /**
      * 线路
      */
+    @ApiModelProperty(value = "线路   字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dict dictLine;
     /**
      * 地点
      */
+    @ApiModelProperty(value = "地点", example = "哈哈")
     private String address;
 
     /**
      * 案件性质分类
      */
+    @ApiModelProperty(value = "案件性质分类", example = "哈哈")
     private String nature;
 
     /**
      * 停车时长
      */
+    @ApiModelProperty(value = "停车时长", example = "哈哈")
     private Double dateLength;
 
     /**
      * 案件状态
      */
+    @ApiModelProperty(value = "案件状态", example = "哈哈")
     private String status;
 
     /**
      * 封闭状态
      */
+    @ApiModelProperty(value = "封闭状态", example = "哈哈")
     private String fbStatus;
 
     /**
      * 属地管理责任说明
      */
+    @ApiModelProperty(value = "属地管理责任说明", example = "哈哈")
     private String content;
 
     /**
      * 备注
      */
+    @ApiModelProperty(value = "备注", example = "哈哈")
     private String remark;
 
     /**
      * 描述
      */
+    @ApiModelProperty(value = "描述", example = "哈哈")
     private String ms;
 
 

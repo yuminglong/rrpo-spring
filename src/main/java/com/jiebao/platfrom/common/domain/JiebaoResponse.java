@@ -11,6 +11,12 @@ public class JiebaoResponse extends HashMap<String, Object> {
         return this;
     }
 
+    public JiebaoResponse failMessage(String message) {
+        this.put("message", message);
+        this.put("status", 0);
+        return this;
+    }
+
     public JiebaoResponse data(Object data) {
         this.put("data", data);
         return this;
@@ -21,4 +27,5 @@ public class JiebaoResponse extends HashMap<String, Object> {
         super.put(key, value);
         return this;
     }
+
 }
