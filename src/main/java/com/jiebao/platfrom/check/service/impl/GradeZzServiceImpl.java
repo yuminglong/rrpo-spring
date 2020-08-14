@@ -99,7 +99,7 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     @Override
     public JiebaoResponse getData(Integer type, Integer status) {
         String userName = (String) SecurityUtils.getSubject().getPrincipal();
-        List<String> userIdByDepts = userMapper.getUserIdByDepts(userMapper.getUser(userName));//当前市州相关人员
+        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(userName));//当前市州相关人员
         if (type == 1)
             return new JiebaoResponse().data(ExchangeList(userIdByDepts, status));
         if (type == 2)
@@ -114,28 +114,28 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
 
     private List<Exchange> ExchangeList(List<String> Username, Integer status) { //去信息互递拿值
         QueryWrapper<Exchange> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("create_user", Username);
+        queryWrapper.in("creat_user", Username);
         queryWrapper.eq("is_check", status);
         return exchangeService.list(queryWrapper);
     }
 
     private List<Prize> PrizeList(List<String> Username, Integer status) { //一事一奖
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("create_user", Username);
+        queryWrapper.in("creat_user", Username);
         queryWrapper.eq("is_check", status);
         return prizeService.list(queryWrapper);
     }
 
     private List<Inform> InformList(List<String> Username, Integer status) { //通知公告
         QueryWrapper<Inform> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("create_user", Username);
+        queryWrapper.in("creat_user", Username);
         queryWrapper.eq("is_check", status);
         return informService.list(queryWrapper);
     }
 
     private List<PublicFile> PublicFileList(List<String> Username, Integer status) { //公共信息  //未写好
         QueryWrapper<PublicFile> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("create_user", Username);
+        queryWrapper.in("creat_user", Username);
         queryWrapper.eq("is_check", status);
         return publicFileService.list(queryWrapper);
     }
