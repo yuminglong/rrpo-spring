@@ -34,7 +34,7 @@ public class Num implements Serializable {
     /**
      * 分数总结id
      */
-    @TableId(value = "num_id",type = IdType.UUID)
+    @TableId(value = "num_id", type = IdType.UUID)
     private String numId;
 
     /**
@@ -68,4 +68,6 @@ public class Num implements Serializable {
     private Double xgWork;
 
     private Double fpXgWork;
+    @ApiModelProperty(value = "试卷效果", example = "23.23")
+    private Integer status;     //0  0 正常  1不正常
 }

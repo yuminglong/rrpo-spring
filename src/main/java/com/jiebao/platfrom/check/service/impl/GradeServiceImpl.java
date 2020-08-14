@@ -262,4 +262,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败").data(gradeId);
     }
+
+    @Override
+    public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
+        return null;
+    }
 }
