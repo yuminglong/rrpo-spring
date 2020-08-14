@@ -34,8 +34,7 @@ public interface DeptService extends IService<Dept> {
      */
     Tree<Dept> findDeptUser(QueryRequest request, Dept dept);
 
-    List<Address> getAddress(String id, List<String> list);
+    List<Address> getAddress(String id);
 
-  //  List<String> getAllId(String id, List<String> list);
 
 }

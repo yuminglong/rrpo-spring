@@ -176,7 +176,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
 
-    private List<String> getAllId(String id, List<String> list){
+    private List getAllId(String id, List list){
         //根据父ID查底下的子节点
         Map<String, Object> map = new HashMap<>();
         map.put("parent_id",id);
@@ -195,9 +195,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
 
 
-        @Override
-    public List<Address> getAddress(String id,List<String> list){
-        List<String> allId = getAllId(id,list);
+    @Override
+    public List<Address> getAddress(String id ){
+        List<String> allId = getDeptIds(id);
         List<Address> addresses = new ArrayList<>();
         for (String li: allId
              ) {
@@ -205,10 +205,27 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             map.put("dept_id",li);
             addresses.addAll( addressMapper.selectByMap(map));
         }
-        Map<String, Object> ownMap = new HashMap<>();
-        ownMap.put("dept_id",id);
-        addresses.addAll(addressMapper.selectByMap(ownMap));
         return addresses;
     }
+
+
+    private List getDeptIds(String id) {
+        List list = new ArrayList();
+        list.add(id); // 加上本身
+        list = getAllId(id,list);
+        return list;
+    }
+
+
+
+   /* private List getId(String id,List list){
+        List<Dept> forList = deptMapper.getChildId(id);
+        for(Dept sysDept : forList){
+            list.add(sysDept.getDeptId());
+            list = getId(sysDept.getDeptId(),list);
+        }
+        return list;
+    }
+*/
 
 }

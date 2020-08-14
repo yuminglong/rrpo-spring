@@ -1,4 +1,3 @@
-/*
 
 package com.jiebao.platfrom.railway.controller;
 
@@ -10,6 +9,7 @@ import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,9 @@ public class PublicFileController extends BaseController {
     @Autowired
     private PublicFileService publicFileService;
 
+    @Autowired
+    private FileMapper fileMapper;
+
 
     @GetMapping
     public Map<String, Object> publicFileList(QueryRequest request, PublicFile publicFile) {
@@ -42,9 +45,12 @@ public class PublicFileController extends BaseController {
 
     @Log("新增文件夹")
     @PostMapping
-    public void addPublicFile(@Valid PublicFile publicFile) throws JiebaoException {
+    public void addPublicFile(@Valid PublicFile publicFile, String[] fileIds) throws JiebaoException {
         try {
             this.publicFileService.createPublicFile(publicFile);
+            Arrays.stream(fileIds).forEach(fileId -> {
+                fileMapper.updateInformByFileId(fileId, publicFile.getId());
+            });
         } catch (Exception e) {
             message = "新增文件夹失败";
             log.error(message, e);
@@ -77,7 +83,7 @@ public class PublicFileController extends BaseController {
     @PutMapping
     public void updatePublicFile(@Valid PublicFile publicFile) throws JiebaoException {
         try {
-            this.publicFileService.updatePublicFile(publicFile);
+            this.publicFileService.updateById(publicFile);
         } catch (Exception e) {
             message = "修改文件夹失败";
             log.error(message, e);
@@ -88,11 +94,7 @@ public class PublicFileController extends BaseController {
 
 
 
- @GetMapping("/publicFile")
-    public Tree<PublicFile> publicFileList(QueryRequest request, PublicFile publicFile) {
-        return this.publicFileService.findPublicFile(request, publicFile);
-    }
+
 
 }
 
-*/

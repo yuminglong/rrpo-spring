@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -121,8 +122,12 @@ public class DeptController extends BaseController {
         return this.deptService.findDeptUser(request, dept);
     }
 
-    @GetMapping("/getChildren")
-    public List<Address> deptUserList(String id, @RequestParam(value = "list") List<String> list) {
-        return deptService.getAddress(id,list);
+    @GetMapping("/getChildrenAddress")
+    public List<Address> deptUserList(String id) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("start:"+simpleDateFormat.format(new Date()));
+        List<Address> list = deptService.getAddress(id);
+        System.out.println("end:"+simpleDateFormat.format(new Date()));
+        return list;
     }
 }

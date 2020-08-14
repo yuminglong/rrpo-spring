@@ -1,6 +1,13 @@
 package com.jiebao.platfrom.railway.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.domain.JiebaoConstant;
+import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.domain.Tree;
+import com.jiebao.platfrom.common.utils.SortUtil;
+import com.jiebao.platfrom.common.utils.TreeUtil;
 import com.jiebao.platfrom.railway.dao.PrizeTypeMapper;
 import com.jiebao.platfrom.railway.dao.PublicFileMapper;
 import com.jiebao.platfrom.railway.domain.PrizeType;
@@ -13,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.util.*;
 
 
 /**
@@ -26,6 +33,49 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
 
 
     @Override
+    public Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<PublicFile> publicFiles = findPublicFiles(publicFile, request);
+            List<Tree<PublicFile>> trees = new ArrayList<>();
+            buildTrees(trees, publicFiles);
+            Tree<PublicFile> publicFileTree = TreeUtil.build(trees);
+            result.put("rows", publicFileTree);
+            result.put("total", publicFiles.size());
+        } catch (Exception e) {
+            log.error("获取组织机构列表失败", e);
+            result.put("rows", null);
+            result.put("total", 0);
+        }
+        return result;
+    }
+
+
+    private void buildTrees(List<Tree<PublicFile>> trees, List<PublicFile> publicFiles) {
+        publicFiles.forEach(publicFile -> {
+            Tree<PublicFile> tree = new Tree<>();
+            tree.setId(publicFile.getId());
+            tree.setKey(tree.getId());
+            tree.setParentId(publicFile.getParentId());
+            tree.setText(publicFile.getName());
+            trees.add(tree);
+        });
+    }
+
+
+    @Override
+    public List<PublicFile> findPublicFiles(PublicFile publicFile, QueryRequest request) {
+        QueryWrapper<PublicFile> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(publicFile.getName())){
+            queryWrapper.lambda().eq(PublicFile::getName, publicFile.getName());
+        }
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+
+
+    @Override
     @Transactional
     public void createPublicFile(PublicFile publicFile) {
         String parentId = publicFile.getParentId();
@@ -33,5 +83,12 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             publicFile.setParentId("0");
         }
         this.save(publicFile);
+    }
+
+    @Override
+    public List<PublicFile> findChilderPublicFile(String id) {
+        LambdaQueryWrapper<PublicFile> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(PublicFile::getParentId, id);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
     }
 }
