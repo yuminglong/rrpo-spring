@@ -1,11 +1,19 @@
 package com.jiebao.platfrom.system.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.controller.BaseController;
+import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.common.utils.SortUtil;
+import com.jiebao.platfrom.railway.dao.AddressMapper;
+import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.railway.domain.Exchange;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.wuwenze.poi.ExcelKit;
@@ -18,9 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 @Slf4j
 @Validated
@@ -35,9 +42,15 @@ public class DeptController extends BaseController {
     private DeptService deptService;
 
 
+
     @GetMapping
     public Map<String, Object> deptList(QueryRequest request, Dept dept) {
         return this.deptService.findDepts(request, dept);
+    }
+
+    @GetMapping("/list")
+    public List<Dept> List(QueryRequest request, Dept dept) {
+        return deptService.findDepts(dept,request);
     }
 
     @Log("新增组织机构")
@@ -106,5 +119,10 @@ public class DeptController extends BaseController {
     @GetMapping("deptUser")
     public Tree<Dept> deptUserList(QueryRequest request, Dept dept) {
         return this.deptService.findDeptUser(request, dept);
+    }
+
+    @GetMapping("/getChildren")
+    public List<Address> deptUserList(String id, @RequestParam(value = "list") List<String> list) {
+        return deptService.getAddress(id,list);
     }
 }

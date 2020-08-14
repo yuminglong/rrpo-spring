@@ -32,4 +32,6 @@ public class PublicFile {
     private String parentId;
 
     private Date creatTime;
+
+    private String deptId;
 }

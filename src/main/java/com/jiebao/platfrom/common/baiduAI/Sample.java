@@ -87,7 +87,7 @@ public class Sample {
         options.put("tags", "100,11");
         options.put("tag_logic", "0");
       //  options.put("pn", "1");
-        options.put("rn", "2");
+        options.put("rn", "200");
         JSONObject res = client.similarSearch(image, options);
         System.out.println(res.toString(2));
     }

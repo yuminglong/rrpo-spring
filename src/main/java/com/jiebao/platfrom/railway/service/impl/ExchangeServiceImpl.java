@@ -63,6 +63,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
         if (StringUtils.isNotBlank(exchange.getStatus())) {
             queryWrapper.lambda().eq(Exchange::getStatus, exchange.getStatus());
         }
+        if (StringUtils.isNotBlank(exchange.getIsCheck())){
+            queryWrapper.lambda().eq(Exchange::getIsCheck, exchange.getIsCheck());
+        }
         Page<Exchange> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

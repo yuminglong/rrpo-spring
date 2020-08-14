@@ -173,7 +173,7 @@ public class PrizeController extends BaseController {
             Integer limitNumber;
             if (prizeLimit == null) {
                 //如果无记录，则设置默认限制上报次数如果为10,则要10-1即应为9
-                limitNumber = 19;
+                limitNumber = 219;
             } else {
                 limitNumber = prizeLimit.getLimitNumber();
             }
