@@ -114,4 +114,6 @@ public class Prize {
     @ApiModelProperty(value = "意见")
     @TableField(exist = false)
     private List<PrizeOpinion> opinions;
+
+    private Integer isCheck;
 }

@@ -3,14 +3,16 @@ package com.jiebao.platfrom.check.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -27,7 +29,7 @@ public class GradeZz implements Serializable {
     /**
      * 扣分佐证id
      */
-    @TableId(value = "grade_zz_id",type = IdType.UUID)
+    @TableId(value = "grade_zz_id", type = IdType.UUID)
     private String gradeZzId;
 
     private String gradeId;
@@ -39,5 +41,6 @@ public class GradeZz implements Serializable {
      */
     private String zzId;
 
+    private Integer isQualified;//0合格  1不合格
 
 }

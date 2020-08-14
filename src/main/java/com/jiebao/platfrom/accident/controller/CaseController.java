@@ -27,7 +27,7 @@ import java.util.List;
 @RequestMapping("/accident/case")
 @Api(tags = "accident-设铁案")
 public class CaseController {
-   @Autowired
+    @Autowired
     ICaseService caseService;
 
     @PostMapping("saveOrUpdate")

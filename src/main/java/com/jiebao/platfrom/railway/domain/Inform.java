@@ -75,4 +75,5 @@ public class Inform {
     @ApiModelProperty(value = "发布时间")
     private Date releaseTime;
 
+    private Integer isCheck;
 }

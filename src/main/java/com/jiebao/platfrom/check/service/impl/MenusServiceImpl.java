@@ -48,7 +48,7 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
         List<Menus> objects = new ArrayList<>();
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("parent_id", menusId);
-        Page<Menus> page = new Page<>();
+        Page<Menus> page = new Page<>(queryRequest.getPageNum(),queryRequest.getPageSize());
         return new JiebaoResponse().data(page(page, queryWrapper)).message("操作成功");
     }
 

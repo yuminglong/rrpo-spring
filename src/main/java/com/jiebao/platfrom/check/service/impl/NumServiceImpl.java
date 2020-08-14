@@ -38,9 +38,9 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
             queryWrapper.eq("dept_id", deptId);
         }
         if (dateYear != null) {
-            ;
             queryWrapper.eq("year_date", dateYear);
         }
+        queryWrapper.orderByDesc("year_date");
         Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.pageList(page, queryWrapper)).message("查询成功");
     }
