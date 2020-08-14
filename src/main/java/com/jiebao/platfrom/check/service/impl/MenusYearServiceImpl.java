@@ -73,7 +73,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("menus_id", menusIdList);
         List<Menus> list = menusService.list(queryWrapper);
-        String GZxg = menusMapper.getMenusIdByName("工作效果");
+        String GZxg = menusMapper.getMenusIdByName("工作效果");//对应的id
         String JCgz = menusMapper.getMenusIdByName("基础工作");
         List<Menus> JCgzList = new ArrayList<>();
         List<Menus> GZxgList = new ArrayList<>();
