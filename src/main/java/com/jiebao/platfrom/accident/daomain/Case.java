@@ -56,7 +56,7 @@ public class Case implements Serializable {
     @ApiModelProperty(value = "发生县区", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管", example = "2020/04/03 12:15:12")
+
     private Dept deptQx;
     /**
      * 发生乡镇村
@@ -65,7 +65,7 @@ public class Case implements Serializable {
     private String cityXc;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管", example = "2020/04/03 12:15:12")
+
     private Dept deptXc;
     /**
      * 派出所
@@ -80,7 +80,7 @@ public class Case implements Serializable {
     @ApiModelProperty(value = "线路   字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管", example = "哈哈")
+
     private Dict dictLine;
     /**
      * 地点
@@ -129,6 +129,5 @@ public class Case implements Serializable {
      */
     @ApiModelProperty(value = "描述", example = "哈哈")
     private String ms;
-
 
 }
