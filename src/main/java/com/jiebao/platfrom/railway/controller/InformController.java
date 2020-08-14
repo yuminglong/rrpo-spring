@@ -135,13 +135,13 @@ public class InformController extends BaseController {
     @ApiOperation(value = "新增通知公告", notes = "新增通知公告", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addInform(@Valid Inform inform,  String [] fileIds) {
-        Arrays.stream(fileIds).forEach(fileId ->{
-            fileMapper.updateInformByFileId(fileId,inform.getId());
-        });
         inform.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         inform.setCreateUser(username);
         informService.save(inform);
+        Arrays.stream(fileIds).forEach(fileId ->{
+            fileMapper.updateInformByFileId(fileId,inform.getId());
+        });
         return new JiebaoResponse().message("成功");
     }
 

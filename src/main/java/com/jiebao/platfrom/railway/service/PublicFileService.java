@@ -10,4 +10,6 @@ import com.jiebao.platfrom.railway.domain.PublicFile;
 public interface PublicFileService extends IService<PublicFile> {
 
 
+
+   void createPublicFile(PublicFile publicFile);
 }

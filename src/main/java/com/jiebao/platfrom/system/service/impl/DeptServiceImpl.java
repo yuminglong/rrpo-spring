@@ -2,12 +2,14 @@ package com.jiebao.platfrom.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.common.utils.TreeUtil;
+import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -20,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Slf4j
@@ -31,6 +35,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Autowired
     UserMapper userMapper;
+    
+    @Autowired
+    DeptMapper deptMapper;
+
+    @Autowired
+    AddressMapper addressMapper;
 
     @Override
     public Map<String, Object> findDepts(QueryRequest request, Dept dept) {
@@ -55,6 +65,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<Dept> findDepts(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dept::getStatus, 1);
+        if (StringUtils.isNotBlank(dept.getDeptId())){
+            queryWrapper.lambda().eq(Dept::getParentId, dept.getDeptId());
+        }
         if (StringUtils.isNotBlank(dept.getDeptName()))
             queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
         if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo()))
@@ -161,4 +174,41 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             trees.add(tree);
         });
     }
+
+
+    private List<String> getAllId(String id, List<String> list){
+        //根据父ID查底下的子节点
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id",id);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        if(null!=depts){
+            //如果底下有子节点-将子节点的ID加入list中
+            for(int i=0;i<depts.size();i++){
+                list.add(depts.get(i).getDeptId());
+                //重新调用自身  -根据子节点的id和list
+                list=getAllId(depts.get(i).getDeptId(),list);
+            }
+        }
+        //返回list
+        return list;
+    }
+
+
+
+        @Override
+    public List<Address> getAddress(String id,List<String> list){
+        List<String> allId = getAllId(id,list);
+        List<Address> addresses = new ArrayList<>();
+        for (String li: allId
+             ) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("dept_id",li);
+            addresses.addAll( addressMapper.selectByMap(map));
+        }
+        Map<String, Object> ownMap = new HashMap<>();
+        ownMap.put("dept_id",id);
+        addresses.addAll(addressMapper.selectByMap(ownMap));
+        return addresses;
+    }
+
 }

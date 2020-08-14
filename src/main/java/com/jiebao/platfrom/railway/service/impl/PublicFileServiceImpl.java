@@ -8,9 +8,12 @@ import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 
 /**
@@ -22,4 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicFile> implements PublicFileService {
 
 
+    @Override
+    @Transactional
+    public void createPublicFile(PublicFile publicFile) {
+        String parentId = publicFile.getParentId();
+        if (StringUtils.isEmpty(parentId)){
+            publicFile.setParentId("0");
+        }
+        this.save(publicFile);
+    }
 }

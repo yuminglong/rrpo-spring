@@ -4,6 +4,7 @@ package com.jiebao.platfrom.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.domain.Dept;
 
 import java.util.List;
@@ -32,4 +33,9 @@ public interface DeptService extends IService<Dept> {
      * @return
      */
     Tree<Dept> findDeptUser(QueryRequest request, Dept dept);
+
+    List<Address> getAddress(String id, List<String> list);
+
+  //  List<String> getAllId(String id, List<String> list);
+
 }
