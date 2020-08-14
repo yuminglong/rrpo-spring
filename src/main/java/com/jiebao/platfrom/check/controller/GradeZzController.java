@@ -3,6 +3,7 @@ package com.jiebao.platfrom.check.controller;
 
 import com.jiebao.platfrom.check.service.IGradeZzService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class GradeZzController {
 
     @GetMapping("list")
     @ApiOperation("佐证查询  参数每条扣分记录id")
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusIds, Integer type) {
-        return gradeZzService.list(gradeId, yearDate, deptId, menusIds, type);
+    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusIds, Integer type, QueryRequest queryRequest) {
+        return gradeZzService.list(gradeId, yearDate, deptId, menusIds, type,queryRequest);
     }
 
     @DeleteMapping("delete")
@@ -42,7 +43,7 @@ public class GradeZzController {
 
     @GetMapping("getListCZ")
     @ApiOperation("去池子里面那数据")
-    public JiebaoResponse getListCZ(Integer type, Integer status) {
-        return gradeZzService.getData(type, status);
+    public JiebaoResponse getListCZ(Integer type, Integer status, QueryRequest queryRequest) {
+        return gradeZzService.getData(type, status,queryRequest);
     }
 }

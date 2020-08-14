@@ -156,7 +156,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId) {  //必填 时间   对象id
+    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId) {  //必填 时间   组织id   年份
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("year_date", dateYear);
         queryWrapper.eq("dept_id", DeptId);
@@ -261,5 +261,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             b = gradeZzService.saveBatch(gradeZzList);
         }
         return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败").data(gradeId);
+    }
+
+    @Override
+    public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
+        if (gradeId == null) {
+            return new JiebaoResponse().failMessage("未传值");
+        }
+
+        return null;
     }
 }

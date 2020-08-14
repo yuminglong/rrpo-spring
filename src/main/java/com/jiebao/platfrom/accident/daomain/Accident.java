@@ -11,6 +11,7 @@ import java.util.Date;
 
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Dict;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -40,119 +41,147 @@ public class Accident implements Serializable {
     /**
      * 事故发生时间
      */
+    @ApiModelProperty(value = "事故发生时间", example = "2020/04/03 12:15:12")
     private Date date;
 
     /**
      * 发生城市
      */
+    @ApiModelProperty(value = "发生城市", example = "哈哈")
     private String cityCsId;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dept deptCs;
 
     /**
      * 发生区县
      */
+    @ApiModelProperty(value = "发生区县", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dept deptQx;
     /**
      * 派出所
      */
+    @ApiModelProperty(value = "派出所", example = "哈哈")
     private String policeId;
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     @TableField(exist = false)
     private Dept deptPolice;
     /**
      * 线路
      */
+    @ApiModelProperty(value = "线路 字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dict dictXl;
     /**
      * 地点
      */
+    @ApiModelProperty(value = "地点", example = "哈哈")
     private String address;
 
     /**
      * 车务段
      */
+    @ApiModelProperty(value = "车务段", example = "哈哈")
     private String trainId;
     @TableField(exist = false)
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dict dictCwd;
     /**
      * 公务段
      */
+    @ApiModelProperty(value = "公务段", example = "哈哈")
     private String trackId;
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     @TableField(exist = false)
     private Dict dictGwd;
     /**
      * 事故性质
      */
+    @ApiModelProperty(value = "事故性质", example = "哈哈")
     private String nature;
 
     /**
      * 站内性质
      */
+    @ApiModelProperty(value = "站内性质", example = "哈哈")
     private String instationSection;
 
     /**
      * 护路模式
      */
+    @ApiModelProperty(value = "护路模式", example = "哈哈")
     private String road;
 
     /**
      * 年龄段
      */
+    @ApiModelProperty(value = "年龄段", example = "哈哈")
     private String age;
 
     /**
      * 封闭程度
      */
+    @ApiModelProperty(value = "封闭程度", example = "哈哈")
     private String closed;
 
     /**
      * 居住地
      */
+    @ApiModelProperty(value = "居住地", example = "哈哈")
     private String jzd;
 
     /**
      * 离铁路远近
      */
+    @ApiModelProperty(value = "离铁路远近", example = "哈哈")
     private String distance;
 
     /**
      * 性别
      */
+    @ApiModelProperty(value = "性别", example = "哈哈")
     private String sex;
 
     /**
      * 身份判断
      */
+    @ApiModelProperty(value = "身份判断", example = "哈哈")
     private String identity;
 
     /**
      * 事故情形
      */
+    @ApiModelProperty(value = "不用管", example = "哈哈")
     private String condition;
 
     /**
      * 电脑分析系数
      */
+    @ApiModelProperty(value = "电脑分析系数", example = "哈哈")
     private String dnxs;
 
     /**
      * 电脑调节系数
      */
+    @ApiModelProperty(value = "电脑调节系数", example = "哈哈")
     private String dntjxs;
 
     /**
      * 公安分析系数
      */
+    @ApiModelProperty(value = "公安分析系数", example = "哈哈")
     private String gaxs;
 
     /**
      * 属地管理责任死亡人数
      */
+    @ApiModelProperty(value = "属地管理责任死亡人数", example = "哈哈")
     private String deathToll;
 
 
