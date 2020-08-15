@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.system.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -45,14 +46,14 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> getByDepts(String deptId);
 
 
-    @Select("select username from sys_user r  where  r.dept_id in #{deptId}")
-    List<String> getUserNameByDepts(String deptId);
+    @Select("select username from sys_user r  ${ew.customSqlSegment}")
+    List<String> getUserNameByDepts(QueryWrapper<User> ew);
 
 
-    @Select("select username from sys_user r  where  r.dept_id in #{deptId}")
-    List<String> getUserIdByDepts(String deptId);
+    @Select("select user_id from sys_user r  ${ew.customSqlSegment}")
+    List<String> getUserIdByDepts(QueryWrapper<User> ew);
 
     @Select("select dept_id from sys_user r  where  r.username = #{userName}")
-    String getUser(String userName);
+    String getDeptID(String userName);
 
 }

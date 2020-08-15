@@ -306,6 +306,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             }
         }
         grade.setStatus(status);
+        QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("year_date", grade.getYearDate());
+        queryWrapper.eq("dept_id", grade.getDeptId());
+        Num num = numService.getOne(queryWrapper);  //对应的年份 统计总表
+        numService.updateById(num.setStatus(status));
         return jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("扣分项疑点标记成功") : jiebaoResponse.failMessage("扣分项疑点绑定失败");
     }
 }

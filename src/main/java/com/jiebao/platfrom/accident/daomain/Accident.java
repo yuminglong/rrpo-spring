@@ -84,7 +84,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "地点", example = "哈哈")
     private String address;
 
-    /**
+    /**b
      * 车务段
      */
     @ApiModelProperty(value = "车务段", example = "哈哈")

@@ -126,8 +126,11 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     @Override
     public JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        List<String> userNameByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
-        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
+        String deptID = userMapper.getDeptID(username);  //得到此人存在的部门
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("dept_id", deptID);
+        List<String> userNameByDepts = userMapper.getUserNameByDepts(queryWrapper);//前市州相关人员  得到用户
+        List<String> userIdByDepts = userMapper.getUserNameByDepts(queryWrapper);//前市州相关人员  得到用户
         if (type == 1)
             return new JiebaoResponse().data(ExchangeList(userNameByDepts, status, queryRequest));
         if (type == 2)
