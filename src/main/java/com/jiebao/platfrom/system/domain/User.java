@@ -88,6 +88,11 @@ public class User implements Serializable {
 
     private String avatar;
 
+    private String openid;
+
+    @NotBlank(message = "{required}")
+    private Integer type;
+
     @NotBlank(message = "{required}")
     private transient String roleId;
     @ExcelField(value = "角色")

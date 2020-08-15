@@ -90,7 +90,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/exchangeFile/**,/room/**,/exchange/**,/dept/**,/user/**,/prize/**,/prizeUser/**,/check/**,/mini/user/login/**,/mini/user/quickLogin/**
     # token有效期，单位秒
     jwtTimeOut: 3600
 
@@ -107,3 +107,9 @@ jiebao:
     image: /jbx/cdn/image/
     file: /jbx/cdn/file/
 
+wx:
+  miniapp:
+    configs:
+      - appid: wx67029b2a97acdda1
+        secret: 6da3b18391c7eb57bae8cf3353c6a3d7
+        msgDataFormat: JSON

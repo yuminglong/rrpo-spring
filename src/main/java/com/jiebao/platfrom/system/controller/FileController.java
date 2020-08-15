@@ -1,6 +1,5 @@
 package com.jiebao.platfrom.system.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -168,7 +165,7 @@ public class FileController extends BaseController {
         File file = fileService.getById(fileId);
         if (null != file) {
             java.io.File deleteFile = new java.io.File(file.getFileUrl() + file.getNewName());
-            if (deleteFile.delete() && file.deleteById()) {
+            if (deleteFile.delete() && file.deleteById(file.getFileId())) {
                 return new JiebaoResponse().put("status", true).message("文件删除成功！");
             } else {
                 return new JiebaoResponse().put("status", false).message("文件删除失败，请重试！");
