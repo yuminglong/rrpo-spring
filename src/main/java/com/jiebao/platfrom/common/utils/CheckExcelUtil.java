@@ -55,7 +55,8 @@ public class CheckExcelUtil {
     }
 
     private static boolean judegExcelEdition(String fileName) {
-        if (fileName.matches("^.+\\.(?i)(xls)$")) {
+        int i = fileName.lastIndexOf(".");
+        if (fileName.substring(i).equals("xls")) {
             return false;
         } else {
             return true;

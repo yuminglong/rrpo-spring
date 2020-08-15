@@ -124,7 +124,17 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             list.add(menus);
         }
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = menusService.saveBatch(list) ? jiebaoResponse.okMessage("录入成功") : jiebaoResponse.failMessage("录入失败");
+        jiebaoResponse = menusService.saveBatch(list) ? jiebaoResponse.okMessage("入库录入成功") : jiebaoResponse.failMessage("入库录入失败");
+        List<MenusYear> menusYearList = new ArrayList<>();
+        for (Menus menus : list
+        ) {
+            MenusYear menusYear = new MenusYear();
+            menusYear.setParentId(menus.getParentId());
+            menusYear.setYearId(year_id);
+            menusYear.setMenusId(menus.getMenusId());
+            menusYearList.add(menusYear);
+        }
+        jiebaoResponse = saveBatch(menusYearList) ? jiebaoResponse.okMessage("考题与年份绑定成功") : jiebaoResponse.failMessage("考题与年份绑定失败");
         return jiebaoResponse;
     }
 }
