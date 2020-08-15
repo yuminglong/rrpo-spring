@@ -5,6 +5,12 @@ package com.jiebao.platfrom.common.domain;
  */
 public class JiebaoConstant {
 
+    //wechatMini code
+    public static final String MINI_LOGIN_TEMP_TOKEN = "wechat.mini.login.temp.token.";
+    public static final Integer STATUS_CODE_ERROR = 400010;    //处理异常
+    public static final Integer STATUS_CODE_SUCCESS = 0;   //操作成功
+
+
     // user缓存前缀
     public static final String USER_CACHE_PREFIX = "jiebao.cache.user.";
     // user角色缓存前缀
