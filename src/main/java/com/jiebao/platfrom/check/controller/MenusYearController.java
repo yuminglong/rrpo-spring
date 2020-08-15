@@ -53,7 +53,7 @@ public class MenusYearController {
         return menusYearService.deleteByListAndYearDate(listS, yearDate);
     }
 
-    @PostMapping("excel上传绑定")
+    @PostMapping("excel")
     @ApiOperation("excel上传绑定")
     public JiebaoResponse excel(MultipartFile multipartFile) {
         Map<String, List<String>> excel = CheckExcelUtil.excel(multipartFile);
