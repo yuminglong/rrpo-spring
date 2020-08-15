@@ -60,11 +60,8 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     FileService fileService;
 
     @Override
-    public JiebaoResponse deleteByGradeIdAndZzId(String[] list, String gradeId) {
-        QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("zz_id", Arrays.asList(list));
-        queryWrapper.eq("grade_id", gradeId);
-        return new JiebaoResponse().message(remove(queryWrapper) ? "解除绑定成功" : "解除绑定失败");
+    public JiebaoResponse deleteByGradeIdAndZzId(String[] list) {
+        return new JiebaoResponse().message(removeByIds(Arrays.asList(list)) ? "解除绑定成功" : "解除绑定失败");
     }
 
     @Override
@@ -87,27 +84,29 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
         if (zzId.size() == 0) {
             return new JiebaoResponse().message("无对象");
         }
+
         if (type == 1) {
             //信息互递
-
-            return new JiebaoResponse().data(gradeZzMapper.ListXXHD(gradeId, type)).message("操作成功");
+            Page<Exchange> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+            return new JiebaoResponse().data(gradeZzMapper.ListXXHD(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 2) {
             //一事一奖
-
-            return new JiebaoResponse().data(gradeZzMapper.ListYSYJ(gradeId, type)).message("操作成功");
+            Page<Prize> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+            return new JiebaoResponse().data(gradeZzMapper.ListYSYJ(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 3) {
             //通知公告
-
-            return new JiebaoResponse().data(gradeZzMapper.ListTZGG(gradeId, type)).message("操作成功");
+            Page<Inform> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+            return new JiebaoResponse().data(gradeZzMapper.ListTZGG(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 4) {
             //公共信息
-            return new JiebaoResponse().data(gradeZzMapper.ListGGXX(gradeId, type)).message("操作成功");
+            Page<File> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+            return new JiebaoResponse().data(gradeZzMapper.ListGGXX(gradeId, type, page)).message("操作成功");
         }
 
         return null;

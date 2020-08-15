@@ -15,6 +15,6 @@ import java.util.List;
  * @since 2020-08-05
  */
 public interface MenusYearMapper extends BaseMapper<MenusYear> {
-    @Select("select menus_id from check_menus_year where year_id=#{yearId}")
-    List<String> getMenusIdList(String yearId);
+    @Select("select menus_id from check_menus_year where year_id=#{yearId} and parent_id=#{parentId}")
+    List<String> getMenusIdList(String yearId,String parentId);
 }

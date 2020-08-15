@@ -34,11 +34,11 @@ public class GradeZzController {
 
     @DeleteMapping("delete")
     @ApiOperation("删除佐证")
-    public JiebaoResponse delete(String[] list, String gradeId) {
+    public JiebaoResponse delete(String[] list) {
         if (list == null) {
             return new JiebaoResponse().message("未传值");
         }
-        return gradeZzService.deleteByGradeIdAndZzId(list, gradeId);
+        return gradeZzService.deleteByGradeIdAndZzId(list);
     }
 
     @GetMapping("getListCZ")

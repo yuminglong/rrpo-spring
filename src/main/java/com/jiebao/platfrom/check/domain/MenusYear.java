@@ -3,14 +3,16 @@ package com.jiebao.platfrom.check.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -27,7 +29,7 @@ public class MenusYear implements Serializable {
     /**
      * 年度  菜单 挂钩
      */
-    @TableId(value = "menus_year_id",type = IdType.UUID)
+    @TableId(value = "menus_year_id", type = IdType.UUID)
     private String menusYearId;
 
     /**
@@ -40,7 +42,7 @@ public class MenusYear implements Serializable {
      */
     private String yearId;
 
-
+    private String parentId;
 
 
 }

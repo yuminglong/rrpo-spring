@@ -49,26 +49,25 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
-        if (number == null) {
-            return new JiebaoResponse().message("未填分数");
-        }
+        number = number == null ? 0 : number;
+        fpNumber = fpNumber == null ? 0 : fpNumber;
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_date", yearDate);//年份
         queryWrapper.eq("dept_id", deptId);
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
-            grade.setNum(number == null ? 0 : number);
-            grade.setFpNum(fpNumber == null ? 0 : fpNumber);
+            grade.setNum(number);
+            grade.setFpNum(fpNumber);
             grade.setMessage(message);
             grade.setFpMessage(fpMessage);
         } else {
             grade = new Grade();
-            grade.setNum(number == null ? 0 : number);
+            grade.setNum(number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearDate(yearDate);
-            grade.setFpNum(fpNumber == null ? 0 : fpNumber);
+            grade.setFpNum(fpNumber);
             grade.setMessage(message);
             grade.setFpMessage(fpMessage);
         }
@@ -272,16 +271,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (GradeZz gradeZz : list
             ) {
                 gradeZz.setStatus(status);
+                System.out.println(gradeId);
             }
-
             jiebaoResponse = gradeZzService.updateBatchById(list) ? jiebaoResponse.okMessage("年度审核材料佐证疑点标记成功") : jiebaoResponse.failMessage("年度审核材料佐证疑点标记失败");
         }
         if (fileId != null) {  //自定义佐证材料
             QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("file_id", Arrays.asList(zzId));
+            queryWrapper.in("file_id", Arrays.asList(fileId));
             List<File> list = fileService.list(queryWrapper);
             for (File file : list) {
-                file.setZz_status(status);
+                file.setZzStatus(status);
             }
             jiebaoResponse = fileService.updateBatchById(list) ? jiebaoResponse.okMessage("自定义年度审核材料疑点标记成功") : jiebaoResponse.failMessage("自定义年度审核材料疑点标记失败");
         }
