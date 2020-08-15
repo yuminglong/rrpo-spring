@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.domain.GradeZz;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.swagger.models.auth.In;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -24,4 +22,30 @@ public interface GradeZzMapper extends BaseMapper<GradeZz> {
 
     @Update("update check_grade_zz set status=#{status} ${ew.customSqlSegment}")
     int updateByGrade(Integer status, @Param("ew") QueryWrapper<GradeZz> ew);
+
+
+    @Select("select * from check_grade_zz where grade_id=#{gradeId} and type=#{type}")
+    @Results({
+            @Result(property = "exchange", column = "zz_id", one = @One(select = "com.jiebao.platfrom.railway.dao.ExchangeMapper.selectById"))
+    })
+    List<GradeZz> ListXXHD(String gradeId, Integer type);  //信息互递
+
+    @Select("select * from check_grade_zz where grade_id=#{gradeId} and type=#{type}}")
+    @Results({
+            @Result(property = "prize", column = "zz_id", one = @One(select = "com.jiebao.platfrom.railway.dao.PrizeMapper.selectById"))
+    })
+    List<GradeZz> ListYSYJ(String gradeID, Integer type); //一事一奖
+
+
+    @Select("select * from check_grade_zz where grade_id=#{gradeId} and type=#{type}")
+    @Results({
+            @Result(property = "inform", column = "zz_id", one = @One(select = "com.jiebao.platfrom.railway.dao.InformMapper.selectById"))
+    })
+    List<GradeZz> ListTZGG(String gradeID, Integer type);  //通知公告
+
+    @Select("select * from check_grade_zz where grade_id=#{gradeId} and type=#{type}")
+    @Results({
+            @Result(property = "file", column = "zz_id", one = @One(select = "com.jiebao.platfrom.system.dao.FileMapper.selectById"))
+    })
+    List<GradeZz> ListGGXX(String gradeID, Integer type);  //公共信息
 }

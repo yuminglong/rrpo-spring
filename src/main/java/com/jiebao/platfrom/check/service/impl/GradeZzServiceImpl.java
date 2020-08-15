@@ -87,37 +87,27 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
         if (zzId.size() == 0) {
             return new JiebaoResponse().message("无对象");
         }
-
         if (type == 1) {
             //信息互递
-            Page<Exchange> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Exchange> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(exchangeService.getBaseMapper().selectPage(page, queryWrapper)).message("操作成功");
+
+            return new JiebaoResponse().data(gradeZzMapper.ListXXHD(gradeId, type)).message("操作成功");
         }
 
         if (type == 2) {
             //一事一奖
-            Page<Prize> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(prizeService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+
+            return new JiebaoResponse().data(gradeZzMapper.ListYSYJ(gradeId, type)).message("操作成功");
         }
 
         if (type == 3) {
             //通知公告
-            Page<Inform> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Inform> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(informService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+
+            return new JiebaoResponse().data(gradeZzMapper.ListTZGG(gradeId, type)).message("操作成功");
         }
 
         if (type == 4) {
             //公共信息
-            Page<File> page = new Page<>();
-            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("file_id", zzId);
-            return new JiebaoResponse().data(fileService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+            return new JiebaoResponse().data(gradeZzMapper.ListGGXX(gradeId, type)).message("操作成功");
         }
 
         return null;
