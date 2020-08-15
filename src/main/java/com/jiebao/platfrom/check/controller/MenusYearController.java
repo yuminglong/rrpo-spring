@@ -43,7 +43,7 @@ public class MenusYearController {
     @ApiOperation("集合")
     @Log("查询年份与考核项挂钩")
     public JiebaoResponse list(String yearId, String yearDate) {
-        return new JiebaoResponse().data(menusYearService.List(yearId, yearDate)).message("查询成功");
+        return new JiebaoResponse().data(menusYearService.List(yearId)).message("查询成功");
     }
 
     @DeleteMapping("deleteByLists")

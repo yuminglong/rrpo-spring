@@ -18,7 +18,7 @@ import java.util.List;
 public interface IMenusYearService extends IService<MenusYear> {
     JiebaoResponse add(String yearID, List<String> menusId);
 
-    JiebaoResponse List(String yearId, String yearDate);//对应的
+    JiebaoResponse List(String yearId);//对应的
 
     JiebaoResponse deleteByListAndYearDate(String[] list, String yearDate);
 

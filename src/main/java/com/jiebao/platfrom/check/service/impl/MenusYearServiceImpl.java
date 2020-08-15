@@ -54,33 +54,25 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     }
 
     @Override
-    public JiebaoResponse List(String yearId, String yearDate) {  //通过 年份考核 查询 对应的年内考核项
+    public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
         List<String> JcMenusIdList = null;
         List<String> XgMenusIdList = null;
         if (yearId != null) {
             JcMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("基础工作"));
             XgMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("工作效果"));
         }
-        if (yearDate != null) {
-            QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("year_date", yearDate);
-            Year year = yearService.getOne(queryWrapper);
-            if (year != null) {
-                JcMenusIdList = this.baseMapper.getMenusIdList(year.getYearId(), menusMapper.getMenusIdByName("基础工作"));
-                XgMenusIdList = this.baseMapper.getMenusIdList(year.getYearId(), menusMapper.getMenusIdByName("工作效果"));
-            }
-        }
         HashMap<String, List<Menus>> map = new HashMap<>();  //最后返回
-        if (JcMenusIdList != null) {
+        if (JcMenusIdList != null && JcMenusIdList.size() != 0) {
             QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("menus_id", JcMenusIdList);
             map.put("JCgz", menusService.list(queryWrapper));
         }
-        if (XgMenusIdList != null) {
+        if (XgMenusIdList != null && XgMenusIdList.size() != 0) {
             QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("menus_id", XgMenusIdList);
             map.put("GZxg", menusService.list(queryWrapper));
         }
+        
         return new JiebaoResponse().data(map).message("查询成功");
     }
 
