@@ -66,8 +66,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             queryWrapper.eq("year_date", yearDate);
             Year year = yearService.getOne(queryWrapper);
             if (year != null) {
-                JcMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("基础工作"));
-                XgMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("工作效果"));
+                JcMenusIdList = this.baseMapper.getMenusIdList(year.getYearId(), menusMapper.getMenusIdByName("基础工作"));
+                XgMenusIdList = this.baseMapper.getMenusIdList(year.getYearId(), menusMapper.getMenusIdByName("工作效果"));
             }
         }
         HashMap<String, List<Menus>> map = new HashMap<>();  //最后返回
