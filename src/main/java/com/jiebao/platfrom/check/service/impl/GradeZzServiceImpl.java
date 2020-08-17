@@ -65,13 +65,13 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     }
 
     @Override
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId, Integer type, QueryRequest queryRequest) {
+    public JiebaoResponse list(String gradeId, String yearId, String deptId, String menusId, Integer type, QueryRequest queryRequest) {
         if (gradeId == null) {
-            if (yearDate == null || deptId == null || menusId == null) {
+            if (yearId == null || deptId == null || menusId == null) {
                 return new JiebaoResponse().message("信息不能为空");
             }
             QueryWrapper<Grade> queryWrapper1 = new QueryWrapper<>();  //考核 关联部分
-            queryWrapper1.eq("year_date", yearDate);
+            queryWrapper1.eq("year_Id", yearId);
             queryWrapper1.eq("dept_id", deptId);
             queryWrapper1.eq("check_id", menusId);
             Grade grade = gradeService.getOne(queryWrapper1);

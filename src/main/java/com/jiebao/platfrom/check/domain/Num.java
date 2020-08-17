@@ -41,8 +41,9 @@ public class Num implements Serializable {
      * 存年份
      */
     @ApiModelProperty(value = "年份 后端生成", example = "2018")
-    private String yearDate;
+    private String yearId;
 
+    private String yearDate;
 
     /**
      * 年度分数

@@ -32,13 +32,13 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     UserService userService;
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String dateYear) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (deptId != null) {
             queryWrapper.eq("dept_id", deptId);
         }
-        if (dateYear != null) {
-            queryWrapper.eq("year_date", dateYear);
+        if (yearId != null) {
+            queryWrapper.eq("year_id", yearId);
         }
         queryWrapper.orderByDesc("year_date");
         Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());

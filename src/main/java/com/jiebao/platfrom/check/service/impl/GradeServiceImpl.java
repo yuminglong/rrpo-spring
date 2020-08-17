@@ -7,11 +7,8 @@ import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.domain.GradeZz;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.Num;
-import com.jiebao.platfrom.check.service.IGradeService;
+import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jiebao.platfrom.check.service.IGradeZzService;
-import com.jiebao.platfrom.check.service.IMenusService;
-import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
@@ -46,14 +43,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     FileService fileService;
     @Autowired
     GradeZzMapper gradeZzMapper;
+    @Autowired
+    IYearService yearService;
 
     @Override
-    public JiebaoResponse addGrade(String menusId, Double number, String yearDate, String deptId, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String menusId, Double number, String yearId, String deptId, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
         number = number == null ? 0 : number;
         fpNumber = fpNumber == null ? 0 : fpNumber;
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
-        queryWrapper.eq("year_date", yearDate);//年份
+        queryWrapper.eq("year_id", yearId);//年份
         queryWrapper.eq("dept_id", deptId);
         Grade grade = getOne(queryWrapper);
         if (grade != null) {
@@ -66,7 +65,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setNum(number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
-            grade.setYearDate(yearDate);
+            grade.setYearId(yearId);
             grade.setFpNum(fpNumber);
             grade.setMessage(message);
             grade.setFpMessage(fpMessage);
@@ -75,10 +74,10 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse commit(String yearDate, String deptId) {   //  生成报表
+    public JiebaoResponse commit(String yearId, String deptId) {   //  生成报表
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(("dept_id"), deptId);
-        queryWrapper.eq("year_date", yearDate);
+        queryWrapper.eq("year_Id", yearId);
         List<Grade> list = list(queryWrapper);
         QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
         queryWrapperJC.eq("content", "基础工作");
@@ -136,18 +135,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             fpJcJf = 40;  //40分为限  超过40分  折价  15：1
         }
         QueryWrapper<Num> numQueryWrapper = new QueryWrapper<>();
-        numQueryWrapper.eq("year_date", yearDate);
+        numQueryWrapper.eq("year_Id", yearId);
         numQueryWrapper.eq("dept_id", deptId);
         Num num = numService.getOne(numQueryWrapper);  //年度考核表储存对象
         if (num == null) {
             num = new Num();  //为空创造对象
         }
         num.setDeptId(deptId);
-        num.setYearDate(yearDate);
+        num.setYearId(yearId);
         num.setJcWork(JCKF + JCJF);
         num.setXgWork(SGKF);
         num.setNumber(20 + JCKF + JCJF + SGKF);
-
+        num.setYearDate(yearService.getById(yearId).getYearDate());
         num.setFpJcWork(fpJcKf + fpJcJf);
         num.setFpXgWork(fpSgK);
         num.setFpNumber(20 + fpJcKf + fpJcJf + fpSgK);
@@ -155,9 +154,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId) {  //必填 时间   组织id   年份
+    public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_date", dateYear);
+        queryWrapper.eq("year_Id", yearId);
         queryWrapper.eq("dept_id", DeptId);
         List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
         QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
@@ -184,12 +183,12 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearDate, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
+    public JiebaoResponse putZz(String yearId, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
-        queryWrapper.eq("year_date", yearDate);//年份
+        queryWrapper.eq("year_Id", yearId);//年份
         queryWrapper.eq("dept_id", deptId);
         Grade grade = getOne(queryWrapper);  //对应考核项具体扣分情况
         if (grade == null) {
@@ -306,7 +305,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         grade.setStatus(status);
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_date", grade.getYearDate());
+        queryWrapper.eq("year_Id", grade.getYearId());
         queryWrapper.eq("dept_id", grade.getDeptId());
         Num num = numService.getOne(queryWrapper);  //对应的年份 统计总表
         numService.updateById(num.setStatus(status));

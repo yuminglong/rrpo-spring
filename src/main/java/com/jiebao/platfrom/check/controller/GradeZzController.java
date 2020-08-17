@@ -28,8 +28,8 @@ public class GradeZzController {
 
     @GetMapping("list")
     @ApiOperation("佐证查询  参数每条扣分记录id")
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusIds, Integer type, QueryRequest queryRequest) {
-        return gradeZzService.list(gradeId, yearDate, deptId, menusIds, type,queryRequest);
+    public JiebaoResponse list(String gradeId, String yearId, String deptId, String menusIds, Integer type, QueryRequest queryRequest) {
+        return gradeZzService.list(gradeId, yearId, deptId, menusIds, type,queryRequest);
     }
 
     @DeleteMapping("delete")
