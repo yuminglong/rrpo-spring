@@ -94,7 +94,7 @@ public class Case implements Serializable {
     /**
      * 停车时长
      */
-    @ApiModelProperty(value = "停车时长", example = "哈哈")
+    @ApiModelProperty(value = "停车时长", example = "12.16")
     private Double dateLength;
 
     /**

@@ -33,20 +33,11 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         } else if (cityCsId != null) {
             queryWrapper.eq("city_cs_id", cityCsId);
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (startDate != null) {
-            try {
-                queryWrapper.ge("date", simpleDateFormat.parse(startDate));    //不能小于此时间
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            queryWrapper.ge("date", startDate);    //不能小于此时间
         }
         if (endDate != null) {
-            try {
-                queryWrapper.le("date", simpleDateFormat.parse(endDate));//不能大于此时间
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            queryWrapper.le("date", endDate);//不能大于此时间
         }
         Page<Case> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");

@@ -207,6 +207,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (xXhd != null) {
             for (String xXhdId : xXhd
             ) {
+                if (isCuiZai(gradeId, xXhdId)) {
+                    break;
+                }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(1);
                 gradeZz.setGradeId(gradeId);
@@ -218,6 +221,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (ySyj != null) {
             for (String ySyjId : ySyj
             ) {
+                if (isCuiZai(gradeId, ySyjId)) {
+                    break;
+                }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(2);
                 gradeZz.setGradeId(gradeId);
@@ -228,6 +234,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (tZgg != null) {
             for (String tZggId : tZgg
             ) {
+                if (isCuiZai(gradeId, tZggId)) {
+                    break;
+                }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(3);
                 gradeZz.setGradeId(gradeId);
@@ -239,6 +248,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (gGxx != null) {
             for (String gGxxId : gGxx
             ) {
+                if (isCuiZai(gradeId, gGxxId)) {
+                    break;
+                }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(4);
                 gradeZz.setGradeId(gradeId);
@@ -256,6 +268,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败").data(gradeId);
     }
+
+    private boolean isCuiZai(String gradeId, String ZzId) {
+        QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("grade_id", gradeId);
+        queryWrapper.eq("zz_id", gradeId);
+        List<GradeZz> list = gradeZzService.list(queryWrapper);
+        if (list.size() > 0)
+            return true;
+        return false;
+    } //判断佐证是否已经和 此对象绑定好
 
     @Override
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
