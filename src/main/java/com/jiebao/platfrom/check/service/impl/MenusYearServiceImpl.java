@@ -55,12 +55,17 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
         List<String> JcMenusIdList = null;
         List<String> XgMenusIdList = null;
         if (yearId != null) {
             JcMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("基础工作"));
             XgMenusIdList = this.baseMapper.getMenusIdList(yearId, menusMapper.getMenusIdByName("工作效果"));
         }
+        if (JcMenusIdList.size() == 0&&XgMenusIdList.size()==0) {
+                return new JiebaoResponse().failMessage("未绑定对应的扣分项");
+        }
+
         HashMap<String, List<Menus>> map = new HashMap<>();  //最后返回
         if (JcMenusIdList != null && JcMenusIdList.size() != 0) {
             QueryWrapper<Menus> queryWrapper = new QueryWrapper<>();
