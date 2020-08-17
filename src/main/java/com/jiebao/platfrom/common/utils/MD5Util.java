@@ -23,7 +23,7 @@ public class MD5Util {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(encrypt("sinliz","link0122"));
+		System.out.println(encrypt("15111359272","abcdef"));
 	}
 
 }

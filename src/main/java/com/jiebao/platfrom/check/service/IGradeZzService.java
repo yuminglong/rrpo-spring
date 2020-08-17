@@ -18,5 +18,5 @@ public interface IGradeZzService extends IService<GradeZz> {
 
     JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest);
 
-    JiebaoResponse deleteByGradeIdAndZzId(String[] list,String gradeId);
+    JiebaoResponse deleteByGradeIdAndZzId(String[] list);
 }

@@ -49,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User findByName(String username) {
-        return baseMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        return baseMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username).eq(User::getType, 0));
     }
 
 
@@ -217,5 +217,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<User> getByDepts(String deptId) {
         return userMapper.getByDepts(deptId);
+    }
+
+    @Override
+    public User getByOpenid(String openid) {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getOpenid, openid);
+        lambdaQueryWrapper.eq(User::getType, 1);
+        return this.baseMapper.selectOne(lambdaQueryWrapper);
     }
 }

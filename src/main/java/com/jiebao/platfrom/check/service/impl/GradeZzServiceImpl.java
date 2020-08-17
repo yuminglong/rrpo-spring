@@ -60,21 +60,18 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     FileService fileService;
 
     @Override
-    public JiebaoResponse deleteByGradeIdAndZzId(String[] list, String gradeId) {
-        QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("zz_id", Arrays.asList(list));
-        queryWrapper.eq("grade_id", gradeId);
-        return new JiebaoResponse().message(remove(queryWrapper) ? "解除绑定成功" : "解除绑定失败");
+    public JiebaoResponse deleteByGradeIdAndZzId(String[] list) {
+        return new JiebaoResponse().message(removeByIds(Arrays.asList(list)) ? "解除绑定成功" : "解除绑定失败");
     }
 
     @Override
-    public JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId, Integer type, QueryRequest queryRequest) {
+    public JiebaoResponse list(String gradeId, String yearId, String deptId, String menusId, Integer type, QueryRequest queryRequest) {
         if (gradeId == null) {
-            if (yearDate == null || deptId == null || menusId == null) {
+            if (yearId == null || deptId == null || menusId == null) {
                 return new JiebaoResponse().message("信息不能为空");
             }
             QueryWrapper<Grade> queryWrapper1 = new QueryWrapper<>();  //考核 关联部分
-            queryWrapper1.eq("year_date", yearDate);
+            queryWrapper1.eq("year_id", yearId);
             queryWrapper1.eq("dept_id", deptId);
             queryWrapper1.eq("check_id", menusId);
             Grade grade = gradeService.getOne(queryWrapper1);
@@ -91,33 +88,25 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
         if (type == 1) {
             //信息互递
             Page<Exchange> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Exchange> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(exchangeService.getBaseMapper().selectPage(page, queryWrapper)).message("操作成功");
+            return new JiebaoResponse().data(gradeZzMapper.ListXXHD(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 2) {
             //一事一奖
             Page<Prize> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(prizeService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+            return new JiebaoResponse().data(gradeZzMapper.ListYSYJ(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 3) {
             //通知公告
             Page<Inform> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-            QueryWrapper<Inform> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("id", zzId);
-            return new JiebaoResponse().data(informService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+            return new JiebaoResponse().data(gradeZzMapper.ListTZGG(gradeId, type, page)).message("操作成功");
         }
 
         if (type == 4) {
             //公共信息
-            Page<File> page = new Page<>();
-            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("file_id", zzId);
-            return new JiebaoResponse().data(fileService.getBaseMapper().selectBatchIds(zzId)).message("操作成功");
+            Page<File> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+            return new JiebaoResponse().data(gradeZzMapper.ListGGXX(gradeId, type, page)).message("操作成功");
         }
 
         return null;
@@ -126,8 +115,11 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
     @Override
     public JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        List<String> userNameByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
-        List<String> userIdByDepts = userMapper.getUserNameByDepts(userMapper.getUser(username));//前市州相关人员  得到用户
+        String deptID = userMapper.getDeptID(username);  //得到此人存在的部门
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("dept_id", deptID);
+        List<String> userNameByDepts = userMapper.getUserNameByDepts(queryWrapper);//前市州相关人员  得到用户
+        List<String> userIdByDepts = userMapper.getUserNameByDepts(queryWrapper);//前市州相关人员  得到用户
         if (type == 1)
             return new JiebaoResponse().data(ExchangeList(userNameByDepts, status, queryRequest));
         if (type == 2)
