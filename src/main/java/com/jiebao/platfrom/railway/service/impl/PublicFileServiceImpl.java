@@ -14,8 +14,10 @@ import com.jiebao.platfrom.railway.domain.PrizeType;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.domain.File;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,13 @@ import java.util.*;
  * @author yf
  */
 @Slf4j
-@Service("PrizeFileService")
+@Service("PublicFileService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicFile> implements PublicFileService {
 
+
+    @Autowired
+    PublicFileMapper publicFileMapper;
 
     @Override
     public Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile) {
@@ -58,6 +63,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setKey(tree.getId());
             tree.setParentId(publicFile.getParentId());
             tree.setText(publicFile.getName());
+            tree.setMark(publicFile.getMark());
             trees.add(tree);
         });
     }
@@ -66,7 +72,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     @Override
     public List<PublicFile> findPublicFiles(PublicFile publicFile, QueryRequest request) {
         QueryWrapper<PublicFile> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.isNotBlank(publicFile.getName())){
+        if (StringUtils.isNotBlank(publicFile.getName())) {
             queryWrapper.lambda().eq(PublicFile::getName, publicFile.getName());
         }
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
@@ -74,12 +80,11 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     }
 
 
-
     @Override
     @Transactional
     public void createPublicFile(PublicFile publicFile) {
         String parentId = publicFile.getParentId();
-        if (StringUtils.isEmpty(parentId)){
+        if (StringUtils.isNotBlank(parentId)) {
             publicFile.setParentId("0");
         }
         this.save(publicFile);
@@ -90,5 +95,18 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         LambdaQueryWrapper<PublicFile> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(PublicFile::getParentId, id);
         return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<PublicFile> getPublicFileListById(String publicFileId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", publicFileId);
+        List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);
+        for (PublicFile p : publicFiles
+        ) {
+            List<File> files = publicFileMapper.selectFiles(publicFileId);
+            p.setFiles(files);
+        }
+        return publicFiles;
     }
 }

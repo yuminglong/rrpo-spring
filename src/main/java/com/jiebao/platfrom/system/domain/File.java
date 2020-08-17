@@ -48,4 +48,6 @@ public class File extends Model<File> implements Serializable {
     private Integer zz_status;//0合格  1不合格
 
     private Integer isCheck;
+
+
 }

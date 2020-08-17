@@ -116,4 +116,6 @@ public class Prize {
     private List<PrizeOpinion> opinions;
 
     private Integer isCheck;
+
+    private Integer reviewStatus;
 }

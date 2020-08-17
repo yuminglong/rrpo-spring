@@ -1,17 +1,14 @@
 package com.jiebao.platfrom.railway.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.jiebao.platfrom.system.domain.File;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
@@ -23,9 +20,9 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("rail_public_file")
+@TableName("rail_private_file")
 @Accessors(chain = true)
-public class PublicFile {
+public class PrivateFile {
 
     @TableId(value = "id", type = IdType.UUID)
     private String id;
@@ -36,11 +33,8 @@ public class PublicFile {
 
     private Date creatTime;
 
-    private String deptId;
+    private String userId;
 
     @ApiModelProperty(value = "标识符",example = "1")
     private Integer mark;
-
-    @TableField(exist = false)
-    private List<File> files;
 }

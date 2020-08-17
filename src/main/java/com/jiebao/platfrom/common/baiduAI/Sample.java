@@ -21,7 +21,7 @@ public class Sample {
     }
 
     /**
-     *
+     * 入库，相同图片则返回false
      * @param image  本地图片路径或者图片二进制数据
      * @param brief  检索时原样带回,最长256B。样例：{"name":"周杰伦", "id":"666"} 。请注意，检索接口不返回原图，仅返回入库时填写的brief信息，所以调用该入库接口时，brief信息请尽量填写可关联至本地图库的图片id或者图片url、图片名称等信息
      * @param url 图片完整URL，URL长度不超过1024字节，URL对应的图片base64编码后大小不超过4M，最短边至少50px，最长边最大4096px,支持jpg/png/bmp格式，当image字段存在时url字段失效。
@@ -79,7 +79,10 @@ public class Sample {
         return content;
     }
 
-
+    /**
+     * 相似度查询
+     * @param image
+     */
     public static void sample(String image) {
         AipImageSearch client = new AipImageSearch(APP_ID, API_KEY, SECRET_KEY);
         // 传入可选参数调用接口

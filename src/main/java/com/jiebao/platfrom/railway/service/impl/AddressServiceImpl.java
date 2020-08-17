@@ -188,17 +188,25 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 row.getCell(2).setCellType(CellType.STRING);
                 row.getCell(3).setCellType(CellType.STRING);
                 row.getCell(4).setCellType(CellType.STRING);
+                row.getCell(5).setCellType(CellType.STRING);
+                row.getCell(6).setCellType(CellType.STRING);
+
 
                 String phone = row.getCell(1).getStringCellValue();
                 String telPhone = row.getCell(2).getStringCellValue();
                 String weiXin = row.getCell(3).getStringCellValue();
                 String email = row.getCell(4).getStringCellValue();
+                String position = row.getCell(5).getStringCellValue();
+                String unit = row.getCell(6).getStringCellValue();
+
                 if(StringUtils.isNotBlank(deptId) && !"".equals(userName)){
                     address.setUserName(userName);
                     address.setPhone(phone);
                     address.setTelPhone(telPhone);
                     address.setWeiXin(weiXin);
                     address.setEmail(email);
+                    address.setUnit(unit);
+                    address.setPosition(position);
                     address.setDeptId(deptId);
                     address.setStatus(2);
                     addressList.add(address);

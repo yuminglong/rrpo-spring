@@ -32,6 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,7 @@ public class PrizeController extends BaseController {
                         prizeUserService.saveByUser(prize.getId(), user.getUserId());
                     }
                 }
+                prize.setReviewStatus(0);
                 //模拟2是市级
             } else if ("2".equals(userRole.getRoleId())) {
                 Dept byId = deptService.getById(byName.getDeptId());
@@ -147,6 +149,7 @@ public class PrizeController extends BaseController {
                         prizeUserService.saveByUser(prize.getId(), u.getUserId());
                     }
                 }
+                prize.setReviewStatus(0);
             } else {
                 return new JiebaoResponse().message("无权限");
             }
@@ -274,9 +277,9 @@ public class PrizeController extends BaseController {
         return byId;
     }
 
-    @PostMapping("/report")
-    @ApiOperation(value = "填写意见并上报", notes = "填写意见并上报", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse Prizereport(@Valid PrizeOpinion prizeOpinion) throws JiebaoException {
+    @PostMapping("/report/{prizeIds}")
+    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion,@PathVariable  String [] prizeIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -284,23 +287,46 @@ public class PrizeController extends BaseController {
             Map<String, Object> columnMap = new HashMap<>();
             columnMap.put("dept_id", byId.getParentId());
             List<User> users = userMapper.selectByMap(columnMap);
-            for (User user : users
-            ) {
-                //把要发送的用户ID保存到数据库
-                prizeUserService.saveByUser(prizeOpinion.getPrizeId(), user.getUserId());
-            }
-            prizeOpinion.setRank(byId.getRank());
-            //id必须传来
-            prizeOpinion.setPrizeId(prizeOpinion.getPrizeId());
-            prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
-            prizeOpinion.setMoney(prizeOpinion.getMoney());
-            prizeOpinionService.save(prizeOpinion);
-            return new JiebaoResponse().message("上报成功").put("status", "200");
+            Arrays.stream(prizeIds).forEach(prizeId->{
+                //查询该级组织机构是否有审批内容
+                boolean result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
+                if (result == false){
+                    //如果不为省级，就不上报
+                    if (byId.getRank() != 1){
+                        for (User user : users
+                        ) {
+                            //把要发送的用户ID保存到数据库
+                            prizeUserService.saveByUser(prizeId, user.getUserId());
+                        }
+                    }
+                    prizeOpinion.setRank(byId.getRank());
+                    //id必须传来
+                    prizeOpinion.setPrizeId(prizeId);
+                    prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
+                    prizeOpinion.setMoney(prizeOpinion.getMoney());
+                    prizeOpinionService.save(prizeOpinion);
+                }
+
+            });
+            return new JiebaoResponse().message("审批或上报成功").put("status", "200");
         } catch (Exception e) {
-            message = "上报失败";
+            message = "审批或上报失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
+    }
+
+    @GetMapping("/reject")
+    @ApiOperation(value = "驳回", notes = "驳回", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse prizeReject(String prizeId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("prize_id",prizeId);
+        //删除所有
+        prizeOpinionMapper.deleteByMap(map);
+        prizeMapper.reject(prizeId);
+        prizeUserMapper.reject(prizeId);
+
+        return new JiebaoResponse().message("驳回成功").put("status","200");
     }
 
 

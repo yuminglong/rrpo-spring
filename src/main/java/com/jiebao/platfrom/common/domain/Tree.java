@@ -65,6 +65,8 @@ public class Tree<T> {
 
     private String deptId;
 
+    private Integer Mark;
+
 
     public void initChildren(){
         this.children = new ArrayList<>();

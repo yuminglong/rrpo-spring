@@ -18,7 +18,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
     /**
      * 发送人保存到数据库
      *
-     * @param prizeId    一事一奖内容ID
+     * @param prizeId  一事一奖内容ID
      * @param sendUser 接收人
      * @return
      */
@@ -27,6 +27,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
 
     /**
      * 根据prizeId改状为已删除态
+     *
      * @param prizeId
      * @return
      */
@@ -35,6 +36,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
 
     /**
      * 发表审核意见
+     *
      * @param prizeId
      * @param deptId
      * @param auditOpinion
@@ -42,11 +44,12 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * @return
      */
     @Update("UPDATE `rail_prize_user` set audit_opinion = #{auditOpinion} ,money = #{money} where prize_id =#{prizeId} and send_dept = #{deptId}")
-    boolean updateByPrizeId(String prizeId, String deptId,String auditOpinion,String money);
+    boolean updateByPrizeId(String prizeId, String deptId, String auditOpinion, String money);
 
 
     /**
      * 删除接收人
+     *
      * @param prizeId
      * @return
      */
@@ -56,6 +59,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
 
     /**
      * 把意见金额设置为null
+     *
      * @param prizeId
      * @param deptId
      * @return
@@ -65,4 +69,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
 
     @Update("UPDATE  rail_prize_user  r set  r.creat_time = now() WHERE r.prize_id =#{prizeId}")
     boolean setCreatTime(String prizeId);
+
+    @Delete("")
+    boolean reject(String prizeId);
 }

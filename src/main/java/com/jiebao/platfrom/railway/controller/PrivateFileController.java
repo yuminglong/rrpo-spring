@@ -3,17 +3,20 @@ package com.jiebao.platfrom.railway.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.railway.domain.PrivateFile;
 import com.jiebao.platfrom.railway.domain.PublicFile;
+import com.jiebao.platfrom.railway.service.PrivateFileService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
-import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,31 +30,35 @@ import java.util.Map;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/publicFile")
-@Api(tags = "railWay-公共信息公共文件")   //swagger2 api文档说明示例
-public class PublicFileController extends BaseController {
+@RequestMapping("/privateFile")
+@Api(tags = "railWay-公共信息个人文件")   //swagger2 api文档说明示例
+public class PrivateFileController extends BaseController {
 
     private String message;
 
     @Autowired
-    private PublicFileService publicFileService;
+    private PrivateFileService privateFileService;
 
-
+    @Autowired
+    private UserService userService;
 
     @GetMapping
-    public Map<String, Object> publicFileList(QueryRequest request, PublicFile publicFile) {
-        return this.publicFileService.findpublicFileList(request, publicFile);
+    public Map<String, Object> privateFileList(QueryRequest request, PrivateFile privateFile) {
+        return this.privateFileService.findPrivateFileList(request, privateFile);
     }
 
     @Log("新增文件夹")
     @PostMapping
-    public JiebaoResponse addPublicFile(@Valid PublicFile publicFile) throws JiebaoException {
+    public JiebaoResponse addPrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
-            this.publicFileService.createPublicFile(publicFile);
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            privateFile.setUserId(byName.getUserId());
+            this.privateFileService.createPrivateFile(privateFile);
            /* Arrays.stream(fileIds).forEach(fileId -> {
                 fileMapper.updateInformByFileId(fileId, publicFile.getId());
             });*/
-          return   new JiebaoResponse().message("新增成功").put("status", "200");
+            return new JiebaoResponse().message("新增成功").put("status", "200");
         } catch (Exception e) {
             message = "新增文件夹失败";
             log.error(message, e);
@@ -60,20 +67,20 @@ public class PublicFileController extends BaseController {
     }
 
     @Log("删除文件夹")
-    @DeleteMapping("/{publicFileIds}")
-    public JiebaoResponse deletePublicFiles(@NotBlank(message = "{required}") @PathVariable String publicFileIds) throws JiebaoException {
+    @DeleteMapping("/{privateFileIds}")
+    public JiebaoResponse deletePrivateFiles(@NotBlank(message = "{required}") @PathVariable String privateFileIds) throws JiebaoException {
         try {
-            String[] ids = publicFileIds.split(StringPool.COMMA);
+            String[] ids = privateFileIds.split(StringPool.COMMA);
             Arrays.stream(ids).forEach(id -> {
-                List<PublicFile> list = this.publicFileService.findChilderPublicFile(id);
+                List<PrivateFile> list = this.privateFileService.findChilderPrivateFile(id);
                 if (list.size() > 0) {
-                    list.forEach(publicFile -> {
-                        publicFileService.removeById(publicFile.getId());
+                    list.forEach(privateFile -> {
+                        privateFileService.removeById(privateFile.getId());
                     });
                 }
-                publicFileService.removeById(id);
+                privateFileService.removeById(id);
             });
-            return  new JiebaoResponse().message("删除成功").put("status", "200");
+            return new JiebaoResponse().message("删除成功").put("status", "200");
         } catch (Exception e) {
             message = "删除文件夹失败";
             log.error(message, e);
@@ -83,9 +90,9 @@ public class PublicFileController extends BaseController {
 
     @Log("修改文件夹")
     @PutMapping
-    public JiebaoResponse updatePublicFile(@Valid PublicFile publicFile) throws JiebaoException {
+    public JiebaoResponse updatePrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
-            this.publicFileService.updateById(publicFile);
+            this.privateFileService.updateById(privateFile);
             return new JiebaoResponse().message("修改成功").put("status", "200");
         } catch (Exception e) {
             message = "修改文件夹失败";
@@ -93,13 +100,6 @@ public class PublicFileController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
-    @ApiOperation(value = "根据ID查子文件夹和文件", notes = "根据ID查子文件夹和文件", httpMethod = "GET")
-    @GetMapping("/getByIdList")
-    public List<PublicFile> publicFileList( String publicFileId) {
-        return this.publicFileService.getPublicFileListById(publicFileId);
-    }
-
 
 
 }

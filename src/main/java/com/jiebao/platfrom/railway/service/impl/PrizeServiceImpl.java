@@ -63,11 +63,17 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(prize.getTitle())) {
             queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
         }
+        if (StringUtils.isNotBlank(prize.getNumber())){
+            queryWrapper.lambda().like(Prize::getNumber, prize.getNumber());
+        }
         if (StringUtils.isNotBlank(prize.getContent())){
             queryWrapper.lambda().like(Prize::getContent, prize.getContent());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getCreatTime, startTime).le(Prize::getCreatTime, endTime);
+        }
+        if (StringUtils.isNotBlank(prize.getStatus())){
+            queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
@@ -78,7 +84,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     public IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4));
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7));
         if (StringUtils.isNotBlank(username)) {
             User byName = userService.findByName(username);
             Map<String,Object> map = new HashMap<>();
@@ -94,6 +100,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
                 queryWrapper.lambda().in(Prize::getId, prizeUserIds);
             }
         }
+        if (StringUtils.isNotBlank(prize.getNumber())){
+            queryWrapper.lambda().like(Prize::getNumber, prize.getNumber());
+        }
         if (StringUtils.isNotBlank(prize.getTitle())) {
             queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
         }
@@ -101,7 +110,10 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
             queryWrapper.lambda().like(Prize::getContent, prize.getContent());
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
-            queryWrapper.lambda().ge(Prize::getCreatTime, startTime).le(Prize::getCreatTime, endTime);
+            queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
+        }
+        if (StringUtils.isNotBlank(prize.getStatus())){
+            queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);

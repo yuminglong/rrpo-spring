@@ -71,4 +71,15 @@ public class Address {
     @ApiModelProperty(value = "和组织机构关联ID")
     private String deptId;
 
+    @ExcelField(value = "组织机构名")
+    @ApiModelProperty(value = "职务")
+    private String position;
+
+    @ExcelField(value = "组织机构名")
+    @ApiModelProperty(value = "单位")
+    private String unit;
+
+    @ApiModelProperty(value = "所处的市级ID")
+    private String deptRoot;
+
 }

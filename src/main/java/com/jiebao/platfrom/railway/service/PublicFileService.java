@@ -22,4 +22,6 @@ public interface PublicFileService extends IService<PublicFile> {
    void createPublicFile(PublicFile publicFile);
 
    List<PublicFile> findChilderPublicFile(String id);
+
+   List<PublicFile> getPublicFileListById(String publicFileId);
 }

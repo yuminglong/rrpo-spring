@@ -22,4 +22,5 @@ import org.springframework.transaction.annotation.Transactional;
 public class PrizeOpinionServiceImpl extends ServiceImpl<PrizeOpinionMapper, PrizeOpinion> implements PrizeOpinionService {
 
 
+
 }

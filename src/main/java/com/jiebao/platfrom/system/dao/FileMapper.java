@@ -11,4 +11,7 @@ public interface FileMapper extends BaseMapper<File> {
 
     @Update("UPDATE sys_files SET ref_id = #{informId} WHERE file_id =#{fileId}")
     boolean updateInformByFileId(String fileId,String informId);
+
+    @Update("UPDATE sys_files SET ref_id = #{publicFileId} WHERE file_id =#{fileId}")
+    boolean updatePublicFileByFileId(String fileId,String publicFileId);
 }
