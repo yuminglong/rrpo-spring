@@ -71,7 +71,7 @@ public class GradeZzServiceImpl extends ServiceImpl<GradeZzMapper, GradeZz> impl
                 return new JiebaoResponse().message("信息不能为空");
             }
             QueryWrapper<Grade> queryWrapper1 = new QueryWrapper<>();  //考核 关联部分
-            queryWrapper1.eq("year_Id", yearId);
+            queryWrapper1.eq("year_id", yearId);
             queryWrapper1.eq("dept_id", deptId);
             queryWrapper1.eq("check_id", menusId);
             Grade grade = gradeService.getOne(queryWrapper1);

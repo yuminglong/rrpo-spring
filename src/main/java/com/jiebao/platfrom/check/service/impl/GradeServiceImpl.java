@@ -77,11 +77,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public JiebaoResponse commit(String yearId, String deptId) {   //  生成报表
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(("dept_id"), deptId);
-        queryWrapper.eq("year_Id", yearId);
+        queryWrapper.eq("year_id", yearId);
         List<Grade> list = list(queryWrapper);
         QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
         queryWrapperJC.eq("content", "基础工作");
-        Menus menusJc = menusService.getOne(queryWrapperJC);//基础工作父类
+        Menus menusJc = menusService.getOne(queryWrapperJC);//基础工作父类s
         QueryWrapper<Menus> queryWrapperXG = new QueryWrapper<>();
         queryWrapperXG.eq("content", "工作效果");//效果
         Menus menusSX = menusService.getOne(queryWrapperXG);//工作失效父类
@@ -135,7 +135,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             fpJcJf = 40;  //40分为限  超过40分  折价  15：1
         }
         QueryWrapper<Num> numQueryWrapper = new QueryWrapper<>();
-        numQueryWrapper.eq("year_Id", yearId);
+        numQueryWrapper.eq("year_id", yearId);
         numQueryWrapper.eq("dept_id", deptId);
         Num num = numService.getOne(numQueryWrapper);  //年度考核表储存对象
         if (num == null) {
@@ -156,7 +156,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_Id", yearId);
+        queryWrapper.eq("year_id", yearId);
         queryWrapper.eq("dept_id", DeptId);
         List<Grade> list = list(queryWrapper);   //目标人  关联扣分项
         QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
@@ -305,7 +305,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         grade.setStatus(status);
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_Id", grade.getYearId());
+        queryWrapper.eq("year_id", grade.getYearId());
         queryWrapper.eq("dept_id", grade.getDeptId());
         Num num = numService.getOne(queryWrapper);  //对应的年份 统计总表
         numService.updateById(num.setStatus(status));
