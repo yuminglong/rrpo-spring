@@ -6,10 +6,15 @@ import com.jiebao.platfrom.check.domain.Num;
 import com.jiebao.platfrom.check.dao.NumMapper;
 import com.jiebao.platfrom.check.service.INumService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +35,20 @@ import java.util.List;
 public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumService {
     @Autowired
     UserService userService;
+    @Autowired
+    UserMapper userMapper;
+    @Autowired
+    DeptService deptService;
 
     @Override
     public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的id
+        if (!dept.getParentId().equals("0")) {  //当前登陆人非最高级
+            if (!deptId.equals(dept.getDeptId())) {
+                return new JiebaoResponse().failMessage("无对应的权限查询");
+            }
+        }
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (deptId != null) {
             queryWrapper.eq("dept_id", deptId);

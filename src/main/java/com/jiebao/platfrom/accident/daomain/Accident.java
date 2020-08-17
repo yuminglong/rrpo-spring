@@ -76,7 +76,6 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "线路 字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
-
     private Dict dictXl;
     /**
      * 地点
@@ -90,7 +89,6 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "车务段", example = "哈哈")
     private String trainId;
     @TableField(exist = false)
-
     private Dict dictCwd;
     /**
      * 公务段
