@@ -48,25 +48,29 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse addGrade(String menusId, Double number, String yearId, String deptId, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
-        number = number == null ? 0 : number;
-        fpNumber = fpNumber == null ? 0 : fpNumber;
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("check_id", menusId);//对应的扣分项
         queryWrapper.eq("year_id", yearId);//年份
         queryWrapper.eq("dept_id", deptId);
         Grade grade = getOne(queryWrapper);
+        boolean numberIf = number == null ? false : true;
+        boolean fpNumberIf = fpNumber == null ? false : true;
         if (grade != null) {
-            grade.setNum(number);
-            grade.setFpNum(fpNumber);
+            if (numberIf)
+                grade.setNum(number);
+            if (fpNumberIf)
+                grade.setFpNum(fpNumber);
             grade.setMessage(message);
             grade.setFpMessage(fpMessage);
         } else {
             grade = new Grade();
-            grade.setNum(number);
+            if (numberIf)
+                grade.setNum(number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearId(yearId);
-            grade.setFpNum(fpNumber);
+            if (fpNumberIf)
+                grade.setFpNum(fpNumber);
             grade.setMessage(message);
             grade.setFpMessage(fpMessage);
         }
@@ -272,7 +276,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     private boolean isCuiZai(String gradeId, String ZzId) {
         QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("grade_id", gradeId);
-        queryWrapper.eq("zz_id", gradeId);
+        queryWrapper.eq("zz_id", ZzId);
         List<GradeZz> list = gradeZzService.list(queryWrapper);
         if (list.size() > 0)
             return true;
