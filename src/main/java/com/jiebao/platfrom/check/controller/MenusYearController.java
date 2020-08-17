@@ -56,6 +56,6 @@ public class MenusYearController {
     @PostMapping("excel")
     @ApiOperation("excel上传绑定  参数 第二个 年份考核id")
     public JiebaoResponse excel(MultipartFile multipartFile, String yearId) {
-        return menusYearService.excel(multipartFile,yearId);
+        return menusYearService.excel(multipartFile, yearId);
     }
 }
