@@ -35,14 +35,14 @@ public class Accident implements Serializable {
     /**
      * 事故记录id
      */
-    @TableId(value = "accident_id",type = IdType.UUID)
+    @TableId(value = "accident_id", type = IdType.UUID)
     private String accidentId;
 
     /**
      * 事故发生时间
      */
     @ApiModelProperty(value = "事故发生时间", example = "2020/04/03 12:15:12")
-    private Date date;
+    private String date;
 
     /**
      * 发生城市
@@ -50,8 +50,9 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "发生城市", example = "哈哈")
     private String cityCsId;
 
+
+    @ApiModelProperty(value = "不用管")
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管", example = "哈哈")
     private Dept deptCs;
 
     /**
@@ -60,7 +61,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "发生区县", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管", example = "哈哈")
+    @ApiModelProperty(value = "不用管")
     private Dept deptQx;
     /**
      * 派出所
@@ -83,7 +84,8 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "地点", example = "哈哈")
     private String address;
 
-    /**b
+    /**
+     * b
      * 车务段
      */
     @ApiModelProperty(value = "车务段", example = "哈哈")
@@ -155,8 +157,8 @@ public class Accident implements Serializable {
     /**
      * 事故情形
      */
-    @ApiModelProperty(value = "不用管", example = "哈哈")
-    private String condition;
+    @ApiModelProperty(value = "事故情形", example = "哈哈")
+    private String conditions;
 
     /**
      * 电脑分析系数

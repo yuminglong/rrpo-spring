@@ -34,14 +34,18 @@ public class CaseController {
     @ApiOperation("添加修改 事故信息")
     @Log("添加修改 事故信息")
     public JiebaoResponse saveOrUpdate(Case ca) {
-        return new JiebaoResponse().message(caseService.saveOrUpdate(ca) ? "操作成功" : "操作失败");
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        jiebaoResponse = caseService.saveOrUpdate(ca) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
     }
 
     @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除事故信息")
     @Log("集合删除事故信息")
     public JiebaoResponse deleteByLists(@PathVariable String[] lists) {
-        return new JiebaoResponse().message(caseService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        jiebaoResponse = caseService.removeByIds(Arrays.asList(lists)) ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
+        return jiebaoResponse;
     }
 
     @GetMapping("listPage")
