@@ -31,4 +31,5 @@ public interface AddressService extends IService<Address> {
     IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone);
 
 
+    List<Address> getBookList(String deptRoot);
 }

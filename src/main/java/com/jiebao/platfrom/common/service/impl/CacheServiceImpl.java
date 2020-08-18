@@ -3,22 +3,18 @@ package com.jiebao.platfrom.common.service.impl;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.service.CacheService;
 import com.jiebao.platfrom.common.service.RedisService;
 import com.jiebao.platfrom.system.dao.UserMapper;
-import com.jiebao.platfrom.system.domain.Menu;
-import com.jiebao.platfrom.system.domain.Role;
-import com.jiebao.platfrom.system.domain.User;
-import com.jiebao.platfrom.system.domain.UserConfig;
-import com.jiebao.platfrom.system.service.MenuService;
-import com.jiebao.platfrom.system.service.RoleService;
-import com.jiebao.platfrom.system.service.UserConfigService;
-import com.jiebao.platfrom.system.service.UserService;
+import com.jiebao.platfrom.system.domain.*;
+import com.jiebao.platfrom.system.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service("cacheService")
 public class CacheServiceImpl implements CacheService {
@@ -34,6 +30,9 @@ public class CacheServiceImpl implements CacheService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DeptService deptService;
 
     @Autowired
     private UserConfigService userConfigService;
@@ -152,5 +151,22 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public void deleteUserConfigs(String userId) throws Exception {
         redisService.del(JiebaoConstant.USER_CONFIG_CACHE_PREFIX + userId);
+    }
+
+    @Override
+    public void saveDept() throws Exception {
+        Map<String, Object> map = deptService.findDepts(new QueryRequest(), new Dept());
+        redisService.set(JiebaoConstant.DEPT_CACHE, mapper.writeValueAsString(map));
+    }
+
+    @Override
+    public Map<String, Object> getDept() throws Exception {
+        String deptString = this.redisService.get(JiebaoConstant.DEPT_CACHE);
+        if (StringUtils.isBlank(deptString)) {
+            throw new Exception();
+        } else {
+            JavaType type = mapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+            return this.mapper.readValue(deptString, type);
+        }
     }
 }

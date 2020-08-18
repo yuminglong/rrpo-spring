@@ -44,6 +44,10 @@ public class CacheInitRunner implements ApplicationRunner {
             for (User user : list) {
                 userManager.loadUserRedisCache(user);
             }
+            log.info("缓存组织机构 ······");
+            cacheService.saveDept();
+
+            log.info("缓存加载完成 ······");
         } catch (Exception e) {
             log.error("缓存初始化失败，{}", e.getMessage());
             log.error(" ____   __    _   _ ");

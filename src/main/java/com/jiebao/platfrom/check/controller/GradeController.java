@@ -68,6 +68,7 @@ public class GradeController {
     @ApiOperation("疑点标记")
     @Log("疑点标记")
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
+
         return iGradeService.checkStatus(gradeId, zzId, fileId, status);
     }
 }
