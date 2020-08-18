@@ -37,6 +37,9 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     @Autowired
     PublicFileMapper publicFileMapper;
 
+    @Autowired
+    PublicFileService publicFileService;
+
     @Override
     public Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile) {
         Map<String, Object> result = new HashMap<>();
@@ -62,7 +65,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setId(publicFile.getId());
             tree.setKey(tree.getId());
             tree.setParentId(publicFile.getParentId());
-            tree.setText(publicFile.getName());
+            tree.setName(publicFile.getName());
             tree.setMark(publicFile.getMark());
             trees.add(tree);
         });
@@ -84,7 +87,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     @Transactional
     public void createPublicFile(PublicFile publicFile) {
         String parentId = publicFile.getParentId();
-        if (StringUtils.isNotBlank(parentId)) {
+        if (parentId == null) {
             publicFile.setParentId("0");
         }
         this.save(publicFile);
@@ -104,6 +107,9 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);
         for (PublicFile p : publicFiles
         ) {
+            if (publicFiles == null) {
+                p.setHasChildren(false);
+            }
             List<File> files = publicFileMapper.selectFiles(publicFileId);
             p.setFiles(files);
         }

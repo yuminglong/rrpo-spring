@@ -71,11 +71,11 @@ public class Address {
     @ApiModelProperty(value = "和组织机构关联ID")
     private String deptId;
 
-    @ExcelField(value = "组织机构名")
+    @ExcelField(value = "职务")
     @ApiModelProperty(value = "职务")
     private String position;
 
-    @ExcelField(value = "组织机构名")
+    @ExcelField(value = "单位")
     @ApiModelProperty(value = "单位")
     private String unit;
 

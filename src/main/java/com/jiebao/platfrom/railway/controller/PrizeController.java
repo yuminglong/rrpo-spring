@@ -277,28 +277,52 @@ public class PrizeController extends BaseController {
         return byId;
     }
 
-    @PostMapping("/report/{prizeIds}")
-    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion,@PathVariable  String [] prizeIds) throws JiebaoException {
+    @GetMapping("/report")
+    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion , String [] prizeIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             Dept byId = deptService.getById(byName.getDeptId());
-            Map<String, Object> columnMap = new HashMap<>();
-            columnMap.put("dept_id", byId.getParentId());
-            List<User> users = userMapper.selectByMap(columnMap);
+            List<User> users = new ArrayList<>();
+            if (byId.getRank() == 1){
+               if ("1143" .equals(byId.getDeptId())||"1".equals(byId.getDeptId())){
+                   Map<String, Object> columnMap = new HashMap<>();
+                   columnMap.put("dept_id", 3000);
+                   users = userMapper.selectByMap(columnMap);
+               }
+            }
+            else{
+                Map<String, Object> columnMap = new HashMap<>();
+                columnMap.put("dept_id", byId.getParentId());
+                users = userMapper.selectByMap(columnMap);
+            }
+            List<User> finalUsers = users;
             Arrays.stream(prizeIds).forEach(prizeId->{
                 //查询该级组织机构是否有审批内容
-                boolean result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
-                if (result == false){
+                Integer result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
+                if (result == 0){
                     //如果不为省级，就不上报
-                    if (byId.getRank() != 1){
-                        for (User user : users
+                    if (byId.getRank() != 0){
+                        for (User user : finalUsers
                         ) {
                             //把要发送的用户ID保存到数据库
                             prizeUserService.saveByUser(prizeId, user.getUserId());
                         }
                     }
+                    // 0是省
+                    if(byId.getRank() == 0){
+                        prizeMapper.updateStatusForPro(prizeId);
+                    }
+                    //4为铁护办
+                    if(byId.getRank() == 4){
+                        prizeMapper.updateStatusForIron(prizeId);
+                    }
+                    //1为市
+                    if(byId.getRank() == 1){
+                        prizeMapper.updateStatusForCity(prizeId);
+                    }
+
                     prizeOpinion.setRank(byId.getRank());
                     //id必须传来
                     prizeOpinion.setPrizeId(prizeId);
@@ -306,7 +330,6 @@ public class PrizeController extends BaseController {
                     prizeOpinion.setMoney(prizeOpinion.getMoney());
                     prizeOpinionService.save(prizeOpinion);
                 }
-
             });
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
         } catch (Exception e) {
