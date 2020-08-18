@@ -37,4 +37,5 @@ public interface DeptService extends IService<Dept> {
     List<Address> getAddress(String id);
 
 
+    List<Dept> getList(String parentId);
 }

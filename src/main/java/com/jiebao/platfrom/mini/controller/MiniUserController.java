@@ -82,7 +82,7 @@ public class MiniUserController {
             if (null == user) { //用户不存在
                 String sk = UUID.randomUUID().toString().replace("-", "");
                 redisService.set(JiebaoConstant.MINI_LOGIN_TEMP_TOKEN + sk, jsonObject.toJSONString(), 900 * 1000L);
-                return new JiebaoResponse().message("用户未注册！").put("status", JiebaoConstant.STATUS_CODE_SUCCESS).put("sk", sk).put("userInfo", null);
+                return new JiebaoResponse().message("用户未注册！").put("status", JiebaoConstant.STATUS_CODE_NOT_REGISTRY).put("sk", sk).put("userInfo", null);
             } else {    //用户已注册
                 return this.attest(user, request);
             }
@@ -180,7 +180,7 @@ public class MiniUserController {
     private Map<String, Object> generateUserInfo(JWTToken token, User user) {
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("token", token.getToken());
-        userInfo.put("exipreTime", token.getExipreAt());
+        userInfo.put("expireTime", token.getExipreAt());
 
         user.setPassword("it's a secret");
         user.setOpenid("it's a secret");
