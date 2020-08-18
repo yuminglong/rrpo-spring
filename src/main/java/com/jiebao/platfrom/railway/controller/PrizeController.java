@@ -353,5 +353,12 @@ public class PrizeController extends BaseController {
     }
 
 
-
+    @GetMapping("/findOpinion")
+    @ApiOperation(value = "意见查询", notes = "意见查询", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findOpinion(String prizeId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("prize_id",prizeId);
+        List<PrizeOpinion> prizeOpinions = prizeOpinionMapper.selectByMap(map);
+        return new JiebaoResponse().data(prizeOpinions).put("status","200");
+    }
 }
