@@ -38,9 +38,9 @@ public interface GradeMapper extends BaseMapper<Grade> {
     Integer updateFile(Integer status, QueryWrapper<File> ew); //条件 修改状态
 
 
-    @Select("select 1 from check_grade where year_id=#{yearId} and dept_id={deptId} and status is null limit 1")
+    @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} and status is null limit 1")
     Integer gradeExIs(String yearId, String deptId);//通过gradeId  查询  此扣分项下面是否有查询的状态   自定义文件
 
-    @Update("update check_num set audit=#{status} where year_id=#{yearId} and deptId=#{deptId}")
+    @Update("update check_num set audit=#{status} where year_id=#{yearId} and dept_id=#{deptId}")
     Integer updateNum(String yearId, String deptId, Integer status); //条件 修改状态
 }

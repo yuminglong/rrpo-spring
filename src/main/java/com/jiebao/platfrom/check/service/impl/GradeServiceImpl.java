@@ -312,6 +312,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     private void bjGradeId(String gradeId, Integer status) {  //标记扣分项   存在疑点便不可以 修改
+        System.out.println("进来了");
         Grade grade = getById(gradeId);
         Integer i = gradeMapper.gradeZzExistStatusNull(gradeId);  //非自定义文件
         Integer i1 = gradeMapper.fileExistStatusNull(gradeId);//自定义文件
