@@ -208,6 +208,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return addresses;
     }
 
+    @Override
+    public List<Dept> getList(String parentId) {
+        LambdaQueryWrapper<Dept> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dept::getParentId, parentId);
+        lambdaQueryWrapper.eq(Dept::getRank, 1);
+        lambdaQueryWrapper.orderByAsc(Dept::getOrderNum);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
 
     private List getDeptIds(String id) {
         List list = new ArrayList();

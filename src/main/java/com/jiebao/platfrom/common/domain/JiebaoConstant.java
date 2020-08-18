@@ -7,9 +7,12 @@ public class JiebaoConstant {
 
     //wechatMini code
     public static final String MINI_LOGIN_TEMP_TOKEN = "wechat.mini.login.temp.token.";
-    public static final Integer STATUS_CODE_ERROR = 400010;    //处理异常
+    public static final Integer STATUS_CODE_ERROR = 400005;    //处理异常
+    public static final Integer STATUS_CODE_NOT_REGISTRY = 400001;     //未注册
     public static final Integer STATUS_CODE_SUCCESS = 0;   //操作成功
 
+    //dept缓存
+    public static final String DEPT_CACHE = "jiebao.cache.dept";
 
     // user缓存前缀
     public static final String USER_CACHE_PREFIX = "jiebao.cache.user.";

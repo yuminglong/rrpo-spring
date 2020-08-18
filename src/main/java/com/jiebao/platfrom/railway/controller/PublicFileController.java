@@ -11,6 +11,8 @@ import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,12 @@ public class PublicFileController extends BaseController {
 
     @Autowired
     private PublicFileService publicFileService;
+
+    @Autowired
+    private FileMapper fileMapper;
+
+    @Autowired
+    private FileService fileService;
 
 
 
@@ -100,6 +108,13 @@ public class PublicFileController extends BaseController {
         return this.publicFileService.getPublicFileListById(publicFileId);
     }
 
+    @ApiOperation(value = "根据fileId查文件详情并绑定对应文件夹", notes = "根据fileId查文件详情并绑定对应文件夹", httpMethod = "GET")
+    @GetMapping("/BindFile")
+    public JiebaoResponse publicFileList(String publicFileId, String fileId) {
+        fileMapper.updatePublicFileByFileId(publicFileId,fileId);
+        File byId = fileService.getById(fileId);
+        return  new JiebaoResponse().data(byId).message("查询成功成功").put("status", "200");
+    }
 
 
 }

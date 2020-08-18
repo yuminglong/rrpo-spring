@@ -251,4 +251,11 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         lambdaQueryWrapper.orderByDesc(Address::getId);
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
+
+    @Override
+    public List<Address> getBookList(String deptRoot) {
+        LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Address::getDeptRoot, deptRoot);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
 }

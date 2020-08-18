@@ -6,6 +6,7 @@ import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CacheService {
 
@@ -109,5 +110,18 @@ public interface CacheService {
      * @param userId 用户 ID
      */
     void deleteUserConfigs(String userId) throws Exception;
+
+    /**
+     * 缓存组织机构信息
+     * @throws Exception
+     */
+    void saveDept() throws Exception;
+
+    /**
+     * 读取组织机构缓存信息
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> getDept() throws Exception;
 
 }

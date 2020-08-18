@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
+import com.mchange.lang.IntegerUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -72,7 +73,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getCreatTime, startTime).le(Prize::getCreatTime, endTime);
         }
-        if (StringUtils.isNotBlank(prize.getStatus())){
+        if (prize.getStatus()!=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
@@ -99,6 +100,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
             if (prizeUserIds.size() > 0) {
                 queryWrapper.lambda().in(Prize::getId, prizeUserIds);
             }
+            else {
+                queryWrapper.lambda().in(Prize::getId, "111111111111111111111111111111111");
+            }
         }
         if (StringUtils.isNotBlank(prize.getNumber())){
             queryWrapper.lambda().like(Prize::getNumber, prize.getNumber());
@@ -112,7 +116,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
         }
-        if (StringUtils.isNotBlank(prize.getStatus())){
+        if (prize.getStatus() !=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
