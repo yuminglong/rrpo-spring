@@ -39,14 +39,14 @@ public class RoomRecordSeviceController {
     @Delete(value = "delete/{idList}")
     @ApiOperation("批量 服务项绑定删除")
     @Log(value = "服务项绑定删除")
-    private JiebaoResponse deleteById(@PathVariable String[] idList) {
+    public JiebaoResponse deleteById(@PathVariable String[] idList) {
         return new JiebaoResponse().message(recordSeviceService.deleteByListId(Arrays.asList(idList) ) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")
     @ApiOperation("根据会议查询 服务项绑定")
     @Log(value = "根据会议查询 服务项绑定")
-    private JiebaoResponse getFile(String id, QueryRequest queryRequest) {
+    public JiebaoResponse getFile(String id, QueryRequest queryRequest) {
         return new JiebaoResponse().data(recordSeviceService.list(queryRequest,id)).message("查询成功");
     }
 }

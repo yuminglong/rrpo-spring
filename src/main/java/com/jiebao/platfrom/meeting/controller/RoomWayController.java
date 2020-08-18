@@ -37,14 +37,14 @@ public class RoomWayController {
     @GetMapping(value = "delete/{idList}")
     @ApiOperation("批量 绑定消息发送方式")
     @Log(value = "批量 绑定消息发送方式")
-    private JiebaoResponse deleteById(@PathVariable String[] idList) {
+    public JiebaoResponse deleteById(@PathVariable String[] idList) {
         return new JiebaoResponse().message(wayService.deleteByListId(Arrays.asList(idList)) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")
     @ApiOperation("根据会议查询 绑定消息发送方式")
     @Log(value = "根据会议查询 绑定消息发送方式")
-    private JiebaoResponse getFile(String id) {
+    public JiebaoResponse getFile(String id) {
         return new JiebaoResponse().data(wayService.list(id)).message("查询成功");
     }
 }

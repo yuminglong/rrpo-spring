@@ -33,14 +33,14 @@ public class RoomRecordController {
     @PostMapping(value = "saveOrUpdate")
     @ApiOperation("会议的创建以及修改")
     @Log(value = "会议的创建以及修改")
-    private JiebaoResponse saveOrUpdate(RoomRecord record) {
+    public JiebaoResponse saveOrUpdate(RoomRecord record) {
         return new JiebaoResponse().message(recordService.saveOrUpdate(record) ? "操作成功" : "操作失败");
     }
 
     @DeleteMapping(value = "delete/{id}")
     @ApiOperation("会议删除")
     @Log(value = "会议删除")
-    private JiebaoResponse deleteById(@PathVariable String id) {
+    public JiebaoResponse deleteById(@PathVariable String id) {
         System.out.println(id);
         return new JiebaoResponse().message(recordService.removeById(id) ? "操作成功" : "操作失败");
     }
@@ -55,21 +55,21 @@ public class RoomRecordController {
     @GetMapping(value = "getRecord")
     @ApiOperation("查询指定会议")
     @Log(value = "查询指定会议")
-    private JiebaoResponse getRecord(String id) {
+    public JiebaoResponse getRecord(String id) {
         return new JiebaoResponse().data(recordService.getById(id)).message("查询成功");
     }
 
     @GetMapping("sendEmail")
     @ApiOperation("发送会议信息")
     @Log(value = "发送会议信息")
-    private JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
+    public JiebaoResponse sendEmail(String recordId, String message, Integer inviteIf, List<String> listUserID) {
         return recordService.sendEmail(recordId, message, inviteIf, listUserID);
     }
 
     @GetMapping("getRecordByRoomIdOrDateOrUserId")
     @ApiOperation("通过会议室查询所属绑定会议")
     @Log("通过会议室查询所属绑定会议")
-    private JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, String roomId, Date date, String userId, String order) {
+    public JiebaoResponse getRecordByRoomIdOrDateOrUserId(QueryRequest queryRequest, String roomId, Date date, String userId, String order) {
         return recordService.getRecordByRoomIdOrDateOrUserId(queryRequest, roomId, date, userId, order);
     }
 

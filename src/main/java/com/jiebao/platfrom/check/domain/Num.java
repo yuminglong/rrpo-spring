@@ -71,4 +71,6 @@ public class Num implements Serializable {
     private Double fpXgWork;
     @ApiModelProperty(value = "试卷效果", example = "23.23")
     private Integer status;     //0  0 正常  1不正常
+
+    private Integer audit;
 }
