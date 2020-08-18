@@ -99,16 +99,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
                 if (grade.getNum() > 0) {  //如果大于0 证明为加分项
-                    JCJF += grade.getNum();
-                    fpJcJf += grade.getFpNum();
+                    JCJF += grade.getNum()==null?0:grade.getNum();
+                    fpJcJf += grade.getFpNum()==null?0:grade.getFpNum();
                 } else {  //反之 为扣分项
-                    JCKF += grade.getNum();
-                    fpJcKf += grade.getFpNum();
+                    JCKF += grade.getNum()==null?0:grade.getNum();
+                    fpJcKf += grade.getFpNum()==null?0:grade.getFpNum();
 
                 }
             } else {
-                SGKF += grade.getNum();
-                fpSgK += grade.getNum();
+                SGKF += grade.getNum()==null?0:grade.getNum();
+                fpSgK += grade.getNum()==null?0:grade.getNum();
             }
         }
         SGKF = 40 + SGKF;
@@ -312,7 +312,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     private void bjGradeId(String gradeId, Integer status) {  //标记扣分项   存在疑点便不可以 修改
-        System.out.println("进来了");
         Grade grade = getById(gradeId);
         Integer i = gradeMapper.gradeZzExistStatusNull(gradeId);  //非自定义文件
         Integer i1 = gradeMapper.fileExistStatusNull(gradeId);//自定义文件

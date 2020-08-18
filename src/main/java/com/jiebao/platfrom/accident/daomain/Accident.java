@@ -51,7 +51,7 @@ public class Accident implements Serializable {
     private String cityCsId;
 
 
-    @ApiModelProperty(value = "不用管")
+
     @TableField(exist = false)
     private Dept deptCs;
 
@@ -61,7 +61,6 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "发生区县", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管")
     private Dept deptQx;
     /**
      * 派出所
