@@ -43,8 +43,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     @Autowired
     PublicFileService publicFileService;
 
-    @Autowired
-    private FileService fileService;
+
 
     @Autowired
     private FileMapper fileMapper;
@@ -118,7 +117,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);
         for (PublicFile p : publicFiles
         ) {
-            if (publicFiles == null) {
+            if (publicFiles.size() ==0) {
                 p.setHasChildren(false);
             }
         }
