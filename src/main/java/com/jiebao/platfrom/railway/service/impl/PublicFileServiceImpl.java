@@ -124,8 +124,8 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         }
         List<File> files = publicFileMapper.selectFiles(publicFileId);
         List list = new ArrayList<>();
-        list.add(publicFiles);
-        list.add(files);
+        list.addAll(publicFiles);
+        list.addAll(files);
         return list;
     }
 
