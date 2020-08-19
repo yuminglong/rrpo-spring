@@ -23,10 +23,20 @@ public interface PrizeMapper extends BaseMapper<Prize> {
      * @param prizeId
      * @return
      */
-    @Update("UPDATE  rail_prize set status = '3',release_time = now() where id = #{prizeId}")
+    @Update("UPDATE  rail_prize set status = 3,release_time = now() where id = #{prizeId}")
     boolean release(String prizeId);
 
     @Delete("")
     boolean reject(String prizeId);
+
+
+    @Update("UPDATE rail_prize SET status = 7 WHERE id =#{prizeId}")
+    boolean updateStatusForPro(String prizeId);
+
+    @Update("UPDATE rail_prize SET status = 6 WHERE id =#{prizeId}")
+    boolean updateStatusForIron(String prizeId);
+
+    @Update("UPDATE rail_prize SET status = 5 WHERE id =#{prizeId}")
+    boolean updateStatusForCity(String prizeId);
 }
 

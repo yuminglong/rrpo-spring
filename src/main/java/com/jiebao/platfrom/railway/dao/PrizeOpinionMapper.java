@@ -16,6 +16,6 @@ public interface PrizeOpinionMapper extends BaseMapper<PrizeOpinion> {
      * @param prizeId
      * @return
      */
-    @Select("SELECT * FROM `rail_prize_opinion` WHERE rank =#{rank} and prize_id =#{prizeId}")
-    boolean selectOpinion(Integer rank,String prizeId);
+    @Select("SELECT count(*) FROM `rail_prize_opinion` WHERE rank =#{rank} and prize_id =#{prizeId}")
+    Integer selectOpinion(Integer rank,String prizeId);
 }

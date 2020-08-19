@@ -170,7 +170,7 @@ public class ExchangeController extends BaseController {
         } catch (Exception e) {
             message = "删除发件箱失败";
             log.error(message, e);
-            return new JiebaoResponse().message("批量删除信息失败");
+            throw  new JiebaoException("批量删除信息失败");
         }
     }
 

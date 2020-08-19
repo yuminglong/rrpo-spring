@@ -43,4 +43,10 @@ public class PublicFile {
 
     @TableField(exist = false)
     private List<File> files;
+
+    @TableField(exist = false)
+    private boolean hasParent;
+
+    @TableField(exist = false)
+    private boolean hasChildren;
 }
