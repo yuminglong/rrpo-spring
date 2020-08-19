@@ -55,4 +55,6 @@ public class Grade implements Serializable {
     private String fpMessage;
 
     private Integer status;     //0  0 正常  1不正常
+
+    private Integer audit;
 }

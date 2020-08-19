@@ -53,4 +53,8 @@ public interface GradeZzMapper extends BaseMapper<GradeZz> {
             @Result(property = "file", column = "zz_id", one = @One(select = "com.jiebao.platfrom.system.dao.FileMapper.selectById"))
     })
     List<GradeZz> ListGGXX(String gradeID, Integer type, Page<File> page);  //公共信息
+
+
+    @Select("select 1 from check_grade_zz where grade_id=#{gradeId} and zz_id=#{zzId} limit 1")
+    Integer ExIstGradeZz(String gradeId,String zzId);
 }

@@ -38,14 +38,14 @@ public class RoomUsersController {
     @Delete(value = "delete/{idList}")
     @ApiOperation("批量 参会人员")
     @Log(value = "领导删除")
-    private JiebaoResponse deleteById(@PathVariable String[] idList) {
+    public JiebaoResponse deleteById(@PathVariable String[] idList) {
         return new JiebaoResponse().message(usersService.deleteByListId(Arrays.asList(idList)) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "select")
     @ApiOperation("根据会议查询 参会人员")
     @Log(value = "根据会议查询 参会人员")
-    private JiebaoResponse getFile(String id, QueryRequest queryRequest, Integer leadIf) {
+    public JiebaoResponse getFile(String id, QueryRequest queryRequest, Integer leadIf) {
         return new JiebaoResponse().data(usersService.list(queryRequest,id,leadIf)).message("查询成功");
     }
 }

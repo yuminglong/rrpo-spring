@@ -29,28 +29,28 @@ public class RoomRoomController {
     @PostMapping(value = "saveOrUpdate")
     @ApiOperation("会议室的创建以及修改")
     @Log(value = "会议室的创建以及修改")
-    private JiebaoResponse saveOrUpdate(RoomRoom room) {
+    public JiebaoResponse saveOrUpdate(RoomRoom room) {
         return new JiebaoResponse().message(roomService.saveOrUpdate(room) ? "操作成功" : "操作失败");
     }
 
     @DeleteMapping(value = "delete/{ids}")
     @ApiOperation("会议室删除")
     @Log(value = "会议室删除")
-    private JiebaoResponse deleteById(@PathVariable String[] ids) {
+    public JiebaoResponse deleteById(@PathVariable String[] ids) {
         return new JiebaoResponse().message(roomService.removeByIds(Arrays.asList(ids)) ? "操作成功" : "操作失败");
     }
 
     @GetMapping(value = "list")
     @ApiOperation("会议室查询")
     @Log(value = "会议室查询")
-    private JiebaoResponse list(QueryRequest queryRequest, String name, String address, Integer small, Integer big) {
+    public JiebaoResponse list(QueryRequest queryRequest, String name, String address, Integer small, Integer big) {
         return new JiebaoResponse().data(roomService.list(queryRequest, name, address, small, big)).message("查询成功");
     }
 
     @GetMapping(value = "getRoom")
     @ApiOperation("查询指定会议室")
     @Log(value = "查询指定会议室")
-    private JiebaoResponse getRoom(String id) {
+    public JiebaoResponse getRoom(String id) {
         return new JiebaoResponse().data(roomService.getById(id)).message("查询成功");
     }
 }
