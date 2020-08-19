@@ -71,6 +71,7 @@ public class UserController extends BaseController {
                 message = "用户名重复";
                 throw new JiebaoException(message);
             }
+            user.setType(0);
             this.userService.createUser(user);
         } catch (Exception e) {
             message = "新增用户失败";
