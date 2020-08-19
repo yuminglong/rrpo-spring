@@ -2,6 +2,7 @@ package com.jiebao.platfrom.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.system.domain.File;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -68,6 +69,8 @@ public class Tree<T> {
     private Integer Mark;
 
     private  String name;
+
+    private List<File> files;
 
 
     public void initChildren(){

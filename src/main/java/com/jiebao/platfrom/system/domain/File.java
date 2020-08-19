@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -48,6 +49,7 @@ public class File extends Model<File> implements Serializable {
     private Integer zzStatus;//0合格  1不合格
 
     private Integer isCheck;
+
 
 
 }

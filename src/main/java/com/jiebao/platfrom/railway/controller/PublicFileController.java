@@ -8,11 +8,14 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.railway.dao.PublicFileMapper;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.FileService;
+import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -110,10 +113,15 @@ public class PublicFileController extends BaseController {
 
     @ApiOperation(value = "根据fileId查文件详情并绑定对应文件夹", notes = "根据fileId查文件详情并绑定对应文件夹", httpMethod = "GET")
     @GetMapping("/BindFile")
-    public JiebaoResponse publicFileList(String publicFileId, String fileId) {
-        fileMapper.updatePublicFileByFileId(publicFileId,fileId);
-        File byId = fileService.getById(fileId);
-        return  new JiebaoResponse().data(byId).message("查询成功成功").put("status", "200");
+    public JiebaoResponse bindFile( String fileId,String publicFileId) throws JiebaoException {
+        try {
+            publicFileService.bindFile(fileId,publicFileId);
+            return new JiebaoResponse().message("成功").put("status", "200");
+        } catch (Exception e) {
+            message = "失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
     }
 
 

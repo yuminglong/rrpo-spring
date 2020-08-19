@@ -14,7 +14,9 @@ import com.jiebao.platfrom.railway.domain.PrizeType;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,13 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
 
     @Autowired
     PublicFileService publicFileService;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private FileMapper fileMapper;
+
 
     @Override
     public Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile) {
@@ -67,6 +76,11 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setParentId(publicFile.getParentId());
             tree.setName(publicFile.getName());
             tree.setMark(publicFile.getMark());
+            tree.setCreateTime(publicFile.getCreatTime());
+            Map<String, Object> map = new HashMap<>();
+            map.put("ref_id",publicFile.getId());
+            List<File> files = fileMapper.selectByMap(map);
+            tree.setFiles(files);
             trees.add(tree);
         });
     }
@@ -114,5 +128,10 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             p.setFiles(files);
         }
         return publicFiles;
+    }
+
+    @Override
+    public boolean bindFile(String fileId,String publicFileId) {
+        return fileMapper.updatePublicFileByFileId(fileId,publicFileId);
     }
 }

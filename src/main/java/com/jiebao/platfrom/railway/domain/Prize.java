@@ -93,7 +93,7 @@ public class Prize {
     /**
      * 状态3，已发送   4已删除
      */
-    @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除")
+    @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除",example = "1")
     private Integer status;
 
     @ApiModelProperty(value = "限制天数id")
