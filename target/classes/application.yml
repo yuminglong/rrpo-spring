@@ -80,7 +80,8 @@ management:
 
 
 jiebao:
-  host: http://114.115.147.159:9527
+  #host: http://114.115.147.159:9527
+  host: http://192.168.10.104:9527
   # 是否异步记录用户操作日志
   openAopLog: true
   # 单次最大批量入库数量
@@ -90,15 +91,16 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**/mini/user/login/**,/mini/user/quickLogin/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/mini/user/login/**,/mini/user/quickLogin/**
     # token有效期，单位秒
     jwtTimeOut: 3600
 
   upload:
     #上传路径
-    imagePath:  /usr/local/rrpo/upload/images/ #D:/upload/images/
-    filePath:  /usr/local/rrpo/upload/files/  #D:/upload/files/
-
+   # imagePath:  /usr/local/rrpo/upload/images/
+   # filePath:  /usr/local/rrpo/upload/files/
+    imagePath:  D:/upload/images/
+    filePath:   D:/upload/files/
     #虚拟访问路径+
     staticImagePath: /jbx/cdn/image/**
     staticFilePath: /jbx/cdn/file/**

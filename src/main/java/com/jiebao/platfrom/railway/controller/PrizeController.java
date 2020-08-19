@@ -18,6 +18,7 @@ import com.jiebao.platfrom.railway.domain.PrizeLimit;
 import com.jiebao.platfrom.railway.domain.PrizeOpinion;
 import com.jiebao.platfrom.railway.domain.PrizeOrder;
 import com.jiebao.platfrom.railway.service.*;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -96,6 +97,8 @@ public class PrizeController extends BaseController {
     @Autowired
     private PrizeOpinionService prizeOpinionService;
 
+    @Autowired
+    private FileMapper fileMapper;
 
     /**
      * 创建一条一事一奖
@@ -104,15 +107,19 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/save")
     @ApiOperation(value = "创建一条一事一奖", notes = "创建一条一事一奖", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatPrize(@Valid Prize prize) throws JiebaoException {
+    public JiebaoResponse creatPrize(@Valid Prize prize, String[] fileIds) throws JiebaoException {
         try {
+            System.out.println("-------------------------"+fileIds+"-------------------------------");
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             prize.setCreatUser(username);
             boolean save = prizeService.save(prize);
+            Arrays.stream(fileIds).forEach(fileId -> {
+                fileMapper.updateByFileId(fileId, prize.getId());
+            });
             UserRole userRole = userRoleMapper.getByUserId(byName.getUserId());
-            //模拟1是区级
-            if ("1".equals(userRole.getRoleId())) {
+            //模拟7c8f277c3adb22397b8c38f15ca03ea8是区级
+            if ("7c8f277c3adb22397b8c38f15ca03ea8".equals(userRole.getRoleId())) {
                 //获取该区县组织机构，则getParentId就是获取它上级组织机构ID
                 Dept byId = deptService.getById(byName.getDeptId());
                 Map<String, Object> columnMap = new HashMap<>();
@@ -127,7 +134,7 @@ public class PrizeController extends BaseController {
                 }
                 prize.setReviewStatus(0);
                 //模拟2是市级
-            } else if ("2".equals(userRole.getRoleId())) {
+            } else if ("1ef79e30d65cf948db46a7e408f46085".equals(userRole.getRoleId())) {
                 Dept byId = deptService.getById(byName.getDeptId());
                 Map<String, Object> columnMap = new HashMap<>();
                 columnMap.put("dept_id", byId.getParentId());

@@ -81,6 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     public void createUser(User user) throws Exception {
         // 创建用户
+        user.setType(0);
         user.setCreateTime(new Date());
         user.setAvatar(User.DEFAULT_AVATAR);
         user.setPassword(MD5Util.encrypt(user.getUsername(), User.DEFAULT_PASSWORD));

@@ -9,10 +9,7 @@ import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -90,7 +87,7 @@ public class User implements Serializable {
 
     private String openid;
 
-    @NotBlank(message = "{required}")
+    //@NotNull(message = "{required}")
     private Integer type;
 
     @NotBlank(message = "{required}")

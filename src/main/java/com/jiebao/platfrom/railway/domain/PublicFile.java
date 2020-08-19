@@ -49,4 +49,6 @@ public class PublicFile {
 
     @TableField(exist = false)
     private boolean hasChildren;
+
+
 }

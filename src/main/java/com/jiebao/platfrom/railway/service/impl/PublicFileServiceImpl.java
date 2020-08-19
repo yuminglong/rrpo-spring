@@ -8,12 +8,10 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.common.utils.TreeUtil;
-import com.jiebao.platfrom.railway.dao.PrizeTypeMapper;
 import com.jiebao.platfrom.railway.dao.PublicFileMapper;
-import com.jiebao.platfrom.railway.domain.PrizeType;
 import com.jiebao.platfrom.railway.domain.PublicFile;
-import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +37,12 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
 
     @Autowired
     PublicFileService publicFileService;
+
+
+
+    @Autowired
+    private FileMapper fileMapper;
+
 
     @Override
     public Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile) {
@@ -67,6 +71,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setParentId(publicFile.getParentId());
             tree.setName(publicFile.getName());
             tree.setMark(publicFile.getMark());
+            tree.setCreatTime(publicFile.getCreatTime());
             trees.add(tree);
         });
     }
@@ -107,12 +112,19 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);
         for (PublicFile p : publicFiles
         ) {
-            if (publicFiles == null) {
+            if (publicFiles.size() ==0) {
                 p.setHasChildren(false);
             }
-            List<File> files = publicFileMapper.selectFiles(publicFileId);
-            p.setFiles(files);
         }
-        return publicFiles;
+        List<File> files = publicFileMapper.selectFiles(publicFileId);
+        List list = new ArrayList<>();
+        list.addAll(publicFiles);
+        list.addAll(files);
+        return list;
+    }
+
+    @Override
+    public boolean bindFile(String fileId,String publicFileId) {
+        return fileMapper.updatePublicFileByFileId(fileId,publicFileId);
     }
 }

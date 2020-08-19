@@ -24,4 +24,6 @@ public interface PublicFileService extends IService<PublicFile> {
    List<PublicFile> findChilderPublicFile(String id);
 
    List<PublicFile> getPublicFileListById(String publicFileId);
+
+    boolean bindFile( String fileId,String publicFileId);
 }
