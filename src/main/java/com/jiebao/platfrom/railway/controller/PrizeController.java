@@ -107,8 +107,9 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/save")
     @ApiOperation(value = "创建一条一事一奖", notes = "创建一条一事一奖", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatPrize(@Valid Prize prize,String[] fileIds) throws JiebaoException {
+    public JiebaoResponse creatPrize(@Valid Prize prize, String[] fileIds) throws JiebaoException {
         try {
+            System.out.println("-------------------------"+fileIds+"-------------------------------");
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             prize.setCreatUser(username);

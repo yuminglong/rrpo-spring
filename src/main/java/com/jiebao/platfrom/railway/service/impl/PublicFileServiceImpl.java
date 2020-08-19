@@ -8,15 +8,11 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.common.utils.TreeUtil;
-import com.jiebao.platfrom.railway.dao.PrizeTypeMapper;
 import com.jiebao.platfrom.railway.dao.PublicFileMapper;
-import com.jiebao.platfrom.railway.domain.PrizeType;
 import com.jiebao.platfrom.railway.domain.PublicFile;
-import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
-import com.jiebao.platfrom.system.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -76,7 +71,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setParentId(publicFile.getParentId());
             tree.setName(publicFile.getName());
             tree.setMark(publicFile.getMark());
-            tree.setCreateTime(publicFile.getCreatTime());
+            tree.setCreatTime(publicFile.getCreatTime());
             trees.add(tree);
         });
     }

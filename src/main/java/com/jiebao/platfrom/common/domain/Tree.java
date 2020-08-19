@@ -70,7 +70,7 @@ public class Tree<T> {
 
     private  String name;
 
-
+    private Date creatTime;
 
 
     public void initChildren(){
