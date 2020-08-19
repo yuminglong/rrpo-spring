@@ -41,11 +41,6 @@ public class PublicFileController extends BaseController {
     @Autowired
     private PublicFileService publicFileService;
 
-    @Autowired
-    private FileMapper fileMapper;
-
-    @Autowired
-    private FileService fileService;
 
 
 

@@ -70,7 +70,7 @@ public class Tree<T> {
 
     private  String name;
 
-    private List<File> files;
+
 
 
     public void initChildren(){

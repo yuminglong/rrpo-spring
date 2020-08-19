@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -77,10 +78,6 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             tree.setName(publicFile.getName());
             tree.setMark(publicFile.getMark());
             tree.setCreateTime(publicFile.getCreatTime());
-            Map<String, Object> map = new HashMap<>();
-            map.put("ref_id",publicFile.getId());
-            List<File> files = fileMapper.selectByMap(map);
-            tree.setFiles(files);
             trees.add(tree);
         });
     }
@@ -124,10 +121,12 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             if (publicFiles == null) {
                 p.setHasChildren(false);
             }
-            List<File> files = publicFileMapper.selectFiles(publicFileId);
-            p.setFiles(files);
         }
-        return publicFiles;
+        List<File> files = publicFileMapper.selectFiles(publicFileId);
+        List list = new ArrayList<>();
+        list.add(publicFiles);
+        list.add(files);
+        return list;
     }
 
     @Override
