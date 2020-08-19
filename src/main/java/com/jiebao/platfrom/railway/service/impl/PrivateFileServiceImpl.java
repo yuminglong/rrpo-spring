@@ -15,6 +15,7 @@ import com.jiebao.platfrom.railway.domain.PrivateFile;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PrivateFileService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,10 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
 
 
     @Autowired
-    UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private PrivateFileMapper privateFileMapper;
 
     @Override
     public Map<String, Object> findPrivateFileList(QueryRequest request, PrivateFile privateFile) {
@@ -80,8 +84,8 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
         QueryWrapper<PrivateFile> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
-        queryWrapper.lambda().eq(PrivateFile::getUserId,byName.getUserId());
-        if (StringUtils.isNotBlank(privateFile.getName())){
+        queryWrapper.lambda().eq(PrivateFile::getUserId, byName.getUserId());
+        if (StringUtils.isNotBlank(privateFile.getName())) {
             queryWrapper.lambda().eq(PrivateFile::getName, privateFile.getName());
         }
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
@@ -89,12 +93,11 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
     }
 
 
-
     @Override
     @Transactional
     public void createPrivateFile(PrivateFile privateFile) {
         String parentId = privateFile.getParentId();
-        if (StringUtils.isNotBlank(parentId)){
+        if (StringUtils.isNotBlank(parentId)) {
             privateFile.setParentId("0");
         }
         this.save(privateFile);
@@ -105,5 +108,18 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
         LambdaQueryWrapper<PrivateFile> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(PrivateFile::getParentId, id);
         return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<PrivateFile> getPrivateFileListById(String privateFileId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", privateFileId);
+        List<PrivateFile> privateFiles = privateFileMapper.selectByMap(map);
+
+        List<File> files = privateFileMapper.selectFiles(privateFileId);
+        List list = new ArrayList<>();
+        list.addAll(privateFiles);
+        list.addAll(files);
+        return list;
     }
 }

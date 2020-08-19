@@ -20,4 +20,6 @@ public interface PrivateFileService extends IService<PrivateFile> {
    void createPrivateFile(PrivateFile privateFile);
 
    List<PrivateFile> findChilderPrivateFile(String id);
+
+   List<PrivateFile> getPrivateFileListById(String privateFileId);
 }

@@ -15,6 +15,7 @@ import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +56,6 @@ public class PrivateFileController extends BaseController {
             User byName = userService.findByName(username);
             privateFile.setUserId(byName.getUserId());
             this.privateFileService.createPrivateFile(privateFile);
-           /* Arrays.stream(fileIds).forEach(fileId -> {
-                fileMapper.updateInformByFileId(fileId, publicFile.getId());
-            });*/
             return new JiebaoResponse().message("新增成功").put("status", "200");
         } catch (Exception e) {
             message = "新增文件夹失败";
@@ -101,6 +99,12 @@ public class PrivateFileController extends BaseController {
         }
     }
 
+
+    @ApiOperation(value = "根据ID查子文件夹和文件", notes = "根据ID查子文件夹和文件", httpMethod = "GET")
+    @GetMapping("/getByIdList")
+    public List<PrivateFile> privateFileList( String privateFileId) {
+        return this.privateFileService.getPrivateFileListById(privateFileId);
+    }
 
 }
 
