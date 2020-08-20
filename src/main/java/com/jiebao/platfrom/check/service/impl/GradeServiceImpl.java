@@ -57,27 +57,27 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         Grade grade = getOne(queryWrapper);
         boolean numberIf = number == null ? false : true;
         boolean fpNumberIf = fpNumber == null ? false : true;
-        if (grade != null) {
-            if (numberIf)
-                grade.setNum(number);
-            if (fpNumberIf)
-                grade.setFpNum(fpNumber);
-            grade.setMessage(message);
-            grade.setFpMessage(fpMessage);
-        } else {
+        boolean messageIf = message == null ? false : true;
+        boolean fpMessageIf = fpMessage == null ? false : true;
+        if (grade == null) {
             grade = new Grade();
-            if (numberIf)
-                grade.setNum(number);
             grade.setCheckId(menusId);
             grade.setDeptId(deptId);
             grade.setYearId(yearId);
-            if (fpNumberIf)
-                grade.setFpNum(fpNumber);
-            grade.setMessage(message);
-            grade.setFpMessage(fpMessage);
+
         }
+        if (numberIf)
+            grade.setNum(number);
+        if (fpNumberIf)
+            grade.setFpNum(fpNumber);
+        if (messageIf)
+            grade.setMessage(message);
+        if (fpMessageIf)
+            grade.setFpMessage(fpMessage);
+
         return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
     }
+
 
     @Override
     public JiebaoResponse commit(String yearId, String deptId) {   //  生成报表
@@ -99,30 +99,36 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             Menus menus = menusService.getById(grade.getCheckId());
             if (menus.getParentId().equals(menusJc.getMenusId())) {  //此条数据对应   基础工作  扣分模块规则
                 if (grade.getNum() > 0) {  //如果大于0 证明为加分项
-                    JCJF += grade.getNum()==null?0:grade.getNum();
-                    fpJcJf += grade.getFpNum()==null?0:grade.getFpNum();
+                    JCJF += grade.getNum() == null ? 0 : grade.getNum();
+                    fpJcJf += grade.getFpNum() == null ? 0 : grade.getFpNum();
                 } else {  //反之 为扣分项
-                    JCKF += grade.getNum()==null?0:grade.getNum();
-                    fpJcKf += grade.getFpNum()==null?0:grade.getFpNum();
+                    JCKF += grade.getNum() == null ? 0 : grade.getNum();
+                    fpJcKf += grade.getFpNum() == null ? 0 : grade.getFpNum();
 
                 }
             } else {
-                SGKF += grade.getNum()==null?0:grade.getNum();
-                fpSgK += grade.getNum()==null?0:grade.getNum();
+                SGKF += grade.getNum() == null ? 0 : grade.getNum();
+                fpSgK += grade.getNum() == null ? 0 : grade.getNum();
             }
         }
         SGKF = 40 + SGKF;
 
-        fpSgK = 40 + fpSgK;
+        fpSgK = 40 + fpSgK;//
 
         SGKF = SGKF < 0 ? 0 : SGKF;
+        SGKF = SGKF >= 40 ? 40 : SGKF;
 
-        fpSgK = fpSgK < 0 ? 0 : fpSgK;
+        fpSgK = fpSgK < 0 ? 0 : fpSgK;//
+        fpSgK = fpSgK >= 40 ? 40 : fpSgK;//
 
         JCKF = JCKF < -20 ? -20 : JCKF;  //扣分  20为限
+        JCKF = JCKF >= 0 ? 0 : JCKF;  //扣分  20为限
 
-        fpJcKf = fpJcKf < -20 ? -20 : fpJcKf;  //扣分  20为限
 
+        fpJcKf = fpJcKf < -20 ? -20 : fpJcKf;  //扣分  20为限//
+        fpJcKf = fpJcKf >= 0 ? 0 : fpJcKf;  //扣分  20为限
+
+        JCJF = JCJF <= 0 ? 0 : JCJF;
         if (JCJF > 40) {
             double dx = (JCJF - 40) / 15;  //溢出部分抵消扣分
             JCKF = JCKF + dx;  //抵消后的分数
@@ -132,6 +138,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             JCJF = 40;  //40分为限  超过40分  折价  15：1
         }
 
+        fpJcJf = fpJcJf <= 0 ? 0 : fpJcJf;
         if (fpJcJf > 40) {
             double dx = (fpJcJf - 40) / 15;  //溢出部分抵消扣分
             fpJcKf = JCKF + dx;  //抵消后的分数
