@@ -156,11 +156,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         num.setDeptId(deptId);
         num.setYearId(yearId);
-        num.setJcWork(JCKF + JCJF);
+        num.setJcWork(JCKF + JCJF+20);
         num.setXgWork(SGKF);
         num.setNumber(20 + JCKF + JCJF + SGKF);
         num.setYearDate(yearService.getById(yearId).getYearDate());
-        num.setFpJcWork(fpJcKf + fpJcJf);
+        num.setFpJcWork(fpJcKf + fpJcJf+20);
         num.setFpXgWork(fpSgK);
         num.setFpNumber(20 + fpJcKf + fpJcJf + fpSgK);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");

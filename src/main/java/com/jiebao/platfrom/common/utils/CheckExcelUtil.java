@@ -118,27 +118,45 @@ public class CheckExcelUtil {
         fz(cellStyle, cell6, "小时总计数");
         HSSFCell cell46 = row1.createCell(46);
         fz(cellStyle, cell46, "签名");
-
+        CellRangeAddress cellRangeAddress46 = new CellRangeAddress(0, 2, 46, 46);
+        sheet.addMergedRegion(cellRangeAddress46);
         HSSFRow row2 = sheet.createRow(i++);  //第2行的
         for (int ii = 6; ii < 37; ii++) {
             HSSFCell cell = row2.createCell(ii);
             fz(cellStyle, cell, "" + (ii - 5));
+            CellRangeAddress cellRangeAddress = new CellRangeAddress(1, 2, ii, ii);
+            sheet.addMergedRegion(cellRangeAddress);
         }
         HSSFCell cell337 = row2.createCell(37);  // 2排  37行
         fz(cellStyle, cell337, "已工作时间");
+        CellRangeAddress cellRangeAddress1 = new CellRangeAddress(1, 1, 37, 40);
+        sheet.addMergedRegion(cellRangeAddress1);
         int cellNum = 40;
         HSSFCell cell9 = row2.createCell(cellNum++);
         fz(cellStyle, cell9, "出差");
+        CellRangeAddress cellRangeAddress9 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress9);
         HSSFCell cell11 = row2.createCell(cellNum++);
         fz(cellStyle, cell11, "年休假");
+        CellRangeAddress cellRangeAddress11 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress11);
         HSSFCell cell12 = row2.createCell(cellNum++);
         fz(cellStyle, cell12, "病假");
+        CellRangeAddress cellRangeAddress12 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress12);
         HSSFCell cell13 = row2.createCell(cellNum++);
         fz(cellStyle, cell13, "事假");
+        CellRangeAddress cellRangeAddress13 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress13);
         HSSFCell cell14 = row2.createCell(cellNum++);
         fz(cellStyle, cell14, "婚假");
+        CellRangeAddress cellRangeAddress14 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress9);
         HSSFCell cell15 = row2.createCell(cellNum++);
         fz(cellStyle, cell15, "合计");
+        CellRangeAddress cellRangeAddress15 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress15);
+
 
         HSSFRow row3 = sheet.createRow(i++); //第3行
         for (int ii = 0; ii < 3; ii++) {
@@ -156,7 +174,6 @@ public class CheckExcelUtil {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(0, 2, ii, ii);
             sheet.addMergedRegion(cellRangeAddress);
         }
-
 
 
         //内容区
