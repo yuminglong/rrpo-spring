@@ -108,7 +108,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 }
             } else {
                 SGKF += grade.getNum() == null ? 0 : grade.getNum();
-                fpSgK += grade.getNum() == null ? 0 : grade.getNum();
+                fpSgK += grade.getFpNum() == null ? 0 : grade.getFpNum();
             }
         }
         SGKF = 40 + SGKF;
