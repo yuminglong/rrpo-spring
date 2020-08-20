@@ -52,9 +52,7 @@ public class PrivateFileController extends BaseController {
     @PostMapping
     public JiebaoResponse addPrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
-            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            User byName = userService.findByName(username);
-            privateFile.setUserId(byName.getUserId());
+
             this.privateFileService.createPrivateFile(privateFile);
             return new JiebaoResponse().message("新增成功").put("status", "200");
         } catch (Exception e) {

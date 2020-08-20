@@ -85,7 +85,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     public IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7));
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7).or().eq(Prize::getStatus, 2));
         if (StringUtils.isNotBlank(username)) {
             User byName = userService.findByName(username);
             Map<String,Object> map = new HashMap<>();

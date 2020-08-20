@@ -118,4 +118,7 @@ public class Prize {
     private Integer isCheck;
 
     private Integer reviewStatus;
+
+    @TableField(exist = false)
+    private String briefingMoney;
 }

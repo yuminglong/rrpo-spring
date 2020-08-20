@@ -107,9 +107,10 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
 
     @Override
     public List<PublicFile> getPublicFileListById(String publicFileId) {
-        Map<String, Object> map = new HashMap<>();
+      /*  Map<String, Object> map = new HashMap<>();
         map.put("parent_id", publicFileId);
-        List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);
+        List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);*/
+        List<PublicFile> publicFiles = publicFileMapper.selectByParentId(publicFileId);
         for (PublicFile p : publicFiles
         ) {
             if (publicFiles.size() ==0) {

@@ -72,7 +72,7 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
             tree.setId(privateFile.getId());
             tree.setKey(tree.getId());
             tree.setParentId(privateFile.getParentId());
-            tree.setText(privateFile.getName());
+            tree.setName(privateFile.getName());
             tree.setMark(privateFile.getMark());
             trees.add(tree);
         });
@@ -97,9 +97,12 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
     @Transactional
     public void createPrivateFile(PrivateFile privateFile) {
         String parentId = privateFile.getParentId();
-        if (StringUtils.isNotBlank(parentId)) {
+        if (parentId == null) {
             privateFile.setParentId("0");
         }
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        privateFile.setUserId(byName.getUserId());
         this.save(privateFile);
     }
 

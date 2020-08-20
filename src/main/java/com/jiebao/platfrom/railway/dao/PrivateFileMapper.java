@@ -18,6 +18,6 @@ public interface PrivateFileMapper extends BaseMapper<PrivateFile> {
      * @param refId
      * @return
      */
-    @Select("SELECT * FROM `sys_files` WHERE ref_id = #{refId} and ref_type = 5")
+    @Select("SELECT * FROM `sys_files` WHERE ref_id = #{refId} and ref_type = 5 ORDER BY time DESC")
     List<File> selectFiles(String refId);
 }

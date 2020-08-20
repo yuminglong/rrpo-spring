@@ -2,6 +2,7 @@ package com.jiebao.platfrom.railway.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -13,10 +14,7 @@ import com.jiebao.platfrom.railway.dao.PrizeLimitMapper;
 import com.jiebao.platfrom.railway.dao.PrizeMapper;
 import com.jiebao.platfrom.railway.dao.PrizeOpinionMapper;
 import com.jiebao.platfrom.railway.dao.PrizeUserMapper;
-import com.jiebao.platfrom.railway.domain.Prize;
-import com.jiebao.platfrom.railway.domain.PrizeLimit;
-import com.jiebao.platfrom.railway.domain.PrizeOpinion;
-import com.jiebao.platfrom.railway.domain.PrizeOrder;
+import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.*;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -35,6 +33,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -346,17 +345,20 @@ public class PrizeController extends BaseController {
         }
     }
 
-    @GetMapping("/reject")
+    @GetMapping("/reject/list")
     @ApiOperation(value = "驳回", notes = "驳回", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse prizeReject(String prizeId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("prize_id",prizeId);
-        //删除所有
-        prizeOpinionMapper.deleteByMap(map);
-        prizeMapper.reject(prizeId);
-        prizeUserMapper.reject(prizeId);
+    public JiebaoResponse prizeReject(String [] prizeIds) throws JiebaoException {
+        try {
+            Arrays.stream(prizeIds).forEach(prizeId ->{
+                this.prizeMapper.reject(prizeId);
+            });
+            return new JiebaoResponse().message("驳回成功").put("status","200");
+        } catch (Exception e) {
+            message = "驳回失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
 
-        return new JiebaoResponse().message("驳回成功").put("status","200");
     }
 
 
@@ -367,5 +369,25 @@ public class PrizeController extends BaseController {
         map.put("prize_id",prizeId);
         List<PrizeOpinion> prizeOpinions = prizeOpinionMapper.selectByMap(map);
         return new JiebaoResponse().data(prizeOpinions).put("status","200");
+    }
+
+    @GetMapping("/briefing")
+    @ApiOperation(value = "简报", notes = "简报", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse briefing(String startTime, String endTime) throws JiebaoException {
+        try {
+            List<Prize> prizes = prizeMapper.selectByBriefing(startTime,endTime);
+            for (Prize p: prizes
+            ) {
+                PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
+                String money = prizeOpinion.getMoney();
+                p.setBriefingMoney(money);
+            }
+            return new JiebaoResponse().data(prizes).put("status","200");
+        }
+        catch (Exception e) {
+            message = "生成简报失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
     }
 }
