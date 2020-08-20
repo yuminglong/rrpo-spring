@@ -18,9 +18,9 @@ public interface PublicFileMapper extends BaseMapper<PublicFile> {
      * @param refId
      * @return
      */
-    @Select("SELECT * FROM `sys_files` WHERE ref_id = #{refId} and ref_type = 4 ORDER BY time DESC")
+    @Select("SELECT * FROM `sys_files` WHERE ref_id = #{refId} and ref_type = 4 ORDER BY time ")
     List<File> selectFiles(String refId);
 
-    @Select("SELECT * FROM `rail_public_file` WHERE parent_id =#{publicFileId} ORDER BY creat_time DESC")
+    @Select("SELECT * FROM `rail_public_file` WHERE parent_id =#{publicFileId} ORDER BY creat_time ")
     List<PublicFile> selectByParentId(String publicFileId);
 }

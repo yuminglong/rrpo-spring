@@ -52,8 +52,7 @@ public class PrivateFileController extends BaseController {
     @PostMapping
     public JiebaoResponse addPrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
-
-            this.privateFileService.createPrivateFile(privateFile);
+            privateFileService.createPrivateFile(privateFile);
             return new JiebaoResponse().message("新增成功").put("status", "200");
         } catch (Exception e) {
             message = "新增文件夹失败";
