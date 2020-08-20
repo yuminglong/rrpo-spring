@@ -72,7 +72,7 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
             tree.setId(privateFile.getId());
             tree.setKey(tree.getId());
             tree.setParentId(privateFile.getParentId());
-            tree.setText(privateFile.getName());
+            tree.setName(privateFile.getName());
             tree.setMark(privateFile.getMark());
             trees.add(tree);
         });
