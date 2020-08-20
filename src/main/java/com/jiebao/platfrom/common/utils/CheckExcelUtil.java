@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +77,7 @@ public class CheckExcelUtil {
         cell1.setCellStyle(cellStyle);
     }
 
-    public static void exportExcel(List<Record> list, HttpServletResponse response, UserService userService) {
+    public static void exportExcel(List<Record> list, HttpServletResponse response, UserService userService, String dateMonth) {
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFCellStyle cellStyle = workbook.createCellStyle();
@@ -114,31 +115,54 @@ public class CheckExcelUtil {
         fz(cellStyle, cell6, "技能工资");
         HSSFCell cell7 = row1.createCell(6);
         fz(cellStyle, cell7, "时间日期");
+        CellRangeAddress cellRangeAddress7 = new CellRangeAddress(0, 0, 6, 36);
+        sheet.addMergedRegion(cellRangeAddress7);
         HSSFCell cell37 = row1.createCell(37);
-        fz(cellStyle, cell6, "小时总计数");
+        fz(cellStyle, cell37, "小时总计数");
+        CellRangeAddress cellRangeAddress37 = new CellRangeAddress(0, 0, 37, 45);
+        sheet.addMergedRegion(cellRangeAddress37);
         HSSFCell cell46 = row1.createCell(46);
         fz(cellStyle, cell46, "签名");
-
+        CellRangeAddress cellRangeAddress46 = new CellRangeAddress(0, 2, 46, 46);
+        sheet.addMergedRegion(cellRangeAddress46);
         HSSFRow row2 = sheet.createRow(i++);  //第2行的
         for (int ii = 6; ii < 37; ii++) {
             HSSFCell cell = row2.createCell(ii);
             fz(cellStyle, cell, "" + (ii - 5));
+            CellRangeAddress cellRangeAddress = new CellRangeAddress(1, 2, ii, ii);
+            sheet.addMergedRegion(cellRangeAddress);
         }
         HSSFCell cell337 = row2.createCell(37);  // 2排  37行
         fz(cellStyle, cell337, "已工作时间");
+        CellRangeAddress cellRangeAddress1 = new CellRangeAddress(1, 1, 37, 39);
+        sheet.addMergedRegion(cellRangeAddress1);
         int cellNum = 40;
+        CellRangeAddress cellRangeAddress9 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress9);
         HSSFCell cell9 = row2.createCell(cellNum++);
         fz(cellStyle, cell9, "出差");
+        CellRangeAddress cellRangeAddress11 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress11);
         HSSFCell cell11 = row2.createCell(cellNum++);
         fz(cellStyle, cell11, "年休假");
+
+        CellRangeAddress cellRangeAddress12 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress12);
         HSSFCell cell12 = row2.createCell(cellNum++);
         fz(cellStyle, cell12, "病假");
+        CellRangeAddress cellRangeAddress13 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress13);
         HSSFCell cell13 = row2.createCell(cellNum++);
         fz(cellStyle, cell13, "事假");
+        CellRangeAddress cellRangeAddress14 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress14);
         HSSFCell cell14 = row2.createCell(cellNum++);
         fz(cellStyle, cell14, "婚假");
+        CellRangeAddress cellRangeAddress15 = new CellRangeAddress(1, 2, cellNum, cellNum);
+        sheet.addMergedRegion(cellRangeAddress15);
         HSSFCell cell15 = row2.createCell(cellNum++);
         fz(cellStyle, cell15, "合计");
+
 
         HSSFRow row3 = sheet.createRow(i++); //第3行
         for (int ii = 0; ii < 3; ii++) {
@@ -156,7 +180,6 @@ public class CheckExcelUtil {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(0, 2, ii, ii);
             sheet.addMergedRegion(cellRangeAddress);
         }
-
 
 
         //内容区
@@ -312,7 +335,7 @@ public class CheckExcelUtil {
             }
             i++;
         }
-
+        panMonth(dateMonth);
 
         response.setContentType("application/ms-excel;charset=utf-8");
 //设置导出Excel的名称
@@ -330,4 +353,31 @@ public class CheckExcelUtil {
 
 
     }
+
+    public static Integer panMonth(String month) {  //判断月份多少天  //参数 年份带月
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy");
+        String format = simpleDateFormat.format(month);
+        Integer yer = Integer.valueOf(simpleDateFormat1.format(month));
+        switch (format) {
+            case "01":
+            case "03":
+            case "05":
+            case "07":
+            case "08":
+            case "10":
+            case "12":
+                return 31;
+            case "04":
+            case "06":
+            case "09":
+            case "11":
+                return 30;
+            case "02":
+                return (yer % 400 == 0 || yer % 4 == 0 && yer % 100 != 0) ? 29 : 28;
+            default:
+                return null;
+        }
+    }
+
 }

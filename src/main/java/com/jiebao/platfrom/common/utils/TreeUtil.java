@@ -36,12 +36,13 @@ public class TreeUtil {
             for (Tree<T> n : nodes) {
                 String id = n.getId();
                 if (id != null && id.equals(pid)) {
-                    if (n.getChildren() == null)
+                    if (n.getChildren() == null) {
                         n.initChildren();
-                    n.getChildren().add(node);
-                    node.setHasParent(true);
-                    n.setHasChildren(true);
-                    n.setHasParent(true);
+                        n.getChildren().add(node);
+                        node.setHasParent(true);
+                        n.setHasChildren(true);
+                        n.setHasParent(true);
+                    }
                     return;
                 }
             }
@@ -100,15 +101,12 @@ public class TreeUtil {
     }
 
 
-
-
-
     /**
      * 构造前端路由
      *
      * @param routes routes
      * @param <T>    T
-     * @return ArrayList<VueRouter<T>>
+     * @return ArrayList<VueRouter < T>>
      */
     public static <T> ArrayList<VueRouter<T>> buildVueRouter(List<VueRouter<T>> routes) {
         if (routes == null) {

@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.attendance.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.attendance.daomain.Record;
 import com.jiebao.platfrom.attendance.service.IRecordsService;
 import com.jiebao.platfrom.common.annotation.Log;
@@ -40,8 +41,9 @@ import java.util.Locale;
 public class RecordsController {
     @Autowired
     IRecordsService recordsService;
-   @Autowired
-   UserService userService;
+    @Autowired
+    UserService userService;
+
     @PostMapping("add")
     @ApiOperation("月底接口录入")
     @Log("月底接口录入")
@@ -60,8 +62,10 @@ public class RecordsController {
 
     @GetMapping("excel")
     @ApiOperation("导出")
-    public void exportExcel(HttpServletResponse response) {
-
-        CheckExcelUtil.exportExcel(recordsService.list(), response,userService);
+    public void exportExcel(HttpServletResponse response, String dateMonth) {
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("date_month", dateMonth);
+        queryWrapper.orderByDesc("date");
+        CheckExcelUtil.exportExcel(recordsService.list(queryWrapper), response, userService,dateMonth);
     }
 }

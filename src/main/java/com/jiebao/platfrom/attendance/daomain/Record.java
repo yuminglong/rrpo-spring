@@ -81,6 +81,8 @@ public class Record implements Serializable {
     private String day29;
     private String day30;
     private String day31;
+
+    private String date;
 }
 
 

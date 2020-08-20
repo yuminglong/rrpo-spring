@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -25,7 +26,9 @@ public class RecordsServiceImpl extends ServiceImpl<RecordsMapper, Record> imple
 
     @Override
     public boolean saveOrUpdate(Record entity) {
-        a((entity));
+        a(entity);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        entity.setDate(simpleDateFormat.format(new Date()));
         return super.saveOrUpdate(entity);
     }
 
@@ -82,5 +85,10 @@ public class RecordsServiceImpl extends ServiceImpl<RecordsMapper, Record> imple
                 }
             }
         }
+        record.setChuChai((record.getChuChai() == null ? 0 : record.getChuChai()));
+        record.setNianXiuJia((record.getNianXiuJia() == null ? 0 : record.getNianXiuJia()));
+        record.setBinJia((record.getBinJia() == null ? 0 : record.getBinJia()));
+        record.setShiJia((record.getShiJia() == null ? 0 : record.getShiJia()));
+        record.setHunJia((record.getHunJia() == null ? 0 : record.getHunJia()));
     }
 }
