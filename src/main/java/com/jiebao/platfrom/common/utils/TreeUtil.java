@@ -38,16 +38,18 @@ public class TreeUtil {
                 if (id != null && id.equals(pid)) {
                     if (n.getChildren() == null) {
                         n.initChildren();
-                        n.getChildren().add(node);
-                        node.setHasParent(true);
-                        n.setHasChildren(true);
-                        n.setHasParent(true);
                     }
+                    n.getChildren().add(node);
+                    node.setHasParent(true);
+                    n.setHasChildren(true);
+                    n.setHasParent(true);
+
                     return;
                 }
             }
-            if (topNodes.isEmpty())
+            if (topNodes.isEmpty()) {
                 topNodes.add(node);
+            }
         });
 
 
