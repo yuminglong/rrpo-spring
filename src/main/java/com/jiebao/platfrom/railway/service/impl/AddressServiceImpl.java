@@ -22,8 +22,10 @@ import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.impl.DeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,12 +186,38 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                  * 获取第一个单元格的内容
                  */
                 String userName = row.getCell(0).getStringCellValue();
-                row.getCell(1).setCellType(CellType.STRING);
-                row.getCell(2).setCellType(CellType.STRING);
-                row.getCell(3).setCellType(CellType.STRING);
-                row.getCell(4).setCellType(CellType.STRING);
-                row.getCell(5).setCellType(CellType.STRING);
-                row.getCell(6).setCellType(CellType.STRING);
+                if( row.getCell(1) == null){
+                    row.createCell(1).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(1).setCellType(CellType.STRING);
+                }
+                if( row.getCell(2) == null){
+                    row.createCell(2).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(2).setCellType(CellType.STRING);
+                }
+                if( row.getCell(3) == null){
+                    row.createCell(3).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(3).setCellType(CellType.STRING);
+                }
+                if( row.getCell(4) == null){
+                    row.createCell(4).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(4).setCellType(CellType.STRING);
+                }
+                if( row.getCell(5) == null){
+                    row.createCell(5).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(5).setCellType(CellType.STRING);
+                }
+
+                if( row.getCell(6) == null){
+                    row.createCell(6).setCellType(CellType.STRING);;
+                }else {
+                    row.getCell(6).setCellType(CellType.STRING);
+                }
+
 
 
                 String phone = row.getCell(1).getStringCellValue();
@@ -199,7 +227,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 String position = row.getCell(5).getStringCellValue();
                 String unit = row.getCell(6).getStringCellValue();
 
-                if(StringUtils.isNotBlank(deptId) && !"".equals(userName)){
+                if(StringUtils.isNotBlank(deptId) && !"".equals(userName)&& !"".equals(position) && !"".equals(unit)&& !"".equals(weiXin)&& !"".equals(telPhone)&& !"".equals(email)&& !"".equals(phone)){
                     address.setUserName(userName);
                     address.setPhone(phone);
                     address.setTelPhone(telPhone);
