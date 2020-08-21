@@ -50,5 +50,6 @@ public class UserI implements Serializable {
      */
     private Date date;
 
+    private String qunId;//群
 
 }
