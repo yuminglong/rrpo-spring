@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/user")
-public class UserIController {
+public class  UserIController {
 
 }
