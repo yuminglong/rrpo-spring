@@ -21,6 +21,7 @@ import com.jiebao.platfrom.system.domain.LoginLog;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import com.jiebao.platfrom.system.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/mini/user")
+@Api(tags = "小程序-用户登录及授权")
 @Slf4j
 public class MiniUserController {
 

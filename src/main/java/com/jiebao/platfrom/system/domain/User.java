@@ -87,6 +87,10 @@ public class User implements Serializable {
 
     private String openid;
 
+    private String realName;
+
+    private String idcard;
+
     //@NotNull(message = "{required}")
     private Integer type;
 
