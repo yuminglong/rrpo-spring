@@ -217,6 +217,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
 
+    @Override
+    public List<Dept> getChildrenList(String parentId) {
+        LambdaQueryWrapper<Dept> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dept::getParentId, parentId);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
 
     private List getDeptIds(String id) {
         List list = new ArrayList();
