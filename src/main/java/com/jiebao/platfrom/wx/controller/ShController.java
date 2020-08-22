@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/sh")
-@Api(tags = "微信群提交审核")
+@Api(tags = "wx_微信群提交审核")
 public class ShController {
     @Autowired
     IShService shService;

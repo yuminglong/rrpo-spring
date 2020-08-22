@@ -17,5 +17,5 @@ import java.util.Date;
  * @since 2020-07-28
  */
 public interface INumService extends IService<Num> {
-//    JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String dateYear); //参数  人员 部门  时间年份 获得对应数据列表
+   JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String dateYear); //参数  人员 部门  时间年份 获得对应数据列表
 }

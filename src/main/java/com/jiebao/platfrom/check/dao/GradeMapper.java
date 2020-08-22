@@ -21,7 +21,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     @Select("select 1 from check_grade_zz where grade_id=#{gradeId} and status=1 limit 1")
     Integer gradeZzExistStatus(String gradeId);//通过gradeId  查询  此扣分项下面是否有   非自定义文件
 
-    @Select("select 1 from check_grade_zz where grade_id=#{gradeId} and status=1 limit 1")
+    @Select("select 1 from check_grade_zz where grade_id=#{gradeId} and status!=NULL limit 1")
     Integer gradeZzExistStatusNull(String gradeId);//通过gradeId  查询  此扣分项下面是否有   非自定义文件
 
     @Update("update check_grade_zz set status=#{status} ${ew.customSqlSegment}")
@@ -31,7 +31,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     @Select("select 1 from sys_files where ref_id=#{gradeId} and zz_status=1 limit 1")
     Integer fileExistStatus(String gradeId);//通过gradeId  查询  此扣分项下面是否有查询的状态   自定义文件
 
-    @Select("select 1 from sys_files where ref_id=#{gradeId} and zz_status=1 limit 1")
+    @Select("select 1 from sys_files where ref_id=#{gradeId} and zz_status!=NULL limit 1")
     Integer fileExistStatusNull(String gradeId);//通过gradeId  查询  此扣分项下面是否有查询的状态   自定义文件
 
     @Update("update sys_files set zz_status=#{status} ${ew.customSqlSegment}")

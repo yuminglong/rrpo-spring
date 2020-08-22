@@ -112,7 +112,7 @@ public class myGenerator {
         // 写于父类中的公共字段
         strategy.setSuperEntityColumns("id");
         //"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way",
-        String[] str = new String[]{"wx_qun","wx_sh","wx_user"};
+        String[] str = new String[]{"wx_month"};
         strategy.setInclude(str);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

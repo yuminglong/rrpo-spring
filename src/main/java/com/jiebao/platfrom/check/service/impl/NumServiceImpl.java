@@ -40,22 +40,22 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     @Autowired
     DeptService deptService;
 
-//    @Override
-//    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
-//        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
-//        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-////        if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
-////            deptId = dept.getDeptId();
-////        }
-//        QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
-//        if (deptId != null) {
-//            queryWrapper.eq("dept_id", deptId);
-//        }
-//        if (yearId != null) {
-//            queryWrapper.eq("year_id", yearId);
-//        }
-//        queryWrapper.orderByDesc("year_date");
-//        Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-//        return new JiebaoResponse().data(this.baseMapper.pageList(page, queryWrapper)).message("查询成功");
-//    }
+    @Override
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
+            deptId = dept.getDeptId();
+        }
+        QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
+        if (deptId != null) {
+            queryWrapper.eq("dept_id", deptId);
+        }
+        if (yearId != null) {
+            queryWrapper.eq("year_id", yearId);
+        }
+        queryWrapper.orderByDesc("year_date");
+        Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return new JiebaoResponse().data(this.baseMapper.pageList(page, queryWrapper)).message("查询成功");
+    }
 }

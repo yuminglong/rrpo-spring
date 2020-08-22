@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/user")
-@Api(tags = "微信群用户信息")
+@Api(tags = "w_微信群用户信息")
 public class UserIController {
     @Autowired
     IUserIService userIService;

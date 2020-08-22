@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/qun")
-@Api(tags = "微信群建立")
+@Api(tags = "wx_微信群建立")
 public class QunController {
     @Autowired
     IQunService qunService;

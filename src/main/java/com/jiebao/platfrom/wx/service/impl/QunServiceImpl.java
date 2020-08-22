@@ -56,11 +56,12 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         queryWrapper.or();
         queryWrapper.eq("sh_date_id", dept.getDeptId());
         if (name != null) {
-            queryWrapper.eq("wx_name", name);
+            queryWrapper.like("wx_name", name);
         }
         if (userName != null) {
-            queryWrapper.eq("wx_user_name", userName);
+            queryWrapper.like("wx_user_name", userName);
         }
+        queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(page(page, queryWrapper)).okMessage("查询成功");
     }
