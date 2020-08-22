@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/mini/dept")
 @Api(tags = "小程序-组织机构")
-public class DeptController {
+public class MiniDeptController {
 
     @Autowired
     private DeptService deptService;
