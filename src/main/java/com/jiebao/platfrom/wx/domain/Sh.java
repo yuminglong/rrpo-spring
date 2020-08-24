@@ -32,6 +32,7 @@ public class Sh implements Serializable {
 
     private String deptId; //审核的部门
 
+
     private String wxQunId; //群id
 
     /**

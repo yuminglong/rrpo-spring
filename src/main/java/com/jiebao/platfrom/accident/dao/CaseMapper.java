@@ -24,5 +24,5 @@ public interface CaseMapper extends BaseMapper<Case> {
             @Result(property = "deptPolice", column = "police_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "dictLine", column = "line_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
-    IPage<Case> ListPage(Page<Case> page, @Param("ew") QueryWrapper queryWrapper);
+    IPage<Case> ListPage(Page<Case> page, @Param("ew") QueryWrapper<Case> queryWrapper);
 }

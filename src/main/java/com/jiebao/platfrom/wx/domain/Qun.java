@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -64,7 +66,10 @@ public class Qun implements Serializable {
     private Date shDate;  //最后被审核的时间
 
     private String cjDeptId;  //提交组织层
-
+    @TableField(exist = false)
+    private Dept deptJc;
+    @TableField(exist = false)
+    private Dept deptSh;
     private String shDeptId;  //待审核 层
 
     private Integer shStatus;  //状态  0未审核  1  正在审核  2  审核完成  3  被打回
