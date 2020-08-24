@@ -23,9 +23,9 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("rail_public_file")
+@TableName("rail_manage_file")
 @Accessors(chain = true)
-public class PublicFile {
+public class ManageFile {
 
     @TableId(value = "id", type = IdType.UUID)
     private String id;
@@ -36,7 +36,6 @@ public class PublicFile {
 
     private Date creatTime;
 
-    private String deptId;
 
     @ApiModelProperty(value = "标识符",example = "1")
     private Integer mark;

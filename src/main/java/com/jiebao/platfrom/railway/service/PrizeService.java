@@ -25,7 +25,14 @@ public interface PrizeService extends IService<Prize> {
      */
     IPage<Prize> getPrizeList(QueryRequest request, Prize prize , String startTime, String endTime);
 
-
+    /**
+     * 查询收件箱
+     * @param request
+     * @param prize
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize , String startTime, String endTime);
 
 }

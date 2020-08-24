@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -170,7 +171,7 @@ public class ExchangeController extends BaseController {
         } catch (Exception e) {
             message = "删除发件箱失败";
             log.error(message, e);
-            throw  new JiebaoException("批量删除信息失败");
+            throw new JiebaoException("批量删除信息失败");
         }
     }
 
@@ -273,7 +274,7 @@ public class ExchangeController extends BaseController {
         columnMap.put("exchange_id", exchangeId);
         List listId = new ArrayList();
         List listName = new ArrayList();
-    //    List listDeptName = new ArrayList();
+        //    List listDeptName = new ArrayList();
         List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(columnMap);
         for (ExchangeUser eu : exchangeUsers
         ) {
@@ -303,13 +304,24 @@ public class ExchangeController extends BaseController {
     public JiebaoResponse getUserInfo(QueryRequest request, ExchangeUser exchangeUser) {
         IPage<ExchangeUser> exchangeUserList = exchangeUserService.getExchangeUserList(request, exchangeUser);
         List<ExchangeUser> records = exchangeUserList.getRecords();
-        for (ExchangeUser e: records
-             ) {
+        for (ExchangeUser e : records
+        ) {
             User byId = userService.getById(e.getSendUserId());
             Dept byDeptId = deptService.getById(byId.getDeptId());
-          e.setDeptName(byDeptId.getDeptName());
+            e.setDeptName(byDeptId.getDeptName());
         }
-        return new JiebaoResponse().data(this.getDataTable(exchangeUserList));
+        HashMap<String, Object> map = new HashMap<>();
+        int zero = exchangeUserMapper.countByIsReadZero(exchangeUser.getExchangeId());
+        int one = exchangeUserMapper.countByIsReadOne(exchangeUser.getExchangeId());
+        int two = exchangeUserMapper.countByIsReadTwo(exchangeUser.getExchangeId());
+        map.put("zero", zero);
+        map.put("one", one);
+        map.put("two", two);
+        Map<String, Object> rspData = new HashMap<>();
+        rspData.put("rows", exchangeUserList.getRecords());
+        rspData.put("isRead", map);
+        rspData.put("total", exchangeUserList.getTotal());
+        return new JiebaoResponse().data(rspData);
     }
 
 
@@ -342,7 +354,6 @@ public class ExchangeController extends BaseController {
         }
         return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
     }
-
 
 
 }

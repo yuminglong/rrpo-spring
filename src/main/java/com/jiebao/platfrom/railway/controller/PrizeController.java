@@ -390,4 +390,9 @@ public class PrizeController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+
+
+
+
 }

@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.annotation.Log;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.common.exception.JiebaoException;
@@ -13,12 +15,17 @@ import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Exchange;
+import com.jiebao.platfrom.railway.domain.PrizeOpinion;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +48,9 @@ public class DeptController extends BaseController {
 
     @Autowired
     private DeptService deptService;
+
+    @Autowired
+    private UserService userService;
 
 
 
@@ -129,5 +139,16 @@ public class DeptController extends BaseController {
         List<Address> list = deptService.getAddress(id);
         System.out.println("end:"+simpleDateFormat.format(new Date()));
         return list;
+    }
+
+
+
+    @GetMapping("/findRank")
+    @ApiOperation(value = "查询登录人的组织机构层级", notes = "查询登录人的组织机构层级", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findRank() {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        Dept byId = deptService.getById(byName.getDeptId());
+        return new JiebaoResponse().data(byId).put("status","200");
     }
 }

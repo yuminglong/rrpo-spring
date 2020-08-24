@@ -66,4 +66,13 @@ public interface ExchangeUserMapper extends BaseMapper<ExchangeUser> {
 
     @Update("UPDATE rail_exchange_user set type = 2  WHERE exchange_id =#{exchangeId} and send_user_id =#{sendUserId}")
     boolean upDateBySendUserId(String sendUserId, String exchangeId);
+
+    @Select("SELECT count(*) FROM `rail_exchange_user` WHERE  exchange_id = #{exchangeId} and is_read = 0 ")
+    int countByIsReadZero(String exchangeId);
+
+    @Select("SELECT count(*) FROM `rail_exchange_user` WHERE  exchange_id = #{exchangeId} and is_read = 1 ")
+    int countByIsReadOne(String exchangeId);
+
+    @Select("SELECT count(*) FROM `rail_exchange_user` WHERE  exchange_id = #{exchangeId} and is_read = 2 ")
+    int countByIsReadTwo(String exchangeId);
 }

@@ -39,7 +39,6 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     PublicFileService publicFileService;
 
 
-
     @Autowired
     private FileMapper fileMapper;
 
@@ -110,11 +109,13 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
       /*  Map<String, Object> map = new HashMap<>();
         map.put("parent_id", publicFileId);
         List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);*/
+      
         List<PublicFile> publicFiles = publicFileMapper.selectByParentId(publicFileId);
-        for (PublicFile p : publicFiles
-        ) {
-            if (publicFiles.size() ==0) {
-                p.setHasChildren(false);
+        for (PublicFile p: publicFiles
+             ) {
+            List<PublicFile> publicFilesP = publicFileMapper.selectByParentId(p.getId());
+            if (publicFilesP.size()>0){
+                p.setHasChildren(true);
             }
         }
         List<File> files = publicFileMapper.selectFiles(publicFileId);
@@ -125,7 +126,7 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
     }
 
     @Override
-    public boolean bindFile(String fileId,String publicFileId) {
-        return fileMapper.updatePublicFileByFileId(fileId,publicFileId);
+    public boolean bindFile(String fileId, String publicFileId) {
+        return fileMapper.updatePublicFileByFileId(fileId, publicFileId);
     }
 }

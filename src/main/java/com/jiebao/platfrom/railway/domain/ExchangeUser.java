@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author yf
@@ -66,4 +68,7 @@ public class ExchangeUser {
     @TableField(exist = false)
     private String deptName;
 
+
+    @TableField(exist = false)
+    private List IsReadList;
 }
