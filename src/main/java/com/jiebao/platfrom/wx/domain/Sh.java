@@ -27,20 +27,20 @@ public class Sh implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @TableId(value = "wx_sh_id", type = IdType.UUID)
-    private String wxShId;
+    private String wxShId;  //id 主键 不用管
 
-    private String deptId;
+    private String deptId; //审核的部门
 
-    private String wxQunId;
+    private String wxQunId; //群id
 
     /**
      * 0通过  1不通过
      */
-    private Integer status;
+    private Integer status;//状态
 
-    private Date shDate;
+    private Date shDate;  //时间不用管
 
-    private String massage;
+    private String massage; //留言  同意或者拒绝的理由
 
-    private String userId;
+    private String userId; //审核人
 }

@@ -59,7 +59,7 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
             return jiebaoResponse.okMessage("审核节点完成");
         } else {
             qun.setShStatus(2);
-            qun.setShDateId(qun.getCjDeptId());
+            qun.setShDeptId(qun.getCjDeptId());
             return jiebaoResponse.okMessage("审核不通过 打回原籍");
         }
     }

@@ -42,7 +42,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             entity.setDate(new Date());
             entity.setCjDeptId(dept.getDeptId());
-            entity.setShDateId(dept.getParentId());
+            entity.setShDeptId(dept.getParentId());
         }
         return super.saveOrUpdate(entity);
     }
@@ -71,7 +71,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Qun qun = getById(qunId);
         qun.setStatus(0);
-        qun.setShDateId(qun.getCjDeptId());
+        qun.setShDeptId(qun.getCjDeptId());
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }

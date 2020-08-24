@@ -63,7 +63,7 @@ public class Qun implements Serializable {
 
     private String cjDeptId;  //提交组织层
 
-    private String shDateId;  //待审核 层
+    private String shDeptId;  //待审核 层
 
     private Integer shStatus;  //状态  0未审核  1  正在审核  2  审核完成  3  被打回
 
