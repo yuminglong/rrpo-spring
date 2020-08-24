@@ -36,6 +36,8 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
     DeptService deptService;
     @Autowired
     IQunService qunService;
+    @Autowired
+    ShMapper shMapper;
 
     @Override
     public JiebaoResponse shWx(String qunId, Integer status, String massage) {
@@ -69,6 +71,6 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         QueryWrapper<Sh> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("sh_date");
         Page<Sh> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper));
+        return new JiebaoResponse().data(shMapper.list(page,queryWrapper)).message("查询成功");
     }
 }

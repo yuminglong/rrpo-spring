@@ -24,10 +24,15 @@ public interface MonthMapper extends BaseMapper<Month> {
     @Select("select count(*) from  wx_month where month=#{month} and last_dept=#{deptId}")
     Integer count(String month, String deptId);
 
-    @Select("select * from wx_qun ${ew.customSqlSegment}")
+    @Select("select * from wx_month ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "deptJc", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
-            @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
+            @Result(property = "qun", column = "qun_id", one = @One(select = "com.jiebao.platfrom.wx.dao.QunMapper.selectById")),
+            @Result(property = "deptJc", column = "jc_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
+            @Result(property = "lastDept", column = "last_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
-    List<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
+    List<Month> list(Page<Month> page, QueryWrapper<Month> ew);
+
+
 }

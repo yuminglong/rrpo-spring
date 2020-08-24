@@ -34,6 +34,8 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     UserMapper userMapper;
     @Autowired
     DeptService deptService;
+    @Autowired
+    QunMapper qunMapper;
 
     @Override
     public boolean saveOrUpdate(Qun entity) {
@@ -63,7 +65,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper)).okMessage("查询成功");
+        return new JiebaoResponse().data(qunMapper.list(page,queryWrapper)).okMessage("查询成功");
     }
 
     @Override
