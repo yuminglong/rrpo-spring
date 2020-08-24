@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -32,7 +33,7 @@ public interface MonthMapper extends BaseMapper<Month> {
             @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
             @Result(property = "lastDept", column = "last_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
-    List<Month> list(Page<Month> page, QueryWrapper<Month> ew);
+    IPage<Month> list(Page<Month> page, QueryWrapper<Month> ew);
 
 
 }

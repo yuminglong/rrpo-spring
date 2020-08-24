@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -25,5 +26,5 @@ public interface QunMapper extends BaseMapper<Qun> {
             @Result(property = "deptJc", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
-    List<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
+    IPage<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
 }

@@ -37,8 +37,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     DeptService deptService;
     @Autowired
     UserMapper userMapper;
-    @Autowired
-    MonthMapper monthMapper;
+
 
     @Override
     public boolean saveOrUpdate(Month entity) {
@@ -78,7 +77,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             return jiebaoResponse.failMessage("无权上报");
         }
         if (dept.getParentId().equals("0")) {  //此为 市级
-            if (monthMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
+            if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
                 return jiebaoResponse.failMessage("超过上报三条记录上线");
             }
             month.setLastDeptId(dept.getDeptId());
