@@ -22,7 +22,7 @@ import java.util.List;
 public interface QunMapper extends BaseMapper<Qun> {
     @Select("select * from wx_qun ")
     @Results({
-            @Result(property = "cjDeptId", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao."))
+            @Result(property = "cjDeptId", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById"))
     })
     List<Qun> list(Page page, QueryWrapper<Qun> qunQueryWrapper);
 }
