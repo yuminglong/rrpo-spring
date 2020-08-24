@@ -1,7 +1,5 @@
 package com.jiebao.platfrom.wx.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
@@ -17,41 +15,51 @@ import org.springframework.format.annotation.DateTimeFormat;
  * </p>
  *
  * @author qta
- * @since 2020-08-20
+ * @since 2020-08-22
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("wx_user")
-public class UserI implements Serializable {
+@TableName("wx_month")
+public class Month implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableId(value = "wx_user_id",type = IdType.UUID)
-    private String wxUserId;
 
     /**
-     * 名字
+     * id
      */
-    private String name;
+    private String wxMonthId;
 
     /**
-     * 身份证
+     * 月份
      */
-    private String idCar;
-
-    private String phone;
+    private String month;
 
     /**
-     * 身份
+     * 内容
      */
-    private String sf;
+    private String content;
 
     /**
-     * 创建时间
+     * 来源于什么群
      */
+    private String qunId;
+
+    /**
+     * 起始地区
+     */
+    private String dept;
+
+    /**
+     * 递交到那一层
+     */
+    private String shDept;
+  //是否进入年核
+    private Integer isCheck;
+  //
+    private String userId;
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date date;
-
-    private String qunId;//群
-
+   //最后审核部门 不用管
+    private String lastDept;
 }

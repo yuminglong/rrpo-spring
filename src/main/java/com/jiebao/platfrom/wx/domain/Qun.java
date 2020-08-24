@@ -11,6 +11,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -47,6 +48,7 @@ public class Qun implements Serializable {
     /**
      * 创建时间
      */
+    @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date date;
 
     /**
@@ -58,7 +60,7 @@ public class Qun implements Serializable {
      * 是否需要审核群成员信息 0 需要 1不需要
      */
     private Integer status;
-
+    @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date shDate;  //最后被审核的时间
 
     private String cjDeptId;  //提交组织层

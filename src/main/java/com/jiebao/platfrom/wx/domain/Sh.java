@@ -10,6 +10,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -37,7 +38,7 @@ public class Sh implements Serializable {
      * 0通过  1不通过
      */
     private Integer status;//状态
-
+    @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date shDate;  //时间不用管
 
     private String massage; //留言  同意或者拒绝的理由

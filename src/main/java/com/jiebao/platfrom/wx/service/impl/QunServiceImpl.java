@@ -54,7 +54,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("cj_dept_id", dept.getDeptId());
         queryWrapper.or();
-        queryWrapper.eq("sh_date_id", dept.getDeptId());
+        queryWrapper.eq("sh_dept_id", dept.getDeptId());
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
