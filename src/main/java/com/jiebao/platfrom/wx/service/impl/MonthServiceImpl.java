@@ -45,8 +45,8 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         if (entity.getWxMonthId() == null) {
             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-            entity.setDept(dept.getDeptId());
-            entity.setShDept(dept.getParentId());
+            entity.setJcDeptId(dept.getDeptId());
+            entity.setShDeptId(dept.getParentId());
             entity.setDate(new Date());
         }
         return super.saveOrUpdate(entity);
@@ -74,16 +74,16 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         Month month = getById(monthId);
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        if (!month.getShDept().equals(dept.getDeptId())) {
+        if (!month.getShDeptId().equals(dept.getDeptId())) {
             return jiebaoResponse.failMessage("无权上报");
         }
         if (dept.getParentId().equals("0")) {  //此为 市级
             if (monthMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
                 return jiebaoResponse.failMessage("超过上报三条记录上线");
             }
-            month.setLastDept(dept.getDeptId());
+            month.setLastDeptId(dept.getDeptId());
         }
-        month.setShDept(dept.getParentId());
+        month.setShDeptId(dept.getParentId());
         return jiebaoResponse.okMessage("上报成功");
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author qta
@@ -23,8 +23,9 @@ import java.util.List;
 public interface ShMapper extends BaseMapper<Sh> {
     @Select("select * from wx_sh ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "cjDeptId", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById")),
-            @Result(property = "shDeptId", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById"))
+            @Result(property = "dept", column = "dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
+//            @Result(property = "shDeptId", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById"))
     })
-    List<Qun> list(Page page, QueryWrapper<Sh> ew);
+    List<Sh> list(Page<Sh> page, QueryWrapper<Sh> ew);
+
 }

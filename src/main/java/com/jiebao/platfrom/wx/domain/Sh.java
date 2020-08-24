@@ -1,12 +1,14 @@
 package com.jiebao.platfrom.wx.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,6 +33,8 @@ public class Sh implements Serializable {
     private String wxShId;  //id 主键 不用管
 
     private String deptId; //审核的部门
+    @TableField(exist = false)
+    private Dept dept;
 
 
     private String wxQunId; //群id

@@ -1,9 +1,13 @@
 package com.jiebao.platfrom.wx.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -11,7 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -44,22 +48,32 @@ public class Month implements Serializable {
      * 来源于什么群
      */
     private String qunId;
-
+    @TableField(exist = false)
+    private Qun qun;
     /**
      * 起始地区
      */
-    private String dept;
+    private String jcDeptId;
+    @TableField(exist = false)
+    private Dept deptJc;
 
     /**
      * 递交到那一层
      */
-    private String shDept;
-  //是否进入年核
+    private String shDeptId;
+    @TableField(exist = false)
+    private Dept deptSh;
+
+    //是否进入年核
     private Integer isCheck;
-  //
+    //
     private String userId;
-    @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
+    @TableField(exist = false)
+    private User user;
+
     private Date date;
-   //最后审核部门 不用管
-    private String lastDept;
+    //最后审核部门 不用管
+    private String lastDeptId;
+    @TableField(exist = false)
+    private Dept lastDept;
 }

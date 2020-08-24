@@ -22,8 +22,8 @@ import java.util.List;
 public interface QunMapper extends BaseMapper<Qun> {
     @Select("select * from wx_qun ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "cjDeptId", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById")),
-            @Result(property = "shDeptId", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper..selectById"))
+            @Result(property = "deptJc", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
-    List<Qun> list(Page page, QueryWrapper<Qun> ew);
+    List<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
 }
