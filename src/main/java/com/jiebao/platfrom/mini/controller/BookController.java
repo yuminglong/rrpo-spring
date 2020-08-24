@@ -7,6 +7,7 @@ import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/mini/book")
+@Api(tags = "小程序-通讯录")
 public class BookController {
 
     @Autowired

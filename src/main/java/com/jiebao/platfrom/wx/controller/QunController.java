@@ -8,6 +8,7 @@ import com.jiebao.platfrom.wx.service.IQunService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/qun")
-@Api(tags = "微信群建立")
+@Api(tags = "wx_微信群建立")
 public class QunController {
     @Autowired
     IQunService qunService;
@@ -37,12 +38,10 @@ public class QunController {
     }
 
 
-    @PostMapping("list")
+    @GetMapping("list")
     @ApiOperation("群查询")
-    public JiebaoResponse saveOrUpdate(QueryRequest queryRequest,String name,String userName) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-      //  jiebaoResponse = qunService.saveOrUpdate(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
-        return jiebaoResponse;
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
+        return qunService.pageList(queryRequest, name, userName);
     }
 
 }

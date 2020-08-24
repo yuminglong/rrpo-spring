@@ -156,11 +156,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         num.setDeptId(deptId);
         num.setYearId(yearId);
-        num.setJcWork(JCKF + JCJF+20);
+        num.setJcWork(JCKF + JCJF + 20);
         num.setXgWork(SGKF);
         num.setNumber(20 + JCKF + JCJF + SGKF);
         num.setYearDate(yearService.getById(yearId).getYearDate());
-        num.setFpJcWork(fpJcKf + fpJcJf+20);
+        num.setFpJcWork(fpJcKf + fpJcJf + 20);
         num.setFpXgWork(fpSgK);
         num.setFpNumber(20 + fpJcKf + fpJcJf + fpSgK);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
@@ -196,7 +196,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearId, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
+    public JiebaoResponse putZz(String yearId, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {//上传新的佐证材料需要修改状态
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
@@ -275,7 +275,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-
         boolean a = true, b = true;
         if (list.size() != 0) {
             a = fileService.updateBatchById(list);
@@ -283,8 +282,31 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (gradeZzList.size() != 0) {
             b = gradeZzService.saveBatch(gradeZzList);
         }
+        new Thread() {
+            public void run() {
+                checkSh(getById(gradeId));
+            }
+        }.start();
         return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败").data(gradeId);
     }
+
+    private void checkSh(Grade grade) {
+        Integer i = gradeMapper.gradeZzExistStatusNull(grade.getGradeId());  //非自定义文件
+        Integer i1 = gradeMapper.fileExistStatusNull(grade.getGradeId());//自定义文件
+        if (i == null && i1 == null) {  //全部审核完才能
+            grade.setAudit(0);
+        } else {
+            grade.setAudit(1);
+        }
+        Integer i2 = gradeMapper.gradeExIs(grade.getYearId(), grade.getDeptId());  //是否存在有未审核的扣分项
+        int audit = 1;
+        if (i2 == null) {  //全部审核完
+            audit = 0;
+        }
+        gradeMapper.updateNum(grade.getYearId(), grade.getDeptId(), audit);//审核完
+    }
+
+    ;
 
     private boolean isCuiZai(String gradeId, String ZzId) {
         if (gradeZzMapper.ExIstGradeZz(gradeId, ZzId) == null)//存在返回true
@@ -320,19 +342,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     private void bjGradeId(String gradeId, Integer status) {  //标记扣分项   存在疑点便不可以 修改
         Grade grade = getById(gradeId);
-        Integer i = gradeMapper.gradeZzExistStatusNull(gradeId);  //非自定义文件
-        Integer i1 = gradeMapper.fileExistStatusNull(gradeId);//自定义文件
-        if (i == null && i1 == null) {  //全部审核完才能
-            grade.setAudit(0);
-        } else {
-            grade.setAudit(1);
-        }
-        Integer i2 = gradeMapper.gradeExIs(grade.getYearId(), grade.getDeptId());  //是否存在有未审核的扣分项
-        int audit = 1;
-        if (i2 == null) {  //全部审核完
-            audit = 0;
-        }
-        gradeMapper.updateNum(grade.getYearId(), grade.getDeptId(), audit);
+        checkSh(grade);
         if (status == 0) {// 解除疑点操作  则需要遍历   附属  佐证  是否 还存在 疑点
             Integer exIsGrade = gradeMapper.gradeZzExistStatus(gradeId);//  本扣分项 包含的所有的  非自定义扣分项
             Integer exISFile = gradeMapper.fileExistStatus(gradeId);//自定义文件的 绑定材料   不合格的全部查出来

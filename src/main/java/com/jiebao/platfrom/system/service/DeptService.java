@@ -38,4 +38,6 @@ public interface DeptService extends IService<Dept> {
 
 
     List<Dept> getList(String parentId);
+
+    List<Dept> getChildrenList(String parentId);
 }

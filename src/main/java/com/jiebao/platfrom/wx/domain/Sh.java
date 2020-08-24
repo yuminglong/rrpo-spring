@@ -41,4 +41,6 @@ public class Sh implements Serializable {
     private Date shDate;
 
     private String massage;
+
+    private String userId;
 }
