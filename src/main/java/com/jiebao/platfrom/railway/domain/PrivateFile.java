@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.railway.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,6 +36,11 @@ public class PrivateFile {
 
     private String userId;
 
-    @ApiModelProperty(value = "标识符",example = "1")
+    @ApiModelProperty(value = "标识符", example = "1")
     private Integer mark;
+
+    @TableField(exist = false)
+    private boolean hasChildren = false;
+
+
 }

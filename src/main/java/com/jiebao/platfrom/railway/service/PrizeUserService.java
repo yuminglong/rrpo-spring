@@ -16,7 +16,7 @@ public interface PrizeUserService extends IService<PrizeUser> {
     /**
      * 发送人保存到数据库
      *
-     * @param prizeId    一事一奖内容ID
+     * @param prizeId  一事一奖内容ID
      * @param sendUser 接收人
      * @return
      */
@@ -24,29 +24,38 @@ public interface PrizeUserService extends IService<PrizeUser> {
 
     /**
      * 根据prizeId删除相应的接收人
+     *
      * @param prizeId
      * @return
      */
     boolean ByPrizeId(String prizeId);
 
     /**
-     *  接收人发表或修改意见
+     * 接收人发表或修改意见
+     *
      * @param prizeId
-     * @param deptId 组织机构
+     * @param deptId       组织机构
      * @param auditOpinion 意见
-     * @param money 钱
+     * @param money        钱
      * @return
      */
-    boolean updateByPrizeId(String prizeId,String deptId,String auditOpinion,String money);
+    boolean updateByPrizeId(String prizeId, String deptId, String auditOpinion, String money);
 
     /**
      * 删除接收人
+     *
      * @param prizeId
      * @return
      */
     boolean deleteByPrizeId(String prizeId);
 
-
-    boolean deleteOpinion(String prizeId,String deptId);
+    /**
+     * 删除意见
+     *
+     * @param prizeId
+     * @param deptId
+     * @return
+     */
+    boolean deleteOpinion(String prizeId, String deptId);
 
 }

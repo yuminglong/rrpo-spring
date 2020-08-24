@@ -14,16 +14,53 @@ import java.util.Map;
  */
 public interface PublicFileService extends IService<PublicFile> {
 
+    /**
+     * 分页查询
+     *
+     * @param request
+     * @param publicFile
+     * @return
+     */
+    Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile);
 
-   Map<String, Object> findpublicFileList(QueryRequest request, PublicFile publicFile);
+    /**
+     * 查询文件夹List
+     *
+     * @param publicFile
+     * @param request
+     * @return
+     */
+    List<PublicFile> findPublicFiles(PublicFile publicFile, QueryRequest request);
 
-   List<PublicFile> findPublicFiles(PublicFile publicFile, QueryRequest request);
+    /**
+     * 创建新文件夹
+     *
+     * @param publicFile
+     */
+    void createPublicFile(PublicFile publicFile);
 
-   void createPublicFile(PublicFile publicFile);
+    /**
+     * 查询该ID的子集List
+     *
+     * @param id
+     * @return
+     */
+    List<PublicFile> findChilderPublicFile(String id);
 
-   List<PublicFile> findChilderPublicFile(String id);
+    /**
+     * 查询该文件夹下一级的子文件夹和file
+     *
+     * @param publicFileId
+     * @return
+     */
+    List<PublicFile> getPublicFileListById(String publicFileId);
 
-   List<PublicFile> getPublicFileListById(String publicFileId);
-
-    boolean bindFile( String fileId,String publicFileId);
+    /**
+     * 把publicFileId绑定到file表的file_id
+     *
+     * @param fileId
+     * @param publicFileId
+     * @return
+     */
+    boolean bindFile(String fileId, String publicFileId);
 }

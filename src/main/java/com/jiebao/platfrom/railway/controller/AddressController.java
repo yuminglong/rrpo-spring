@@ -59,11 +59,6 @@ public class AddressController extends BaseController {
     @GetMapping
     @ApiOperation(value = "根据组织机构查询数据List", notes = "查询数据List列表", response = JiebaoResponse.class, httpMethod = "GET")
     public Map<String, Object> getAddressListByMapper(QueryRequest request, Dept dept) {
-       /* String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+username+"-------------------");
-        //Object principal = SecurityUtils.getSubject().getPrincipal();
-        String id = JWTUtil.getId((String) SecurityUtils.getSubject().getPrincipal());
-        System.out.println("-------------------"+id+"-------------------");*/
         return this.addressService.getAddressLists(request, dept);
     }
 
@@ -121,7 +116,7 @@ public class AddressController extends BaseController {
     }
 
 
-   /* @PostMapping(value = "/importAddress")
+    @PostMapping(value = "/importAddress")
     @ApiOperation(value = "导入通讯录", notes = "导入通讯录", httpMethod = "POST")
     public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
@@ -136,7 +131,7 @@ public class AddressController extends BaseController {
             return "excel数据导入失败！";
         }
     }
-*/
+
 
     @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")

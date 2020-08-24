@@ -116,12 +116,16 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
 
     @Override
     public List<PrivateFile> getPrivateFileListById(String privateFileId) {
-      /*  Map<String, Object> map = new HashMap<>();
-        map.put("parent_id", privateFileId);
-        List<PrivateFile> privateFiles = privateFileMapper.selectByMap(map);*/
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         List<PrivateFile> privateFiles =privateFileMapper.selectByParentId(privateFileId,byName.getUserId());
+        for (PrivateFile p: privateFiles
+        ) {
+            List<PrivateFile> privateFilesP = privateFileMapper.selectByParentId(p.getId(),byName.getUserId());
+            if (privateFilesP.size()>0){
+                p.setHasChildren(true);
+            }
+        }
         List<File> files = privateFileMapper.selectFiles(privateFileId);
         List list = new ArrayList<>();
         list.addAll(privateFiles);

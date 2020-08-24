@@ -12,6 +12,11 @@ import com.jiebao.platfrom.railway.domain.PrizeOrder;
 public interface PrizeLimitService extends IService<PrizeLimit> {
 
 
-
+    /**
+     *
+     * @param request
+     * @param prizeLimit
+     * @return
+     */
     IPage<PrizeLimit> getPrizeLimitList(QueryRequest request, PrizeLimit prizeLimit );
 }

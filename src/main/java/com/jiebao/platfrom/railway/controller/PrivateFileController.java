@@ -40,8 +40,7 @@ public class PrivateFileController extends BaseController {
     @Autowired
     private PrivateFileService privateFileService;
 
-    @Autowired
-    private UserService userService;
+
 
     @GetMapping
     public Map<String, Object> privateFileList(QueryRequest request, PrivateFile privateFile) {
