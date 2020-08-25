@@ -41,7 +41,7 @@ public class NumController {
     @GetMapping("map")
     @ApiOperation("视图数据接口")
     @Log("试图数据")
-    public JiebaoResponse map(){
-        return null;
+    public JiebaoResponse map(String yearId){
+        return numService.map(yearId);
     }
 }

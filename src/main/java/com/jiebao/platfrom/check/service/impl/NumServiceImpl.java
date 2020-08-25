@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -57,5 +58,41 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         queryWrapper.orderByDesc("year_date");
         Page<Num> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.pageList(page, queryWrapper)).message("查询成功");
+    }
+
+    @Override
+    public JiebaoResponse map(String yearId) {
+        List<Dept> childrenList = deptService.getChildrenList("0");
+        HashMap<String, String[]> map = new HashMap<>();
+        String[] dept = new String[childrenList.size()];
+        String[] jcGz = new String[childrenList.size()]; //基础工作得分
+        String[] gzXg = new String[childrenList.size()];//工作效果得分
+        String[] count = new String[childrenList.size()]; //总得分
+        String[] fpJcGz = new String[childrenList.size()]; //基础工作得分
+        String[] fpGzXg = new String[childrenList.size()];//工作效果得分
+        String[] fpCount = new String[childrenList.size()]; //总得分
+        int i = 0;
+        for (Dept dept1 :
+                childrenList) {
+            dept[i] = dept1.getDeptName();
+            Num num = this.baseMapper.getNum(yearId, dept1.getDeptId());
+            if (num != null) {
+                jcGz[i] = num.getJcWork().toString();
+                fpJcGz[i] = num.getFpJcWork().toString();
+                gzXg[i] = num.getXgWork().toString();
+                fpGzXg[i] = num.getFpXgWork().toString();
+                count[i] = num.getNumber().toString();
+                fpCount[i] = num.getFpNumber().toString();
+            }
+            i++;
+        }
+        map.put("dept", dept);
+        map.put("jcGz", jcGz);
+        map.put("gzXg", gzXg);
+        map.put("count", count);
+        map.put("fpJcGz", fpJcGz);
+        map.put("fpGzXg", fpGzXg);
+        map.put("fpCount", fpCount);
+        return new JiebaoResponse().data(map).message("查询成功");
     }
 }

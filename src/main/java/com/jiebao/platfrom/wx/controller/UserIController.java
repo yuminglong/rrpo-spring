@@ -5,6 +5,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.domain.UserI;
+import com.jiebao.platfrom.wx.service.IQunService;
 import com.jiebao.platfrom.wx.service.IUserIService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserIController {
     @Autowired
     IUserIService userIService;
-
     @PostMapping("addOrUpdate")
     @ApiOperation("群添加修改")
     public JiebaoResponse saveOrUpdate(UserI userI) {
@@ -37,8 +37,8 @@ public class UserIController {
 
     @DeleteMapping("deleteS")
     @ApiOperation("删除集合")
-    public JiebaoResponse deleteS(String[] wxUserIdS) {
-        return userIService.deleteS(wxUserIdS);
+    public JiebaoResponse deleteS(String[] wxUserIdS,String qunId) {
+        return userIService.deleteS(wxUserIdS,qunId);
     }
 
     @GetMapping("List")

@@ -49,4 +49,6 @@ public class Sh implements Serializable {
     private String massage; //留言  同意或者拒绝的理由
 
     private String userId; //审核人
+
+
 }

@@ -49,27 +49,32 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         sh.setStatus(status);
         sh.setMassage(massage);
         sh.setShDate(new Date());
+        save(sh);
         Qun qun = qunService.getById(qunId);
         qun.setShDate(new Date());
         if (status == 0) {
             if (dept.getParentId().equals("0")) {
                 qun.setShStatus(3);
+                qunService.save(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }
             qun.setShStatus(1);
+            qunService.save(qun);
             return jiebaoResponse.okMessage("审核节点完成");
         } else {
             qun.setShStatus(2);
             qun.setShDeptId(qun.getCjDeptId());
+            qunService.save(qun);
             return jiebaoResponse.okMessage("审核不通过 打回原籍");
         }
     }
 
     @Override
-    public JiebaoResponse list(QueryRequest queryRequest) {
+    public JiebaoResponse list(QueryRequest queryRequest, String qunId) {
         QueryWrapper<Sh> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("sh_date");
+        queryWrapper.eq("wx_qun_id", qunId);
         Page<Sh> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(this.baseMapper.list(page,queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 }
