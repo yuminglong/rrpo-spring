@@ -40,9 +40,10 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
             entity.setDate(new Date());
         }
         boolean b = super.saveOrUpdate(entity);
-        if (b) {
+        if (b && entity.getWxUserId() == null) {
             Qun qun = qunService.getById(entity.getQunId());
             qun.setNumber((qun.getNumber() == null ? 0 : qun.getNumber()) + 1);
+            qunService.updateById(qun);
         }
         return b;
     }
