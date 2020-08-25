@@ -23,7 +23,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/mini/event")
 @Api(tags = "小程序-事件上报")
-public class EventController {
+public class MiniEventController {
 
     @Autowired
     private EventService eventService;

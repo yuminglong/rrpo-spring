@@ -30,8 +30,8 @@ public class MiniDeptController {
     @ApiOperation("查询下一级组织机构-[parentId为空查询14个市州]")
     public JiebaoResponse getDeptList(String parentId) {
         List<Dept> list;
-        if (StringUtils.isEmpty(parentId)) {
-            list = deptService.getList("0");
+        if (parentId.equals("0")) {
+            list = deptService.getList(parentId);
         } else {
             list = deptService.getChildrenList(parentId);
         }
