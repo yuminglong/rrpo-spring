@@ -31,10 +31,17 @@ public class NumController {
     @Autowired
     INumService numService;
 
-    @GetMapping("")
+    @GetMapping("num")
     @ApiOperation("获得数据 年终考核 ")
     @Log("获得数据 年终考核")
     public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
         return numService.pageList(queryRequest,  deptId, yearId);
+    }
+
+    @GetMapping("map")
+    @ApiOperation("视图数据接口")
+    @Log("试图数据")
+    public JiebaoResponse map(String yearId){
+        return numService.map(yearId);
     }
 }

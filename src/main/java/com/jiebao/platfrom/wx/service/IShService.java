@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IShService extends IService<Sh> {
     JiebaoResponse shWx(String qunId, Integer status, String massage);
 
-    JiebaoResponse list(QueryRequest queryRequest);
+    JiebaoResponse list(QueryRequest queryRequest,String qunid);
 
 
 }

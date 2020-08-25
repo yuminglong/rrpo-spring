@@ -78,7 +78,7 @@ public class Case implements Serializable {
     @ApiModelProperty(value = "线路   字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
-    private Dict dictLine;
+    private Dict dictXl;
     /**
      * 地点
      */

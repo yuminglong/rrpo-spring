@@ -9,6 +9,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -48,6 +49,7 @@ public class UserI implements Serializable {
     /**
      * 创建时间
      */
+    @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date date;
 
     private String qunId;//群

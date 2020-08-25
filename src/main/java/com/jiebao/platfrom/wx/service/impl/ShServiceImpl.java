@@ -37,38 +37,47 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
     @Autowired
     IQunService qunService;
 
+
     @Override
     public JiebaoResponse shWx(String qunId, Integer status, String massage) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        Qun qun = qunService.getById(qunId);
+        if (!dept.getDeptId().equals(qun.getShDeptId())) {
+            return jiebaoResponse.message("无权限审核");
+        }
         Sh sh = new Sh();
         sh.setDeptId(dept.getDeptId());
         sh.setWxQunId(qunId);
         sh.setStatus(status);
         sh.setMassage(massage);
         sh.setShDate(new Date());
-        Qun qun = qunService.getById(qunId);
+        save(sh);
         qun.setShDate(new Date());
         if (status == 0) {
             if (dept.getParentId().equals("0")) {
                 qun.setShStatus(3);
+                qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }
             qun.setShStatus(1);
+            qunService.updateById(qun);
             return jiebaoResponse.okMessage("审核节点完成");
         } else {
             qun.setShStatus(2);
-            qun.setShDateId(qun.getCjDeptId());
+            qun.setShDeptId(qun.getCjDeptId());
+            qunService.updateById(qun);
             return jiebaoResponse.okMessage("审核不通过 打回原籍");
         }
     }
 
     @Override
-    public JiebaoResponse list(QueryRequest queryRequest) {
+    public JiebaoResponse list(QueryRequest queryRequest, String qunId) {
         QueryWrapper<Sh> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("sh_date");
+        queryWrapper.eq("wx_qun_id", qunId);
         Page<Sh> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper));
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 }

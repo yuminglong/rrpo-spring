@@ -36,7 +36,7 @@ public class ShController {
 
     @GetMapping("list")
     @ApiOperation("查看审核节点")
-    public JiebaoResponse list(QueryRequest queryRequest) {
-        return shService.list(queryRequest);
+    public JiebaoResponse list(QueryRequest queryRequest,String qunid) {
+        return shService.list(queryRequest,qunid);
     }
 }

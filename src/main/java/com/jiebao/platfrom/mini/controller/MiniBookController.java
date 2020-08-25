@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/mini/book")
 @Api(tags = "小程序-通讯录")
-public class BookController {
+public class MiniBookController {
 
     @Autowired
     private DeptService deptService;
