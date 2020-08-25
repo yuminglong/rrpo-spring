@@ -56,9 +56,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        queryWrapper.eq("dept", dept.getDeptId());
-        queryWrapper.or();
-        queryWrapper.eq("sh_dept", dept.getDeptId());
+        queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         if (month != null) {
             queryWrapper.eq("month", month);
         }

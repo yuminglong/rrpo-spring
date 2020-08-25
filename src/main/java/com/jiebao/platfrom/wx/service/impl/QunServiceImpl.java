@@ -52,9 +52,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("cj_dept_id", dept.getDeptId());
-        queryWrapper.or();
-        queryWrapper.eq("sh_dept_id", dept.getDeptId());
+        queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
@@ -63,7 +61,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(this.baseMapper.list(page,queryWrapper)).okMessage("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
 
     @Override
