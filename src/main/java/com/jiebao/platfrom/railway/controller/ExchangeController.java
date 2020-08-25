@@ -133,14 +133,14 @@ public class ExchangeController extends BaseController {
                     exchangeMapper.release(exchangeId);
                     exchangeUserMapper.setCreatTime(exchangeId);
                 });
-                return new JiebaoResponse().message("发布通知公告成功");
+                return new JiebaoResponse().message("发布信息互递成功");
             }
         } catch (Exception e) {
-            message = "发布通知公告失败";
+            message = "发布信息互递失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("发布通知公告失败");
+        return new JiebaoResponse().message("发布信息互递失败");
     }
 
 

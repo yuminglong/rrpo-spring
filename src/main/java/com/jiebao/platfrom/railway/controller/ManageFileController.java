@@ -8,9 +8,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.domain.ManageFile;
-import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.ManageFileService;
-import com.jiebao.platfrom.railway.service.PublicFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +26,13 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("/manageFile")
-@Api(tags = "railWay-铁护办文件")   //swagger2 api文档说明示例
+@Api(tags = "railWay-上级文件")   //swagger2 api文档说明示例
 public class ManageFileController extends BaseController {
 
     private String message;
 
     @Autowired
     private ManageFileService manageFileService;
-
-
 
 
     @GetMapping
@@ -110,7 +106,5 @@ public class ManageFileController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
-
 }
 
