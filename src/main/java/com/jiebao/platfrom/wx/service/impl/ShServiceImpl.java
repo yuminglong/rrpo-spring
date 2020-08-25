@@ -43,6 +43,10 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        Qun qun = qunService.getById(qunId);
+        if (!dept.getDeptId().equals(qun.getShDeptId())) {
+            return jiebaoResponse.message("无权限审核");
+        }
         Sh sh = new Sh();
         sh.setDeptId(dept.getDeptId());
         sh.setWxQunId(qunId);
@@ -50,21 +54,20 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         sh.setMassage(massage);
         sh.setShDate(new Date());
         save(sh);
-        Qun qun = qunService.getById(qunId);
         qun.setShDate(new Date());
         if (status == 0) {
             if (dept.getParentId().equals("0")) {
                 qun.setShStatus(3);
-                qunService.save(qun);
+                qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }
             qun.setShStatus(1);
-            qunService.save(qun);
+            qunService.updateById(qun);
             return jiebaoResponse.okMessage("审核节点完成");
         } else {
             qun.setShStatus(2);
             qun.setShDeptId(qun.getCjDeptId());
-            qunService.save(qun);
+            qunService.updateById(qun);
             return jiebaoResponse.okMessage("审核不通过 打回原籍");
         }
     }
