@@ -13,6 +13,7 @@ import com.jiebao.platfrom.common.utils.EqualsMonth;
 import com.jiebao.platfrom.railway.dao.*;
 import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.*;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
@@ -85,6 +86,9 @@ public class PrizeController extends BaseController {
     private UserMapper userMapper;
 
     @Autowired
+    private DeptMapper deptMapper;
+
+    @Autowired
     private PrizeOpinionMapper prizeOpinionMapper;
 
     @Autowired
@@ -119,40 +123,13 @@ public class PrizeController extends BaseController {
             if (dept.getRank() == 2) {
                 //获取该区县组织机构，则getParentId就是获取它上级组织机构ID
                 Dept byId = deptService.getById(byName.getDeptId());
-                Map<String, Object> columnMap = new HashMap<>();
-                columnMap.put("dept_id", byId.getParentId());
-                List<User> users = userMapper.selectByMap(columnMap);
-                if (save) {
-                    for (User user : users
-                    ) {
-                        //把要发送的用户ID保存到数据库
-                        prizeUserService.saveByUser(prize.getId(), user.getUserId());
-                    }
-                }
-                prize.setReviewStatus(0);
+                //把要发送的deptId保存到数据库
+                prizeUserService.saveByDept(prize.getId(), byId.getParentId());
+                //市级发送自身组织机构id
             } else if (dept.getRank() == 1) {
                 Dept byId = deptService.getById(byName.getDeptId());
-                Map<String, Object> columnMap = new HashMap<>();
-                columnMap.put("dept_id", byId.getParentId());
-                List<User> users = userMapper.selectByMap(columnMap);
-                if (save) {
-                    for (User user : users
-                    ) {
-                        //把要发送的用户ID保存到数据库
-                        prizeUserService.saveByUser(prize.getId(), user.getUserId());
-                    }
-                }
-                Map<String, Object> map = new HashMap<>();
-                map.put("dept_id", byId.getDeptId());
-                List<User> OwnUsers = userMapper.selectByMap(map);
-                if (save) {
-                    for (User u : OwnUsers
-                    ) {
-                        //把要发送的用户ID保存到数据库
-                        prizeUserService.saveByUser(prize.getId(), u.getUserId());
-                    }
-                }
-                prize.setReviewStatus(0);
+                //把要发送的deptId保存到数据库
+                prizeUserService.saveByDept(prize.getId(), byId.getDeptId());
             } else {
                 return new JiebaoResponse().message("无权限");
             }
@@ -187,16 +164,19 @@ public class PrizeController extends BaseController {
             Integer countByDept = prizeOrderService.getCountByDept(byName.getDeptId());
             if (countByDept <= limitNumber) {
                 Arrays.stream(prizeIds).forEach(prizeId -> {
-                    Prize byId = prizeService.getById(prizeId);
-                    PrizeOrder prizeOrderSet = new PrizeOrder();
-                    prizeOrderSet.setDeptId(byName.getDeptId());
-                    prizeOrderSet.setCreatTime(byId.getReleaseTime());
-                    prizeOrderSet.setPrizeId(prizeId);
-                    prizeOrderSet.setReleaseNumber(countByDept + 1);
-                    prizeOrderService.save(prizeOrderSet);
-                    //把status改为3,并创建发布时间
-                    prizeMapper.release(prizeId);
-                    prizeUserMapper.setCreatTime(prizeId);
+                    Prize prize = prizeService.getById(prizeId);
+                   if (prize.getStatus() == 1){
+                       PrizeOrder prizeOrderSet = new PrizeOrder();
+                       prizeOrderSet.setDeptId(byName.getDeptId());
+                       prizeOrderSet.setCreatTime(prize.getReleaseTime());
+                       prizeOrderSet.setPrizeId(prizeId);
+                       prizeOrderSet.setTitle(prize.getContent());
+                       prizeOrderSet.setReleaseNumber(countByDept + 1);
+                       prizeOrderService.save(prizeOrderSet);
+                       //把status改为3,并创建发布时间
+                       prizeMapper.release(prizeId);
+                       prizeUserMapper.setCreatTime(prizeId);
+                   }
                 });
             } else {
                 return new JiebaoResponse().message("超出发布次数限制，本月限制发布条数为" + (limitNumber + 1) + "，已超出！");
@@ -237,6 +217,7 @@ public class PrizeController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
 
 
     @PutMapping("/update")
@@ -282,34 +263,35 @@ public class PrizeController extends BaseController {
 
     @GetMapping("/report")
     @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion, String[] prizeIds) throws JiebaoException {
+    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion, String[] prizeIds, String sendDeptId) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             Dept byId = deptService.getById(byName.getDeptId());
-            List<User> users = new ArrayList<>();
+            List<Dept> depts = new ArrayList<>();
             if (byId.getRank() == 1) {
-                if ("1143".equals(byId.getDeptId()) || "1".equals(byId.getDeptId())) {
-                    Map<String, Object> columnMap = new HashMap<>();
-                    columnMap.put("dept_id", 3000);
-                    users = userMapper.selectByMap(columnMap);
-                }
+                Map<String, Object> columnMap = new HashMap<>();
+                columnMap.put("dept_id", sendDeptId);
+                depts = deptMapper.selectByMap(columnMap);
+
+            } else if (byId.getRank() == 0) {
+                depts = null;
             } else {
                 Map<String, Object> columnMap = new HashMap<>();
                 columnMap.put("dept_id", byId.getParentId());
-                users = userMapper.selectByMap(columnMap);
+                depts = deptMapper.selectByMap(columnMap);
             }
-            List<User> finalUsers = users;
+            List<Dept> finalDepts = depts;
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 //查询该级组织机构是否有审批内容
                 Integer result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
                 if (result == 0) {
-                    //如果不为省级，就不上报
-                    if (byId.getRank() != 0) {
-                        for (User user : finalUsers
+                    //如果不为省级，就上报
+                    if (byId.getRank() != 0 && finalDepts != null) {
+                        for (Dept dept : finalDepts
                         ) {
-                            //把要发送的用户ID保存到数据库
-                            prizeUserService.saveByUser(prizeId, user.getUserId());
+                            //把要发送的deptId保存到数据库
+                            prizeUserService.saveByDept(prizeId, dept.getDeptId());
                         }
                     }
                     // 0是省
@@ -330,7 +312,7 @@ public class PrizeController extends BaseController {
                     prizeOpinion.setPrizeId(prizeId);
                     prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
                     prizeOpinion.setMoney(prizeOpinion.getMoney());
-                    prizeOpinionService.save(prizeOpinion);
+                    prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
@@ -343,7 +325,7 @@ public class PrizeController extends BaseController {
 
     @GetMapping("/reject/list")
     @ApiOperation(value = "驳回", notes = "驳回", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse prizeReject(String[] prizeIds,String rejectAuditOpinion) throws JiebaoException {
+    public JiebaoResponse prizeReject(String[] prizeIds, String rejectAuditOpinion) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -352,7 +334,7 @@ public class PrizeController extends BaseController {
                 PrizeRejectOpinion prj = new PrizeRejectOpinion();
                 prj.setAuditOpinion(rejectAuditOpinion);
                 prj.setId(prizeId);
-                prj.setUserId( byName.getUserId());
+                prj.setUserId(byName.getUserId());
                 prizeRejectOpinionService.saveOrUpdate(prj);
             });
             return new JiebaoResponse().message("驳回成功").put("status", "200");
@@ -367,20 +349,18 @@ public class PrizeController extends BaseController {
 
     @GetMapping("/findRejectOpinion")
     @ApiOperation(value = "驳回意见查询", notes = "驳回意见查询", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse findRejectOpinion(String prizeId)   {
+    public JiebaoResponse findRejectOpinion(String prizeId) {
         PrizeRejectOpinion prizeRejectOpinion = prizeRejectOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeRejectOpinion>().eq(PrizeRejectOpinion::getId, prizeId));
-        if (prizeRejectOpinion !=null){
+        if (prizeRejectOpinion != null) {
             User byId = userService.getById(prizeRejectOpinion.getUserId());
             Dept dept = deptService.getById(byId.getDeptId());
             prizeRejectOpinion.setRank(dept.getRank());
             prizeRejectOpinion.setUserName(byId.getUsername());
             return new JiebaoResponse().data(prizeRejectOpinion).put("status", "200");
-        }
-        else {
-            return new JiebaoResponse().data("").put("status","200");
+        } else {
+            return new JiebaoResponse().data("").put("status", "200");
         }
     }
-    
 
 
     @GetMapping("/findOpinion")
@@ -392,7 +372,7 @@ public class PrizeController extends BaseController {
         return new JiebaoResponse().data(prizeOpinions).put("status", "200");
     }
 
-    @GetMapping("/briefing")
+   /* @GetMapping("/briefing")
     @ApiOperation(value = "简报", notes = "简报", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse briefing(String startTime, String endTime) throws JiebaoException {
         try {
@@ -400,8 +380,10 @@ public class PrizeController extends BaseController {
             for (Prize p : prizes
             ) {
                 PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
-                String money = prizeOpinion.getMoney();
-                p.setBriefingMoney(money);
+                if (prizeOpinion != null) {
+                    String money = prizeOpinion.getMoney();
+                    p.setBriefingMoney(money);
+                }
             }
             return new JiebaoResponse().data(prizes).put("status", "200");
         } catch (Exception e) {
@@ -409,6 +391,31 @@ public class PrizeController extends BaseController {
             log.error(message, e);
             throw new JiebaoException(message);
         }
+    }*/
+
+    @GetMapping("/briefing")
+    @ApiOperation(value = "简报info", notes = "简报info", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse briefing(QueryRequest request, Prize prize, String startTime, String endTime) {
+        IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
+        List<Prize> records = prizeList.getRecords();
+        for (Prize p : records
+        ) {
+            PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
+            if (prizeOpinion != null) {
+                String money = prizeOpinion.getMoney();
+                p.setBriefingMoney(money);
+            }
+        }
+        return new JiebaoResponse().data(this.getDataTable(prizeList));
+    }
+
+
+    @GetMapping("/briefingWord")
+    @ApiOperation(value = "生成简报", notes = "生成简报", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse briefingWord( String startTime, String endTime ,String period) {
+
+
+        return  null;
     }
 
 

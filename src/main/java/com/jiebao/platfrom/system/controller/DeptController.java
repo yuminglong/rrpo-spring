@@ -52,6 +52,10 @@ public class DeptController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private DeptMapper deptMapper;
+
+
 
 
     @GetMapping
@@ -151,4 +155,14 @@ public class DeptController extends BaseController {
         Dept byId = deptService.getById(byName.getDeptId());
         return new JiebaoResponse().data(byId).put("status","200");
     }
+
+    @GetMapping("/findRankFour")
+    @ApiOperation(value = "查询所有公安处", notes = "查询所有公安处", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findRankFour() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("rank",4);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        return new JiebaoResponse().data(depts).put("status","200");
+    }
+
 }

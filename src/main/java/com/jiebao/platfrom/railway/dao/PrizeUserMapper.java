@@ -19,11 +19,11 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * 发送人保存到数据库
      *
      * @param prizeId  一事一奖内容ID
-     * @param sendUser 接收人
+     * @param sendDept 接收的组织机构
      * @return
      */
-    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_user) VALUES (#{prizeId},#{sendUser})")
-    boolean saveByUser(String prizeId, String sendUser);
+    @Insert("INSERT INTO `rail_prize_user` (prize_id,send_dept) VALUES (#{prizeId},#{sendDept})")
+    boolean saveByDept(String prizeId, String sendDept);
 
     /**
      * 根据prizeId改状为已删除态
@@ -43,7 +43,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * @param money
      * @return
      */
-    @Update("UPDATE `rail_prize_user` set audit_opinion = #{auditOpinion} ,money = #{money} where prize_id =#{prizeId} and send_dept = #{deptId}")
+    @Update("UPDATE `rail_prize_opinion` set audit_opinion = #{auditOpinion} ,money = #{money} where prize_id =#{prizeId} and send_dept = #{deptId}")
     boolean updateByPrizeId(String prizeId, String deptId, String auditOpinion, String money);
 
 
@@ -64,7 +64,7 @@ public interface PrizeUserMapper extends BaseMapper<PrizeUser> {
      * @param deptId
      * @return
      */
-    @Update("UPDATE `rail_prize_user` set audit_opinion = null,money = null where prize_id =#{prizeId} and send_dept = #{deptId}")
+    @Update("UPDATE `rail_prize_opinion` set audit_opinion = null,money = null where prize_id =#{prizeId} and send_dept = #{deptId}")
     boolean deleteOpinion(String prizeId, String deptId);
 
     @Update("UPDATE  rail_prize_user  r set  r.creat_time = now() WHERE r.prize_id =#{prizeId}")

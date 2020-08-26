@@ -226,7 +226,9 @@ public class ExchangeController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             ExchangeUser exchangeUser = exchangeUserMapper.getIsRead(byName.getUserId(), e.getId());
-            e.setIsRead(exchangeUser.getIsRead());
+            if (exchangeUser!=null){
+                e.setIsRead(exchangeUser.getIsRead());
+            }
         }
         return new JiebaoResponse().data(this.getDataTable(exchangeList));
     }

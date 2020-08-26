@@ -43,8 +43,8 @@ public class PrizeUser {
     /**
      * 推送给谁
      */
-    @ApiModelProperty(value = "推送给谁")
-    private String sendUser;
+    @ApiModelProperty(value = "推送给组织机构的ID")
+    private String sendDept;
 
 
 }

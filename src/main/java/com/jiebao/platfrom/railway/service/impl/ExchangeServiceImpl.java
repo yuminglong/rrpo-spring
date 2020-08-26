@@ -12,10 +12,7 @@ import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.railway.dao.ExchangeFileMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
-import com.jiebao.platfrom.railway.domain.Exchange;
-import com.jiebao.platfrom.railway.domain.ExchangeFile;
-import com.jiebao.platfrom.railway.domain.ExchangeUser;
-import com.jiebao.platfrom.railway.domain.Prize;
+import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
@@ -112,6 +109,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
             }
             if (exchangeUserIds.size() > 0) {
                 queryWrapper.lambda().in(Exchange::getId, exchangeUserIds);
+            }
+            else {
+                queryWrapper.lambda().in(Exchange::getId, "111111111111111111111111111111111");
             }
         }
         if (StringUtils.isNotBlank(exchange.getTitle())) {

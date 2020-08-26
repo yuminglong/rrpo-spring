@@ -212,7 +212,9 @@ public class BriefingController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             BriefingUser briefingUser = briefingUserMapper.getIsRead(byName.getUserId(), e.getId());
-            e.setIsRead(briefingUser.getIsRead());
+            if (briefingUser != null) {
+                e.setIsRead(briefingUser.getIsRead());
+            }
         }
         return new JiebaoResponse().data(this.getDataTable(briefingList));
     }

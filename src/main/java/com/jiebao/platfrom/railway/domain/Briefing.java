@@ -54,6 +54,7 @@ public class Briefing {
     private String isCheck;
 
     @ApiModelProperty(value = "是否阅读" ,example = "1")
+    @TableField(exist = false)
     private Integer isRead;
 
     @TableField(exist = false)

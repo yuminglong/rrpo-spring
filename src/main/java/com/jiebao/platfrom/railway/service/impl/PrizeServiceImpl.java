@@ -17,7 +17,9 @@ import com.jiebao.platfrom.railway.domain.PrizeUser;
 import com.jiebao.platfrom.railway.service.PrizeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.mchange.lang.IntegerUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +54,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DeptService deptService;
 
     @Override
     public IPage<Prize> getPrizeList(QueryRequest request, Prize prize, String startTime, String endTime) {
@@ -88,17 +93,18 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7).or().eq(Prize::getStatus, 2));
         if (StringUtils.isNotBlank(username)) {
             User byName = userService.findByName(username);
+            Dept dept = deptService.getById(byName.getDeptId());
             Map<String,Object> map = new HashMap<>();
-            map.put("send_user",byName.getUserId());
-            List<PrizeUser> prizeUsers = prizeUserMapper.selectByMap(map);
-            ArrayList<String> prizeUserIds = new ArrayList<>();
-            for (PrizeUser prizeUser : prizeUsers
+            map.put("send_dept",dept.getDeptId());
+            List<PrizeUser> prizeDepts = prizeUserMapper.selectByMap(map);
+            ArrayList<String> prizeDeptIds = new ArrayList<>();
+            for (PrizeUser prizeDept : prizeDepts
             ) {
-                String prizeId = prizeUser.getPrizeId();
-                prizeUserIds.add(prizeId);
+                String prizeId = prizeDept.getPrizeId();
+                prizeDeptIds.add(prizeId);
             }
-            if (prizeUserIds.size() > 0) {
-                queryWrapper.lambda().in(Prize::getId, prizeUserIds);
+            if (prizeDeptIds.size() > 0) {
+                queryWrapper.lambda().in(Prize::getId, prizeDeptIds);
             }
             else {
                 queryWrapper.lambda().in(Prize::getId, "111111111111111111111111111111111");
@@ -118,6 +124,18 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         }
         if (prize.getStatus() !=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
+        }
+        Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
+        SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public IPage<Prize> getBriefing(QueryRequest request, Prize prize, String startTime, String endTime) {
+        QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Prize::getStatus, 7);
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
