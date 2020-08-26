@@ -36,13 +36,16 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
 
     @Override
     public boolean saveOrUpdate(UserI entity) {
+        boolean a = false;//记录此次为修改还是添加
         if (entity.getWxUserId() == null) {
             entity.setDate(new Date());
+            a = true;
         }
         boolean b = super.saveOrUpdate(entity);
-        if (b) {
+        if (b && a) {
             Qun qun = qunService.getById(entity.getQunId());
             qun.setNumber((qun.getNumber() == null ? 0 : qun.getNumber()) + 1);
+            qunService.updateById(qun);
         }
         return b;
     }
@@ -54,6 +57,7 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
         if (b) {
             Qun qun = qunService.getById(qunId);
             qun.setNumber((qun.getNumber() == null ? 0 : qun.getNumber()) - wxUserIdS.length);
+            qunService.updateById(qun);
         }
         jiebaoResponse = b ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
         return jiebaoResponse;

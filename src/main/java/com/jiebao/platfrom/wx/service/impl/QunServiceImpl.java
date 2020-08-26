@@ -15,7 +15,6 @@ import com.jiebao.platfrom.wx.service.IQunService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -43,6 +42,9 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             entity.setDate(new Date());
             entity.setCjDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getParentId());
+            entity.setShStatus(0);
+            entity.setShNumber(0);
+            entity.setNumber(0);
         }
         return super.saveOrUpdate(entity);
     }
@@ -67,8 +69,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     @Override
     public JiebaoResponse updateStatus(String qunId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        if (dept.getDeptId().equals(getById(qunId).getCjDeptId())) {
+            return jiebaoResponse.failMessage("无权发起重新提交");
+        }
         Qun qun = getById(qunId);
         qun.setStatus(0);
+        qun.setShNumber(qun.getShNumber() + 1);
         qun.setShDeptId(qun.getCjDeptId());
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;

@@ -76,11 +76,13 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         }
         if (dept.getParentId().equals("0")) {  //此为 市级
             if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
+                updateById(month);
                 return jiebaoResponse.failMessage("超过上报三条记录上线");
             }
             month.setLastDeptId(dept.getDeptId());
         }
         month.setShDeptId(dept.getParentId());
+        updateById(month);
         return jiebaoResponse.okMessage("上报成功");
     }
 
