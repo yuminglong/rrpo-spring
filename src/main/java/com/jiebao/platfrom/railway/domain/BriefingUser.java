@@ -58,7 +58,6 @@ public class BriefingUser {
     @TableField(exist = false)
     private String deptName;
 
-    @TableField(exist = false)
     @ApiModelProperty(value = "发送给某用户姓名")
     private String sendUserName;
 

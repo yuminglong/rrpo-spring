@@ -3,7 +3,6 @@ package com.jiebao.platfrom.railway.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.railway.domain.Briefing;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
-import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;

@@ -14,6 +14,7 @@ import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.domain.Briefing;
 import com.jiebao.platfrom.railway.domain.Briefing;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
+import com.jiebao.platfrom.railway.domain.Prize;
 import com.jiebao.platfrom.railway.service.BriefingService;
 import com.jiebao.platfrom.railway.service.BriefingService;
 import com.jiebao.platfrom.system.domain.User;
@@ -106,6 +107,9 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
             }
             if (briefingUserIds.size() > 0) {
                 queryWrapper.lambda().in(Briefing::getId, briefingUserIds);
+            }
+            else {
+                queryWrapper.lambda().in(Briefing::getId, "111111111111111111111111111111111");
             }
         }
         if (StringUtils.isNotBlank(briefing.getTitle())) {

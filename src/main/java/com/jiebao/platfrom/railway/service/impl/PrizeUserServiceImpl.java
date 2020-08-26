@@ -26,8 +26,8 @@ public class PrizeUserServiceImpl extends ServiceImpl<PrizeUserMapper, PrizeUser
     private PrizeUserMapper prizeUserMapper;
 
     @Override
-    public boolean saveByUser(String prizeId, String sendUser) {
-        return prizeUserMapper.saveByUser(prizeId,sendUser);
+    public boolean saveByDept(String prizeId, String sendDept) {
+        return prizeUserMapper.saveByDept(prizeId,sendDept);
     }
 
     @Override

@@ -54,7 +54,6 @@ public class PrizeUserController extends BaseController {
             String userName = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(userName);
             String deptId = byName.getDeptId();
-            //String deptId = "1";
             this.prizeUserService.updateByPrizeId(prizeId, deptId, auditOpinion, money);
         } catch (Exception e) {
             message = "发表或修改审核意见失败";

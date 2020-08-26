@@ -14,13 +14,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface PrizeUserService extends IService<PrizeUser> {
 
     /**
-     * 发送人保存到数据库
+     * 发送组织机构保存到数据库
      *
      * @param prizeId  一事一奖内容ID
-     * @param sendUser 接收人
+     * @param sendDept 接收的组织机构
      * @return
      */
-    boolean saveByUser(String prizeId, String sendUser);
+    boolean saveByDept(String prizeId, String sendDept);
 
     /**
      * 根据prizeId删除相应的接收人
