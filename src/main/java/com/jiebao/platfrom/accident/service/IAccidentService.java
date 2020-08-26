@@ -5,14 +5,18 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
+import java.util.Date;
+
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author qta
  * @since 2020-08-04
  */
 public interface IAccidentService extends IService<Accident> {
-    JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId,  String startDate, String endDate);
+    JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate);
+    
+    JiebaoResponse map(String startDate, String endDate, Integer status);//地图视角
 }

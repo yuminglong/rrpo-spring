@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.check.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.domain.Year;
@@ -9,6 +10,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -39,13 +42,19 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     }
 
     @Override
+    public List<Year> list(QueryWrapper<Year> queryWrapper) {
+        return this.baseMapper.list(queryWrapper);
+    }
+
+    @Override
     public JiebaoResponse pageList(QueryRequest queryRequest, String yearDate) {
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_date", yearDate);
+        if (yearDate != null) {
+            queryWrapper.eq("year_date", yearDate);
+        }
         queryWrapper.orderByDesc("year_date");
         Page<Year> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-
-        return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.pageYear(page, queryWrapper)).message("查询成功");
     }
 
     @Override

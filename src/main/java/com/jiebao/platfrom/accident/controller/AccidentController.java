@@ -54,4 +54,11 @@ public class AccidentController {
         return accidentService.list(queryRequest, cityCsId, cityQxId, startDate, endDate);
     }
 
+    @GetMapping("map")
+    @ApiOperation("获取地图展示数据")
+    @Log("获取地图展示数据")
+    public JiebaoResponse map(String startDate, String endDate, Integer status) {
+        return accidentService.map(startDate, endDate, status);
+    }
+
 }

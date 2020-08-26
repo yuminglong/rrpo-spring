@@ -34,7 +34,7 @@ public class Month implements Serializable {
     /**
      * id
      */
-    @TableId(value = "wx_month_id",type = IdType.UUID)
+    @TableId(value = "wx_month_id", type = IdType.UUID)
     private String wxMonthId;
 
     /**
@@ -75,8 +75,9 @@ public class Month implements Serializable {
     private User user;
 
     private Date date;
-    //最后审核部门 不用管
-    private String lastDeptId;
-    @TableField(exist = false)
-    private Dept lastDept;
+    //最终是否选上  0 未选上  1选上
+    private Integer status;
+
+
+    private Integer look;//0  未看  1查看了
 }

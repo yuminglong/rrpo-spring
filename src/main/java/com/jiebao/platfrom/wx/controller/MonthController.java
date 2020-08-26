@@ -51,8 +51,8 @@ public class MonthController {
 
     @GetMapping("list")
     @ApiOperation("查询集合")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month) {
-        return monthService.pageList(queryRequest, month);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look) {
+        return monthService.pageList(queryRequest, month, look);
     }
 
     @GetMapping("appear")
@@ -61,9 +61,9 @@ public class MonthController {
         return monthService.appear(monthId);
     }
 
-    @GetMapping("tgList")
-    @ApiOperation("查询管辖区 被最终进入升级的月度评选")
-    public JiebaoResponse tgList(QueryRequest queryRequest){
-     return      monthService.tgList(queryRequest);
+    @GetMapping("getById")
+    @ApiOperation("查看具体信息")
+    public JiebaoResponse getById(String monthId) {
+        return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
     }
 }

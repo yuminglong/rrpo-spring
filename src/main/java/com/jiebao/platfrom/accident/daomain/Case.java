@@ -70,8 +70,8 @@ public class Case implements Serializable {
      */
     @ApiModelProperty(value = "创建时间", example = "哈哈")
     private String policeId;
-    @TableField(exist = false)
-    private Dept deptPolice;
+//    @TableField(exist = false)
+//    private Dept deptPolice;
     /**
      * 线路
      */

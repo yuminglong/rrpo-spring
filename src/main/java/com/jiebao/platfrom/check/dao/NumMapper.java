@@ -34,4 +34,5 @@ public interface NumMapper extends BaseMapper<Num> {
     @Select("select * from check_num where year_id=#{yearId} and dept_id=#{deptId}")
     Num getNum(String yearId, String deptId);
 
+
 }

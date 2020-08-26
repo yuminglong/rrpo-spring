@@ -7,7 +7,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author qta
@@ -15,4 +15,6 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
  */
 public interface ICaseService extends IService<Case> {
     JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate);
+
+    JiebaoResponse map(String startDate, String endDate, Integer status);//地图视角
 }

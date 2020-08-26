@@ -17,7 +17,9 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -54,7 +56,9 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-        queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
+        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
+        queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
+        .or().in("cj_dept_id", resolver(childrenList)).eq("sh_status", 3));
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
@@ -64,6 +68,15 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
+    }
+
+    private List<String> resolver(List<Dept> list) {
+        List<String> listR = new ArrayList<>(); //储存数据
+        for (Dept dept : list
+        ) {
+            listR.add(dept.getDeptId());
+        }
+        return listR;
     }
 
     @Override

@@ -16,5 +16,12 @@ import java.util.List;
  */
 public interface MenusYearMapper extends BaseMapper<MenusYear> {
     @Select("select menus_id from check_menus_year where year_id=#{yearId} and parent_id=#{parentId}")
-    List<String> getMenusIdList(String yearId,String parentId);
+    List<String> getMenusIdList(String yearId, String parentId);
+
+
+    @Select("select count(*) from check_menus_year where year_id=#{yearId} and parent_id=(select menus_id from check_menus where content='基础工作')")
+    Integer jcNumber(String yearId);
+
+    @Select("select count(*) from check_menus_year where year_id=#{yearId} and parent_id=(select menus_id from check_menus where content='工作效果')")
+    Integer xgNumber(String yearId);
 }

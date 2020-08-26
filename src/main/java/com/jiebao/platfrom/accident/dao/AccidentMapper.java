@@ -7,6 +7,8 @@ import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 /**
  * <p>
  * Mapper 接口
@@ -26,4 +28,20 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper queryWrapper);
+
+
+    @Select("select nature from accident_accident group by nature")
+    List<String> sgXz();  //事故性质类别
+
+    @Select("select age from accident_accident group by age")
+    List<String> age();  //年龄类别
+
+    @Select("select conditions from accident_accident group by conditions")
+    List<String> conditions();  //事故情形类别
+
+    @Select("select identity from accident_accident group by identity")
+    List<String> identity();  //身份类别
+
+    @Select("select count(*) from accident_accident ${ew.customSqlSegment}")
+    Integer count(@Param("ew") QueryWrapper<Accident> ew);  //数量
 }

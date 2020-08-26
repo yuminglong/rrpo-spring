@@ -1,8 +1,11 @@
 package com.jiebao.platfrom.check.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.domain.Year;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -15,7 +18,21 @@ import java.util.List;
  * @since 2020-08-05
  */
 public interface YearMapper extends BaseMapper<Year> {
-    @Select("select year_date from check_year order by  year_date desc")
-    List<String> yearStringList();
+    @Select("select * from check_year order by  year_date desc")
+    List<Year> yearStringList();
 
+    @Select("select * from check_year ${ew.customSqlSegment}")
+    @Results({
+            @Result(property = "jcNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.jcNumber")),
+            @Result(property = "xgNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.xgNumber")),
+    })
+    IPage<Year> pageYear(Page<Year> page, QueryWrapper<Year> ew);
+
+
+    @Select("select * from check_year ${ew1.customSqlSegment}")
+    @Results({
+            @Result(property = "jcNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.jcNumber")),
+            @Result(property = "xgNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.xgNumber")),
+    })
+    List<Year> list(@Param("ew1") QueryWrapper<Year> ew1);
 }

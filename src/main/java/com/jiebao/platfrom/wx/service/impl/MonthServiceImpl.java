@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -52,34 +53,48 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
+        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
+        queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
+                .or().in("jc_dept_id", resolver(childrenList)).eq("status", 1)
+        );
         if (month != null) {
             queryWrapper.eq("month", month);
+        }
+        if (look != null) {
+            queryWrapper.eq("look", look);
         }
         queryWrapper.orderByDesc("date");
         Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
     }
 
+    private List<String> resolver(List<Dept> list) {
+        List<String> listR = new ArrayList<>(); //储存数据
+        for (Dept dept : list
+        ) {
+            listR.add(dept.getDeptId());
+        }
+        return listR;
+    }
+
     @Override
     public JiebaoResponse appear(String monthId) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        Month month = getById(monthId);
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Month month = getById(monthId);
         if (!month.getShDeptId().equals(dept.getDeptId())) {
             return jiebaoResponse.failMessage("无权上报");
         }
         if (dept.getParentId().equals("0")) {  //此为 市级
             if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
-                updateById(month);
-                return jiebaoResponse.failMessage("超过上报三条记录上线");
+                return jiebaoResponse.failMessage("超过上报三条记录上限");
             }
-            month.setLastDeptId(dept.getDeptId());
+            month.setStatus(1);
         }
         month.setShDeptId(dept.getParentId());
         updateById(month);
@@ -87,13 +102,10 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse tgList(QueryRequest queryRequest) {
-        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        List<Address> address = deptService.getAddress(dept.getDeptId()); //附属id
-        QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("dept", address);
-        Page<Month> page = new Page<>();
-        return new JiebaoResponse().message("查询成功").data(page(page, queryWrapper));
+    public Month getById(Serializable id) {
+        Month month = super.getById(id);
+        month.setLook(1);
+        updateById(month);
+        return month;
     }
 }

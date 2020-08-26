@@ -298,6 +298,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         } else {
             grade.setAudit(1);
         }
+        updateById(grade);
         Integer i2 = gradeMapper.gradeExIs(grade.getYearId(), grade.getDeptId());  //是否存在有未审核的扣分项
         int audit = 1;
         if (i2 == null) {  //全部审核完
@@ -306,7 +307,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         gradeMapper.updateNum(grade.getYearId(), grade.getDeptId(), audit);//审核完
     }
 
-    ;
 
     private boolean isCuiZai(String gradeId, String ZzId) {
         if (gradeZzMapper.ExIstGradeZz(gradeId, ZzId) == null)//存在返回true

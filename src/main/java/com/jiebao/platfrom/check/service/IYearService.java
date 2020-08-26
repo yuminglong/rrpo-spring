@@ -1,9 +1,12 @@
 package com.jiebao.platfrom.check.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.domain.Year;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+
+import java.util.List;
 
 /**
  * <p>
@@ -20,6 +23,6 @@ public interface IYearService extends IService<Year> {
 
     JiebaoResponse yearStringList();//已存入的年份集合
 
-
+    List<Year> list(QueryWrapper<Year> queryWrapper);
 
 }

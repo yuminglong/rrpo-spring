@@ -9,10 +9,17 @@ import com.jiebao.platfrom.accident.service.ICaseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.service.DeptService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -24,6 +31,8 @@ import java.text.SimpleDateFormat;
  */
 @Service
 public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements ICaseService {
+    @Autowired
+    DeptService deptService;
 
     @Override
     public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
@@ -41,5 +50,50 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         }
         Page<Case> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
+    }
+
+    @Override
+    public JiebaoResponse map(String startDate, String endDate, Integer status) {
+        if (status == null) {
+            return new JiebaoResponse().failMessage("请选择类型");
+        }
+        List<Dept> childrenList = deptService.getChildrenList("0");  //市州级别  详情
+        return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
+    }
+
+    private Map fz(List<Dept> deptList, String startDate, String endDate, Integer status) {  //事故性质  数据
+        HashMap<String, List<String>> map = new HashMap<>();
+        List<String> city = new ArrayList<>();
+        List<String> list = null;  //储存类型
+        if (status == 1) {
+            list = this.baseMapper.sgXz();  //事故性质
+        }
+        boolean bool = true;
+        for (Dept dept :
+                deptList) {
+            city.add(dept.getDeptName());
+            int b = 1;//记录存储第几个数组
+            for (String str : list
+            ) {
+                QueryWrapper<Case> queryWrapper = new QueryWrapper();
+                if (startDate != null) {
+                    queryWrapper.ge("date", startDate);
+                }
+                if (endDate != null) {
+                    queryWrapper.le("date", endDate);
+                }
+                queryWrapper.eq("city_cs_id", dept.getDeptId());
+                queryWrapper.eq("nature", str);
+                if (bool) {
+                    map.put(str + b, new ArrayList<String>());
+                }
+                map.get(str + b).add(this.baseMapper.count(queryWrapper).toString());
+                ++b;
+            }
+            bool = false;
+        }
+        map.put("city", city);
+        return map;
+
     }
 }
