@@ -34,7 +34,7 @@ public class Month implements Serializable {
     /**
      * id
      */
-    @TableId(value = "wx_mon_id",type = IdType.UUID)
+    @TableId(value = "wx_month_id",type = IdType.UUID)
     private String wxMonthId;
 
     /**
