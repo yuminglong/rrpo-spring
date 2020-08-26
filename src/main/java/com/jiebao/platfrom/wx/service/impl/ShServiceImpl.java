@@ -56,8 +56,8 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         sh.setNumber(qun.getShNumber());
         save(sh);
         qun.setShDate(new Date());
-        qun.setShDeptId(dept.getParentId());
         if (status == 0) {
+            qun.setShDeptId(dept.getParentId());
             if (dept.getParentId().equals("0")) {
                 qun.setShStatus(3);
                 qunService.updateById(qun);

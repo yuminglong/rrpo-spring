@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.wx.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
@@ -32,6 +34,7 @@ public class Month implements Serializable {
     /**
      * id
      */
+    @TableId(value = "wx_mon_id",type = IdType.UUID)
     private String wxMonthId;
 
     /**
