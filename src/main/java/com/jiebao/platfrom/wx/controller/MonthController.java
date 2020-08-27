@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.wx.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.File;
@@ -39,14 +41,15 @@ public class MonthController {
 
     @PostMapping("saveorUpdate")
     @ApiOperation("添加或者修改")
-    public JiebaoResponse saveOrUpdate(Month month, String fileId) {
+    public JiebaoResponse saveOrUpdate(Month month, String[] fileIds) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = monthService.saveOrUpdate(month);
-        if (fileId != null) {
+        if (fileIds!= null) {
             if (b) {
-                File file = fileService.getById(fileId);
-                file.setRefId(month.getWxMonthId());
-                fileService.updateById(file);
+                UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.in("file_id",Arrays.asList(fileIds));
+                updateWrapper.set("ref_id",month.getWxMonthId());
+                fileService.update(updateWrapper);
             }
         }
         jiebaoResponse = b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");

@@ -2,6 +2,7 @@ package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.dao.GradeZzMapper;
+import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.Grade;
 import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.domain.GradeZz;
@@ -47,6 +48,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     IYearService yearService;
     @Autowired
     GradeMapper gradeMapper;
+    @Autowired
+    MenusYearMapper menusYearMapper;
 
     @Override
     public JiebaoResponse addGrade(String menusId, Double number, String yearId, String deptId, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
@@ -84,13 +87,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(("dept_id"), deptId);
         queryWrapper.eq("year_id", yearId);
-        List<Grade> list = list(queryWrapper);
+        List<Grade> list = list(queryWrapper);  //本条规产生的数据
         QueryWrapper<Menus> queryWrapperJC = new QueryWrapper<>();  //  基础工作
         queryWrapperJC.eq("content", "基础工作");
         Menus menusJc = menusService.getOne(queryWrapperJC);//基础工作父类s
         QueryWrapper<Menus> queryWrapperXG = new QueryWrapper<>();
         queryWrapperXG.eq("content", "工作效果");//效果
-        Menus menusSX = menusService.getOne(queryWrapperXG);//工作失效父类
+        Menus menusSX = menusService.getOne(queryWrapperXG);//工作效果父类
+        if(list.size()!=(menusYearMapper.countNumber(yearId))){
+            return new JiebaoResponse().failMessage("考核未填完");
+        }
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
         double SGKF = 0;//工作效果扣分项
