@@ -76,7 +76,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         }
         queryWrapper.orderByDesc("date");
         Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page,queryWrapper)).message("查询成功");
     }
 
     private List<String> resolver(List<Dept> list) {
