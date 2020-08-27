@@ -80,4 +80,5 @@ public class Month implements Serializable {
 
 
     private Integer look;//0  未看  1查看了
+    
 }

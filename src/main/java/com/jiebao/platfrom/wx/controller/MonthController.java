@@ -3,6 +3,8 @@ package com.jiebao.platfrom.wx.controller;
 
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.service.IMonthService;
 import io.swagger.annotations.Api;
@@ -32,12 +34,20 @@ import java.util.Arrays;
 public class MonthController {
     @Autowired
     IMonthService monthService;
+    @Autowired
+    FileService fileService;
 
     @PostMapping("saveorUpdate")
     @ApiOperation("添加或者修改")
-    public JiebaoResponse saveOrUpdate(Month month) {
+    public JiebaoResponse saveOrUpdate(Month month, String fileId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = monthService.saveOrUpdate(month) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        boolean b = monthService.saveOrUpdate(month);
+        if (b) {
+            File file = fileService.getById(fileId);
+            file.setRefId(month.getWxMonthId());
+            fileService.updateById(file);
+        }
+        jiebaoResponse = b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
 

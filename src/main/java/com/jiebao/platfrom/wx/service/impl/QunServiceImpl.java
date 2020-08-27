@@ -57,8 +57,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
         List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
-        queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-        .or().in("cj_dept_id", resolver(childrenList)).eq("sh_status", 3));
+        List<String> resolver = resolver(childrenList);
+        if (resolver.size() == 0) {
+            queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
+        } else {
+            queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
+                    .or().in("cj_dept_id", resolver).eq("sh_status", 3));
+        }
+
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
