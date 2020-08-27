@@ -42,10 +42,12 @@ public class MonthController {
     public JiebaoResponse saveOrUpdate(Month month, String fileId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = monthService.saveOrUpdate(month);
-        if (b) {
-            File file = fileService.getById(fileId);
-            file.setRefId(month.getWxMonthId());
-            fileService.updateById(file);
+        if (fileId != null) {
+            if (b) {
+                File file = fileService.getById(fileId);
+                file.setRefId(month.getWxMonthId());
+                fileService.updateById(file);
+            }
         }
         jiebaoResponse = b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
