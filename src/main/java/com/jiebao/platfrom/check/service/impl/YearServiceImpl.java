@@ -3,12 +3,15 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.dao.YearMapper;
+import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.check.service.IYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +26,8 @@ import java.util.List;
  */
 @Service
 public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IYearService {
-
+    @Autowired
+    MenusYearMapper menusYearMapper;
 
     @Override
     public JiebaoResponse addOrUpdate(Year year) {
@@ -43,7 +47,13 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
 
     @Override
     public List<Year> list(QueryWrapper<Year> queryWrapper) {
-        return this.baseMapper.list(queryWrapper);
+        List<Year> list = this.baseMapper.list(queryWrapper);
+        for (Year year : list
+        ) {
+            year.setJcNumber(menusYearMapper.jcNumber(year.getYearId()));
+            year.setXgNumber(menusYearMapper.xgNumber(year.getYearId()));
+        }
+        return list;
     }
 
     @Override

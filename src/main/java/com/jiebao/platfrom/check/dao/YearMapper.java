@@ -22,17 +22,13 @@ public interface YearMapper extends BaseMapper<Year> {
     List<Year> yearStringList();
 
     @Select("select * from check_year ${ew.customSqlSegment}")
-    @Results({
-            @Result(property = "jcNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.jcNumber")),
-            @Result(property = "xgNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.xgNumber")),
-    })
+//    @Results({
+//            @Result(property = "jcNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.jcNumber")),
+//            @Result(property = "xgNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.xgNumber")),
+//    })
     IPage<Year> pageYear(Page<Year> page, QueryWrapper<Year> ew);
 
 
     @Select("select * from check_year ${ew1.customSqlSegment}")
-    @Results({
-            @Result(property = "jcNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.jcNumber")),
-            @Result(property = "xgNumber", column = "year_id", many = @Many(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.xgNumber")),
-    })
     List<Year> list(@Param("ew1") QueryWrapper<Year> ew1);
 }
