@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.check.controller;
 
 
+import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.common.annotation.Log;
@@ -34,14 +35,14 @@ public class MenusYearController {
 
     @PostMapping("add")
     @ApiOperation("添加  考核年份规则生成")
-    @Log("添加  考核年份规则生成")
-    public JiebaoResponse add(String yearID, @RequestParam("menusId") List<String> menusId) {
-        return menusYearService.add(yearID, menusId);
+    @Log("添加  修改考核年份规则生成")
+    public JiebaoResponse add(MenusYear menusYear) {
+        return menusYearService.addOrUpdate(menusYear);
     }
 
     @GetMapping("list")
     @ApiOperation("集合")
-    @Log("查询年份与考核项挂钩")
+    @Log("查询年份考核试题")
     public JiebaoResponse list(String yearId) {
         return new JiebaoResponse().data(menusYearService.List(yearId)).message("查询成功");
     }
@@ -49,8 +50,8 @@ public class MenusYearController {
     @DeleteMapping("deleteByLists")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
-    public JiebaoResponse deleteByLists(String[] listS, String yearDate) {
-        return menusYearService.deleteByListAndYearDate(listS, yearDate);
+    public JiebaoResponse deleteByLists(String[] listS, String yearId) {
+        return menusYearService.deleteByListAndYearDate(listS);
     }
 
     @PostMapping("excel")
@@ -58,4 +59,6 @@ public class MenusYearController {
     public JiebaoResponse excel(MultipartFile multipartFile, String yearId) {
         return menusYearService.excel(multipartFile, yearId);
     }
+
+
 }

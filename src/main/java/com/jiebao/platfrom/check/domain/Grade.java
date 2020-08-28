@@ -45,6 +45,9 @@ public class Grade implements Serializable {
     @ApiModelProperty(value = "对应的考核项id", example = "哈哈")
     private String checkId;
 
+    @TableField(exist = false)
+    private MenusYear menusYear;
+
     @ApiModelProperty(value = "分数", example = "2.0")
     private Double num;
 
@@ -54,7 +57,4 @@ public class Grade implements Serializable {
 
     private String fpMessage;
 
-    private Integer status;     //0  0 正常  1不正常
-
-    private Integer audit;
 }

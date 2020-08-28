@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,17 +33,17 @@ public class MenusYear implements Serializable {
     @TableId(value = "menus_year_id", type = IdType.UUID)
     private String menusYearId;
 
-    /**
-     * 菜单
-     */
-    private String menusId;
 
     /**
      * 年份表id
      */
     private String yearId;
 
-    private String parentId;
+    private String parentId;  //  扣分组
 
+    private String content;//主题内容
 
+    private String summary;//摘要
+
+    private Date date;
 }

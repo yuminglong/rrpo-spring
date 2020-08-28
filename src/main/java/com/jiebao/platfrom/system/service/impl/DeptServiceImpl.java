@@ -226,6 +226,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
 
+
+
     private List getDeptIds(String id) {
         List list = new ArrayList();
         list.add(id); // 加上本身

@@ -59,4 +59,10 @@ public class YearController {
     public JiebaoResponse yearStringList() {
         return new JiebaoResponse().data(yearService.yearStringList()).message("查询成功");
     }
+
+    @GetMapping("ok")
+    @ApiOperation("当今年考核规则不在变更的时候  点击此接口")
+    public JiebaoResponse ok(String yearId) {
+        return yearService.ok(yearId);
+    }
 }
