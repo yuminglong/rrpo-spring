@@ -76,7 +76,7 @@ public class BriefingController extends BaseController {
      */
     @PostMapping("/creat")
     @ApiOperation(value = "创建一条护路简报或创建并发送(修改)", notes = "创建一条护路简报或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds) throws JiebaoException {
+    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds,List<BriefingCount> briefingCounts) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
@@ -94,6 +94,11 @@ public class BriefingController extends BaseController {
                         User byId = userService.getById(sendUserId);
                         briefingUserService.saveByUserId(briefing.getId(), sendUserId, byId.getUsername());
                     });
+                }
+                for (BriefingCount b:briefingCounts
+                ) {
+                    b.setBriefingId(briefing.getId());
+                    briefingCountService.save(b);
                 }
                 return new JiebaoResponse().message("创建一条护路简报成功");
             } else if (briefing.getStatus() == 3) {
@@ -300,7 +305,7 @@ public class BriefingController extends BaseController {
     }
 
 
-
+/*
     @PostMapping("/countBriefing")
     @ApiOperation(value = "统计", notes = "统计", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse countBriefing(@Valid List<BriefingCount> briefingCounts) throws JiebaoException {
@@ -314,7 +319,7 @@ public class BriefingController extends BaseController {
             throw  new JiebaoException("添加失败");
         }
 
-    }
+    }*/
 
 
 }

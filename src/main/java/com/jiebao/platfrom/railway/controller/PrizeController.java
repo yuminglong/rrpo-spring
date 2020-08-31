@@ -10,6 +10,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.common.utils.EqualsMonth;
+import com.jiebao.platfrom.demo.test.WorderToNewWordUtils;
 import com.jiebao.platfrom.railway.dao.*;
 import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.*;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.BufferedInputStream;
 import java.util.*;
 
 /**
@@ -411,11 +413,30 @@ public class PrizeController extends BaseController {
 
 
     @GetMapping("/briefingWord")
-    @ApiOperation(value = "生成简报", notes = "生成简报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse briefingWord( String startTime, String endTime ,String period) {
+    @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse briefingWord(QueryRequest request, Prize prize, String startTime, String endTime ,String period,String year,String month,String day) {
+        IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
+        List<Prize> records = prizeList.getRecords();
 
+        Map<String, String> map = new HashMap<>();
+        map.put("period", period);
+        map.put("year", year);
+        map.put("month", month);
+        map.put("day",day);
 
-        return  null;
+        List<String[]> testList = new ArrayList<>();
+        for (Prize p:
+             records) {
+            testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
+        }
+        //模板文件地址
+        //String inputUrl = "D:\\tempDoc.docx";
+        String inputUrl =  this.getClass().getResourceAsStream("/doc/tempDoc.docx").toString();
+        //新生产的模板文件
+        String outputUrl = "D:\\newDoc.docx";
+        WorderToNewWordUtils.changWord(inputUrl, outputUrl, map, testList);
+
+        return  new JiebaoResponse().okMessage("ok");
     }
 
 
