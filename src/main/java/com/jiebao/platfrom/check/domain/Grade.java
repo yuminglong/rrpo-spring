@@ -57,4 +57,6 @@ public class Grade implements Serializable {
 
     private String fpMessage;
 
+    private String parentId;// 所属考核大模块
+
 }

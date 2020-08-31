@@ -34,14 +34,21 @@ public class NumController {
     @GetMapping("num")
     @ApiOperation("获得数据 年终考核 ")
     @Log("获得数据 年终考核")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
-        return numService.pageList(queryRequest,  deptId, yearId);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId, Integer status) {
+        return numService.pageList(queryRequest, deptId, yearId, status);
     }
 
     @GetMapping("map")
     @ApiOperation("视图数据接口")
     @Log("试图数据")
-    public JiebaoResponse map(String yearId){
+    public JiebaoResponse map(String yearId) {
         return numService.map(yearId);
+    }
+
+
+    @GetMapping("exist")
+    @ApiOperation("查询此考核结果是否第一次产生")
+    public JiebaoResponse exist(String yearId, String deptId) {
+        return numService.exist(yearId, deptId);
     }
 }

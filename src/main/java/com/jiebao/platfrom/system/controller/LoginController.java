@@ -19,6 +19,8 @@ import com.jiebao.platfrom.system.domain.UserConfig;
 import com.jiebao.platfrom.system.manager.UserManager;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import com.jiebao.platfrom.system.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import java.util.*;
 
 @Validated
 @RestController
+@Api(tags = "登录")
 public class LoginController {
 
     @Autowired
@@ -50,10 +53,12 @@ public class LoginController {
     private ObjectMapper mapper;
 
     @PostMapping("/login")
+    @ApiOperation("登录")
     @Limit(key = "login", period = 60, count = 20, name = "登录接口", prefix = "limit")
+   // @NotBlank(message = "{required}")
     public JiebaoResponse login(
-            @NotBlank(message = "{required}") String username,
-            @NotBlank(message = "{required}") String password, HttpServletRequest request) throws Exception {
+          String username,
+            String password, HttpServletRequest request) throws Exception {
         username = StringUtils.lowerCase(username);
         password = MD5Util.encrypt(username, password);
 

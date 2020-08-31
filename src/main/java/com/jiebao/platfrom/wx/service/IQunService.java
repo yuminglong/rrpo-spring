@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author qta
@@ -17,4 +17,6 @@ public interface IQunService extends IService<Qun> {
     JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName);
 
     JiebaoResponse updateStatus(String qunId);
+
+    JiebaoResponse up(String qunId);
 }

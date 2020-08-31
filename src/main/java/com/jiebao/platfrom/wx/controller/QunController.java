@@ -44,4 +44,10 @@ public class QunController {
         return qunService.pageList(queryRequest, name, userName);
     }
 
+    @GetMapping("up")
+    @ApiOperation("上报审核")
+    public JiebaoResponse up(String qunId) {
+        return qunService.up(qunId);
+    }
+
 }

@@ -50,7 +50,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     public JiebaoResponse addOrUpdate(MenusYear menusYear) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (menusYear.getMenusYearId() == null) {
-            Integer integer = this.baseMapper.exSit(menusYear.getContent());
+            Integer integer = this.baseMapper.exSit(menusYear.getContent(), menusYear.getYearId());
             if (integer != null) {
                 jiebaoResponse.failMessage("内容重复");
             }
@@ -58,7 +58,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         } else {
             MenusYear menusYear1 = getById(menusYear.getMenusYearId()); //数据库已存在的
             if (!menusYear1.getContent().equals(menusYear.getContent())) {  //如果内容发生了变化
-                Integer integer = this.baseMapper.exSit(menusYear.getContent());
+                Integer integer = this.baseMapper.exSit(menusYear.getContent(), menusYear.getYearId());
                 if (integer != null) {
                     jiebaoResponse.failMessage("内容重复");
                 }
@@ -81,7 +81,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
             yearZu.setNum(menus.getNum());
-            yearZu.setList(this.baseMapper.selectList(queryWrapper));
+            yearZu.setList(Collections.singletonList(this.baseMapper.selectList(queryWrapper)));
             list.add(yearZu);
         }
         return new JiebaoResponse().data(list).message("查询成功");
@@ -97,9 +97,9 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
-        List<MenusYear> excel = CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper);
+        CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper);
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = saveBatch(excel) ? jiebaoResponse.okMessage("考题与年份绑定成功") : jiebaoResponse.failMessage("考题与年份绑定失败");
+        jiebaoResponse = jiebaoResponse.okMessage("考题与年份绑定成功");
         return jiebaoResponse;
     }
 

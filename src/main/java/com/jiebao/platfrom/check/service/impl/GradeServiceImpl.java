@@ -70,34 +70,41 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setMessage(message);
         if (fpMessageIf)
             grade.setFpMessage(fpMessage);
-
         return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
 
     @Override
     public JiebaoResponse commit(String yearId, String deptId, Integer status) {   //  生成报表
-        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(("dept_id"), deptId);
-        queryWrapper.eq("year_id", yearId);
-        List<Grade> list = this.baseMapper.selectList(yearId, deptId);  //本条规产生的数据
+        if (this.baseMapper.exist(yearId, deptId) == null) {
+            return null;
+        }
         double JCKF = 0;  //基础工作的扣分项
         double JCJF = 0;//基础工作加分项
         double SGKF = 0;//工作效果扣分项
         double fpJcKf = 0, fpJcJf = 0, fpSgK = 0;
-        for (Grade grade : list) {
-            if (grade.getMenusYear().getParentId().equals(menusMapper.getId("基础工作"))) {  //此条数据对应   基础工作  扣分模块规则
-                if (grade.getNum() > 0) {  //如果大于0 证明为加分项
-                    JCJF += grade.getNum() == null ? 0 : grade.getNum();
-                    fpJcJf += grade.getFpNum() == null ? 0 : grade.getFpNum();
-                } else {  //反之 为扣分项
-                    JCKF += grade.getNum() == null ? 0 : grade.getNum();
-                    fpJcKf += grade.getFpNum() == null ? 0 : grade.getFpNum();
-
+        List<Menus> menusList = menusService.list();
+        for (Menus menus : menusList
+        ) {
+            List<Grade> grades = this.baseMapper.queryList(yearId, deptId, menus.getStandardId());
+            if (grades == null) {  //此分组无数据则结束
+                break;
+            }
+            if (menus.getName().equals("基础工作")) {
+                for (Grade grade : grades) {
+                    if (grade.getNum() == null || grade.getNum() > 0) {  //如果大于0 证明为加分项
+                        JCJF += grade.getNum() == null ? 0 : grade.getNum();
+                        fpJcJf += grade.getFpNum() == null ? 0 : grade.getFpNum();
+                    } else {  //反之 为扣分项
+                        JCKF += grade.getNum() == null ? 0 : grade.getNum();
+                        fpJcKf += grade.getFpNum() == null ? 0 : grade.getFpNum();
+                    }
                 }
-            } else {
-                SGKF += grade.getNum() == null ? 0 : grade.getNum();
-                fpSgK += grade.getFpNum() == null ? 0 : grade.getFpNum();
+            } else if (menus.getName().equals("工作效果")) {
+                for (Grade grade : grades) {
+                    SGKF += grade.getNum() == null ? 0 : grade.getNum();
+                    fpSgK += grade.getFpNum() == null ? 0 : grade.getFpNum();
+                }
             }
         }
         SGKF = 40 + SGKF;
@@ -144,27 +151,24 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         num.setFpJcWork(fpJcKf + fpJcJf + 20);
         num.setFpXgWork(fpSgK);
         num.setFpNumber(20 + fpJcKf + fpJcJf + fpSgK);
-        num.setStatus(status == null ? 0 : status);
+        num.setStatus(status);
         return new JiebaoResponse().message(numService.saveOrUpdate(num) ? "操作成功" : "操作失败");
     }
 
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
-//        List<Grade> list = this.baseMapper.selectList(yearId, DeptId);   //目标单位  关联扣分项
+        List<YearZu> list1 = new ArrayList<>();  //储存
         List<Menus> list = menusService.list();
         for (Menus menus : list
         ) {
-
+            YearZu yearZu = new YearZu();
+            yearZu.setId(menus.getStandardId());
+            yearZu.setNum(menus.getNum());
+            yearZu.setName(menus.getName());
+            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(yearId, DeptId, menus.getStandardId())));
+            list1.add(yearZu);
         }
-
-        Map<Object, Object> map = new HashMap<>();
-//        for (Grade grade : list
-//        ) {
-//            MenusYear menusYear = grade.getMenusYear();
-//            Menus menus = menusService.getById(menusYear.getParentId());
-//            map.put(menus.getEnglish(), grade);
-//        }
-        return new JiebaoResponse().data(map).message("操作成功");
+        return new JiebaoResponse().data(list1).message("操作成功");
     }
 
     @Override

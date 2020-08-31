@@ -50,7 +50,7 @@ public class CheckExcelUtil {
                         cell = row.createCell(j);
                     }
                     cell.setCellType(CellType.STRING);
-                    if (menusYearMapper.exSit(cell.getStringCellValue()) != null) {
+                    if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
                         break;
                     }
                     MenusYear menusYear = new MenusYear();

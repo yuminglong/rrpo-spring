@@ -29,6 +29,6 @@ public interface MenusYearMapper extends BaseMapper<MenusYear> {
     @Select("select count(*) from check_menus_year where year_id=#{yearId} and parent_id=#{parentId}")
     Integer countNumber(String yearId, String parentId);
 
-    @Select("select 1 from check_menus_year where content=#{content} limit 1")
-    Integer exSit(String content);
+    @Select("select 1 from check_menus_year where content=#{content} and year_id=#{yearId} limit 1")
+    Integer exSit(String content, String yearId);
 }

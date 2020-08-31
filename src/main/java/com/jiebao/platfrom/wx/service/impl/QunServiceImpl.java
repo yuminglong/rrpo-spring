@@ -43,7 +43,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             entity.setDate(new Date());
             entity.setCjDeptId(dept.getDeptId());
-            entity.setShDeptId(dept.getParentId());
+            entity.setShDeptId(dept.getDeptId());
             entity.setShStatus(0);
             entity.setShNumber(0);
             entity.setNumber(0);
@@ -98,6 +98,17 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         qun.setShNumber(qun.getShNumber() + 1);
         qun.setShDeptId(qun.getCjDeptId());
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
+    }
+
+    @Override
+    public JiebaoResponse up(String qunId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Qun qun = getById(qunId);
+        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        qun.setShDeptId(dept.getParentId());
+        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
         return jiebaoResponse;
     }
 }

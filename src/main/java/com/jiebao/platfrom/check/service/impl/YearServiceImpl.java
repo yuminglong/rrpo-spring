@@ -98,6 +98,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
                     grade.setYearId(yearId);
                     grade.setDeptId(dept.getDeptId());
                     grade.setCheckId(m.getMenusYearId());
+                    grade.setParentId(m.getParentId());
                     gradeArrayList.add(grade);
                 }
             }

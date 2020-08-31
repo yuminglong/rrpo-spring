@@ -35,4 +35,7 @@ public interface NumMapper extends BaseMapper<Num> {
     Num getNum(String yearId, String deptId);
 
 
+    @Select("select 1 from check_num where year_id=#{yearId} and dept_id=#{deptId} limit 1")
+    Integer exist(String yearId, String deptId);
+
 }

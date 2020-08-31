@@ -42,13 +42,18 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     DeptService deptService;
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId, Integer status) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
             deptId = dept.getDeptId();
+            queryWrapper.ne("status", 0);
+        } else {
+            if (status != null) {
+                queryWrapper.eq("status", status);
+            }
         }
-        QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (deptId != null) {
             queryWrapper.eq("dept_id", deptId);
         }
@@ -94,5 +99,12 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         map.put("fpGzXg", fpGzXg);
         map.put("fpCount", fpCount);
         return new JiebaoResponse().data(map).message("查询成功");
+    }
+
+    @Override
+    public JiebaoResponse exist(String yearId, String deptId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        jiebaoResponse=this.baseMapper.exist(yearId, deptId)==null?jiebaoResponse.okMessage("可以创建"):jiebaoResponse.failMessage("不可以创建");
+        return jiebaoResponse;
     }
 }
