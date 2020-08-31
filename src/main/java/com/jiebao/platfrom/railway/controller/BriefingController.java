@@ -76,7 +76,7 @@ public class BriefingController extends BaseController {
      */
     @PostMapping("/creat")
     @ApiOperation(value = "创建一条护路简报或创建并发送(修改)", notes = "创建一条护路简报或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds,BriefingCount [] briefingCounts) throws JiebaoException {
+    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds, @RequestParam(value = "briefingCounts")  List<BriefingCount>  briefingCounts) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
