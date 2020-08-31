@@ -25,9 +25,7 @@ import java.util.*;
 
 public class CheckExcelUtil {
 
-    public static List<MenusYear> excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper) {  //年考核 题库导入
-        List<MenusYear> list = new ArrayList<>();
-
+    public static void excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper) {  //年考核 题库导入
         try {
             InputStream inputStream = file.getInputStream();
             Workbook workbook = null;
@@ -55,21 +53,20 @@ public class CheckExcelUtil {
                     if (menusYearMapper.exSit(cell.getStringCellValue()) != null) {
                         break;
                     }
-
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
-                    list.add(menusYear);
+                    menusYearService.save(menusYear);
                 }
             }
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ;
-        return list;
+
+
     }
 
 
