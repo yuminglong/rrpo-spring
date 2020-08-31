@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class WordUtil {
 
-	private static String tempDoc = PathKit.getRootClassPath() + "\\tempDoc.docx";
-	private static String styleDoc = PathKit.getRootClassPath() + "\\styleDoc.docx";
+	private static String tempDoc = PathKit.getRootClassPath() + "\\tempDoc.doc";
+	private static String styleDoc = PathKit.getRootClassPath() + "\\styleDoc.doc";期
 
 	public void build(String filename, Map<String, Object> params) throws IOException {
 		FileInputStream tempInputStream = new FileInputStream(tempDoc);
