@@ -184,6 +184,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.59</version>
         </dependency>
+        <!-- poi(样式) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.3</version>
+        </dependency>
         <!-- dm8
         <dependency>
             <groupId>com.dameng</groupId>
