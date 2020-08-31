@@ -1,12 +1,15 @@
 package com.jiebao.platfrom.common.authentication;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
+import com.jiebao.platfrom.common.exception.RedisConnectException;
 import com.jiebao.platfrom.common.service.RedisService;
 import com.jiebao.platfrom.common.utils.HttpContextUtil;
 import com.jiebao.platfrom.common.utils.IPUtil;
 import com.jiebao.platfrom.common.utils.JiebaoUtil;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.manager.UserManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -17,6 +20,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
@@ -26,12 +30,15 @@ import java.util.Set;
  *
  * @author Jiebao.cn
  */
+@Slf4j
 public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private RedisService redisService;
     @Autowired
     private UserManager userManager;
+    @Value("${jiebao.shiro.jwtTimeOut}")
+    private int jwtTimeOut;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -90,6 +97,12 @@ public class ShiroRealm extends AuthorizingRealm {
 
         if (StringUtils.isBlank(username))
             throw new AuthenticationException("token校验不通过");
+
+        try {
+            redisService.set(JiebaoConstant.TOKEN_CACHE_PREFIX + encryptToken + StringPool.DOT + ip, encryptToken, jwtTimeOut * 1000L);
+        } catch (RedisConnectException e) {
+            log.warn("ShiroRealm：Refresh user token exception,line: 103");
+        }
 
         // 通过用户名查询用户信息
         User user = userManager.getUser(username);
