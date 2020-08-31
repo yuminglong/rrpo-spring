@@ -3,23 +3,29 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.Grade;
+import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.domain.Year;
 import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.check.service.IGradeService;
+import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.check.service.IYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Menu;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,6 +43,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     MenusYearMapper menusYearMapper;
     @Autowired
     DeptService deptService;
+    @Autowired
+    IMenusService menusService;
 
     @Autowired
     IGradeService gradeService;
@@ -62,9 +70,13 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Year> list = this.baseMapper.list(queryWrapper);
         for (Year year : list
         ) {
-            year.setCount(menusYearMapper.countNumber(year.getYearId()));
-//            year.setJcNumber(menusYearMapper.jcNumber(year.getYearId()));
-//            year.setXgNumber(menusYearMapper.xgNumber(year.getYearId()));
+            List<Menus> list1 = menusService.list();  //类型分组
+            HashMap<String, Integer> map = new HashMap<>();
+            for (Menus menu : list1
+            ) {
+                map.put(menu.getEnglish(), menusYearMapper.countNumber(year.getYearId(), menu.getStandardId()));
+            }
+            year.setMap(map);
         }
         return list;
     }
@@ -81,7 +93,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             if (!dept.getDeptName().contains("公安处")) {
                 for (MenusYear m : menusYearList
                 ) {
-                      //判断是否绑定已经  没写
+                    //判断是否绑定已经  没写
                     Grade grade = new Grade();
                     grade.setYearId(yearId);
                     grade.setDeptId(dept.getDeptId());

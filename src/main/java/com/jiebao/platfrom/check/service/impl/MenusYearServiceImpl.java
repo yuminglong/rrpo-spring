@@ -78,7 +78,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             queryWrapper.eq("parent_id", menus.getStandardId());
             map.put(menus.getEnglish(), this.baseMapper.selectList(queryWrapper));
         }
-
         return new JiebaoResponse().data(map).message("查询成功");
     }
 
