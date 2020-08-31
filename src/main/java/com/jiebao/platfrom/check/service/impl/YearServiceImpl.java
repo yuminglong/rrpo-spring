@@ -62,8 +62,9 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Year> list = this.baseMapper.list(queryWrapper);
         for (Year year : list
         ) {
-            year.setJcNumber(menusYearMapper.jcNumber(year.getYearId()));
-            year.setXgNumber(menusYearMapper.xgNumber(year.getYearId()));
+            year.setCount(menusYearMapper.countNumber(year.getYearId()));
+//            year.setJcNumber(menusYearMapper.jcNumber(year.getYearId()));
+//            year.setXgNumber(menusYearMapper.xgNumber(year.getYearId()));
         }
         return list;
     }

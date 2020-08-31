@@ -74,8 +74,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         for (Menus menus : menusS  //考核分组类型
         ) {
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("year_id", yearId);
-            queryWrapper.in("parent_id", menus.getStandardId());
+            queryWrapper.eq("year_id", yearId);
+            queryWrapper.eq("parent_id", menus.getStandardId());
             map.put(menus.getEnglish(), this.baseMapper.selectList(queryWrapper));
         }
 
