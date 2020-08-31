@@ -39,12 +39,12 @@ public class MenusController {
     }
 
 
-//    @GetMapping("lists")
-//    @ApiOperation("通过主级 父类 查找子项")
-//    @Log("获取树形列表")
-//    public JiebaoResponse lists(QueryRequest queryRequest, String menusId) {
-//        return menusService.lists(queryRequest, menusId);
-//    }
+    @GetMapping("list")
+    @ApiOperation("集合")
+    @Log("集合考核分组信息")
+    public JiebaoResponse list() {
+        return menusService.lists();
+    }
 
     @GetMapping("selectById")
     @ApiOperation("查询对应扣分项")
