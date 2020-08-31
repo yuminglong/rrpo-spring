@@ -46,8 +46,8 @@ public class GradeController {
     @PostMapping("addGrade")
     @ApiOperation("绑定关系")
     @Log("绑定关系")
-    public JiebaoResponse addGrade(String menusId, Double number, String yearId, String deptId, Double fpNumber, String message, String fpMessage) {
-        return iGradeService.addGrade(menusId, number, yearId, deptId, fpNumber, message, fpMessage);
+    public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {
+        return iGradeService.addGrade( gradeId,  number,  fpNumber,  message,  fpMessage);
     }
 
     @PostMapping("addZz")
@@ -60,15 +60,14 @@ public class GradeController {
     @GetMapping("commit")
     @ApiOperation("最后提交  分数统计生成表")
     @Log("最后提交  分数统计生成表")
-    public JiebaoResponse commit(String yearId, String deptId) {
-        return iGradeService.commit(yearId, deptId);
+    public JiebaoResponse commit(String yearId, String deptId,Integer status) {
+        return iGradeService.commit(yearId, deptId,status);
     }
 
     @PostMapping("checkStatus")
     @ApiOperation("疑点标记")
     @Log("疑点标记")
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
-
         return iGradeService.checkStatus(gradeId, zzId, fileId, status);
     }
 }

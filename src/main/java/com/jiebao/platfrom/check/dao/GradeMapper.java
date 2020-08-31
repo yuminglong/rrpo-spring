@@ -6,8 +6,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.check.domain.GradeZz;
 import com.jiebao.platfrom.system.domain.File;
 import io.swagger.models.auth.In;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -43,4 +44,10 @@ public interface GradeMapper extends BaseMapper<Grade> {
 
     @Update("update check_num set audit=#{status} where year_id=#{yearId} and dept_id=#{deptId}")
     Integer updateNum(String yearId, String deptId, Integer status); //条件 修改状态
+
+    @Select("select * from check_grade where year_id=#{yearId} and dept_id=#{deptId}")
+    @Results({
+            @Result(property = "menusYear", column = "check_id", one = @One(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.selectById"))
+    })
+    List<Grade> selectList(String yearId, String deptId);//查找 栏
 }

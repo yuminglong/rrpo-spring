@@ -22,8 +22,8 @@ import java.util.List;
  * @since 2020-08-22
  */
 public interface MonthMapper extends BaseMapper<Month> {
-    @Select("select count(*) from  wx_month where month=#{month} and last_dept=#{deptId}")
-    Integer count(String month, String deptId);
+    @Select("select count(*) from  wx_month where month=#{month} and sh_dept_id=#{deptId} and status=1")
+    Integer count(String month, String deptId);   //查看  此市级部门 上传的阅读  评选有几条
 
     @Select("select * from wx_month ${ew.customSqlSegment}")
     @Results({

@@ -14,9 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-08-22
  */
 public interface IMonthService extends IService<Month> {
-    JiebaoResponse pageList(QueryRequest queryRequest, String month);  //月份 分页查询
+    JiebaoResponse pageList(QueryRequest queryRequest, String month,Integer look);  //月份 分页查询
 
     JiebaoResponse appear(String monthId);  //上报
 
-    JiebaoResponse tgList(QueryRequest queryRequest);  //查询管辖区域 最终被选上的  阅读精选
+
 }

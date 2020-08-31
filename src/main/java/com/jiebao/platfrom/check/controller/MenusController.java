@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/check/menus")
-@Api(tags = "check-考核项")
+@Api(tags = "check-考核组")
 public class MenusController {
     @Autowired
     IMenusService menusService;
@@ -39,12 +39,12 @@ public class MenusController {
     }
 
 
-    @GetMapping("lists")
-    @ApiOperation("通过主级 父类 查找子项")
-    @Log("获取树形列表")
-    public JiebaoResponse lists(QueryRequest queryRequest, String menusId) {
-        return menusService.lists(queryRequest, menusId);
-    }
+//    @GetMapping("lists")
+//    @ApiOperation("通过主级 父类 查找子项")
+//    @Log("获取树形列表")
+//    public JiebaoResponse lists(QueryRequest queryRequest, String menusId) {
+//        return menusService.lists(queryRequest, menusId);
+//    }
 
     @GetMapping("selectById")
     @ApiOperation("查询对应扣分项")
@@ -60,16 +60,16 @@ public class MenusController {
         return menusService.deleteById(menusId);
     }
 
-    @DeleteMapping("deleteListById/{menusIdS}")
-    @ApiOperation("集合删除")
-    @Log("集合删除")
-    public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
-        return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
-    }
+//    @DeleteMapping("deleteListById/{menusIdS}")
+//    @ApiOperation("集合删除")
+//    @Log("集合删除")
+//    public JiebaoResponse deleteListById(@PathVariable String[] menusIdS) {
+//        return new JiebaoResponse().message(menusService.removeByIds(Arrays.asList(menusIdS)) ? "删除成功" : "删除失败");
+//    }
 
-    @GetMapping("fatherList")
-    @ApiOperation("获取主菜单")
-    public JiebaoResponse fatherList() {
-        return menusService.fatherList();
-    }
+//    @GetMapping("fatherList")
+//    @ApiOperation("获取主菜单")
+//    public JiebaoResponse fatherList() {
+//        return menusService.fatherList();
+//    }
 }

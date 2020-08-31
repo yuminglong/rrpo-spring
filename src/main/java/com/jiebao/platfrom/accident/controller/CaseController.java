@@ -54,4 +54,11 @@ public class CaseController {
     public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
         return caseService.list(queryRequest, cityCsId, cityQxId, startDate, endDate);
     }
+
+    @GetMapping("map")
+    @ApiOperation("获取地图展示数据")
+    @Log("获取地图展示数据")
+    public JiebaoResponse map(String startDate, String endDate, Integer status) {
+        return caseService.map(startDate, endDate, status);
+    }
 }

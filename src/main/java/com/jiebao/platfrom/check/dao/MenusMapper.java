@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -16,6 +17,17 @@ import javax.annotation.Resource;
  */
 @Resource
 public interface MenusMapper extends BaseMapper<Menus> {
-    @Select("select menus_id from check_menus where content=#{name}")
+    @Select("select standard_id from check_menus where name=#{name}")
     String getMenusIdByName(String name);//通过name   也就是 content内容获得对应主键id
+
+    @Select("select * from check_menus order by date asc")
+    List<Menus> getMenus();
+
+    @Select("select 1 from check_menus where name=#{name} limit 1")
+    Integer countName(String name);
+
+    @Select("select standard_id from check_menus where name=#{name} ")
+    String  getId(String name);
+
+
 }

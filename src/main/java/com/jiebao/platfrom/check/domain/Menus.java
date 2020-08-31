@@ -34,25 +34,13 @@ public class Menus implements Serializable {
     /**
      * 考核菜单列表
      */
-    @TableId(value = "menus_id", type = IdType.UUID)
-    private String menusId;
+    @TableId(value = "standard_id", type = IdType.UUID)
+    private String standardId;
 
-    @ApiModelProperty(value = "考核父类", example = "哈哈")
-    private String parentId;
+    private String name;
 
-    /**
-     * 考核模块分数
-     */
-    @ApiModelProperty(value = "考核内容", example = "哈哈")
-    private String content;
-    @ApiModelProperty(value = "创建时间", example = "2020/04/03 12:15:12")
     private Date date;
-    @TableField(exist = false)
-    private List<Menus> childMenus;
 
+    private String english;//模块简称
 
-
-    private Integer accessory;//是否可传附件 0  不可传   1 可传
-    @TableField(exist = false)
-    private Grade grade;
 }

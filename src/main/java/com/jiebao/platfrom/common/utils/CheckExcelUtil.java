@@ -1,6 +1,11 @@
 package com.jiebao.platfrom.common.utils;
 
 import com.jiebao.platfrom.attendance.daomain.Record;
+import com.jiebao.platfrom.check.dao.MenusMapper;
+import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.domain.MenusYear;
+import com.jiebao.platfrom.check.service.IMenusService;
+import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import org.apache.poi.hssf.usermodel.*;
@@ -16,28 +21,29 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CheckExcelUtil {
 
-    public static Map<String, List<String>> excel(MultipartFile file) {  //年考核 题库导入
-        List<String> list = new ArrayList<>();//基础工作
-        List<String> xgList = new ArrayList<>();//效果
-        String filename = file.getOriginalFilename();
-        System.out.println(filename);
+    public static List<MenusYear> excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper) {  //年考核 题库导入
+        List<MenusYear> list = new ArrayList<>();
+
         try {
             InputStream inputStream = file.getInputStream();
             Workbook workbook = null;
-            if (judegExcelEdition(filename)) {
-                workbook = new XSSFWorkbook(inputStream);//2007
-            } else {
-                workbook = new HSSFWorkbook(inputStream);
-            }
+            workbook = new XSSFWorkbook(inputStream);//2007
             Sheet sheetAt = workbook.getSheetAt(0);
-            Row row = null;
+//            Row row = null;
+            Row row = sheetAt.getRow(0);
+            String[] arr = new String[row.getPhysicalNumberOfCells()];
+            for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
+                Cell cell = row.getCell(i);
+                if (cell == null) {
+                    cell = row.createCell(i);
+                }
+                cell.setCellType(CellType.STRING);
+                arr[i] = menusService.selectByName(cell.getStringCellValue());
+            }
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 row = sheetAt.getRow(i); //对应行
                 for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
@@ -46,31 +52,26 @@ public class CheckExcelUtil {
                         cell = row.createCell(j);
                     }
                     cell.setCellType(CellType.STRING);
-                    if (j == 0) {
-                        list.add(cell.getStringCellValue());
-                    } else if (j == 1) {
-                        xgList.add(cell.getStringCellValue());
+                    if (menusYearMapper.exSit(cell.getStringCellValue()) != null) {
+                        break;
                     }
+
+                    MenusYear menusYear = new MenusYear();
+                    menusYear.setYearId(yearId);
+                    menusYear.setParentId(arr[j]);
+                    menusYear.setContent(cell.getStringCellValue());
+                    menusYear.setDate(new Date());
+                    list.add(menusYear);
                 }
             }
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Map<String, List<String>> map = new HashMap<>();
-        map.put("jc", list);
-        map.put("xg", xgList);
-        return map;
+        ;
+        return list;
     }
 
-    private static boolean judegExcelEdition(String fileName) {
-        int i = fileName.lastIndexOf(".");
-        if (fileName.substring(i).equals("xls")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     private static void fz(HSSFCellStyle cellStyle, HSSFCell cell1, String name) {
         cell1.setCellValue(name);
@@ -78,7 +79,6 @@ public class CheckExcelUtil {
     }
 
     public static void exportExcel(List<Record> list, HttpServletResponse response, UserService userService, String dateMonth) {
-
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         //垂直居中
@@ -180,8 +180,6 @@ public class CheckExcelUtil {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(0, 2, ii, ii);
             sheet.addMergedRegion(cellRangeAddress);
         }
-
-
         //内容区
         for (Record record : list
         ) {
