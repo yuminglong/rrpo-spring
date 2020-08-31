@@ -6,6 +6,7 @@ import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.Year;
+import com.jiebao.platfrom.check.domain.YearZu;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -70,15 +71,19 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     @Override
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
         List<Menus> menusS = menusMapper.getMenus();
-        Map<String, List<MenusYear>> map = new HashMap<>();
+        List<YearZu> list = new ArrayList<>();
         for (Menus menus : menusS  //考核分组类型
         ) {
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("parent_id", menus.getStandardId());
-            map.put(menus.getEnglish(), this.baseMapper.selectList(queryWrapper));
+            YearZu yearZu = new YearZu();
+            yearZu.setId(menus.getStandardId());
+            yearZu.setName(menus.getName());
+            yearZu.setList(this.baseMapper.selectList(queryWrapper));
+            list.add(yearZu);
         }
-        return new JiebaoResponse().data(map).message("查询成功");
+        return new JiebaoResponse().data(list).message("查询成功");
     }
 
     @Override
@@ -91,7 +96,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
-        List<MenusYear> excel = CheckExcelUtil.excel(year_id, multipartFile, menusService, this,menusYearMapper);
+        List<MenusYear> excel = CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper);
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         jiebaoResponse = saveBatch(excel) ? jiebaoResponse.okMessage("考题与年份绑定成功") : jiebaoResponse.failMessage("考题与年份绑定失败");
         return jiebaoResponse;

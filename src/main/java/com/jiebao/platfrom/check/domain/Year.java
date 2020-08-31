@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
@@ -41,7 +42,7 @@ public class Year implements Serializable {
     private String yearDate;
 
     @TableField(exist = false)
-    private Map<String, Integer> map;//基础数据对应多少个数据
+    private List<YearSize> list;//基础数据对应多少个数据
 
 
 }

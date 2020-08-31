@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
-import com.jiebao.platfrom.check.domain.Grade;
-import com.jiebao.platfrom.check.domain.Menus;
-import com.jiebao.platfrom.check.domain.MenusYear;
-import com.jiebao.platfrom.check.domain.Year;
+import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IMenusService;
@@ -71,12 +68,15 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         for (Year year : list
         ) {
             List<Menus> list1 = menusService.list();  //类型分组
-            HashMap<String, Integer> map = new HashMap<>();
+            List<YearSize> list2 = new ArrayList<>();//赋值存储
             for (Menus menu : list1
             ) {
-                map.put(menu.getEnglish(), menusYearMapper.countNumber(year.getYearId(), menu.getStandardId()));
+                YearSize yearSize = new YearSize();
+                yearSize.setName(menu.getName());
+                yearSize.setCount(menusYearMapper.countNumber(year.getYearId(), menu.getStandardId()));
+                list2.add(yearSize);
             }
-            year.setMap(map);
+            year.setList(list2);
         }
         return list;
     }
