@@ -97,6 +97,7 @@ public class BriefingController extends BaseController {
                 }
                 for (BriefingCount b:briefingCounts
                 ) {
+                    b.setBriefingId(briefing.getId());
                     briefingCountService.save(b);
                 }
                 return new JiebaoResponse().message("创建一条护路简报成功");
