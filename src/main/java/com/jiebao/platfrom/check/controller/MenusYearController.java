@@ -50,7 +50,7 @@ public class MenusYearController {
     @DeleteMapping("deleteByLists")
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
-    public JiebaoResponse deleteByLists(String[] listS, String yearId) {
+    public JiebaoResponse deleteByLists(String[] listS) {
         return menusYearService.deleteByListAndYearDate(listS);
     }
 
