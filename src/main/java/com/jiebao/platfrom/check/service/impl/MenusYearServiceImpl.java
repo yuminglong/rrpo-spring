@@ -80,6 +80,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             YearZu yearZu = new YearZu();
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
+            yearZu.setNum(menus.getNum());
             yearZu.setList(this.baseMapper.selectList(queryWrapper));
             list.add(yearZu);
         }

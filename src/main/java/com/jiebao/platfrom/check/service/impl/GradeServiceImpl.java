@@ -150,14 +150,20 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
-        List<Grade> list = this.baseMapper.selectList(yearId, DeptId);   //目标单位  关联扣分项
-        Map<Object, Object> map = new HashMap<>();
-        for (Grade grade : list
+//        List<Grade> list = this.baseMapper.selectList(yearId, DeptId);   //目标单位  关联扣分项
+        List<Menus> list = menusService.list();
+        for (Menus menus : list
         ) {
-            MenusYear menusYear = grade.getMenusYear();
-            Menus menus = menusService.getById(menusYear.getParentId());
-            map.put(menus.getEnglish(), grade);
+
         }
+
+        Map<Object, Object> map = new HashMap<>();
+//        for (Grade grade : list
+//        ) {
+//            MenusYear menusYear = grade.getMenusYear();
+//            Menus menus = menusService.getById(menusYear.getParentId());
+//            map.put(menus.getEnglish(), grade);
+//        }
         return new JiebaoResponse().data(map).message("操作成功");
     }
 
