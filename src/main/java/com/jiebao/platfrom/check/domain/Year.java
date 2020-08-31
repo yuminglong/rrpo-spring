@@ -40,6 +40,9 @@ public class Year implements Serializable {
     private String yearDate;
 
     @TableField(exist = false)
+    private Integer count;//基础数据对应多少个数据
+
+    @TableField(exist = false)
     private Integer jcNumber;//基础数据对应多少个数据
     @TableField(exist = false)
     private Integer xgNumber;//工作效果对应的多少数据

@@ -25,6 +25,7 @@ public interface MenusYearMapper extends BaseMapper<MenusYear> {
     @Select("select count(*) from check_menus_year where year_id=#{yearId} and parent_id=(select standard_id from check_menus where content='工作效果')")
     Integer xgNumber(String yearId);
 
+
     @Select("select count(*) from check_menus_year where year_id=#{yearId}")
     Integer countNumber(String yearId);
 
