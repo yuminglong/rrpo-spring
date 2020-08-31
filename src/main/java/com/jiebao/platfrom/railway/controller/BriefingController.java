@@ -11,7 +11,9 @@ import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.BriefingMapper;
 import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.domain.Briefing;
+import com.jiebao.platfrom.railway.domain.BriefingCount;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
+import com.jiebao.platfrom.railway.service.BriefingCountService;
 import com.jiebao.platfrom.railway.service.BriefingService;
 import com.jiebao.platfrom.railway.service.BriefingUserService;
 import com.jiebao.platfrom.system.dao.FileMapper;
@@ -64,6 +66,9 @@ public class BriefingController extends BaseController {
 
     @Autowired
     private DeptService deptService;
+
+    @Autowired
+    private BriefingCountService briefingCountService;
 
 
     /**
@@ -293,4 +298,23 @@ public class BriefingController extends BaseController {
         rspData.put("total", briefingUserList.getTotal());
         return new JiebaoResponse().data(rspData);
     }
+
+
+
+    @PostMapping("/countBriefing")
+    @ApiOperation(value = "统计", notes = "统计", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse countBriefing(@Valid List<BriefingCount> briefingCounts) throws JiebaoException {
+        try {
+            for (BriefingCount b:briefingCounts
+                 ) {
+                briefingCountService.save(b);
+            }
+            return new JiebaoResponse().okMessage("添加成功");
+        } catch (Exception e) {
+            throw  new JiebaoException("添加失败");
+        }
+
+    }
+
+
 }
