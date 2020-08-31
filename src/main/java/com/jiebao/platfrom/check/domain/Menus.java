@@ -41,6 +41,6 @@ public class Menus implements Serializable {
 
     private Date date;
 
-    private String english;//模块简称
+    private Integer num;
 
 }
