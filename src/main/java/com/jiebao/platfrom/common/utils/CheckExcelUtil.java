@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.common.utils;
 
 import com.jiebao.platfrom.attendance.daomain.Record;
+import com.jiebao.platfrom.check.dao.MenusMapper;
+import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
@@ -23,7 +25,7 @@ import java.util.*;
 
 public class CheckExcelUtil {
 
-    public static List<MenusYear> excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService) {  //年考核 题库导入
+    public static List<MenusYear> excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper) {  //年考核 题库导入
         List<MenusYear> list = new ArrayList<>();
 
         try {
@@ -50,8 +52,11 @@ public class CheckExcelUtil {
                         cell = row.createCell(j);
                     }
                     cell.setCellType(CellType.STRING);
-                    MenusYear menusYear = new MenusYear();
+                    if (menusYearMapper.exSit(cell.getStringCellValue()) != null) {
+                        break;
+                    }
 
+                    MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
@@ -62,7 +67,8 @@ public class CheckExcelUtil {
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
-        };
+        }
+        ;
         return list;
     }
 

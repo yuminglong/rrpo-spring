@@ -35,6 +35,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     IMenusService menusService;
     @Autowired
     IYearService yearService;
+    @Autowired
+    MenusYearMapper menusYearMapper;
 
     @Override
     public boolean saveOrUpdate(MenusYear entity) {
@@ -90,7 +92,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
-        List<MenusYear> excel = CheckExcelUtil.excel(year_id, multipartFile, menusService, this);
+        List<MenusYear> excel = CheckExcelUtil.excel(year_id, multipartFile, menusService, this,menusYearMapper);
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         jiebaoResponse = saveBatch(excel) ? jiebaoResponse.okMessage("考题与年份绑定成功") : jiebaoResponse.failMessage("考题与年份绑定失败");
         return jiebaoResponse;
