@@ -38,4 +38,8 @@ public class BriefingCount {
 
     @ApiModelProperty(value = "统计")
     private Integer count;
+
+    @ApiModelProperty(value = "时间")
+    private Date creatTime;
+
 }
