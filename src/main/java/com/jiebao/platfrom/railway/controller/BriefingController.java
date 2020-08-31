@@ -303,11 +303,12 @@ public class BriefingController extends BaseController {
 
     @PostMapping("/countBriefing")
     @ApiOperation(value = "统计", notes = "统计", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse countBriefing(@Valid BriefingCount [] briefingCounts) throws JiebaoException {
+    public JiebaoResponse countBriefing(@Valid List<BriefingCount> briefingCounts) throws JiebaoException {
         try {
-            Arrays.stream(briefingCounts).forEach(briefingCount -> {
-                briefingCountService.save(briefingCount);
-            });
+            for (BriefingCount b:briefingCounts
+                 ) {
+                briefingCountService.save(b);
+            }
             return new JiebaoResponse().okMessage("添加成功");
         } catch (Exception e) {
             throw  new JiebaoException("添加失败");
