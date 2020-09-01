@@ -93,16 +93,28 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (menus.getName().equals("基础工作")) {
                 for (Grade grade : grades) {
                     if (grade.getNum() == null || grade.getNum() > 0) {  //如果大于0 证明为加分项
-                        JCJF += grade.getNum() == null ? 0 : grade.getNum();
+                        if (grade.getNum2() != null) {
+                            JCJF += grade.getNum2();
+                        } else {
+                            JCJF += grade.getNum() == null ? 0 : grade.getNum();
+                        }
                         fpJcJf += grade.getFpNum() == null ? 0 : grade.getFpNum();
                     } else {  //反之 为扣分项
-                        JCKF += grade.getNum() == null ? 0 : grade.getNum();
+                        if (grade.getNum2() != null) {
+                            JCKF += grade.getNum2();
+                        } else {
+                            JCKF += grade.getNum() == null ? 0 : grade.getNum();
+                        }
                         fpJcKf += grade.getFpNum() == null ? 0 : grade.getFpNum();
                     }
                 }
             } else if (menus.getName().equals("工作效果")) {
                 for (Grade grade : grades) {
-                    SGKF += grade.getNum() == null ? 0 : grade.getNum();
+                    if (grade.getNum2() != null) {
+                        SGKF += grade.getNum2();
+                    } else {
+                        SGKF += grade.getNum() == null ? 0 : grade.getNum();
+                    }
                     fpSgK += grade.getFpNum() == null ? 0 : grade.getFpNum();
                 }
             }
