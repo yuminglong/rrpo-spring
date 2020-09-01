@@ -432,10 +432,10 @@ public class PrizeController extends BaseController {
         //模板文件地址
         //String inputUrl = "D:\\tempDoc.docx";
         String inputUrl =  this.getClass().getResourceAsStream("/doc/tempDoc.docx").toString();
+        System.out.println("-------------"+inputUrl+"---------------------");
         //新生产的模板文件
         String outputUrl = "D:\\newDoc.docx";
         WorderToNewWordUtils.changWord(inputUrl, outputUrl, map, testList);
-
         return  new JiebaoResponse().okMessage("ok");
     }
 
