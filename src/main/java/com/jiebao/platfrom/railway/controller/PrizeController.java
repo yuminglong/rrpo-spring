@@ -271,9 +271,9 @@ public class PrizeController extends BaseController {
         return byId;
     }
 
-    @GetMapping("/report")
-    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion,String moneys,  String[] prizeIds, String sendDeptId) throws JiebaoException {
+    @PostMapping("/report")
+    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse PrizeReport(String auditOpinion,String moneys,  String[] prizeIds, String sendDeptId) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -292,6 +292,7 @@ public class PrizeController extends BaseController {
                 depts = deptMapper.selectByMap(columnMap);
             }
             List<Dept> finalDepts = depts;
+            System.out.println(prizeIds+"**********************");
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 //查询该级组织机构是否有审批内容
                 Integer result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
@@ -317,17 +318,18 @@ public class PrizeController extends BaseController {
                         prizeMapper.updateStatusForCity(prizeId);
                     }
 
+                    PrizeOpinion prizeOpinion = new PrizeOpinion();
                     prizeOpinion.setRank(byId.getRank());
                     //id必须传来
                     prizeOpinion.setPrizeId(prizeId);
-                    prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
+                    prizeOpinion.setAuditOpinion(auditOpinion);
                    // prizeOpinion.setMoney(prizeOpinion.getMoney());
                     prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
             //解析json数组
-            if (moneys !=null && !"".equals(moneys)){
                 JSONArray jsonArray = JSON.parseArray(moneys);
+                System.out.println(jsonArray.toString()+"-----------------------------");
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                     String prizeId = jsonObject.getString("prizeId");
@@ -335,7 +337,7 @@ public class PrizeController extends BaseController {
                     System.out.println(jsonObject.getString("prizeId")+":"+jsonObject.getInteger("opinionMoney"));
                     prizeOpinionService.saveByPrizeId(prizeId,opinionMoney,byId.getRank());
                 }
-            }
+
 
 
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
