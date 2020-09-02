@@ -32,7 +32,7 @@ import java.util.Arrays;
  */
 @RestController
 @RequestMapping("/wx/month")
-@Api(tags = "wx-月度评选")
+@Api(tags = "wx_月度评选")
 public class MonthController {
     @Autowired
     IMonthService monthService;
