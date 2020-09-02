@@ -54,12 +54,13 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
             } else {
                 queryWrapper.eq("status", status);
             }
+            queryWrapper.eq("dept_id", dept.getDeptId()); //当前部门
         } else {
             if (status != null) {
                 queryWrapper.eq("status", status);
             }
         }
-            queryWrapper.eq("dept_id", dept.getDeptId());
+
         if (yearId != null) {
             queryWrapper.eq("year_id", yearId);
         }
