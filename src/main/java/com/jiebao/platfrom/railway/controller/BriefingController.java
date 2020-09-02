@@ -1,6 +1,9 @@
 package com.jiebao.platfrom.railway.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
@@ -76,7 +79,7 @@ public class BriefingController extends BaseController {
      */
     @PostMapping("/creat")
     @ApiOperation(value = "创建一条护路简报或创建并发送(修改)", notes = "创建一条护路简报或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds, @RequestParam(value = "briefingCounts")  List<BriefingCount>  briefingCounts) throws JiebaoException {
+    public JiebaoResponse creatBriefing(@Valid Briefing briefing, String[] sendUserIds, String[] fileIds, String briefingCounts) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
@@ -95,11 +98,22 @@ public class BriefingController extends BaseController {
                         briefingUserService.saveByUserId(briefing.getId(), sendUserId, byId.getUsername());
                     });
                 }
-                for (BriefingCount b:briefingCounts
-                ) {
-                    b.setBriefingId(briefing.getId());
-                    briefingCountService.save(b);
-                }
+                //解析json数组
+
+                if(briefingCounts != null && !"".equals(briefingCounts)){
+                    JSONArray jsonArray = JSON.parseArray(briefingCounts);
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                    System.out.println(jsonObject.getString("deptId") + ":" + jsonObject.getInteger("count"));
+                    BriefingCount briefingCount = new BriefingCount();
+                    briefingCount.setBriefingId(briefing.getId());
+                    briefingCount.setDeptId(jsonObject.getString("deptId"));
+                    briefingCount.setCount(jsonObject.getInteger("count"));
+                    briefingCountService.save(briefingCount);
+                }}
+
+
+
                 return new JiebaoResponse().message("创建一条护路简报成功");
             } else if (briefing.getStatus() == 3) {
                 boolean save = briefingService.saveOrUpdate(briefing);

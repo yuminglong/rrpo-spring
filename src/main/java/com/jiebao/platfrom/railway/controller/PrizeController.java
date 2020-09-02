@@ -1,6 +1,9 @@
 package com.jiebao.platfrom.railway.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -270,7 +273,7 @@ public class PrizeController extends BaseController {
 
     @GetMapping("/report")
     @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion, String[] prizeIds, String sendDeptId) throws JiebaoException {
+    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion,String moneys,  String[] prizeIds, String sendDeptId) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -318,10 +321,23 @@ public class PrizeController extends BaseController {
                     //id必须传来
                     prizeOpinion.setPrizeId(prizeId);
                     prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
-                    prizeOpinion.setMoney(prizeOpinion.getMoney());
+                   // prizeOpinion.setMoney(prizeOpinion.getMoney());
                     prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
+            //解析json数组
+            if (moneys !=null && !"".equals(moneys)){
+                JSONArray jsonArray = JSON.parseArray(moneys);
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                    String prizeId = jsonObject.getString("prizeId");
+                    String opinionMoney = jsonObject.getString("opinionMoney");
+                    System.out.println(jsonObject.getString("prizeId")+":"+jsonObject.getInteger("opinionMoney"));
+                    prizeOpinionService.saveByPrizeId(prizeId,opinionMoney,byId.getRank());
+                }
+            }
+
+
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
         } catch (Exception e) {
             message = "审批或上报失败";

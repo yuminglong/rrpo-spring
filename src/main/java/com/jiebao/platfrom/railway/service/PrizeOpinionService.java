@@ -14,6 +14,6 @@ import com.jiebao.platfrom.railway.domain.PrizeUser;
  */
 public interface PrizeOpinionService extends IService<PrizeOpinion> {
 
-
+   boolean saveByPrizeId(String prizeId,String opinionMoney,Integer rank);
 
 }
