@@ -48,11 +48,13 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
             deptId = dept.getDeptId();
-            if (status != 0 && status != 2) {
-                queryWrapper.ne("status", 0);
-                queryWrapper.ne("status", 2);
-            } else {
-                queryWrapper.eq("status", status);
+            if (status != null) {
+                if (status != 0 && status != 2) {
+                    queryWrapper.ne("status", 0);
+                    queryWrapper.ne("status", 2);
+                } else {
+                    queryWrapper.eq("status", status);
+                }
             }
 
         } else {
