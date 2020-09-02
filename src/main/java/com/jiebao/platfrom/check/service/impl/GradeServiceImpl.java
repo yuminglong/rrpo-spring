@@ -8,7 +8,9 @@ import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.FileService;
@@ -49,6 +51,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     GradeMapper gradeMapper;
     @Autowired
     MenusYearMapper menusYearMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
@@ -75,7 +79,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public JiebaoResponse addGrade2(String gradeId, Double number, String message) {
         Grade grade = getById(gradeId);
         grade.setNum2(number == null ? 0 : number);
-        grade.setMessage(message);
+        grade.setMessage2(message);
         return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
@@ -92,7 +96,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         List<Menus> menusList = menusService.list();
         for (Menus menus : menusList
         ) {
-            List<Grade> grades = this.baseMapper.queryList(yearId, deptId, menus.getStandardId());
+            QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_id", yearId);
+            queryWrapper.eq("dept_id", deptId);
+            queryWrapper.eq("parent_id", menus.getStandardId());
+            List<Grade> grades = this.baseMapper.queryList(queryWrapper);
             if (grades == null) {  //此分组无数据则结束
                 break;
             }
@@ -183,7 +191,12 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             yearZu.setId(menus.getStandardId());
             yearZu.setNum(menus.getNum());
             yearZu.setName(menus.getName());
-            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(yearId, DeptId, menus.getStandardId())));
+            QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_id", yearId);
+            queryWrapper.eq("dept_id", DeptId);
+            queryWrapper.eq("parent_id", menus.getStandardId());
+
+            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(queryWrapper)));
             list1.add(yearZu);
         }
         return new JiebaoResponse().data(list1).message("操作成功");
@@ -254,7 +267,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-
         if (gGxx != null) {
             for (String gGxxId : gGxx
             ) {
