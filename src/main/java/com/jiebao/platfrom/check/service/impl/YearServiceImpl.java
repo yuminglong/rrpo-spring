@@ -3,6 +3,7 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.*;
@@ -45,6 +46,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
 
     @Autowired
     IGradeService gradeService;
+    @Autowired
+    GradeMapper gradeMapper;
 
     @Override
     public JiebaoResponse addOrUpdate(Year year) {
@@ -93,7 +96,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             if (!dept.getDeptName().contains("公安处")) {
                 for (MenusYear m : menusYearList
                 ) {
-                    //判断是否绑定已经  没写
+                    if (gradeMapper.exist(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经
+                        break;
                     Grade grade = new Grade();
                     grade.setYearId(yearId);
                     grade.setDeptId(dept.getDeptId());

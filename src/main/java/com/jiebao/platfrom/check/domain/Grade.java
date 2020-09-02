@@ -59,4 +59,10 @@ public class Grade implements Serializable {
 
     private String parentId;// 所属考核大模块
 
+    private Double num2;//2次提交值
+
+    private Double message2;//2次提交值
+
+    private Integer status;
+
 }
