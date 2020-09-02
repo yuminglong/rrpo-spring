@@ -217,7 +217,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String xXhdId : xXhd
             ) {
                 if (isCuiZai(gradeId, xXhdId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(1);
@@ -232,7 +232,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             ) {
                 System.out.println(ySyjId);
                 if (isCuiZai(gradeId, ySyjId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(2);
@@ -245,7 +245,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String tZggId : tZgg
             ) {
                 if (isCuiZai(gradeId, tZggId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(3);
@@ -259,7 +259,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String gGxxId : gGxx
             ) {
                 if (isCuiZai(gradeId, gGxxId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(4);
