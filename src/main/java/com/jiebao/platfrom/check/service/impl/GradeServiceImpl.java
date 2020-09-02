@@ -75,7 +75,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public JiebaoResponse addGrade2(String gradeId, Double number, String message) {
         Grade grade = getById(gradeId);
         grade.setNum2(number == null ? 0 : number);
-        grade.setMessage(message);
+        grade.setMessage2(message);
         return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
@@ -254,7 +254,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 gradeZzList.add(gradeZz);
             }
         }
-
         if (gGxx != null) {
             for (String gGxxId : gGxx
             ) {
