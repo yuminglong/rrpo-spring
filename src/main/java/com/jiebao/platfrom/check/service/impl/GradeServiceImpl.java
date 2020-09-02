@@ -52,9 +52,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
-        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("grade_id", gradeId);//年份
-        Grade grade = getOne(queryWrapper);
+        Grade grade = getById(gradeId);
         boolean numberIf = number == null ? false : true;
         boolean fpNumberIf = fpNumber == null ? false : true;
         boolean messageIf = message == null ? false : true;
@@ -70,7 +68,15 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setMessage(message);
         if (fpMessageIf)
             grade.setFpMessage(fpMessage);
-        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
+        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
+    }
+
+    @Override
+    public JiebaoResponse addGrade2(String gradeId, Double number, String message) {
+        Grade grade = getById(gradeId);
+        grade.setNum2(number == null ? 0 : number);
+        grade.setMessage(message);
+        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
 

@@ -47,7 +47,14 @@ public class GradeController {
     @ApiOperation("绑定关系")
     @Log("绑定关系")
     public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {
-        return iGradeService.addGrade( gradeId,  number,  fpNumber,  message,  fpMessage);
+        return iGradeService.addGrade(gradeId, number, fpNumber, message, fpMessage);
+    }
+
+    @PostMapping("addGrade2")
+    @ApiOperation("绑定关系无限次复次提交")
+    @Log("绑定关系")
+    public JiebaoResponse addGrade2(String gradeId, Double number, String message){ //无限次提交接口
+        return iGradeService.addGrade2(gradeId, number, message);
     }
 
     @PostMapping("addZz")
@@ -60,8 +67,8 @@ public class GradeController {
     @GetMapping("commit")
     @ApiOperation("最后提交  分数统计生成表")
     @Log("最后提交  分数统计生成表")
-    public JiebaoResponse commit(String yearId, String deptId,Integer status) {
-        return iGradeService.commit(yearId, deptId,status);
+    public JiebaoResponse commit(String yearId, String deptId, Integer status) {
+        return iGradeService.commit(yearId, deptId, status);
     }
 
     @PostMapping("checkStatus")
