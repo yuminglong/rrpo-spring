@@ -183,14 +183,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
-        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        String deptId = userMapper.getDeptID(username);  //得到此人存在的部门
-        List<Integer> listStatus = null;  //可视参数
-        if (!deptId.equals("0")) {
-            listStatus = new ArrayList<>();
-            listStatus.add(1);
-            listStatus.add(2);
-        }
         List<YearZu> list1 = new ArrayList<>();  //储存
         List<Menus> list = menusService.list();
         for (Menus menus : list
@@ -201,11 +193,9 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             yearZu.setName(menus.getName());
             QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", yearId);
-            queryWrapper.eq("dept_id", deptId);
+            queryWrapper.eq("dept_id", DeptId);
             queryWrapper.eq("parent_id", menus.getStandardId());
-            if (listStatus != null) {
-                queryWrapper.in("status", listStatus);
-            }
+
             yearZu.setList(Collections.singletonList(this.baseMapper.queryList(queryWrapper)));
             list1.add(yearZu);
         }
