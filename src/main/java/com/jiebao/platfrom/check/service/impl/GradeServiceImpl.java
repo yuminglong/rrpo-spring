@@ -52,9 +52,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
-        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("grade_id", gradeId);//年份
-        Grade grade = getOne(queryWrapper);
+        Grade grade = getById(gradeId);
         boolean numberIf = number == null ? false : true;
         boolean fpNumberIf = fpNumber == null ? false : true;
         boolean messageIf = message == null ? false : true;
@@ -70,7 +68,15 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             grade.setMessage(message);
         if (fpMessageIf)
             grade.setFpMessage(fpMessage);
-        return new JiebaoResponse().message(super.saveOrUpdate(grade) ? "操作成功" : "操作失败").data(grade);
+        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
+    }
+
+    @Override
+    public JiebaoResponse addGrade2(String gradeId, Double number, String message) {
+        Grade grade = getById(gradeId);
+        grade.setNum2(number == null ? 0 : number);
+        grade.setMessage(message);
+        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
     }
 
 
@@ -211,7 +217,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String xXhdId : xXhd
             ) {
                 if (isCuiZai(gradeId, xXhdId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(1);
@@ -226,7 +232,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             ) {
                 System.out.println(ySyjId);
                 if (isCuiZai(gradeId, ySyjId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(2);
@@ -239,7 +245,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String tZggId : tZgg
             ) {
                 if (isCuiZai(gradeId, tZggId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(3);
@@ -253,7 +259,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             for (String gGxxId : gGxx
             ) {
                 if (isCuiZai(gradeId, gGxxId)) {
-                    break;
+                    continue;
                 }
                 GradeZz gradeZz = new GradeZz();
                 gradeZz.setType(4);
@@ -284,6 +290,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (gradeId == null) {
             return jiebaoResponse.failMessage("请提交必要参数");
         }//给扣分项  给  状态  是否有疑点‘
+        jiebaoResponse = this.baseMapper.updateStatus(status, gradeId) == 1 ? jiebaoResponse.okMessage("标记成功") : jiebaoResponse.failMessage("标记失败");
         if (zzId != null) {   //非自定义佐证材料
             QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("grade_zz_id", Arrays.asList(zzId));
@@ -298,5 +305,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         return jiebaoResponse;
     }
+
 
 }

@@ -19,6 +19,8 @@ import java.util.List;
 public interface IGradeService extends IService<Grade> {
     JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage);    //扣分绑定
 
+    JiebaoResponse addGrade2(String gradeId, Double number, String message);    //考核人  复次提交 几口
+
     JiebaoResponse commit(String yearDate, String deptId,Integer status);//最后提交  分数统计生成表
 
     JiebaoResponse selectByUserIdOrDateYear(String dateYear, String DeptId);  //查询对应考试情况
