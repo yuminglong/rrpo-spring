@@ -45,16 +45,15 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId, Integer status) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
-            deptId = dept.getDeptId();
-                if (status != 0 && status != 2||status==null) {
-                    queryWrapper.ne("status", 0);
-                    queryWrapper.ne("status", 2);
-                } else {
-                    queryWrapper.eq("status", status);
-                }
+            status = status == null ? 0 : status;
+            if (status == 0 && status == 2) {
+                queryWrapper.ne("status", 0);
+                queryWrapper.ne("status", 2);
+            } else {
+                queryWrapper.eq("status", status);
+            }
         } else {
             if (status != null) {
                 queryWrapper.eq("status", status);
