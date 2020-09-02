@@ -34,12 +34,17 @@ import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.BufferedInputStream;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -412,9 +417,9 @@ public class PrizeController extends BaseController {
     }
 
 
-    @GetMapping("/briefingWord")
-    @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse briefingWord(QueryRequest request, Prize prize, String startTime, String endTime ,String period,String year,String month,String day) {
+    @PostMapping("/briefingWord")
+    @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
+    public void briefingWord(HttpServletRequest servletRequest, HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 
@@ -429,15 +434,37 @@ public class PrizeController extends BaseController {
              records) {
             testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
         }
+
         //模板文件地址
         //String inputUrl = "D:\\tempDoc.docx";
-        String inputUrl =  this.getClass().getResourceAsStream("/doc/tempDoc.docx").toString();
+        String inputUrl =  GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
         System.out.println("-------------"+inputUrl+"---------------------");
         //新生产的模板文件
         String outputUrl = "D:\\newDoc.docx";
         WorderToNewWordUtils.changWord(inputUrl, outputUrl, map, testList);
-        return  new JiebaoResponse().okMessage("ok");
+
+
+        java.io.File downloadFile = new java.io.File(outputUrl);
+        if (downloadFile.exists()) {
+            try {
+                InputStream is = new BufferedInputStream(new FileInputStream(downloadFile));
+                byte[] buffer = new byte[is.available()];
+                is.read(buffer);
+                is.close();
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("application/octet-stream");
+               response.addHeader("Content-Disposition", "attachment;filename=" + new String((period+"期.docx").getBytes("UTF-8"), "ISO-8859-1"));
+                OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+                response.setContentType("application/octet-stream");
+                outputStream.write(buffer);
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                log.warn("File download Exception：" + e);
+            }
+        }
     }
+
 
 
 }

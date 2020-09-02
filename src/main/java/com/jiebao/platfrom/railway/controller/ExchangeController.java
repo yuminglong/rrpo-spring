@@ -330,10 +330,13 @@ public class ExchangeController extends BaseController {
     @PutMapping("/receive")
     @ApiOperation(value = "意见回复或修改", notes = "意见回复或修改", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse receive(@Valid ExchangeUser exchangeUser) throws JiebaoException {
+    public JiebaoResponse receive(@Valid ExchangeUser exchangeUser,String[] fileIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
+            Arrays.stream(fileIds).forEach(fileId -> {
+                fileMapper.updateByFileId(fileId, exchangeUser.getExchangeId());
+            });
             this.exchangeUserService.updateByExchangeId(byName.getUserId(), exchangeUser.getExchangeId(), exchangeUser.getOpinion());
             return new JiebaoResponse().message("意见回复或修改成功").put("status", "200");
         } catch (Exception e) {

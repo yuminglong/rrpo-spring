@@ -209,7 +209,7 @@ public class WorderToNewWordUtils {
     }
 
 
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         //模板文件地址
         String inputUrl = "D:\\tempDoc.docx";
         //新生产的模板文件
@@ -228,5 +228,5 @@ public class WorderToNewWordUtils {
         testList.add(new String[]{"4", "4AA", "4BB"});
 
         WorderToNewWordUtils.changWord(inputUrl, outputUrl, testMap, testList);
-    }
+    }*/
 }

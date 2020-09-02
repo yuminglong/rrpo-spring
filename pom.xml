@@ -219,6 +219,23 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+       <!--poi模版导出，防止文件损坏-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <!--<nonFilteredFileExtension>woff</nonFilteredFileExtension>-->
+                        <!--<nonFilteredFileExtension>eot</nonFilteredFileExtension>-->
+                        <!--<nonFilteredFileExtension>ttf</nonFilteredFileExtension>-->
+                        <!--<nonFilteredFileExtension>svg</nonFilteredFileExtension>-->
+                        <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+
         </plugins>
         <resources>
             <resource>
