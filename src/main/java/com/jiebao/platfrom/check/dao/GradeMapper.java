@@ -50,7 +50,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     @Results({
             @Result(property = "menusYear", column = "check_id", one = @One(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.selectById"))
     })
-    List<Grade> queryList(@Param("ew") QueryWrapper<Grade> ew);
+    List<Grade> queryList(@Param("ew")QueryWrapper<Grade> ew);
 
     @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} limit 1")
     Integer exist(String yearId, String deptId);  //是否产生 对应年份试题
