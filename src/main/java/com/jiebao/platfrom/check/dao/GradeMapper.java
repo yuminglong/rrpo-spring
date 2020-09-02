@@ -46,7 +46,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     Integer updateNum(String yearId, String deptId, Integer status); //条件 修改状态
 
 
-    @Select("select * from check_grade where ${ew.customSqlSegment}")
+    @Select("select * from check_grade  ${ew.customSqlSegment}")
     @Results({
             @Result(property = "menusYear", column = "check_id", one = @One(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.selectById"))
     })
