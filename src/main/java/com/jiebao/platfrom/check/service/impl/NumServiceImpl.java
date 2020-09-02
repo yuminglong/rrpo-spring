@@ -48,7 +48,13 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
             deptId = dept.getDeptId();
-            queryWrapper.ne("status", 0);
+            if (status != 0 && status != 2) {
+                queryWrapper.ne("status", 0);
+                queryWrapper.ne("status", 2);
+            } else {
+                queryWrapper.eq("status", status);
+            }
+
         } else {
             if (status != null) {
                 queryWrapper.eq("status", status);
@@ -104,7 +110,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     @Override
     public JiebaoResponse exist(String yearId, String deptId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse=this.baseMapper.exist(yearId, deptId)==null?jiebaoResponse.okMessage("可以创建"):jiebaoResponse.failMessage("不可以创建");
+        jiebaoResponse = this.baseMapper.exist(yearId, deptId) == null ? jiebaoResponse.okMessage("可以创建") : jiebaoResponse.failMessage("不可以创建");
         return jiebaoResponse;
     }
 }
