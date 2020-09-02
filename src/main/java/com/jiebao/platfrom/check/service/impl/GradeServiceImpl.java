@@ -284,6 +284,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (gradeId == null) {
             return jiebaoResponse.failMessage("请提交必要参数");
         }//给扣分项  给  状态  是否有疑点‘
+        jiebaoResponse = this.baseMapper.updateStatus(status, gradeId) == 1 ? jiebaoResponse.okMessage("标记成功") : jiebaoResponse.failMessage("标记失败");
         if (zzId != null) {   //非自定义佐证材料
             QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("grade_zz_id", Arrays.asList(zzId));
@@ -298,5 +299,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         return jiebaoResponse;
     }
+
 
 }
