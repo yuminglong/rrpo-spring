@@ -51,7 +51,7 @@ public class CheckExcelUtil {
                     }
                     cell.setCellType(CellType.STRING);
                     if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
-                        break;
+                        continue;
                     }
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
