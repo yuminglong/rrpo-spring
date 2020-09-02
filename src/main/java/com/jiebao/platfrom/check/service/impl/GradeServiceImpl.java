@@ -8,7 +8,9 @@ import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.FileService;
@@ -49,6 +51,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     GradeMapper gradeMapper;
     @Autowired
     MenusYearMapper menusYearMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
@@ -92,7 +96,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         List<Menus> menusList = menusService.list();
         for (Menus menus : menusList
         ) {
-            List<Grade> grades = this.baseMapper.queryList(yearId, deptId, menus.getStandardId());
+            QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_id", yearId);
+            queryWrapper.eq("dept_id", deptId);
+            queryWrapper.eq("parent_id", menus.getStandardId());
+            List<Grade> grades = this.baseMapper.queryList(queryWrapper);
             if (grades == null) {  //此分组无数据则结束
                 break;
             }
@@ -175,6 +183,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        String deptId = userMapper.getDeptID(username);  //得到此人存在的部门
+        List<Integer> listStatus = null;  //可视参数
+        if (!deptId.equals("0")) {
+            listStatus = new ArrayList<>();
+            listStatus.add(1);
+            listStatus.add(2);
+        }
         List<YearZu> list1 = new ArrayList<>();  //储存
         List<Menus> list = menusService.list();
         for (Menus menus : list
@@ -183,7 +199,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             yearZu.setId(menus.getStandardId());
             yearZu.setNum(menus.getNum());
             yearZu.setName(menus.getName());
-            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(yearId, DeptId, menus.getStandardId())));
+            QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_id", yearId);
+            queryWrapper.eq("dept_id", deptId);
+            queryWrapper.eq("parent_id", menus.getStandardId());
+            if (listStatus != null) {
+                queryWrapper.in("status", listStatus);
+            }
+            yearZu.setList(Collections.singletonList(queryWrapper));
             list1.add(yearZu);
         }
         return new JiebaoResponse().data(list1).message("操作成功");

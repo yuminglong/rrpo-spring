@@ -61,7 +61,7 @@ public class Grade implements Serializable {
 
     private Double num2;//2次提交值
 
-    private Double message2;//2次提交值
+    private String message2;//2次提交值
 
     private Integer status;
 
