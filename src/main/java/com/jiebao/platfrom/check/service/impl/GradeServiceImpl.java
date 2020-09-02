@@ -206,7 +206,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (listStatus != null) {
                 queryWrapper.in("status", listStatus);
             }
-            yearZu.setList(Collections.singletonList(queryWrapper));
+            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(queryWrapper)));
             list1.add(yearZu);
         }
         return new JiebaoResponse().data(list1).message("操作成功");
