@@ -210,13 +210,13 @@ public class PrizeController extends BaseController {
                 //不能直接删掉文件（暂时未做文件），不能删除接收人，不能删除该信息本体，直接改状态 status为4
                 Prize byId = prizeService.getById(prizeId);
                 //1为未发送状态
-                if ("1".equals(byId.getStatus())) {
+                if (byId.getStatus() ==1) {
                     //删除接收的组织机构
                     prizeUserService.deleteByPrizeId(prizeId);
                     //删除内容本体（文件还没加哦）
                     prizeService.removeById(prizeId);
                     //3为已发送状态，只需改状态为4
-                } else if ("3".equals(byId.getStatus())) {
+                } else if (byId.getStatus() == 3) {
                     prizeUserService.ByPrizeId(prizeId);
                 }
             });
@@ -435,7 +435,7 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(HttpServletRequest servletRequest, HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
+    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 

@@ -209,7 +209,7 @@ public class WorderToNewWordUtils {
     }
 
 
-  /*  public static void main(String[] args) {
+/*   public static void main(String[] args) {
         //模板文件地址
         String inputUrl = "D:\\tempDoc.docx";
         //新生产的模板文件
@@ -220,6 +220,7 @@ public class WorderToNewWordUtils {
         testMap.put("year", "2020");
         testMap.put("month", "08");
         testMap.put("day", "31");
+
 
         List<String[]> testList = new ArrayList<>();
         testList.add(new String[]{"1", "1AA", "1BB"});
