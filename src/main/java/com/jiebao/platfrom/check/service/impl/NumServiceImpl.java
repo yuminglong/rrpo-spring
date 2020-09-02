@@ -48,7 +48,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         QueryWrapper<Num> queryWrapper = new QueryWrapper<>();
         if (!dept.getParentId().equals("-1")) {  //当前登陆人非最高级
             status = status == null ? 0 : status;
-            if (status == 0 && status == 2) {
+            if (status == 0 || status == 2) {
                 queryWrapper.ne("status", 0);
                 queryWrapper.ne("status", 2);
             } else {
@@ -59,9 +59,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
                 queryWrapper.eq("status", status);
             }
         }
-        if (deptId != null) {
-            queryWrapper.eq("dept_id", deptId);
-        }
+            queryWrapper.eq("dept_id", dept.getDeptId());
         if (yearId != null) {
             queryWrapper.eq("year_id", yearId);
         }
