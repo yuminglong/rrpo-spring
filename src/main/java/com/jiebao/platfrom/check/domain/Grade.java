@@ -66,7 +66,6 @@ public class Grade implements Serializable {
 
     private Integer status; //疑点状态
 
-    private Date deadDate; //限期回复时间
 
 
 }

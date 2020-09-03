@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
 
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
@@ -71,5 +72,7 @@ public class Num implements Serializable {
     private Double fpXgWork;
     @ApiModelProperty(value = "试卷效果", example = "23.23")
     private Integer status;     //0 未审核  1被驳回  2补充提交   3终审
+
+    private Date deadDate; //限期回复时间
 
 }

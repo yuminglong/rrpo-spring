@@ -89,7 +89,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (type == 3)
                 grade.setFpMessage(message);
         }
-        jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("草错成功") : jiebaoResponse.failMessage("操作失败");
+        jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
 
