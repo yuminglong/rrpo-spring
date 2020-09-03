@@ -43,9 +43,9 @@ public class CheckExcelUtil {
                     cell = row.createCell(i);
                 }
                 cell.setCellType(CellType.STRING);
-                String stringCellValue = cell.getStringCellValue();
+                String stringCellValue = cell.getStringCellValue(); //表格内容
                 if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
-                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" + cell.getStringCellValue());
+                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" +stringCellValue);
                 }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
