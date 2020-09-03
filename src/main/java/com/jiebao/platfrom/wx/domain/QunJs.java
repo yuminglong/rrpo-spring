@@ -31,20 +31,20 @@ public class QunJs implements Serializable {  //群建设对象
     private String jsId;
     private String qunId;
 
-    private String qunName;
+    private String wxName;
 
     private Date date;
 
     private String sqCity;
 
-    private String qunZhuName; //群主名字
+    private String wxUserName ; //群主名字
 
-    private String qunZhuZw;  //群主植物
+    private String wxUserZw;  //群主植物
 
     /**
      * 人数
      */
-    private Integer qunNum;
+    private Integer qunNumber;
 
     /**
      * 线路
