@@ -126,6 +126,8 @@ public class QunJs implements Serializable {  //群建设对象
      */
     private String sbyj;
 
+    private String award;
+
     private String fillDeptId;//填报单位
 
     private String fillDate;//填报时间
