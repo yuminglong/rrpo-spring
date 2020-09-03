@@ -61,15 +61,15 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         Num num = numService.selectByYearAndDept(grade.getYearId(), grade.getDeptId());
         if (num == null) {
             if (type == 2 || type == 3) {
-                jiebaoResponse.failMessage("此状态不可操作");
+                return jiebaoResponse.failMessage("此状态不可操作");
             }
         } else {
             if (type == 1) {
-                jiebaoResponse.failMessage("此状态不可操作");
+                return jiebaoResponse.failMessage("此状态不可操作");
             }
             if (!(num.getStatus() == 1)) {
                 if (type == 1 || type == 2) {
-                    jiebaoResponse.failMessage("此状态不可操作");
+                    return jiebaoResponse.failMessage("此状态不可操作");
                 }
             }
         }
@@ -89,10 +89,26 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             if (type == 3)
                 grade.setFpMessage(message);
         }
+        double math;
+        if (type == 3) {
+            Double math1 = grade.getNum() == null ? 0 : grade.getNum();//第一次自评
+            math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数
+            if (number == math) {
+                grade.setStatus(1);
+            } else {
+                grade.setStatus(0);
+            }
+        }
+        if (type == 2) {
+            if (number == grade.getFpNum()) {
+                grade.setStatus(1);
+            } else {
+                grade.setStatus(0);
+            }
+        }
         jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
-
 
 
     @Override
