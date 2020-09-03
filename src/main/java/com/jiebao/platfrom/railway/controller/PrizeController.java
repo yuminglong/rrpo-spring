@@ -1,6 +1,9 @@
 package com.jiebao.platfrom.railway.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -207,13 +210,13 @@ public class PrizeController extends BaseController {
                 //不能直接删掉文件（暂时未做文件），不能删除接收人，不能删除该信息本体，直接改状态 status为4
                 Prize byId = prizeService.getById(prizeId);
                 //1为未发送状态
-                if ("1".equals(byId.getStatus())) {
+                if (byId.getStatus() ==1) {
                     //删除接收的组织机构
                     prizeUserService.deleteByPrizeId(prizeId);
                     //删除内容本体（文件还没加哦）
                     prizeService.removeById(prizeId);
                     //3为已发送状态，只需改状态为4
-                } else if ("3".equals(byId.getStatus())) {
+                } else if (byId.getStatus() == 3) {
                     prizeUserService.ByPrizeId(prizeId);
                 }
             });
@@ -268,9 +271,9 @@ public class PrizeController extends BaseController {
         return byId;
     }
 
-    @GetMapping("/report")
-    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse PrizeReport(@Valid PrizeOpinion prizeOpinion, String[] prizeIds, String sendDeptId) throws JiebaoException {
+    @PostMapping("/report")
+    @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse PrizeReport(String auditOpinion,String moneys,  String[] prizeIds, String sendDeptId) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -289,6 +292,7 @@ public class PrizeController extends BaseController {
                 depts = deptMapper.selectByMap(columnMap);
             }
             List<Dept> finalDepts = depts;
+            System.out.println(prizeIds+"**********************");
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 //查询该级组织机构是否有审批内容
                 Integer result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
@@ -314,14 +318,28 @@ public class PrizeController extends BaseController {
                         prizeMapper.updateStatusForCity(prizeId);
                     }
 
+                    PrizeOpinion prizeOpinion = new PrizeOpinion();
                     prizeOpinion.setRank(byId.getRank());
                     //id必须传来
                     prizeOpinion.setPrizeId(prizeId);
-                    prizeOpinion.setAuditOpinion(prizeOpinion.getAuditOpinion());
-                    prizeOpinion.setMoney(prizeOpinion.getMoney());
+                    prizeOpinion.setAuditOpinion(auditOpinion);
+                   // prizeOpinion.setMoney(prizeOpinion.getMoney());
                     prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
+            //解析json数组
+                JSONArray jsonArray = JSON.parseArray(moneys);
+                System.out.println(jsonArray.toString()+"-----------------------------");
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                    String prizeId = jsonObject.getString("prizeId");
+                    String opinionMoney = jsonObject.getString("opinionMoney");
+                    System.out.println(jsonObject.getString("prizeId")+":"+jsonObject.getInteger("opinionMoney"));
+                    prizeOpinionService.saveByPrizeId(prizeId,opinionMoney,byId.getRank());
+                }
+
+
+
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
         } catch (Exception e) {
             message = "审批或上报失败";
@@ -419,7 +437,7 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(HttpServletRequest servletRequest, HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
+    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 

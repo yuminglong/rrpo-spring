@@ -81,6 +81,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getCreatTime, startTime).le(Prize::getCreatTime, endTime);
         }
+        if (StringUtils.isNotBlank(prize.getTypes())) {
+            queryWrapper.lambda().eq(Prize::getTypes, prize.getTypes());
+        }
         if (prize.getStatus()!=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
@@ -127,6 +130,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
+        }
+        if (StringUtils.isNotBlank(prize.getTypes())) {
+            queryWrapper.lambda().eq(Prize::getTypes, prize.getTypes());
         }
         if (prize.getStatus() !=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());

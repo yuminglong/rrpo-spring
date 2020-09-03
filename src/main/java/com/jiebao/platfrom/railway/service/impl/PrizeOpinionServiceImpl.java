@@ -8,6 +8,7 @@ import com.jiebao.platfrom.railway.domain.PrizeType;
 import com.jiebao.platfrom.railway.service.PrizeOpinionService;
 import com.jiebao.platfrom.railway.service.PrizeTypeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class PrizeOpinionServiceImpl extends ServiceImpl<PrizeOpinionMapper, PrizeOpinion> implements PrizeOpinionService {
 
+    @Autowired
+    private PrizeOpinionMapper prizeOpinionMapper;
 
-
+    @Override
+    public boolean saveByPrizeId(String prizeId, String opinionMoney,Integer rank) {
+        return prizeOpinionMapper.saveByPrizeId(prizeId,opinionMoney,rank);
+    }
 }
