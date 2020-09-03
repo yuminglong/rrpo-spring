@@ -43,10 +43,11 @@ public class CheckExcelUtil {
                     cell = row.createCell(i);
                 }
                 cell.setCellType(CellType.STRING);
-                if (yearBindMenus.exist(yearId, menusService.selectByName(cell.getStringCellValue())) == null) {
+                String stringCellValue = cell.getStringCellValue();
+                if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
                     return jiebaoResponse.failMessage("本年考核规则不存在此模块" + cell.getStringCellValue());
                 }
-                arr[i] = menusService.selectByName(cell.getStringCellValue());
+                arr[i] = menusService.selectByName(stringCellValue);
             }
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 row = sheetAt.getRow(i); //对应行
