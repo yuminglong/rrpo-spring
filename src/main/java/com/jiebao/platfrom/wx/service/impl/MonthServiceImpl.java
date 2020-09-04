@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -8,7 +9,9 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.dao.MonthMapper;
@@ -19,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -38,6 +38,8 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     DeptService deptService;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    FileService fileService;
 
 
     @Override
@@ -49,7 +51,14 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             entity.setShDeptId(dept.getParentId());
             entity.setDate(new Date());
         }
-        return super.saveOrUpdate(entity);
+        boolean b = super.saveOrUpdate(entity);
+        if (b && entity.getFileIds() != null) {
+            UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.in("file_id", Arrays.asList(entity.getFileIds()));
+            updateWrapper.set("ref_id", entity.getWxMonthId());
+            fileService.update(updateWrapper);
+        }
+        return b;
     }
 
     @Override
@@ -113,6 +122,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         Month month = super.getById(id);
         month.setLook(1);
         updateById(month);
+        month.setFileList(fileService.getAppendixList(month.getWxMonthId()));
         return month;
     }
 }

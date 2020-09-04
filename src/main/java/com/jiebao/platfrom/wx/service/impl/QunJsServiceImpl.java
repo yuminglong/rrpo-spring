@@ -68,7 +68,6 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
     }
 
     private void fz(QunJs qunJs, Dept dept) {  //判断当前 登陆人的组织级别  主级封装
-        String szDeptId, qxDeptId, jdDeptId;
         if (dept.getParentId().equals("0")) {
             qunJs.setSzCity(dept.getDeptId());
         }
