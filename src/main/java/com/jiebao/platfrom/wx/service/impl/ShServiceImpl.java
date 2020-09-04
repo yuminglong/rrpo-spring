@@ -58,7 +58,7 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         qun.setShDate(new Date());
         if (status == 0) {
             qun.setShDeptId(dept.getParentId());
-            if (dept.getParentId().equals("0")) {
+            if (dept.getParentId().equals("-1")) {
                 qun.setShStatus(3);
                 qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");

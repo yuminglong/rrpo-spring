@@ -32,9 +32,7 @@ public class QunController {
     @PostMapping("addOrUpdate")
     @ApiOperation("群添加修改")
     public JiebaoResponse saveOrUpdate(Qun qun) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = qunService.saveOrUpdate(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
-        return jiebaoResponse;
+        return qunService.addOrUpdate(qun);
     }
 
 

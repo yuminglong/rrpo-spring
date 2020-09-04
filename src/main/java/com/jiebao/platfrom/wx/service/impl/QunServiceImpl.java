@@ -37,18 +37,33 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     DeptService deptService;
 
     @Override
-    public boolean saveOrUpdate(Qun entity) {
+    public JiebaoResponse addOrUpdate(Qun entity) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         if (entity.getWxId() == null) {
-            String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-            Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+            if (!judge(dept.getDeptId())) {
+                return jiebaoResponse.failMessage("此单位已建立群");
+            }
             entity.setDate(new Date());
             entity.setCjDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getDeptId());
             entity.setShStatus(0);
             entity.setShNumber(0);
             entity.setNumber(0);
+        } else {
+            if (!entity.getCjDeptId().equals(dept.getDeptId())) {
+                if (!judge(dept.getDeptId())) {
+                    return jiebaoResponse.failMessage("此单位已建立群");
+                }
+            }
         }
-        return super.saveOrUpdate(entity);
+        jiebaoResponse = super.saveOrUpdate(entity) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
+    }
+
+    private boolean judge(String deptId) {
+        return this.baseMapper.judge(deptId) == null ? true : false;
     }
 
     @Override
@@ -108,6 +123,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         qun.setShDeptId(dept.getParentId());
+        qun.setShNumber(qun.getShNumber() + 1);
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
         return jiebaoResponse;
     }

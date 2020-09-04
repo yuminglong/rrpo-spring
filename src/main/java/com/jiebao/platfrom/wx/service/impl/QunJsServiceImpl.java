@@ -8,6 +8,7 @@ import com.jiebao.platfrom.wx.service.IQunJsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
     @Override
     public JiebaoResponse selectById(String qunId) {
         QueryWrapper<QunJs> queryWrapper = new QueryWrapper<>();
-        if(qunId!=null){
+        if (qunId != null) {
             queryWrapper.eq("wx_id", qunId);
         }
         queryWrapper.orderByAsc("date");
@@ -32,10 +33,29 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
     }
 
     @Override
-    public boolean saveOrUpdate(QunJs entity) {
-        if(entity.getJsId()==null){
-            entity.setFillDate(new Date().toString());
+    public JiebaoResponse addOrUpdate(QunJs entity) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (entity.getJsId() == null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            entity.setFillDate(simpleDateFormat.format(new Date()));
+            if (!jude(entity.getWxId())) {
+                return jiebaoResponse.failMessage("请勿重复绑定");
+            }
+        } else {
+            QunJs qunJs = getById(entity.getJsId());
+            if (!qunJs.getWxId().equals(entity.getWxId())) {
+                if (!jude(entity.getWxId())) {
+                    return jiebaoResponse.failMessage("请勿重复绑定");
+                }
+            }
         }
-        return super.saveOrUpdate(entity);
+        jiebaoResponse = super.saveOrUpdate(entity) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
     }
+
+    private boolean jude(String wxId) {
+        return this.baseMapper.judge(wxId) == null ? true : false;
+    }
+
+
 }

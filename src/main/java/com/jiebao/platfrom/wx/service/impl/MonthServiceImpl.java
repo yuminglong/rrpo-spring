@@ -74,7 +74,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         }
         queryWrapper.orderByDesc("date");
         Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(this.baseMapper.list(page,queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 
     private List<String> resolver(List<Dept> list) {
@@ -99,6 +99,9 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
                 return jiebaoResponse.failMessage("超过上报三条记录上限");
             }
+
+        }
+        if (dept.getParentId().equals("-1")) {//省级
             month.setStatus(1);
         }
         month.setShDeptId(dept.getParentId());

@@ -27,9 +27,7 @@ public class QunJsController {
     @PostMapping("saveOrUpdate")
     @ApiOperation("群 申请单添加修改")
     public JiebaoResponse saveOrUpdate(QunJs qunJs) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = qunJsService.saveOrUpdate(qunJs) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
-        return jiebaoResponse;
+        return qunJsService.addOrUpdate(qunJs);
     }
 
     @DeleteMapping("delete")

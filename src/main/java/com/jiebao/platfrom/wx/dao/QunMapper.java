@@ -27,4 +27,9 @@ public interface QunMapper extends BaseMapper<Qun> {
             @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     IPage<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
+
+
+
+    @Select("select 1 from wx_qun where cj_dept_id=#{deptId} limit 1")
+    Integer judge(String deptId);
 }
