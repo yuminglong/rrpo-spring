@@ -29,11 +29,11 @@ public class QunJs implements Serializable {  //群建设对象
     private static final long serialVersionUID = 1L;
     @TableId(value = "js_id", type = IdType.UUID)
     private String jsId;
-    private String qunId;
+    private String wxId;
 
     private String wxName;
 
-    private Date date;
+    private String date;
 
     private String sqCity;
 
@@ -44,7 +44,7 @@ public class QunJs implements Serializable {  //群建设对象
     /**
      * 人数
      */
-    private Integer qunNumber;
+    private Integer wxNumber;
 
     /**
      * 线路
