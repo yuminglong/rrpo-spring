@@ -42,8 +42,8 @@ public class QunJsController {
 
 
     @GetMapping("selectById")
-    @ApiOperation("通过qunid查询对应的值")
-    public JiebaoResponse selectById(String WXId) {
-        return qunJsService.selectById(WXId);
+    @ApiOperation("通过wxId查询对应的值")
+    public JiebaoResponse selectById(String wXId) {
+        return qunJsService.selectById(wXId);
     }
 }
