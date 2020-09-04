@@ -48,7 +48,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             entity.setJcDeptId(dept.getDeptId());
-            entity.setShDeptId(dept.getParentId());
+            entity.setShDeptId(dept.getDeptId());
             entity.setDate(new Date());
         }
         boolean b = super.saveOrUpdate(entity);
