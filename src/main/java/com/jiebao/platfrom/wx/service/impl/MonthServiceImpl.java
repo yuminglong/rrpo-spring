@@ -62,7 +62,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
@@ -77,6 +77,9 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         }
         if (month != null) {
             queryWrapper.eq("month", month);
+        }
+        if (status != null) {
+            queryWrapper.eq("status", status);
         }
         if (look != null) {
             queryWrapper.eq("look", look);
@@ -96,7 +99,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse appear(String monthId) {
+    public JiebaoResponse appear(String monthId, Integer status) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -109,10 +112,15 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
                 return jiebaoResponse.failMessage("超过上报三条记录上限");
             }
         }
-        if (dept.getParentId().equals("-1")) {//省级
-            month.setStatus(1);
+        if (status == 1) {  //赞成  //
+            if (dept.getParentId().equals("-1")) {//省级
+                month.setStatus(1);
+            } else {  //非省级 继续上报
+                month.setShDeptId(dept.getParentId());
+            }
+        } else {
+            month.setStatus(0);
         }
-        month.setShDeptId(dept.getParentId());
         updateById(month);
         return jiebaoResponse.okMessage("上报成功");
     }
