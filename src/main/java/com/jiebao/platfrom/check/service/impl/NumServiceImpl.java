@@ -107,12 +107,20 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     }
 
 
-
     @Override
     public Num selectByYearAndDept(String yearId, String deptId) {
         QueryWrapper<Num> numQueryWrapper = new QueryWrapper<>();
         numQueryWrapper.eq("year_id", yearId);
         numQueryWrapper.eq("dept_id", deptId);
         return getOne(numQueryWrapper);
+    }
+
+    @Override
+    public JiebaoResponse deadDate(String numId, Date date) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Num num = getById(numId);
+        num.setDeadDate(date);
+        jiebaoResponse=updateById(num)?jiebaoResponse.okMessage("操作成功"):jiebaoResponse.failMessage("操作失败");
+        return null;
     }
 }

@@ -39,7 +39,10 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
     @Override
     public JiebaoResponse list(String yearId) {
         QueryWrapper<YearBindMenus> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_id", yearId);
+        if(yearId!=null){
+            queryWrapper.eq("year_id", yearId);
+        }
+
         return new JiebaoResponse().data(list(queryWrapper)).message("查询成功");
     }
 

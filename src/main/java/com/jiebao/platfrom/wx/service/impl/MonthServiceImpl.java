@@ -66,8 +66,6 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
             );
         }
-
-
         if (month != null) {
             queryWrapper.eq("month", month);
         }

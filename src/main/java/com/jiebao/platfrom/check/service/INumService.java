@@ -24,4 +24,7 @@ public interface INumService extends IService<Num> {
     JiebaoResponse exist(String yearId, String deptId);
 
     Num selectByYearAndDept(String yearId, String deptId);
+
+    JiebaoResponse deadDate(String numId, Date date);
+
 }

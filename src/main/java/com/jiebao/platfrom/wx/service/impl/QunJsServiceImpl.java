@@ -24,7 +24,9 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
     @Override
     public JiebaoResponse selectById(String qunId) {
         QueryWrapper<QunJs> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("qun_id", qunId);
+        if(qunId!=null){
+            queryWrapper.eq("wx_id", qunId);
+        }
         queryWrapper.orderByAsc("date");
         return new JiebaoResponse().data(list(queryWrapper)).message("查询成功");
     }
