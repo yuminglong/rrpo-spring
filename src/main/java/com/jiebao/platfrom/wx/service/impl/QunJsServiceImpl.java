@@ -31,7 +31,9 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
 
     @Override
     public boolean saveOrUpdate(QunJs entity) {
-        entity.setDate(new Date());
+        if(entity.getJsId()==null){
+            entity.setFillDate(new Date().toString());
+        }
         return super.saveOrUpdate(entity);
     }
 }
