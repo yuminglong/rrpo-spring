@@ -32,7 +32,7 @@ public class DictController extends BaseController {
     private DictService dictService;
 
     @GetMapping
-    @RequiresPermissions("dict:view")
+//    @RequiresPermissions("dict:view")
     public Map<String, Object> DictList(QueryRequest request, Dict dict) {
         return getDataTable(this.dictService.findDicts(request, dict));
     }
