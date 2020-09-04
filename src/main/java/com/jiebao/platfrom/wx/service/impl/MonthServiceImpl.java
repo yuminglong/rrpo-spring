@@ -116,13 +116,14 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             if (dept.getParentId().equals("-1")) {//省级
                 month.setStatus(1);
             } else {  //非省级 继续上报
+                month.setStatus(2);
                 month.setShDeptId(dept.getParentId());
             }
         } else {
             month.setStatus(0);
         }
         updateById(month);
-        return jiebaoResponse.okMessage("上报成功");
+        return jiebaoResponse.okMessage("操作成功");
     }
 
     @Override
