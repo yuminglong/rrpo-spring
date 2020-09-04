@@ -99,7 +99,6 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
                 return jiebaoResponse.failMessage("超过上报三条记录上限");
             }
-
         }
         if (dept.getParentId().equals("-1")) {//省级
             month.setStatus(1);

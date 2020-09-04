@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -8,6 +9,8 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Dict;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,9 +38,20 @@ public class QunJs implements Serializable {  //群建设对象
 
     private String date;
 
-    private String sqCity;
+    private String szCity; //市州
 
-    private String wxUserName ; //群主名字
+    @TableField(exist = false)
+    private Dept szDept;
+
+    private String qxCity;  //区县
+    @TableField(exist = false)
+    private Dept qxDept;
+
+    private String jdCity;//街道
+    @TableField(exist = false)
+    private Dept jdDept;
+
+    private String wxUserName; //群主名字
 
     private String wxUserZw;  //群主植物
 
@@ -50,6 +64,8 @@ public class QunJs implements Serializable {  //群建设对象
      * 线路
      */
     private String qunLine;
+    @TableField(exist = false)
+    private Dict dictLine;
 
     /**
      * 线路
