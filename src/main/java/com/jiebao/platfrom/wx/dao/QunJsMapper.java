@@ -22,7 +22,7 @@ public interface QunJsMapper extends BaseMapper<QunJs> {
             @Result(property = "szDept", column = "sz_city", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "qxDept", column = "qx_city", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "jdDept", column = "jd_city", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
-            @Result(property = "dictLine", column = "qun_line", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById"))
+            @Result(property = "qunLine", column = "qun_line", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById"))
     })
     QunJs getQunJs(@Param("ew") QueryWrapper<QunJs> ew);
 
