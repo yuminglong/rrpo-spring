@@ -51,4 +51,10 @@ public class NumController {
     public JiebaoResponse exist(String yearId, String deptId) {
         return numService.exist(yearId, deptId);
     }
+
+    @GetMapping("deadDate")
+    @ApiOperation("逾期回复时间赋值")
+    public JiebaoResponse deadDate(String numId, Date date) {
+        return numService.deadDate(numId,date);
+    }
 }

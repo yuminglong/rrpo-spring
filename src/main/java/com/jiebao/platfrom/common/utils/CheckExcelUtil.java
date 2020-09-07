@@ -3,9 +3,12 @@ package com.jiebao.platfrom.common.utils;
 import com.jiebao.platfrom.attendance.daomain.Record;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
 import com.jiebao.platfrom.check.domain.MenusYear;
+import com.jiebao.platfrom.check.domain.YearBindMenus;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import org.apache.poi.hssf.usermodel.*;
@@ -25,13 +28,13 @@ import java.util.*;
 
 public class CheckExcelUtil {
 
-    public static void excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper) {  //年考核 题库导入
+    public static JiebaoResponse excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper, YearBindMenusMapper yearBindMenus) {  //年考核 题库导入
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
         try {
             InputStream inputStream = file.getInputStream();
             Workbook workbook = null;
             workbook = new XSSFWorkbook(inputStream);//2007
             Sheet sheetAt = workbook.getSheetAt(0);
-//            Row row = null;
             Row row = sheetAt.getRow(0);
             String[] arr = new String[row.getPhysicalNumberOfCells()];
             for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
@@ -40,7 +43,11 @@ public class CheckExcelUtil {
                     cell = row.createCell(i);
                 }
                 cell.setCellType(CellType.STRING);
-                arr[i] = menusService.selectByName(cell.getStringCellValue());
+                String stringCellValue = cell.getStringCellValue(); //表格内容
+                if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
+                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" +stringCellValue);
+                }
+                arr[i] = menusService.selectByName(stringCellValue);
             }
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 row = sheetAt.getRow(i); //对应行
@@ -65,8 +72,7 @@ public class CheckExcelUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
+        return jiebaoResponse.okMessage("操作成功");
     }
 
 
@@ -374,7 +380,6 @@ public class CheckExcelUtil {
                 return null;
         }
     }
-
 
 
 }

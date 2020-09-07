@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -8,7 +9,9 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.dao.MonthMapper;
@@ -19,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -38,6 +38,8 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     DeptService deptService;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    FileService fileService;
 
 
     @Override
@@ -46,14 +48,21 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             entity.setJcDeptId(dept.getDeptId());
-            entity.setShDeptId(dept.getParentId());
+            entity.setShDeptId(dept.getDeptId());
             entity.setDate(new Date());
         }
-        return super.saveOrUpdate(entity);
+        boolean b = super.saveOrUpdate(entity);
+        if (b && entity.getFileIds() != null&&entity.getFileIds().length!=0) {
+            UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.in("file_id", Arrays.asList(entity.getFileIds()));
+            updateWrapper.set("ref_id", entity.getWxMonthId());
+            fileService.update(updateWrapper);
+        }
+        return b;
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
@@ -66,17 +75,18 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
             );
         }
-
-
         if (month != null) {
             queryWrapper.eq("month", month);
+        }
+        if (status != null) {
+            queryWrapper.eq("status", status);
         }
         if (look != null) {
             queryWrapper.eq("look", look);
         }
         queryWrapper.orderByDesc("date");
         Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(this.baseMapper.list(page,queryWrapper)).message("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 
     private List<String> resolver(List<Dept> list) {
@@ -89,7 +99,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse appear(String monthId) {
+    public JiebaoResponse appear(String monthId, Integer status) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -101,11 +111,19 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
                 return jiebaoResponse.failMessage("超过上报三条记录上限");
             }
-            month.setStatus(1);
         }
-        month.setShDeptId(dept.getParentId());
+        if (status == 1) {  //赞成  //
+            if (dept.getParentId().equals("-1")) {//省级
+                month.setStatus(1);
+            } else {  //非省级 继续上报
+                month.setStatus(2);
+                month.setShDeptId(dept.getParentId());
+            }
+        } else {
+            month.setStatus(0);
+        }
         updateById(month);
-        return jiebaoResponse.okMessage("上报成功");
+        return jiebaoResponse.okMessage("操作成功");
     }
 
     @Override
@@ -113,6 +131,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         Month month = super.getById(id);
         month.setLook(1);
         updateById(month);
+        month.setFileList(fileService.getAppendixList(month.getWxMonthId()));
         return month;
     }
 }

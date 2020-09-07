@@ -5,6 +5,7 @@ import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.domain.Dept;
 import org.apache.ibatis.annotations.Select;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface DeptMapper extends BaseMapper<Dept> {
@@ -18,5 +19,6 @@ public interface DeptMapper extends BaseMapper<Dept> {
 
 	@Select("SELECT * FROM `sys_dept` d where d.dept_id = #{deptId}")
 	Dept getById(String deptId);
+
 
 }

@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -8,6 +9,8 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Dict;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,27 +32,40 @@ public class QunJs implements Serializable {  //群建设对象
     private static final long serialVersionUID = 1L;
     @TableId(value = "js_id", type = IdType.UUID)
     private String jsId;
-    private String qunId;
+    private String wxId;
 
-    private String qunName;
+    private String wxName;
 
-    private Date date;
+    private String date;
 
-    private String sqCity;
+    private String szCity; //市州
 
-    private String qunZhuName; //群主名字
+    @TableField(exist = false)
+    private Dept szDept;
 
-    private String qunZhuZw;  //群主植物
+    private String qxCity;  //区县
+    @TableField(exist = false)
+    private Dept qxDept;
+
+    private String jdCity;//街道
+    @TableField(exist = false)
+    private Dept jdDept;
+
+    private String wxUserName; //群主名字
+
+    private String wxUserZw;  //群主植物
 
     /**
      * 人数
      */
-    private Integer qunNum;
+    private Integer wxNumber;
 
     /**
      * 线路
      */
     private String qunLine;
+    @TableField(exist = false)
+    private Dict dictLine;
 
     /**
      * 线路
@@ -125,6 +141,8 @@ public class QunJs implements Serializable {  //群建设对象
      * 省办意见
      */
     private String sbyj;
+
+    private String award;
 
     private String fillDeptId;//填报单位
 

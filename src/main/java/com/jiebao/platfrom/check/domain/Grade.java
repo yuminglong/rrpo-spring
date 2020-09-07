@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -63,6 +64,8 @@ public class Grade implements Serializable {
 
     private String message2;//2次提交值
 
-    private Integer status;
+    private Integer status; //疑点状态
+
+
 
 }

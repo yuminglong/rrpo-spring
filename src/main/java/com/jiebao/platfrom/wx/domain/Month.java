@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -80,5 +82,11 @@ public class Month implements Serializable {
 
 
     private Integer look;//0  未看  1查看了
-    
+
+    @TableField(exist = false)
+    private String[] fileIds;
+
+    @TableField(exist = false)
+    private List<File> fileList;
+
 }

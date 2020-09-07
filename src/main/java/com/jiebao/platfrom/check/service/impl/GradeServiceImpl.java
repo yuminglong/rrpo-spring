@@ -55,32 +55,59 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     UserMapper userMapper;
 
     @Override
-    public JiebaoResponse addGrade(String gradeId, Double number, Double fpNumber, String message, String fpMessage) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Grade grade = getById(gradeId);
-        boolean numberIf = number == null ? false : true;
-        boolean fpNumberIf = fpNumber == null ? false : true;
-        boolean messageIf = message == null ? false : true;
-        boolean fpMessageIf = fpMessage == null ? false : true;
-        if (grade == null) {
-            grade = new Grade();
+        Num num = numService.selectByYearAndDept(grade.getYearId(), grade.getDeptId());
+        if (num == null) {
+            if (type == 2 || type == 3) {
+                return jiebaoResponse.failMessage("此状态不可操作");
+            }
+        } else {
+            if (type == 1) {
+                return jiebaoResponse.failMessage("此状态不可操作");
+            }
+            if (!(num.getStatus() == 1)) {
+                if (type == 1 || type == 2) {
+                    return jiebaoResponse.failMessage("此状态不可操作");
+                }
+            }
         }
-        if (numberIf)
-            grade.setNum(number);
-        if (fpNumberIf)
-            grade.setFpNum(fpNumber);
-        if (messageIf)
-            grade.setMessage(message);
-        if (fpMessageIf)
-            grade.setFpMessage(fpMessage);
-        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
-    }
-
-    @Override
-    public JiebaoResponse addGrade2(String gradeId, Double number, String message) {
-        Grade grade = getById(gradeId);
-        grade.setNum2(number == null ? 0 : number);
-        grade.setMessage2(message);
-        return new JiebaoResponse().message(super.updateById(grade) ? "操作成功" : "操作失败").data(grade);
+        if (!(number == null)) {
+            if (type == 1)
+                grade.setNum(number);
+            if (type == 2)
+                grade.setNum2(number);
+            if (type == 3)
+                grade.setFpNum(number);
+        }
+        if (!(message == null)) {
+            if (type == 1)
+                grade.setMessage(message);
+            if (type == 2)
+                grade.setMessage2(message);
+            if (type == 3)
+                grade.setFpMessage(message);
+        }
+        double math;
+        if (type == 3) {
+            Double math1 = grade.getNum() == null ? 0 : grade.getNum();//第一次自评
+            math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数
+            if (number == math) {
+                grade.setStatus(1);
+            } else {
+                grade.setStatus(0);
+            }
+        }
+        if (type == 2) {
+            if (number == grade.getFpNum()) {
+                grade.setStatus(1);
+            } else {
+                grade.setStatus(0);
+            }
+        }
+        jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
     }
 
 
@@ -203,21 +230,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String yearId, String deptId, String menusId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {//上传新的佐证材料需要修改状态
+    public JiebaoResponse putZz(String gradeId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {//上传新的佐证材料需要修改状态
         List<File> list = new ArrayList<>();
         List<GradeZz> gradeZzList = new ArrayList<>();
-        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("check_id", menusId);//对应的扣分项
-        queryWrapper.eq("year_id", yearId);//年份
-        queryWrapper.eq("dept_id", deptId);
-        Grade grade = getOne(queryWrapper);  //对应考核项具体扣分情况
-        if (grade == null) {
-            grade = new Grade();
-        }
-        String gradeId = grade.getGradeId();
-        System.out.println(gradeId);
         if (ids != null) {
-            for (String fileId : ids  //
+            for (String fileId : ids  //  自定义模块
             ) {
                 File file = fileService.getById(fileId);
                 file.setRefId(gradeId);
@@ -225,7 +242,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 list.add(file);
             }
         }
-
         if (xXhd != null) {
             for (String xXhdId : xXhd
             ) {
