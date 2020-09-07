@@ -303,8 +303,19 @@ public class BriefingController extends BaseController {
         for (BriefingUser e : records
         ) {
             User byId = userService.getById(e.getSendUserId());
-            Dept byDeptId = deptService.getById(byId.getDeptId());
-            e.setDeptName(byDeptId.getDeptName());
+            Dept byDept = deptService.getById(byId.getDeptId());
+            if (byDept.getRank() == 1) {
+                e.setDeptName(byDept.getDeptName());
+            } else if (byDept.getRank() == 2) {
+                Dept byParentDept = deptService.getById(byDept.getParentId());
+                e.setDeptName(byParentDept.getDeptName() + " " + byDept.getDeptName());
+            } else if (byDept.getRank() == 3) {
+                Dept byParentDept = deptService.getById(byDept.getParentId());
+                Dept byCityDept = deptService.getById(byParentDept.getParentId());
+                e.setDeptName(byCityDept.getDeptName() + " " + byParentDept.getDeptName() + " " + byDept.getDeptName());
+            } else {
+                e.setDeptName(byDept.getDeptName());
+            }
         }
         HashMap<String, Object> map = new HashMap<>();
         int zero = briefingUserMapper.countByIsReadZero(briefingUser.getBriefingId());

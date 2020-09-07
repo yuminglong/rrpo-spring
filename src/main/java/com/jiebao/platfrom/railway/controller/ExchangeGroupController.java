@@ -7,10 +7,13 @@ import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.ExchangeGroupMapper;
+import com.jiebao.platfrom.railway.dao.ExchangeUserGroupMapper;
 import com.jiebao.platfrom.railway.domain.ExchangeGroup;
 import com.jiebao.platfrom.railway.domain.ExchangeType;
+import com.jiebao.platfrom.railway.domain.ExchangeUserGroup;
 import com.jiebao.platfrom.railway.service.ExchangeGroupService;
 import com.jiebao.platfrom.railway.service.ExchangeTypeService;
+import com.jiebao.platfrom.railway.service.ExchangeUserGroupService;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
@@ -22,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -49,16 +49,30 @@ public class ExchangeGroupController extends BaseController {
     @Autowired
     private ExchangeGroupMapper exchangeGroupMapper;
 
+    @Autowired
+    private ExchangeUserGroupService exchangeUserGroupService;
+
+    @Autowired
+    private ExchangeUserGroupMapper exchangeUserGroupMapper;
+
     @PostMapping
-    @Log("新增分组")
-    @ApiOperation(value = "新增分组", notes = "新增分组", response = JiebaoResponse.class, httpMethod = "POST")
+    @Log("新增分组并增加分组人员")
+    @ApiOperation(value = "新增分组并增加分组人员", notes = "新增分组并增加分组人员", response = JiebaoResponse.class, httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addExchangeGroup(@Valid ExchangeGroup exchangeGroup) {
+    public JiebaoResponse addExchangeGroup(@Valid ExchangeGroup exchangeGroup, String[] groupUserIds) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         exchangeGroup.setUserId(byName.getUserId());
         exchangeGroupService.save(exchangeGroup);
-        return new JiebaoResponse().message("成功");
+
+        Arrays.stream(groupUserIds).forEach(groupUserId -> {
+            ExchangeUserGroup exchangeUserGroup = new ExchangeUserGroup();
+            exchangeUserGroup.setGroupId(exchangeGroup.getId());
+            exchangeUserGroup.setUserId(byName.getUserId());
+            exchangeUserGroup.setGroupUserId(groupUserId);
+            exchangeUserGroupService.save(exchangeUserGroup);
+        });
+        return new JiebaoResponse().okMessage("成功");
     }
 
     @DeleteMapping("/{ids}")
@@ -73,7 +87,7 @@ public class ExchangeGroupController extends BaseController {
         } catch (Exception e) {
             throw new JiebaoException("删除失败");
         }
-        return new JiebaoResponse().message("删除成功");
+        return new JiebaoResponse().okMessage("删除成功");
     }
 
     @PutMapping
@@ -102,8 +116,26 @@ public class ExchangeGroupController extends BaseController {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         Map<String, Object> map = new HashMap<>();
-        map.put("user_id",byName.getUserId());
+        map.put("user_id", byName.getUserId());
         List<ExchangeGroup> list = exchangeGroupMapper.selectByMap(map);
         return list;
+    }
+
+    @GetMapping(value = "/getGroupUserList")
+    @ApiOperation(value = "根据分组查分组人员", notes = "根据分组查分组人员", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getGroupUserList(String groupId) {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_id", byName.getUserId());
+        map.put("group_id", groupId);
+        List<ExchangeUserGroup> list = exchangeUserGroupMapper.selectByMap(map);
+        List<User> userList = new ArrayList<>();
+        for (ExchangeUserGroup e : list
+        ) {
+            User user = userService.getById(e.getGroupUserId());
+            userList.add(user);
+        }
+        return new JiebaoResponse().data(userList).okMessage("返回成功");
     }
 }
