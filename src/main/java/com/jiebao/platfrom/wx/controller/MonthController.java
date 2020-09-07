@@ -43,16 +43,7 @@ public class MonthController {
     @ApiOperation("添加或者修改")
     public JiebaoResponse saveOrUpdate(Month month, String[] fileIds) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        boolean b = monthService.saveOrUpdate(month);
-        if (fileIds!= null) {
-            if (b) {
-                UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.in("file_id",Arrays.asList(fileIds));
-                updateWrapper.set("ref_id",month.getWxMonthId());
-                fileService.update(updateWrapper);
-            }
-        }
-        jiebaoResponse = b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        jiebaoResponse = monthService.saveOrUpdate(month) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
 
