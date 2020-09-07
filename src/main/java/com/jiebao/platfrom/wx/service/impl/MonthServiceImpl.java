@@ -52,7 +52,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             entity.setDate(new Date());
         }
         boolean b = super.saveOrUpdate(entity);
-        if (b && entity.getFileIds() != null) {
+        if (b && entity.getFileIds() != null&&entity.getFileIds().length!=0) {
             UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
             updateWrapper.in("file_id", Arrays.asList(entity.getFileIds()));
             updateWrapper.set("ref_id", entity.getWxMonthId());
