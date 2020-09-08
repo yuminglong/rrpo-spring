@@ -3,6 +3,7 @@ package com.jiebao.platfrom.wx.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
+import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -17,9 +18,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -71,13 +70,16 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
-        List<String> resolver = resolver(childrenList);
-        if (resolver.size() == 0) {
+
+        List<String> list = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+        ids.add("0");
+        deptService.getAllIds(ids, list);//当前部门的所有子集部门
+        if (list.size() == 0) {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         } else {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("cj_dept_id", resolver).eq("sh_status", 3));
+                    .or().in("cj_dept_id", list).eq("sh_status", 3));
         }
 
         if (name != null) {
@@ -91,14 +93,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
 
-    private List<String> resolver(List<Dept> list) {
-        List<String> listR = new ArrayList<>(); //储存数据
-        for (Dept dept : list
-        ) {
-            listR.add(dept.getDeptId());
-        }
-        return listR;
-    }
+//    private List<String> resolver(List<Dept> list) {
+//        List<String> listR = new ArrayList<>(); //储存数据
+//        for (Dept dept : list
+//        ) {
+//            listR.add(dept.getDeptId());
+//        }
+//        return listR;
+//    }
 
     @Override
     public JiebaoResponse updateStatus(String qunId) {

@@ -13,11 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,24 +43,28 @@ public class MonthController {
         return jiebaoResponse;
     }
 
-    @Delete("delete")
+    @DeleteMapping("delete")
     @ApiOperation("删除  ")
     public JiebaoResponse saveOrUpdate(String[] ids) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = monthService.removeByIds(Arrays.asList(ids)) ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
+        boolean b = monthService.removeByIds(Arrays.asList(ids));
+        if (b) {
+            fileService.deleteByRefIds(Arrays.asList(ids));
+        }
+        jiebaoResponse = b ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
         return jiebaoResponse;
     }
 
     @GetMapping("list")
     @ApiOperation("查询集合")
     public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
-        return monthService.pageList(queryRequest, month, look,status);
+        return monthService.pageList(queryRequest, month, look, status);
     }
 
     @GetMapping("appear")
     @ApiOperation("上报")
     public JiebaoResponse appear(String monthId, Integer status) {
-        return monthService.appear(monthId,status);
+        return monthService.appear(monthId, status);
     }
 
     @GetMapping("getById")

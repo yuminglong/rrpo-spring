@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
@@ -22,6 +24,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         lambdaQueryWrapper.eq(File::getFileType, 2);
         lambdaQueryWrapper.orderByDesc(File::getTime);
         return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
+    public Integer deleteByRefIds(List<String> refIds) {
+        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("ref_id", refIds);
+        return this.baseMapper.deleteByRefId(queryWrapper);
     }
 
 }
