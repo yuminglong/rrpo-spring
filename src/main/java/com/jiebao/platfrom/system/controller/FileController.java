@@ -60,6 +60,7 @@ public class FileController extends BaseController {
     private String filePath;
     @Value("${jiebao.upload.image}")
     private String imageAccessPath;
+
     @Value("${jiebao.upload.file}")
     private String fileAccessPath;
     @Value("${jiebao.host}")

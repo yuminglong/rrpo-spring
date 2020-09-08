@@ -16,19 +16,23 @@ import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Dict;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
+import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.lang.reflect.Array;
@@ -226,7 +230,7 @@ public class ExchangeController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             ExchangeUser exchangeUser = exchangeUserMapper.getIsRead(byName.getUserId(), e.getId());
-            if (exchangeUser!=null){
+            if (exchangeUser != null) {
                 e.setIsRead(exchangeUser.getIsRead());
             }
         }
@@ -276,7 +280,6 @@ public class ExchangeController extends BaseController {
         columnMap.put("exchange_id", exchangeId);
         List listId = new ArrayList();
         List listName = new ArrayList();
-        //    List listDeptName = new ArrayList();
         List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(columnMap);
         for (ExchangeUser eu : exchangeUsers
         ) {
@@ -309,8 +312,19 @@ public class ExchangeController extends BaseController {
         for (ExchangeUser e : records
         ) {
             User byId = userService.getById(e.getSendUserId());
-            Dept byDeptId = deptService.getById(byId.getDeptId());
-            e.setDeptName(byDeptId.getDeptName());
+            Dept byDept = deptService.getById(byId.getDeptId());
+            if (byDept.getRank() == 1) {
+                e.setDeptName(byDept.getDeptName());
+            } else if (byDept.getRank() == 2) {
+                Dept byParentDept = deptService.getById(byDept.getParentId());
+                e.setDeptName(byParentDept.getDeptName() + " " + byDept.getDeptName());
+            } else if (byDept.getRank() == 3) {
+                Dept byParentDept = deptService.getById(byDept.getParentId());
+                Dept byCityDept = deptService.getById(byParentDept.getParentId());
+                e.setDeptName(byCityDept.getDeptName() + " " + byParentDept.getDeptName() + " " + byDept.getDeptName());
+            } else {
+                e.setDeptName(byDept.getDeptName());
+            }
         }
         HashMap<String, Object> map = new HashMap<>();
         int zero = exchangeUserMapper.countByIsReadZero(exchangeUser.getExchangeId());
@@ -330,7 +344,7 @@ public class ExchangeController extends BaseController {
     @PutMapping("/receive")
     @ApiOperation(value = "意见回复或修改", notes = "意见回复或修改", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse receive(@Valid ExchangeUser exchangeUser,String[] fileIds) throws JiebaoException {
+    public JiebaoResponse receive(@Valid ExchangeUser exchangeUser, String[] fileIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -358,6 +372,18 @@ public class ExchangeController extends BaseController {
             exchangeUserMapper.updateIsRead(exchangeId, byName.getUserId());
         }
         return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
+    }
+
+    @PostMapping("/excel")
+    public void export( ExchangeUser exchangeUser, HttpServletResponse response) throws JiebaoException {
+        try {
+
+          //  ExcelKit.$Export(Dict.class, response).downXlsx(exchangeUser, false);
+        } catch (Exception e) {
+            message = "导出Excel失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
     }
 
 

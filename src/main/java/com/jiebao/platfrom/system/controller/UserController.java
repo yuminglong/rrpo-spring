@@ -8,6 +8,11 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.common.utils.MD5Util;
+import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
+import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
+import com.jiebao.platfrom.railway.domain.BriefingUser;
+import com.jiebao.platfrom.railway.domain.ExchangeUser;
+import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
 import com.jiebao.platfrom.system.service.UserConfigService;
@@ -27,10 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Validated
@@ -44,6 +46,10 @@ public class UserController extends BaseController {
     private UserService userService;
     @Autowired
     private UserConfigService userConfigService;
+    @Autowired
+    private ExchangeUserMapper exchangeUserMapper;
+    @Autowired
+    private BriefingUserMapper briefingUserMapper;
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
@@ -209,4 +215,33 @@ public class UserController extends BaseController {
         });
        return users;
     }
+
+    @GetMapping("getId")
+    @ApiOperation(value = "根据信息互递或者简报ID查接收人员", notes = "根据信息互递或者简报ID查接收人员", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<User> getId( String someId  ,Integer type) {
+        List<User> users = new ArrayList();
+        //1为信息互递ID
+       if (type ==1){
+           Map<String, Object> exchangeMap = new HashMap<>();
+           exchangeMap.put("exchange_id",someId);
+           List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(exchangeMap);
+           for (ExchangeUser e:exchangeUsers
+                ) {
+             users.add(userService.getById(e.getSendUserId()));
+           }
+       }
+       //2为简报
+       else if (type ==2){
+           Map<String, Object> briefingMap = new HashMap<>();
+           briefingMap.put("briefing_id",someId);
+           List<BriefingUser> briefingUsers = briefingUserMapper.selectByMap(briefingMap);
+           for (BriefingUser b:briefingUsers
+           ) {
+               users.add(userService.getById(b.getSendUserId()));
+           }
+       }
+        return users;
+    }
+
+
 }

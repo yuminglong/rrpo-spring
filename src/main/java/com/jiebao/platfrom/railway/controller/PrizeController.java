@@ -329,7 +329,6 @@ public class PrizeController extends BaseController {
             });
             //解析json数组
                 JSONArray jsonArray = JSON.parseArray(moneys);
-                System.out.println(jsonArray.toString()+"-----------------------------");
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                     String prizeId = jsonObject.getString("prizeId");
