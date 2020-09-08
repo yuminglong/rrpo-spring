@@ -80,8 +80,8 @@ management:
 
 
 jiebao:
-  #host: http://114.115.147.159:9527
-  host: http://192.168.10.104:9527
+  host: http://114.115.147.159:9527
+  #host: http://192.168.20.113:9527
   # 是否异步记录用户操作日志
   openAopLog: true
   # 单次最大批量入库数量
@@ -97,10 +97,9 @@ jiebao:
 
   upload:
     #上传路径
-   #imagePath: /usr/local/rrpo/upload/images/ #D:/upload/images/
-   #filePath: /usr/local/rrpo/upload/files/  #D:/upload/files/
-    imagePath:  D:/upload/images/
-    filePath:  D:/upload/files/
+    imagePath: /usr/local/rrpo/upload/images/ #D:/upload/images/
+    filePath: /usr/local/rrpo/upload/files/  #D:/upload/files/
+
     #虚拟访问路径+
     staticImagePath: /jbx/cdn/image/**
     staticFilePath: /jbx/cdn/file/**

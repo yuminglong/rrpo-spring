@@ -16,9 +16,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IQunService extends IService<Qun> {
     JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName,Integer Status);
 
-    JiebaoResponse updateStatus(String qunId);
-
-    JiebaoResponse up(String qunId);
+//    JiebaoResponse updateStatus(String qunId);
+//
+//    JiebaoResponse up(String qunId);
 
     JiebaoResponse addOrUpdate(Qun qun);
 

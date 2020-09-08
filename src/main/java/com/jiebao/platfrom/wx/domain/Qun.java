@@ -75,5 +75,5 @@ public class Qun implements Serializable {
     @TableField(exist = false)
     private Integer number;
 
-    private Integer shNumber;
+
 }
