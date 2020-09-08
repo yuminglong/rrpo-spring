@@ -14,11 +14,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-08-20
  */
 public interface IQunService extends IService<Qun> {
-    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName);
+    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName,Integer Status);
 
     JiebaoResponse updateStatus(String qunId);
 
     JiebaoResponse up(String qunId);
 
     JiebaoResponse addOrUpdate(Qun qun);
+
 }

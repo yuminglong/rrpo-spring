@@ -26,4 +26,7 @@ public interface QunJsMapper extends BaseMapper<QunJs> {
     })
     QunJs getQunJs(@Param("ew") QueryWrapper<QunJs> ew);
 
+
+    @Select("select * from wx_qun_js where wx_id=#{wxId}")
+    QunJs selectByWxId(String wxId);
 }

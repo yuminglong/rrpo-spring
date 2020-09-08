@@ -38,8 +38,8 @@ public class QunController {
 
     @GetMapping("list")
     @ApiOperation("群查询")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
-        return qunService.pageList(queryRequest, name, userName);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer Status) {
+        return qunService.pageList(queryRequest, name, userName,Status);
     }
 
     @GetMapping("up")

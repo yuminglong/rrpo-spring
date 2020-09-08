@@ -66,15 +66,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer Status) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-
         List<String> list = new ArrayList<>();
         List<String> ids = new ArrayList<>();
         ids.add(dept.getDeptId());
-        deptService.getAllIds(ids,list);//当前部门的所有子集部门
+        deptService.getAllIds(ids, list);//当前部门的所有子集部门
         if (list.size() == 0) {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         } else {
@@ -88,19 +87,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         if (userName != null) {
             queryWrapper.like("wx_user_name", userName);
         }
+        if (Status != null) {
+            queryWrapper.eq("sh_status", Status);
+        }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
 
-//    private List<String> resolver(List<Dept> list) {
-//        List<String> listR = new ArrayList<>(); //储存数据
-//        for (Dept dept : list
-//        ) {
-//            listR.add(dept.getDeptId());
-//        }
-//        return listR;
-//    }
 
     @Override
     public JiebaoResponse updateStatus(String qunId) {
