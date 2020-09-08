@@ -73,8 +73,8 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
 
         List<String> list = new ArrayList<>();
         List<String> ids = new ArrayList<>();
-        ids.add("0");
-        deptService.getAllIds(ids, list);//当前部门的所有子集部门
+        ids.add(dept.getDeptId());
+        deptService.getAllIds(ids,list);//当前部门的所有子集部门
         if (list.size() == 0) {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         } else {
