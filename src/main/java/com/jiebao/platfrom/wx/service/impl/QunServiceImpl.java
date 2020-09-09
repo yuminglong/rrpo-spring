@@ -95,29 +95,29 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     }
 
 
-//    @Override
-//    public JiebaoResponse updateStatus(String qunId) {
-//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-//        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-//        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-//        if (dept.getDeptId().equals(getById(qunId).getCjDeptId())) {
-//            return jiebaoResponse.failMessage("无权发起重新提交");
-//        }
-//        Qun qun = getById(qunId);
-//        qun.setStatus(0);
-//        qun.setShDeptId(qun.getCjDeptId());
-//        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
-//        return jiebaoResponse;
-//    }
-//
-//    @Override
-//    public JiebaoResponse up(String qunId) {
-//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-//        Qun qun = getById(qunId);
-//        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-//        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-//        qun.setShDeptId(dept.getParentId());
-//        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
-//        return jiebaoResponse;
-//    }
+    @Override
+    public JiebaoResponse updateStatus(String qunId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        if (dept.getDeptId().equals(getById(qunId).getCjDeptId())) {
+            return jiebaoResponse.failMessage("无权发起重新提交");
+        }
+        Qun qun = getById(qunId);
+        qun.setStatus(0);
+        qun.setShDeptId(qun.getCjDeptId());
+        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
+    }
+
+    @Override
+    public JiebaoResponse up(String qunId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Qun qun = getById(qunId);
+        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        qun.setShDeptId(dept.getParentId());
+        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
+        return jiebaoResponse;
+    }
 }
