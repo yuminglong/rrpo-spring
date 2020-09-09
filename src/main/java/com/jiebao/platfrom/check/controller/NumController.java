@@ -11,6 +11,7 @@ import io.swagger.annotations.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +55,7 @@ public class NumController {
         return numService.exist(yearId, deptId);
     }
 
-    @GetMapping("deadDate")
+    @PostMapping("deadDate")
     @ApiOperation("逾期回复时间赋值")
     public JiebaoResponse deadDate(String numId, Date date) {
         return numService.deadDate(numId, date);
