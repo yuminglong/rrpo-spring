@@ -56,7 +56,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     Integer exist(String yearId, String deptId);  //是否产生 对应年份试题
 
     @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} and check_id=#{menusId} limit 1")
-    Integer exist(String yearId, String deptId, String menusId);  //试题中的具体某一题
+    Integer existM(String yearId, String deptId, String menusId);  //试题中的具体某一题
 
     @Update("update check_grade set status=#{status} where grade_id=#{gradeId}")
     Integer updateStatus(Integer status, String gradeId); //条件 修改状态
