@@ -9,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -55,6 +57,6 @@ public class NumController {
     @GetMapping("deadDate")
     @ApiOperation("逾期回复时间赋值")
     public JiebaoResponse deadDate(String numId, Date date) {
-        return numService.deadDate(numId,date);
+        return numService.deadDate(numId, date);
     }
 }
