@@ -93,14 +93,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (type == 3) {
             Double math1 = grade.getNum() == null ? 0 : grade.getNum();//第一次自评
             math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数
-            if (number == math) {
+            if (number != null && number == math) {
                 grade.setStatus(1);
             } else {
                 grade.setStatus(0);
             }
         }
         if (type == 2) {
-            if (number == grade.getFpNum()) {
+            if (number != null && number == grade.getFpNum()) {
                 grade.setStatus(1);
             } else {
                 grade.setStatus(0);
