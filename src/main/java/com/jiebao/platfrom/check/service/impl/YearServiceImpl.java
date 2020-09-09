@@ -96,7 +96,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             if (!dept.getDeptName().contains("公安处")) {
                 for (MenusYear m : menusYearList
                 ) {
-                    if (gradeMapper.exist(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经
+                    if (gradeMapper.existM(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经
                         continue;
                     Grade grade = new Grade();
                     grade.setYearId(yearId);
