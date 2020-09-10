@@ -63,14 +63,14 @@ public class ExchangeGroupController extends BaseController {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         exchangeGroup.setUserId(byName.getUserId());
-        exchangeGroupService.save(exchangeGroup);
+        exchangeGroupService.saveOrUpdate(exchangeGroup);
 
         Arrays.stream(groupUserIds).forEach(groupUserId -> {
             ExchangeUserGroup exchangeUserGroup = new ExchangeUserGroup();
             exchangeUserGroup.setGroupId(exchangeGroup.getId());
             exchangeUserGroup.setUserId(byName.getUserId());
             exchangeUserGroup.setGroupUserId(groupUserId);
-            exchangeUserGroupService.save(exchangeUserGroup);
+            exchangeUserGroupService.saveOrUpdate(exchangeUserGroup);
         });
         return new JiebaoResponse().okMessage("成功");
     }
@@ -123,19 +123,76 @@ public class ExchangeGroupController extends BaseController {
 
     @GetMapping(value = "/getGroupUserList")
     @ApiOperation(value = "根据分组查分组人员", notes = "根据分组查分组人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getGroupUserList(String groupId) {
+    public JiebaoResponse getGroupUserList(String [] groupIds) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", byName.getUserId());
-        map.put("group_id", groupId);
-        List<ExchangeUserGroup> list = exchangeUserGroupMapper.selectByMap(map);
-        List<User> userList = new ArrayList<>();
-        for (ExchangeUserGroup e : list
-        ) {
-            User user = userService.getById(e.getGroupUserId());
-            userList.add(user);
-        }
-        return new JiebaoResponse().data(userList).okMessage("返回成功");
+        List<User> userLists = new ArrayList<>();
+        Arrays.stream(groupIds).forEach(groupId->{
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", byName.getUserId());
+            map.put("group_id", groupId);
+            List<ExchangeUserGroup> list = exchangeUserGroupMapper.selectByMap(map);
+            List<User> userList = new ArrayList<>();
+            for (ExchangeUserGroup e : list
+            ) {
+                User user = userService.getById(e.getGroupUserId());
+                userList.add(user);
+            }
+            userLists.addAll(userList);
+        });
+        HashSet h = new HashSet(userLists);
+        userLists.clear();
+        userLists.addAll(h);
+
+
+        return new JiebaoResponse().data(userLists).okMessage("返回成功");
     }
+
+    @PostMapping("/addUser")
+    @Log("增加分组人员")
+    @ApiOperation(value = "增加分组人员", notes = "增加分组人员", response = JiebaoResponse.class, httpMethod = "POST")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse addUser(String exchangeGroupId, String[] groupUserIds) {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        Arrays.stream(groupUserIds).forEach(groupUserId -> {
+            ExchangeUserGroup exchangeUserGroup = new ExchangeUserGroup();
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id",byName.getUserId());
+            map.put("group_user_id",groupUserId);
+            map.put("group_id",exchangeGroupId);
+            List<ExchangeUserGroup> exchangeUserGroups = exchangeUserGroupMapper.selectByMap(map);
+            if (exchangeUserGroups.size() > 0 ){
+                return;
+            }
+            else {
+                exchangeUserGroup.setGroupId(exchangeGroupId);
+                exchangeUserGroup.setUserId(byName.getUserId());
+                exchangeUserGroup.setGroupUserId(groupUserId);
+                exchangeUserGroupService.save(exchangeUserGroup);
+            }
+
+
+        });
+        return new JiebaoResponse().okMessage("成功");
+    }
+
+
+    @PostMapping("/deleteUser")
+    @Log("删除分组人员")
+    @ApiOperation(value = "删除分组人员", notes = "删除分组人员", response = JiebaoResponse.class, httpMethod = "POST")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse deleteUser(String exchangeGroupId, String[] groupUserIds) {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        Arrays.stream(groupUserIds).forEach(groupUserId -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id",byName.getUserId());
+            map.put("group_id",exchangeGroupId);
+            map.put("group_user_id",groupUserId);
+            exchangeUserGroupMapper.deleteByMap(map);
+        });
+        return new JiebaoResponse().okMessage("成功");
+    }
+
 }
