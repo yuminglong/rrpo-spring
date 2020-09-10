@@ -462,7 +462,8 @@ public class PrizeController extends BaseController {
         String oldName = "湖南铁路护路联防简报"+year+"第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
         //新生产的模板文件
         String newName = UUID.randomUUID().toString();
-        String outputUrl = "D:/upload/words/" + newName;
+       // String outputUrl = "D:/upload/words/" + newName;
+        String outputUrl = "/usr/local/rrpo/upload/" + newName;
         String outPath = outputUrl+".docx";
         WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -476,7 +477,8 @@ public class PrizeController extends BaseController {
     private JiebaoResponse saveFile(String fileType, String refType,  String userId, String oldName, String newName, boolean status) {
         String path = "";   //上传地址
         String accessPath = ""; //文件访问虚拟地址
-        path = "D:/upload/words/";
+       // path = "D:/upload/words/";
+        path = "/usr/local/rrpo/upload/";
         accessPath = "/jbx/cdn/file/";
         String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
         java.io.File currentFile = new java.io.File(path + newName + ".docx");
