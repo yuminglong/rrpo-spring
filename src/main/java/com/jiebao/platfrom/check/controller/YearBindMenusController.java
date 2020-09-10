@@ -29,11 +29,11 @@ public class YearBindMenusController {
     @Autowired
     IYearBindMenusService yearBindMenusService;
 
-    @GetMapping("addOrUpdate")
+    @GetMapping("add")
     @ApiOperation("考勤年度规则绑定考核类型模块")
     @Log("绑定 考勤年度规则绑定考核类型模块")
-    public JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus) {
-        return yearBindMenusService.addOrUpdate(yearBindMenus);
+    public JiebaoResponse add(String yearId, String[] menusId) {
+        return yearBindMenusService.add(yearId, menusId);
     }
 
     @DeleteMapping("delete")

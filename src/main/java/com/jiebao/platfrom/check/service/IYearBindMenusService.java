@@ -13,7 +13,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
  * @since 2020-09-03
  */
 public interface IYearBindMenusService extends IService<YearBindMenus> {
-    JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus);
+    JiebaoResponse add(String yearID,String[] menusId);
 
     JiebaoResponse delete(String[] ids);
 

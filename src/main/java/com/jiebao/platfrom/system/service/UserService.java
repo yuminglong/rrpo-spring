@@ -103,4 +103,6 @@ public interface UserService extends IService<User> {
     List<User> getByDepts(String deptId);
 
     User getByOpenid(String openid);
+
+
 }
