@@ -40,6 +40,7 @@ import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -437,7 +438,7 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) {
+    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 
@@ -455,14 +456,16 @@ public class PrizeController extends BaseController {
         }
 
         //模板文件地址
-        String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
+        //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
+        File file = ResourceUtils.getFile("classpath:tempDoc.docx");
+        String inputUrl = file.getAbsolutePath();
         System.out.println("-------------" + inputUrl + "---------------------");
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         String oldName = "湖南铁路护路联防简报"+year+"第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
         //新生产的模板文件
         String newName = UUID.randomUUID().toString();
-       // String outputUrl = "D:/upload/words/" + newName;
+        //String outputUrl = "D:/upload/words/" + newName;
         String outputUrl = "/usr/local/rrpo/upload/" + newName;
         String outPath = outputUrl+".docx";
         WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
@@ -477,7 +480,7 @@ public class PrizeController extends BaseController {
     private JiebaoResponse saveFile(String fileType, String refType,  String userId, String oldName, String newName, boolean status) {
         String path = "";   //上传地址
         String accessPath = ""; //文件访问虚拟地址
-       // path = "D:/upload/words/";
+        //path = "D:/upload/words/";
         path = "/usr/local/rrpo/upload/";
         accessPath = "/jbx/cdn/file/";
         String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
