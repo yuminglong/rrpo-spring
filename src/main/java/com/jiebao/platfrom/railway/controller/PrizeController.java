@@ -35,19 +35,21 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -65,8 +67,9 @@ import java.util.*;
 public class PrizeController extends BaseController {
 
 
-    private String message;
+    private final String HOST = "http://192.168.10.104:9527";
 
+    private String message;
 
     @Autowired
     private PrizeUserService prizeUserService;
@@ -175,18 +178,18 @@ public class PrizeController extends BaseController {
             if (countByDept <= limitNumber) {
                 Arrays.stream(prizeIds).forEach(prizeId -> {
                     Prize prize = prizeService.getById(prizeId);
-                   if (prize.getStatus() == 1){
-                       PrizeOrder prizeOrderSet = new PrizeOrder();
-                       prizeOrderSet.setDeptId(byName.getDeptId());
-                       prizeOrderSet.setCreatTime(prize.getReleaseTime());
-                       prizeOrderSet.setPrizeId(prizeId);
-                       prizeOrderSet.setTitle(prize.getContent());
-                       prizeOrderSet.setReleaseNumber(countByDept + 1);
-                       prizeOrderService.save(prizeOrderSet);
-                       //把status改为3,并创建发布时间
-                       prizeMapper.release(prizeId);
-                       prizeUserMapper.setCreatTime(prizeId);
-                   }
+                    if (prize.getStatus() == 1) {
+                        PrizeOrder prizeOrderSet = new PrizeOrder();
+                        prizeOrderSet.setDeptId(byName.getDeptId());
+                        prizeOrderSet.setCreatTime(prize.getReleaseTime());
+                        prizeOrderSet.setPrizeId(prizeId);
+                        prizeOrderSet.setTitle(prize.getContent());
+                        prizeOrderSet.setReleaseNumber(countByDept + 1);
+                        prizeOrderService.save(prizeOrderSet);
+                        //把status改为3,并创建发布时间
+                        prizeMapper.release(prizeId);
+                        prizeUserMapper.setCreatTime(prizeId);
+                    }
                 });
             } else {
                 return new JiebaoResponse().message("超出发布次数限制，本月限制发布条数为" + (limitNumber + 1) + "，已超出！");
@@ -210,7 +213,7 @@ public class PrizeController extends BaseController {
                 //不能直接删掉文件（暂时未做文件），不能删除接收人，不能删除该信息本体，直接改状态 status为4
                 Prize byId = prizeService.getById(prizeId);
                 //1为未发送状态
-                if (byId.getStatus() ==1) {
+                if (byId.getStatus() == 1) {
                     //删除接收的组织机构
                     prizeUserService.deleteByPrizeId(prizeId);
                     //删除内容本体（文件还没加哦）
@@ -227,7 +230,6 @@ public class PrizeController extends BaseController {
             throw new JiebaoException(message);
         }
     }
-
 
 
     @PutMapping("/update")
@@ -273,7 +275,7 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/report")
     @ApiOperation(value = "审批并上报", notes = "审批并上报", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse PrizeReport(String auditOpinion,String moneys,  String[] prizeIds, String sendDeptId) throws JiebaoException {
+    public JiebaoResponse PrizeReport(String auditOpinion, String moneys, String[] prizeIds, String sendDeptId) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -292,7 +294,7 @@ public class PrizeController extends BaseController {
                 depts = deptMapper.selectByMap(columnMap);
             }
             List<Dept> finalDepts = depts;
-            System.out.println(prizeIds+"**********************");
+            System.out.println(prizeIds + "**********************");
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 //查询该级组织机构是否有审批内容
                 Integer result = prizeOpinionMapper.selectOpinion(byId.getRank(), prizeId);
@@ -323,20 +325,19 @@ public class PrizeController extends BaseController {
                     //id必须传来
                     prizeOpinion.setPrizeId(prizeId);
                     prizeOpinion.setAuditOpinion(auditOpinion);
-                   // prizeOpinion.setMoney(prizeOpinion.getMoney());
+                    // prizeOpinion.setMoney(prizeOpinion.getMoney());
                     prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
             //解析json数组
-                JSONArray jsonArray = JSON.parseArray(moneys);
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                    String prizeId = jsonObject.getString("prizeId");
-                    String opinionMoney = jsonObject.getString("opinionMoney");
-                    System.out.println(jsonObject.getString("prizeId")+":"+jsonObject.getInteger("opinionMoney"));
-                    prizeOpinionService.saveByPrizeId(prizeId,opinionMoney,byId.getRank());
-                }
-
+            JSONArray jsonArray = JSON.parseArray(moneys);
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                String prizeId = jsonObject.getString("prizeId");
+                String opinionMoney = jsonObject.getString("opinionMoney");
+                System.out.println(jsonObject.getString("prizeId") + ":" + jsonObject.getInteger("opinionMoney"));
+                prizeOpinionService.saveByPrizeId(prizeId, opinionMoney, byId.getRank());
+            }
 
 
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
@@ -436,52 +437,70 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime , String period, String year, String month, String day) {
+    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) {
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 
         Map<String, String> map = new HashMap<>();
+        System.out.println(period + year + month + day + "-------------------------------");
         map.put("period", period);
         map.put("year", year);
         map.put("month", month);
-        map.put("day",day);
+        map.put("day", day);
 
         List<String[]> testList = new ArrayList<>();
-        for (Prize p:
-             records) {
+        for (Prize p :
+                records) {
             testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
         }
 
         //模板文件地址
-        //String inputUrl = "D:\\tempDoc.docx";
-        String inputUrl =  GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
-        System.out.println("-------------"+inputUrl+"---------------------");
+        String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
+        System.out.println("-------------" + inputUrl + "---------------------");
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        String oldName = "湖南铁路护路联防简报"+year+"第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
         //新生产的模板文件
-        String outputUrl = "D:\\newDoc.docx";
-        WorderToNewWordUtils.changWord(inputUrl, outputUrl, map, testList);
+        String newName = UUID.randomUUID().toString();
+        String outputUrl = "D:/upload/words/" + newName;
+        String outPath = outputUrl+".docx";
+        WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        this.saveFile("2", "10",  byName.getUserId(), oldName,  newName, true);
 
-
-        java.io.File downloadFile = new java.io.File(outputUrl);
-        if (downloadFile.exists()) {
-            try {
-                InputStream is = new BufferedInputStream(new FileInputStream(downloadFile));
-                byte[] buffer = new byte[is.available()];
-                is.read(buffer);
-                is.close();
-                response.setCharacterEncoding("utf-8");
-                response.setContentType("application/octet-stream");
-               response.addHeader("Content-Disposition", "attachment;filename=" + new String((period+"期.docx").getBytes("UTF-8"), "ISO-8859-1"));
-                OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-                response.setContentType("application/octet-stream");
-                outputStream.write(buffer);
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                log.warn("File download Exception：" + e);
-            }
-        }
     }
 
+
+
+    private JiebaoResponse saveFile(String fileType, String refType,  String userId, String oldName, String newName, boolean status) {
+        String path = "";   //上传地址
+        String accessPath = ""; //文件访问虚拟地址
+        path = "D:/upload/words/";
+        accessPath = "/jbx/cdn/file/";
+        String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
+        java.io.File currentFile = new java.io.File(path + newName + ".docx");
+        accessPath = HOST + accessPath + newName + ".docx";   //上传后完整文件虚拟访问地址
+        //创建文件信息对象保存至数据库
+        com.jiebao.platfrom.system.domain.File file = new com.jiebao.platfrom.system.domain.File();
+        file.setFileType(fileType);
+        file.setOldName(oldName);
+        file.setNewName(newName + ".docx");
+        file.setFileUrl(path);
+        file.setAccessUrl(accessPath);
+        file.setRefType(refType);
+        file.setFileSuffix(".docx");
+        file.setStatus(status);
+        file.setTime(new Date());
+        file.setUserId(userId);
+
+        if (file.insert()) {
+            return new JiebaoResponse().put("status", true).put("file", file);
+        } else {
+            currentFile.delete();
+            return new JiebaoResponse().put("status", false).message("上传服务异常，上传失败，请重试！");
+        }
+    }
 
 
 }

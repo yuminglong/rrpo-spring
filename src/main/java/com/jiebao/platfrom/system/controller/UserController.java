@@ -13,6 +13,8 @@ import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
+import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
 import com.jiebao.platfrom.system.service.UserConfigService;
@@ -50,6 +52,8 @@ public class UserController extends BaseController {
     private ExchangeUserMapper exchangeUserMapper;
     @Autowired
     private BriefingUserMapper briefingUserMapper;
+    @Autowired
+    private DeptMapper deptMapper;
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
@@ -243,5 +247,23 @@ public class UserController extends BaseController {
         return users;
     }
 
+    @GetMapping("/getDeptAndUser")
+    @ApiOperation(value = "根据部门id查子部门和该部门人员", notes = "根据部门id查子部门和该部门人员", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getDeptAndUser( String [] deptIds) {
+        List<User> users = new ArrayList();
+        List<Dept> depts =new ArrayList<>();
+        Arrays.stream(deptIds).forEach(deptId -> {
+            List<User> byDept = userService.getByDepts(deptId);
+            users.addAll(byDept);
 
+            Map<String, Object> map = new HashMap<>();
+            map.put("parent_id",deptId);
+            List<Dept> dept = deptMapper.selectByMap(map);
+            depts.addAll(dept);
+        });
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("dept",depts);
+        map.put("user",users);
+        return new JiebaoResponse().data(map).okMessage("查询成功");
+    }
 }

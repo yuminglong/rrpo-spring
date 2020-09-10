@@ -150,7 +150,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
             queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
         }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
-        SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "place", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 }
