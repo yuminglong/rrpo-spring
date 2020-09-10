@@ -92,7 +92,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         double math;
         if (type == 3) {
             Double math1 = grade.getNum() == null ? 0 : grade.getNum();//第一次自评
-            math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数
+            math = grade.getNum2() == null ? math1 : grade.getNum2();  //分数
             if (number != null && number == math) {
                 grade.setStatus(1);
             } else {
@@ -101,7 +101,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
 
         if (type == 2) {
-            if (number != null && number == grade.getFpNum()) {
+            math = grade.getFpNum() == null ? 0 : grade.getFpNum();  //分数
+            if (number != null && number == math) {
                 grade.setStatus(1);
             } else {
                 grade.setStatus(0);

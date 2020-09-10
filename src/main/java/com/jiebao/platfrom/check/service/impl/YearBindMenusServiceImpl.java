@@ -39,6 +39,7 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
         return jiebaoResponse;
     }
 
+
     @Override
     public JiebaoResponse delete(String[] ids) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
