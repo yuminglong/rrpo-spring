@@ -50,7 +50,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             entity.setShStatus(0);
             entity.setNumber(0);
         } else {
-            if (!entity.getCjDeptId().equals(dept.getDeptId())) {
+            if (entity.getCjDeptId() != null && !entity.getCjDeptId().equals(dept.getDeptId())) {
                 if (!judge(dept.getDeptId())) {
                     return jiebaoResponse.failMessage("此单位已建立群");
                 }
