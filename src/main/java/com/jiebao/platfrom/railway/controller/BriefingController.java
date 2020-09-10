@@ -16,7 +16,6 @@ import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.domain.Briefing;
 import com.jiebao.platfrom.railway.domain.BriefingCount;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
-import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import com.jiebao.platfrom.railway.service.BriefingCountService;
 import com.jiebao.platfrom.railway.service.BriefingService;
 import com.jiebao.platfrom.railway.service.BriefingUserService;
@@ -262,9 +261,9 @@ public class BriefingController extends BaseController {
     }
 
 
-    @GetMapping(value = "/getInfoById")
+    @GetMapping(value = "/getInfoById/{briefingId}")
     @ApiOperation(value = "根据ID查信息info", notes = "根据ID查信息info", response = JiebaoResponse.class, httpMethod = "GET")
-    public Briefing getInfoById( String briefingId) {
+    public Briefing getInfoById(@PathVariable String briefingId) {
         Briefing byId = briefingService.getById(briefingId);
         Map<String, Object> columnMap = new HashMap<>();
         //列briefing_id为数据库中的列名，不是实体类中的属性名
@@ -347,16 +346,5 @@ public class BriefingController extends BaseController {
 
     }*/
 
-    @GetMapping("/getView")
-    @ApiOperation(value = "查看(收件箱)", notes = "查看(收件箱)", httpMethod = "GET")
-    @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse getView(String briefingId) {
-        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        User byName = userService.findByName(username);
-        BriefingUser byNameAndId = briefingUserMapper.findByNameAndId(briefingId, byName.getUserId());
-        if (byNameAndId.getIsRead() == 0) {
-            briefingUserMapper.updateIsRead(briefingId, byName.getUserId());
-        }
-        return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
-    }
+
 }

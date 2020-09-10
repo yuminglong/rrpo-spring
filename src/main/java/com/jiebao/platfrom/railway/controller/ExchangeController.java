@@ -1,8 +1,6 @@
 package com.jiebao.platfrom.railway.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
@@ -377,16 +375,10 @@ public class ExchangeController extends BaseController {
     }
 
     @PostMapping("/excel")
-    public void export(String list, HttpServletResponse response) throws JiebaoException {
+    public void export( ExchangeUser exchangeUser, HttpServletResponse response) throws JiebaoException {
         try {
-            ArrayList<ExchangeUser> userList =
-                    JSON.parseObject(list, new TypeReference<ArrayList<ExchangeUser>>() {
-            });
-            for (ExchangeUser e : userList) {
-                System.out.println(e.toString());
-            }
 
-            //ExcelKit.$Export(Dict.class, response).downXlsx(list, false);
+          //  ExcelKit.$Export(Dict.class, response).downXlsx(exchangeUser, false);
         } catch (Exception e) {
             message = "导出Excel失败";
             log.error(message, e);

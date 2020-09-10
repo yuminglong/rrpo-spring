@@ -1,19 +1,14 @@
 package com.jiebao.platfrom.system.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
-import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.railway.domain.Prize;
-import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.Basic;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.manager.UserManager;
 import com.jiebao.platfrom.system.service.BasicService;
 import com.jiebao.platfrom.system.service.FileService;
-import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +52,6 @@ public class FileController extends BaseController {
     private final Integer FILE_DEFAULT_SIZE = 10;
     private final String IMAGE_DEFAULT_TYPE = "bmp,jpg,jepg,png,gif,webp";
     private final String FILE_DEFAULT_TYPE = "bmp,jpg,jepg,png,gif,webp,doc,docx,xls,xlsx,pdf,rar,zip,7z";
-    private final String TEN = "10";
 
     // 文件存储路径、虚拟访问路径读取
     @Value("${jiebao.upload.imagePath}")
@@ -76,8 +72,6 @@ public class FileController extends BaseController {
     private UserManager userManager;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private UserService userService;
 
 
     @GetMapping("selectById")
@@ -140,7 +134,6 @@ public class FileController extends BaseController {
     @ApiOperation("文件下载接口")
     @PostMapping("/downloadFile")
     public void downloadFile(String fileId, HttpServletResponse response) {
-
         File file = fileService.getById(fileId);
         java.io.File downloadFile = new java.io.File(file.getFileUrl() + file.getNewName());
         if (downloadFile.exists()) {
@@ -339,20 +332,4 @@ public class FileController extends BaseController {
         return true;
     }
 
-    /**
-     * 读取一事一奖word文档接口
-     * @return
-     */
-    @ApiOperation("读取附件接口")
-    @GetMapping("/getPrizeList")
-    public JiebaoResponse getPrizeList(QueryRequest request, File file, String startTime, String endTime) {
-        IPage<File> fileList = fileService.getFileList(request, file, startTime, endTime);
-        List<File> records = fileList.getRecords();
-        for (File f:records
-             ) {
-            User byId = userService.getById(f.getUserId());
-            f.setUserName(byId.getUsername());
-        }
-        return new JiebaoResponse().data(this.getDataTable(fileList));
-    }
 }
