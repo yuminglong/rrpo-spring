@@ -33,6 +33,7 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
             YearBindMenus yearBindMenus = new YearBindMenus();
             yearBindMenus.setYearId(yearID);
             yearBindMenus.setMenusId(mId);
+            list.add(yearBindMenus);
         }
         jiebaoResponse = super.saveBatch(list) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
