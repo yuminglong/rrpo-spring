@@ -22,7 +22,7 @@ public interface IMenusYearService extends IService<MenusYear> {
 
     JiebaoResponse deleteByListAndYearDate(String[] list);
 
-    JiebaoResponse excel(MultipartFile multipartFile, String yearId);
+    JiebaoResponse excel(MultipartFile multipartFile, String yearId);//excel导入题目
 
 
 }

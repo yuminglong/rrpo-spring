@@ -13,9 +13,9 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
  * @since 2020-09-03
  */
 public interface IYearBindMenusService extends IService<YearBindMenus> {
-    JiebaoResponse add(String yearID,String[] menusId);
+    JiebaoResponse add(String yearID,String[] menusId);//绑定
 
-    JiebaoResponse delete(String[] ids);
+    JiebaoResponse delete(String[] ids);//删除
 
-    JiebaoResponse list(String yearId);
+    JiebaoResponse list(String yearId); //年份查找集合
 }

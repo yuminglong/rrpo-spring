@@ -37,7 +37,7 @@ public class YearBindMenus implements Serializable {
 
     private String menusId;
     @TableField(exist = false)
-    private String[] menusIds;
+    private Menus menus;
 
 
 }

@@ -25,5 +25,5 @@ public interface IYearService extends IService<Year> {
 
     List<Year> list(QueryWrapper<Year> queryWrapper);
 
-    JiebaoResponse ok(String yearId);
+    JiebaoResponse ok(String yearId);  //发放考题
 }
