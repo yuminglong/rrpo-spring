@@ -99,6 +99,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setStatus(0);
             }
         }
+
         if (type == 2) {
             if (number != null && number == grade.getFpNum()) {
                 grade.setStatus(1);

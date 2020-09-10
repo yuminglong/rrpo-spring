@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.check.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -35,6 +36,8 @@ public class YearBindMenus implements Serializable {
     private String yearId;
 
     private String menusId;
+    @TableField(exist = false)
+    private String[] menusIds;
 
 
 }
