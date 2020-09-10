@@ -457,8 +457,9 @@ public class PrizeController extends BaseController {
 
         //模板文件地址
         //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
-        File file = ResourceUtils.getFile("classpath:tempDoc.docx");
-        String inputUrl = file.getAbsolutePath();
+
+    String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
+
         System.out.println("-------------" + inputUrl + "---------------------");
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
