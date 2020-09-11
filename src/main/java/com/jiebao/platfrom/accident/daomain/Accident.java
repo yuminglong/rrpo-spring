@@ -38,6 +38,8 @@ public class Accident implements Serializable {
     @TableId(value = "accident_id", type = IdType.UUID)
     private String accidentId;
 
+
+
     /**
      * 事故发生时间
      */
@@ -183,5 +185,8 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "属地管理责任死亡人数", example = "哈哈")
     private String deathToll;
 
+    private Integer statu;
+
+    private String month;
 
 }

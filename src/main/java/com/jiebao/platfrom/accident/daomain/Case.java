@@ -127,4 +127,7 @@ public class Case implements Serializable {
     @ApiModelProperty(value = "描述", example = "哈哈")
     private String ms;
 
+    private Integer statu;
+    private String month;
+
 }

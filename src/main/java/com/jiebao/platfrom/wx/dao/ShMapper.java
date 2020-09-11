@@ -28,4 +28,11 @@ public interface ShMapper extends BaseMapper<Sh> {
     })
     IPage<Sh> list(Page<Sh> page, QueryWrapper<Sh> ew);
 
+
+    @Select("select * from  wx_sh where wx_qun_id=#{qunId}")
+    Sh maxNumber(String qunId);
+
+    @Select("select 1 from wx_sh where wx_qun_id=#{qunId} limit 1")
+    Integer exist(String qunId);
+
 }

@@ -41,11 +41,11 @@ public class QunController {
     public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
         return qunService.pageList(queryRequest, name, userName);
     }
-
-    @GetMapping("up")
-    @ApiOperation("上报审核")
-    public JiebaoResponse up(String qunId) {
-        return qunService.up(qunId);
-    }
+//
+//    @GetMapping("up")
+//    @ApiOperation("上报审核")
+//    public JiebaoResponse up(String qunId) {
+//        return qunService.up(qunId);
+//    }
 
 }

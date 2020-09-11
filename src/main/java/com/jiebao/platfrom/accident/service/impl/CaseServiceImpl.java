@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.accident.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.daomain.Case;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -60,6 +58,26 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         List<Dept> childrenList = deptService.getChildrenList("0");  //市州级别  详情
         return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
     }
+
+    @Override
+    public JiebaoResponse lock(String[] caseId, String month, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        UpdateWrapper<Case> qw = new UpdateWrapper<>();
+        qw.set("statu", status);
+        if (caseId != null&&caseId.length!=0) {
+            qw.in("case_id", Arrays.asList(caseId));
+        } else {
+            if (month == null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                month = simpleDateFormat.format(new Date());
+            }
+            qw.likeRight("date", month);
+        }
+
+        jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
+    }
+
 
     private Map fz(List<Dept> deptList, String startDate, String endDate, Integer status) {  //事故性质  数据
         HashMap<String, List<String>> map = new HashMap<>();
