@@ -38,6 +38,8 @@ public class Accident implements Serializable {
     @TableId(value = "accident_id", type = IdType.UUID)
     private String accidentId;
 
+
+
     /**
      * 事故发生时间
      */
@@ -184,5 +186,7 @@ public class Accident implements Serializable {
     private String deathToll;
 
     private Integer statu;
+
+    private String month;
 
 }

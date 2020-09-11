@@ -65,7 +65,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Accident> qw = new UpdateWrapper<>();
         qw.set("statu", status);
-        if (accidentId != null) {
+        if (accidentId != null&&accidentId.length!=0) {
             qw.in("accident_id", Arrays.asList(accidentId));
         } else {
             if (month == null) {

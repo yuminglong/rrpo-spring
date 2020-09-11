@@ -128,5 +128,6 @@ public class Case implements Serializable {
     private String ms;
 
     private Integer statu;
+    private String month;
 
 }

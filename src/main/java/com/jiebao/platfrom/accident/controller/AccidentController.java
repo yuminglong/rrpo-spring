@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +40,14 @@ public class AccidentController {
             Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
             if (accident1.getStatu() == 1)
                 return jiebaoResponse.failMessage("已锁定不可操作");
+        } else {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            try {
+                accident.setMonth(simpleDateFormat.format(simpleDateFormat.parse(accident.getDate())));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
         }
         jiebaoResponse = accidentService.saveOrUpdate(accident) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
@@ -69,8 +79,8 @@ public class AccidentController {
 
     @PostMapping("lock")
     @ApiOperation("是否锁定")
-    public JiebaoResponse lock(String[] accidentId,String month, Integer status) {
-        return accidentService.lock(accidentId,month, status);
+    public JiebaoResponse lock(String[] accidentId, String month, Integer status) {
+        return accidentService.lock(accidentId, month, status);
     }
 
 

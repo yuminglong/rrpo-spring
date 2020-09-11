@@ -2,6 +2,7 @@ package com.jiebao.platfrom.wx.dao;
 
 import com.jiebao.platfrom.wx.domain.DeptLine;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 /**
@@ -20,8 +21,8 @@ public interface DeptLineMapper extends BaseMapper<DeptLine> {
     Integer maxNumber(String qunId);//  最大节点
 
     @Select("select * from wx_dept_line where qun_id=#{qunId} and dept_id=#{deptId}")
-    DeptLine selectDeptLine(String qunId, String deptId);//查找对应数据
+    DeptLine selectDeptLine1(@Param("qunId") String qunId, @Param("deptId") String deptId);//查找对应数据
 
     @Select("select * from wx_dept_line where qun_id=#{qunId} and number=#{number}")
-    DeptLine selectDeptLine(String qunId, Integer number);//查找对应数据
+    DeptLine selectDeptLine2(@Param("qunId") String qunId, @Param("number") Integer number);//查找对应数据
 }

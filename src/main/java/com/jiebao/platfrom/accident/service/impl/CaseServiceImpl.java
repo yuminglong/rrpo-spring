@@ -64,7 +64,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Case> qw = new UpdateWrapper<>();
         qw.set("statu", status);
-        if (caseId != null) {
+        if (caseId != null&&caseId.length!=0) {
             qw.in("case_id", Arrays.asList(caseId));
         } else {
             if (month == null) {

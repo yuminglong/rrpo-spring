@@ -33,8 +33,8 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
 
     @Override
     public String getDownDeptId(String qunId, String deptId) {
-        DeptLine deptLine = this.baseMapper.selectDeptLine(qunId, deptId); //本级
-        DeptLine deptLine1 = this.baseMapper.selectDeptLine(qunId, deptLine.getNumber() - 1);  //下级部门
+        DeptLine deptLine = this.baseMapper.selectDeptLine1(qunId, deptId); //本级
+        DeptLine deptLine1 = this.baseMapper.selectDeptLine2(qunId, deptLine.getNumber() - 1);  //下级部门
         return deptLine1.getDeptId();
     }
 }
