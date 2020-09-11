@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.time.LocalDateTime;
 import java.io.Serializable;
-import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,31 +16,21 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author qta
- * @since 2020-09-09
+ * @since 2020-09-10
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("wx_notice")
-public class Notice implements Serializable {
+@TableName("wx_dept_line")
+public class DeptLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @TableId(value = "qun_id", type = IdType.UUID)
+    private String qunId;
 
-    /**
-     * 公告序列
-     */
-    @TableId(value = "notice_id", type = IdType.UUID)
-    private String noticeId;
+    private String deptId;
 
-    /**
-     * 内容
-     */
-    private String content;
-
-    /**
-     * 时间
-     */
-    private Date date;
+    private Integer number;
 
 
 }

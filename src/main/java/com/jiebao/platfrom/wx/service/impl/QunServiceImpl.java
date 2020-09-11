@@ -3,7 +3,6 @@ package com.jiebao.platfrom.wx.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
-import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -18,7 +17,9 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -48,9 +49,10 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             entity.setCjDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getDeptId());
             entity.setShStatus(0);
+            entity.setShNumber(0);
             entity.setNumber(0);
         } else {
-            if (entity.getCjDeptId() != null && !entity.getCjDeptId().equals(dept.getDeptId())) {
+            if (!entity.getCjDeptId().equals(dept.getDeptId())) {
                 if (!judge(dept.getDeptId())) {
                     return jiebaoResponse.failMessage("此单位已建立群");
                 }
@@ -65,19 +67,17 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer Status) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-        List<String> list = new ArrayList<>();
-        List<String> ids = new ArrayList<>();
-        ids.add(dept.getDeptId());
-        deptService.getAllIds(ids, list);//当前部门的所有子集部门
-        if (list.size() == 0) {
+        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
+        List<String> resolver = resolver(childrenList);
+        if (resolver.size() == 0) {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         } else {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("cj_dept_id", list).eq("sh_status", 3));
+                    .or().in("cj_dept_id", resolver).eq("sh_status", 3));
         }
 
         if (name != null) {
@@ -86,14 +86,19 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         if (userName != null) {
             queryWrapper.like("wx_user_name", userName);
         }
-        if (Status != null) {
-            queryWrapper.eq("sh_status", Status);
-        }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
 
+    private List<String> resolver(List<Dept> list) {
+        List<String> listR = new ArrayList<>(); //储存数据
+        for (Dept dept : list
+        ) {
+            listR.add(dept.getDeptId());
+        }
+        return listR;
+    }
 
     @Override
     public JiebaoResponse updateStatus(String qunId) {
@@ -105,6 +110,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         Qun qun = getById(qunId);
         qun.setStatus(0);
+        qun.setShNumber(qun.getShNumber() + 1);
         qun.setShDeptId(qun.getCjDeptId());
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
@@ -117,6 +123,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         qun.setShDeptId(dept.getParentId());
+        qun.setShNumber(qun.getShNumber() + 1);
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
         return jiebaoResponse;
     }

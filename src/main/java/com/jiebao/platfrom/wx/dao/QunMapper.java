@@ -21,12 +21,13 @@ import java.util.List;
  * @since 2020-08-20
  */
 public interface QunMapper extends BaseMapper<Qun> {
-    @Select("select *,(select count(*) from wx_user where qun_id=wx_id) as number from wx_qun ${ew.customSqlSegment} ")
+    @Select("select * from wx_qun ${ew.customSqlSegment}")
     @Results({
             @Result(property = "deptJc", column = "cj_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     IPage<Qun> list(Page<Qun> page, QueryWrapper<Qun> ew);
+
 
 
     @Select("select 1 from wx_qun where cj_dept_id=#{deptId} limit 1")

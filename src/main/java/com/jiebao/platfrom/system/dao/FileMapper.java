@@ -7,8 +7,6 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
-import java.util.List;
-
 public interface FileMapper extends BaseMapper<File> {
 
     @Update("UPDATE sys_files SET ref_id = #{exchangeId} WHERE file_id =#{fileId}")

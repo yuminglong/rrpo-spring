@@ -8,9 +8,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.wx.dao.QunJsMapper;
 import com.jiebao.platfrom.wx.domain.Qun;
-import com.jiebao.platfrom.wx.domain.QunJs;
 import com.jiebao.platfrom.wx.domain.Sh;
 import com.jiebao.platfrom.wx.dao.ShMapper;
 import com.jiebao.platfrom.wx.service.IQunService;
@@ -38,8 +36,6 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
     DeptService deptService;
     @Autowired
     IQunService qunService;
-    @Autowired
-    QunJsMapper qunJsMapper;
 
 
     @Override
@@ -62,8 +58,6 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
             qun.setShDeptId(dept.getParentId());
             if (dept.getParentId().equals("-1")) {
                 qun.setShStatus(3);
-                QunJs qunJs = qunJsMapper.selectByWxId(qunId);
-                qunJs.setSbyj(massage);
                 qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }
@@ -83,6 +77,7 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         QueryWrapper<Sh> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByAsc("sh_date");
         queryWrapper.eq("wx_qun_id", qunId);
+        queryWrapper.eq("number", qunService.getById(qunId).getShNumber());
         Page<Sh> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }

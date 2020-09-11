@@ -9,9 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>
@@ -25,20 +23,11 @@ import java.util.List;
 public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, YearBindMenus> implements IYearBindMenusService {
 
     @Override
-    public JiebaoResponse add(String yearID, String[] menusId) {
+    public JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        Integer integer = this.baseMapper.deleteByYearId(yearID);
-        List<YearBindMenus> list = new ArrayList<>();
-        for (String mId : menusId) {
-            YearBindMenus yearBindMenus = new YearBindMenus();
-            yearBindMenus.setYearId(yearID);
-            yearBindMenus.setMenusId(mId);
-            list.add(yearBindMenus);
-        }
-        jiebaoResponse = super.saveBatch(list) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        jiebaoResponse = super.saveOrUpdate(yearBindMenus) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
-
 
     @Override
     public JiebaoResponse delete(String[] ids) {
@@ -50,9 +39,10 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
     @Override
     public JiebaoResponse list(String yearId) {
         QueryWrapper<YearBindMenus> queryWrapper = new QueryWrapper<>();
-        if (yearId != null) {
+        if(yearId!=null){
             queryWrapper.eq("year_id", yearId);
         }
+
         return new JiebaoResponse().data(list(queryWrapper)).message("查询成功");
     }
 

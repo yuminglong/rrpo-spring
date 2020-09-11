@@ -71,9 +71,9 @@ public class Qun implements Serializable {
     @TableField(exist = false)
     private Dept deptSh;
     private String shDeptId;  //待审核 层
+
     private Integer shStatus;  //状态  0未审核  1  正在审核  2  审核完成  3  被打回
-    @TableField(exist = false)
     private Integer number;
 
-
+    private Integer shNumber;
 }

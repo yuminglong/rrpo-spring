@@ -66,13 +66,11 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        List<String> list = new ArrayList<>();
-        List<String> ids = new ArrayList<>();
-        ids.add(dept.getDeptId());
-        deptService.getAllIds(ids,list);//当前部门的所有子集部门
-        if (list.size() != 0) {
+        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
+        List<String> resolver = resolver(childrenList);
+        if (resolver.size() != 0) {
             queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("jc_dept_id", list).eq("status", 1));
+                    .or().in("jc_dept_id", resolver).eq("status", 1));
         } else {
             queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
             );
@@ -91,6 +89,14 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 
+    private List<String> resolver(List<Dept> list) {
+        List<String> listR = new ArrayList<>(); //储存数据
+        for (Dept dept : list
+        ) {
+            listR.add(dept.getDeptId());
+        }
+        return listR;
+    }
 
     @Override
     public JiebaoResponse appear(String monthId, Integer status) {
