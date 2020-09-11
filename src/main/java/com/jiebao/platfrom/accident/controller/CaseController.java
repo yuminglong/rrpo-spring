@@ -69,7 +69,7 @@ public class CaseController {
 
     @PostMapping("lock")
     @ApiOperation("是否锁定")
-    public JiebaoResponse lock(String caseId, String month, Integer status) {
+    public JiebaoResponse lock(String[] caseId, String month, Integer status) {
         return caseService.lock(caseId,month, status);
     }
 }

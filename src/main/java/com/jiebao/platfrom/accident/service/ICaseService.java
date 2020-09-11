@@ -18,5 +18,5 @@ public interface ICaseService extends IService<Case> {
 
     JiebaoResponse map(String startDate, String endDate, Integer status);//地图视角
 
-    JiebaoResponse lock(String caseId,String month,Integer status);
+    JiebaoResponse lock(String[] caseId,String month,Integer status);
 }

@@ -74,5 +74,5 @@ public class Qun implements Serializable {
 
     private Integer shStatus;  //状态  0未审核  1  正在审核  2  审核完成  3  被打回
 
-    private Integer shNumber;
+
 }

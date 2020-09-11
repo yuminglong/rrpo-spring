@@ -61,12 +61,12 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public JiebaoResponse lock(String accidentId, String month, Integer status) {
+    public JiebaoResponse lock(String[] accidentId, String month, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Accident> qw = new UpdateWrapper<>();
         qw.set("statu", status);
         if (accidentId != null) {
-            qw.eq("accident_id", accidentId);
+            qw.in("accident_id", Arrays.asList(accidentId));
         } else {
             if (month == null) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");

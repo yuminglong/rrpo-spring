@@ -60,12 +60,12 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
     }
 
     @Override
-    public JiebaoResponse lock(String caseId, String month, Integer status) {
+    public JiebaoResponse lock(String[] caseId, String month, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Case> qw = new UpdateWrapper<>();
         qw.set("statu", status);
         if (caseId != null) {
-            qw.eq("case_id", caseId);
+            qw.in("case_id", Arrays.asList(caseId));
         } else {
             if (month == null) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");

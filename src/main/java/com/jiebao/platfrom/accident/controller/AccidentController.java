@@ -69,7 +69,7 @@ public class AccidentController {
 
     @PostMapping("lock")
     @ApiOperation("是否锁定")
-    public JiebaoResponse lock(String accidentId,String month, Integer status) {
+    public JiebaoResponse lock(String[] accidentId,String month, Integer status) {
         return accidentService.lock(accidentId,month, status);
     }
 

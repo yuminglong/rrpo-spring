@@ -85,7 +85,6 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         QueryWrapper<Sh> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByAsc("sh_date");
         queryWrapper.eq("wx_qun_id", qunId);
-        queryWrapper.eq("number", qunService.getById(qunId).getShNumber());
         Page<Sh> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }

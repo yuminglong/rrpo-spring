@@ -49,7 +49,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             entity.setCjDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getDeptId());
             entity.setShStatus(0);
-            entity.setShNumber(0);
+
         } else {
             if (!entity.getCjDeptId().equals(dept.getDeptId())) {
                 if (!judge(dept.getDeptId())) {
@@ -109,7 +109,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         Qun qun = getById(qunId);
         qun.setStatus(0);
-        qun.setShNumber(qun.getShNumber() + 1);
         qun.setShDeptId(qun.getCjDeptId());
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
@@ -122,7 +121,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         qun.setShDeptId(dept.getParentId());
-        qun.setShNumber(qun.getShNumber() + 1);
         jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
         return jiebaoResponse;
     }
