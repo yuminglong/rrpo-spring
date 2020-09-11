@@ -26,7 +26,15 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
         DeptLine deptLine = new DeptLine();
         deptLine.setDeptId(deptId);
         deptLine.setQunId(qunId);
-        deptLine.setNumber(this.baseMapper.maxNumber(qunId) + 1);
+        Integer integer = this.baseMapper.maxNumber(qunId);
+        deptLine.setNumber((integer == null ? 0 : integer) + 1);
         save(deptLine);
+    }
+
+    @Override
+    public String getDownDeptId(String qunId, String deptId) {
+        DeptLine deptLine = this.baseMapper.selectDeptLine(qunId, deptId); //本级
+        DeptLine deptLine1 = this.baseMapper.selectDeptLine(qunId, deptLine.getNumber() - 1);  //下级部门
+        return deptLine1.getDeptId();
     }
 }
