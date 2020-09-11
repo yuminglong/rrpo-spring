@@ -52,7 +52,6 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         sh.setStatus(status);
         sh.setMassage(massage);
         sh.setShDate(new Date());
-        sh.setNumber(qun.getShNumber());
         save(sh);
         qun.setShDate(new Date());
         if (status == 0) {
