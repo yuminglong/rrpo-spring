@@ -78,7 +78,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
                     .or().in("cj_dept_id", resolver).eq("sh_status", 3));
         }
-
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
@@ -92,6 +91,9 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
 
     private List<String> resolver(List<Dept> list) {
         List<String> listR = new ArrayList<>(); //储存数据
+        if (list == null || list.size() == 0) {
+            return listR;
+        }
         for (Dept dept : list
         ) {
             listR.add(dept.getDeptId());

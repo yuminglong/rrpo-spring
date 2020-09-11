@@ -38,7 +38,7 @@ public class AccidentController {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (accident.getAccidentId() != null) {
             Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
-            if (accident1.getStatu() == 1)
+            if (accident1.getStatu()!=null&&accident1.getStatu() == 1)
                 return jiebaoResponse.failMessage("已锁定不可操作");
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -47,7 +47,6 @@ public class AccidentController {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
         }
         jiebaoResponse = accidentService.saveOrUpdate(accident) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;

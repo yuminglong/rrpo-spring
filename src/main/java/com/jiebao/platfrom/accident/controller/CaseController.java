@@ -39,7 +39,7 @@ public class CaseController {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (ca.getCaseId() != null) {
             Case aCase = caseService.getById(ca.getCaseId());
-            if (aCase.getStatu() == 1)
+            if (aCase.getStatu()!=null&&aCase.getStatu() == 1)
                 return jiebaoResponse.failMessage("已锁定不可更改");
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
