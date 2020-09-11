@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.accident.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
@@ -57,6 +58,25 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         List<Dept> childrenList = deptService.getChildrenList("0");  //市州级别  详情
         return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
+    }
+
+    @Override
+    public JiebaoResponse lock(String accidentId, String month, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        UpdateWrapper<Accident> qw = new UpdateWrapper<>();
+        qw.set("statu", status);
+        if (accidentId != null) {
+            qw.eq("accident_id", accidentId);
+        } else {
+            if (month == null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+                month = simpleDateFormat.format(new Date());
+            }
+            qw.likeRight("date", month);
+        }
+
+        jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
     }
 
     private Map fz(List<Dept> deptList, String StartDate, String endDate, Integer status) {  //事故性质  数据

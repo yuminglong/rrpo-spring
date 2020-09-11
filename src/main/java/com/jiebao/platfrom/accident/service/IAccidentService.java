@@ -19,4 +19,6 @@ public interface IAccidentService extends IService<Accident> {
     JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate);
     
     JiebaoResponse map(String startDate, String endDate, Integer status);//地图视角
+
+    JiebaoResponse lock(String accidentId,String month,Integer status);
 }

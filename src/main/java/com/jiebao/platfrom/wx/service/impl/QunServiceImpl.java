@@ -50,7 +50,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             entity.setShDeptId(dept.getDeptId());
             entity.setShStatus(0);
             entity.setShNumber(0);
-            entity.setNumber(0);
         } else {
             if (!entity.getCjDeptId().equals(dept.getDeptId())) {
                 if (!judge(dept.getDeptId())) {

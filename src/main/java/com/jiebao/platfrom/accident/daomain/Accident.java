@@ -183,5 +183,6 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "属地管理责任死亡人数", example = "哈哈")
     private String deathToll;
 
+    private Integer statu;
 
 }

@@ -34,6 +34,11 @@ public class AccidentController {
     @Log("添加修改 事故信息")
     public JiebaoResponse saveOrUpdate(Accident accident) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (accident.getAccidentId() != null) {
+            Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
+            if (accident1.getStatu() == 1)
+                return jiebaoResponse.failMessage("已锁定不可操作");
+        }
         jiebaoResponse = accidentService.saveOrUpdate(accident) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
@@ -60,5 +65,13 @@ public class AccidentController {
     public JiebaoResponse map(String startDate, String endDate, Integer status) {
         return accidentService.map(startDate, endDate, status);
     }
+
+
+    @PostMapping("lock")
+    @ApiOperation("是否锁定")
+    public JiebaoResponse lock(String accidentId,String month, Integer status) {
+        return accidentService.lock(accidentId,month, status);
+    }
+
 
 }

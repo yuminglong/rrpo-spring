@@ -80,6 +80,9 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         for (String menuId : menusId  //考核分组类型
         ) {
             Menus menus = menusService.getById(menuId);
+            if (menus==null){
+                continue;
+            }
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("parent_id", menus.getStandardId());

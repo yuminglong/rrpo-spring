@@ -42,11 +42,6 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
             a = true;
         }
         boolean b = super.saveOrUpdate(entity);
-        if (b && a) {
-            Qun qun = qunService.getById(entity.getQunId());
-            qun.setNumber((qun.getNumber() == null ? 0 : qun.getNumber()) + 1);
-            qunService.updateById(qun);
-        }
         return b;
     }
 
@@ -54,11 +49,6 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
     public JiebaoResponse deleteS(String[] wxUserIdS, String qunId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = removeByIds(Arrays.asList(wxUserIdS));
-        if (b) {
-            Qun qun = qunService.getById(qunId);
-            qun.setNumber((qun.getNumber() == null ? 0 : qun.getNumber()) - wxUserIdS.length);
-            qunService.updateById(qun);
-        }
         jiebaoResponse = b ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
         return jiebaoResponse;
     }
