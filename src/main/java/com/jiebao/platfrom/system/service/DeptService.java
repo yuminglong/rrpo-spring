@@ -28,7 +28,6 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 查询部门树和user
-     *
      * @param request
      * @param dept
      * @return
@@ -41,10 +40,6 @@ public interface DeptService extends IService<Dept> {
     List<Dept> getList(String parentId);
 
     List<Dept> getChildrenList(String parentId);
-
-    void getAllIds(List<String> prentIds, List<String> list); //子集极其附属子集
-
-    Dept getDept();//获取当前登陆人 部门
 
 
 }

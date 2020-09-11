@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
@@ -19,7 +18,6 @@ import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,7 +35,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Autowired
     UserMapper userMapper;
-
+    
     @Autowired
     DeptMapper deptMapper;
 
@@ -67,7 +65,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<Dept> findDepts(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dept::getStatus, 1);
-        if (StringUtils.isNotBlank(dept.getDeptId())) {
+        if (StringUtils.isNotBlank(dept.getDeptId())){
             queryWrapper.lambda().eq(Dept::getParentId, dept.getDeptId());
         }
         if (StringUtils.isNotBlank(dept.getDeptName()))
@@ -178,17 +176,17 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
 
-    private List getAllId(String id, List list) {
+    private List getAllId(String id, List list){
         //根据父ID查底下的子节点
         Map<String, Object> map = new HashMap<>();
-        map.put("parent_id", id);
+        map.put("parent_id",id);
         List<Dept> depts = deptMapper.selectByMap(map);
-        if (null != depts) {
+        if(null!=depts){
             //如果底下有子节点-将子节点的ID加入list中
-            for (int i = 0; i < depts.size(); i++) {
+            for(int i=0;i<depts.size();i++){
                 list.add(depts.get(i).getDeptId());
                 //重新调用自身  -根据子节点的id和list
-                list = getAllId(depts.get(i).getDeptId(), list);
+                list=getAllId(depts.get(i).getDeptId(),list);
             }
         }
         //返回list
@@ -196,15 +194,16 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
 
+
     @Override
-    public List<Address> getAddress(String id) {
+    public List<Address> getAddress(String id ){
         List<String> allId = getDeptIds(id);
         List<Address> addresses = new ArrayList<>();
-        for (String li : allId
-        ) {
+        for (String li: allId
+             ) {
             Map<String, Object> map = new HashMap<>();
-            map.put("dept_id", li);
-            addresses.addAll(addressMapper.selectByMap(map));
+            map.put("dept_id",li);
+            addresses.addAll( addressMapper.selectByMap(map));
         }
         return addresses;
     }
@@ -226,38 +225,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
 
-    @Override
-    public void getAllIds(List<String> prentIds, List<String> list) {
-        //根据父ID查底下的子节点
-        QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("parent_id", prentIds);
-        List<Dept> list1 = list(queryWrapper);
-        prentIds.clear();//清空
-//        List<String> list2 = new ArrayList<>();  //存储每一级的  dept
-        if (null != list1 && list1.size() > 0) {
-            //如果底下有子节点-将子节点的ID加入list中
-            for (Dept dept : list1
-            ) {
-                String deptId = dept.getDeptId();
-                list.add(deptId);
-                prentIds.add(deptId);
-            }
-            getAllIds(prentIds, list);
-        }
-        return;
-    }
 
-    @Override
-    public Dept getDept() {
-        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-        return getById(userMapper.getDeptID(username));
-    }
 
 
     private List getDeptIds(String id) {
         List list = new ArrayList();
         list.add(id); // 加上本身
-        list = getAllId(id, list);
+        list = getAllId(id,list);
         return list;
     }
 

@@ -174,4 +174,14 @@ public class DeptController extends BaseController {
         return new JiebaoResponse().data(depts).put("status","200");
     }
 
+    @GetMapping("/findProvince")
+    @ApiOperation(value = "查询所有省级", notes = "查询所有省级", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findProvince() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("rank",0);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        return new JiebaoResponse().data(depts).okMessage("查询成功");
+    }
+
+
 }

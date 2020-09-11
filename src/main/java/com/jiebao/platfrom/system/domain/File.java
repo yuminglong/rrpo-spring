@@ -50,6 +50,7 @@ public class File extends Model<File> implements Serializable {
 
     private Integer isCheck;
 
-
+    @TableField(exist = false)
+    private String userName;
 
 }

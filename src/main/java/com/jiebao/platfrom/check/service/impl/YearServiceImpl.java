@@ -3,8 +3,11 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.check.dao.*;
+import com.jiebao.platfrom.check.dao.GradeMapper;
+import com.jiebao.platfrom.check.dao.MenusMapper;
+import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.domain.*;
+import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
@@ -45,8 +48,6 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     IGradeService gradeService;
     @Autowired
     GradeMapper gradeMapper;
-    @Autowired
-    YearBindMenusMapper yearBindMenusMapper;
 
     @Override
     public JiebaoResponse addOrUpdate(Year year) {
@@ -69,11 +70,10 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Year> list = this.baseMapper.list(queryWrapper);
         for (Year year : list
         ) {
-            List<String> list1 = yearBindMenusMapper.listMenusId(year.getYearId());     //类型分组
+            List<Menus> list1 = menusService.list();  //类型分组
             List<YearSize> list2 = new ArrayList<>();//赋值存储
-            for (String menuId : list1
+            for (Menus menu : list1
             ) {
-                Menus menu = menusService.getById(menuId);
                 YearSize yearSize = new YearSize();
                 yearSize.setName(menu.getName());
                 yearSize.setCount(menusYearMapper.countNumber(year.getYearId(), menu.getStandardId()));
@@ -96,7 +96,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             if (!dept.getDeptName().contains("公安处")) {
                 for (MenusYear m : menusYearList
                 ) {
-                    if (gradeMapper.existM(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经
+                    if (gradeMapper.exist(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经
                         continue;
                     Grade grade = new Grade();
                     grade.setYearId(yearId);

@@ -50,7 +50,5 @@ public class Sh implements Serializable {
 
     private String userId; //审核人
 
-    private Integer number;
-
 
 }
