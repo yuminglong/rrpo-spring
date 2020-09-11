@@ -38,13 +38,12 @@ public interface PrizeService extends IService<Prize> {
 
     /**
      *  简报数据
-     * @param request
      * @param prize
      * @param startTime
      * @param endTime
      * @return
      */
 
-    IPage<Prize>  getBriefing(QueryRequest request, Prize prize , String startTime, String endTime);
+    IPage<Prize>  getBriefing( QueryRequest request, Prize prize , String startTime, String endTime);
 
 }
