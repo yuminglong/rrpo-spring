@@ -45,13 +45,12 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
     @Override
     public JiebaoResponse shWx(String qunId, Integer status, String massage) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+        Dept dept = deptService.getDept();  //当前登陆人的部门
         Qun qun = qunService.getById(qunId);
         if (!dept.getDeptId().equals(qun.getShDeptId())) {
             return jiebaoResponse.message("无权限审核");
         }
-        Sh sh = new Sh();
+        Sh sh = new Sh();//创建节点
         sh.setDeptId(dept.getDeptId());
         sh.setWxQunId(qunId);
         sh.setStatus(status);
