@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -438,7 +439,9 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额）", notes = "生成简报（不带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(HttpServletResponse response, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
+    public void briefingWord(Integer moneyType, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
+
+        System.out.println(moneyType + "---------------------");
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 
@@ -450,39 +453,77 @@ public class PrizeController extends BaseController {
         map.put("day", day);
 
         List<String[]> testList = new ArrayList<>();
-        for (Prize p :
-                records) {
-            testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
+        if (moneyType == 0) {
+            for (Prize p :
+                    records) {
+                testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
+            }
+            //模板文件地址
+            String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
+            //String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
+            //String inputUrl = Thread.currentThread().getContextClassLoader().getResource("tempDoc.docx").toString();
+
+            System.out.println("-------------" + inputUrl + "---------------------");
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-不带金额" + "(" + df.format(date) + ")" + ".docx";
+            //新生产的模板文件
+            String newName = UUID.randomUUID().toString();
+
+
+            String outputUrl = "D:/upload/words/" + newName;
+            //String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            String outPath = outputUrl + ".docx";
+            WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true);
+            //附带金额
+        } else if (moneyType == 1) {
+            for (Prize p :
+                    records) {
+                PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
+                if (prizeOpinion != null) {
+                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(),(prizeOpinion.getMoney()+"元")});
+                }
+                else {
+                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()," "});
+                }
+
+            }
+            //模板文件地址
+            String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc_amount.docx").getPath();
+            //String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
+            //String inputUrl = Thread.currentThread().getContextClassLoader().getResource("tempDoc_amount.docx").toString();
+
+            System.out.println("-------------" + inputUrl + "---------------------");
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-附带金额" + "(" + df.format(date) + ")" + ".docx";
+            //新生产的模板文件
+            String newName = UUID.randomUUID().toString();
+
+
+            String outputUrl = "D:/upload/words/" + newName;
+            //String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            String outPath = outputUrl + ".docx";
+            WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true);
         }
 
-        //模板文件地址
-        //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
-
-    String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
-
-        System.out.println("-------------" + inputUrl + "---------------------");
-        Date date = new Date();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-        String oldName = "湖南铁路护路联防简报"+year+"第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
-        //新生产的模板文件
-        String newName = UUID.randomUUID().toString();
-        //String outputUrl = "D:/upload/words/" + newName;
-        String outputUrl = "/usr/local/rrpo/upload/" + newName;
-        String outPath = outputUrl+".docx";
-        WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
-        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        User byName = userService.findByName(username);
-        this.saveFile("2", "10",  byName.getUserId(), oldName,  newName, true);
 
     }
 
 
-
-    private JiebaoResponse saveFile(String fileType, String refType,  String userId, String oldName, String newName, boolean status) {
+    private JiebaoResponse saveFile(String fileType, String refType, String userId, String oldName, String newName, boolean status) {
         String path = "";   //上传地址
         String accessPath = ""; //文件访问虚拟地址
-        //path = "D:/upload/words/";
-        path = "/usr/local/rrpo/upload/";
+
+
+        path = "D:/upload/words/";
+        //path = "/usr/local/rrpo/upload/";
         accessPath = "/jbx/cdn/file/";
         String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
         java.io.File currentFile = new java.io.File(path + newName + ".docx");

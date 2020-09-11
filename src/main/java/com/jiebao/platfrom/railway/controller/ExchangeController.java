@@ -377,16 +377,16 @@ public class ExchangeController extends BaseController {
     }
 
     @PostMapping("/excel")
-    public void export(String list, HttpServletResponse response) throws JiebaoException {
+    public JiebaoResponse export(String [] exchangeIds, HttpServletResponse response) throws JiebaoException {
         try {
-            ArrayList<ExchangeUser> userList =
-                    JSON.parseObject(list, new TypeReference<ArrayList<ExchangeUser>>() {
-            });
-            for (ExchangeUser e : userList) {
-                System.out.println(e.toString());
-            }
+
+           Arrays.stream(exchangeIds).forEach(exchangeId->{
+               ExchangeUser byId = exchangeUserService.getById(exchangeId);
+
+           });
 
             //ExcelKit.$Export(Dict.class, response).downXlsx(list, false);
+            return new JiebaoResponse().okMessage("导出成功");
         } catch (Exception e) {
             message = "导出Excel失败";
             log.error(message, e);
