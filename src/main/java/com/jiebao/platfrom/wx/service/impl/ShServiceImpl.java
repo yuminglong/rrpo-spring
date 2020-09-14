@@ -12,6 +12,7 @@ import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.domain.Sh;
 import com.jiebao.platfrom.wx.dao.ShMapper;
 import com.jiebao.platfrom.wx.service.IDeptLineService;
+import com.jiebao.platfrom.wx.service.IQunJsService;
 import com.jiebao.platfrom.wx.service.IQunService;
 import com.jiebao.platfrom.wx.service.IShService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,6 +40,8 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
     IQunService qunService;
     @Autowired
     IDeptLineService deptLineService;
+    @Autowired
+    IQunJsService qunJsService;
 
 
     @Override
@@ -62,6 +65,7 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
             qun.setShDeptId(dept.getParentId());
             if (dept.getParentId().equals("-1")) {
                 qun.setShStatus(3);
+                qunJsService.updateById(qunId, massage);
                 qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }

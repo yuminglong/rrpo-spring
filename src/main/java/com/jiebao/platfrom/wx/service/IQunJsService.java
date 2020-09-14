@@ -18,4 +18,5 @@ public interface IQunJsService extends IService<QunJs> {
 
     JiebaoResponse addOrUpdate(QunJs entity);
 
+    boolean updateById(String qunId,String massage);
 }
