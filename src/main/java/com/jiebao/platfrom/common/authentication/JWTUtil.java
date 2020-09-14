@@ -34,7 +34,7 @@ public class JWTUtil {
             log.info("token is valid");
             return true;
         } catch (Exception e) {
-            log.info("token is invalid{}", e.getMessage());
+            log.info("token is invalid {}", e.getMessage());
             return false;
         }
     }
@@ -79,7 +79,7 @@ public class JWTUtil {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withClaim("username", username)
-                    .withExpiresAt(date)
+                    //.withExpiresAt(date)  TODO: cancel ExpiresTime - Sinliz
                     .sign(algorithm);
         } catch (Exception e) {
             log.error("error：{}", e);
