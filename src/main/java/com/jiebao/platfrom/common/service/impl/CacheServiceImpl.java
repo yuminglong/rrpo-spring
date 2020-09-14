@@ -51,17 +51,18 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public User getUser(String username) throws Exception {
         String userString = this.redisService.get(JiebaoConstant.USER_CACHE_PREFIX + username);
-        if (StringUtils.isBlank(userString))
-            throw new Exception();
-        else
+        if (StringUtils.isBlank(userString)) {
+            return null;
+        } else {
             return this.mapper.readValue(userString, User.class);
+        }
     }
 
     @Override
     public List<Role> getRoles(String username) throws Exception {
         String roleListString = this.redisService.get(JiebaoConstant.USER_ROLE_CACHE_PREFIX + username);
         if (StringUtils.isBlank(roleListString)) {
-            throw new Exception();
+            return null;
         } else {
             JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Role.class);
             return this.mapper.readValue(roleListString, type);
@@ -72,7 +73,7 @@ public class CacheServiceImpl implements CacheService {
     public List<Menu> getPermissions(String username) throws Exception {
         String permissionListString = this.redisService.get(JiebaoConstant.USER_PERMISSION_CACHE_PREFIX + username);
         if (StringUtils.isBlank(permissionListString)) {
-            throw new Exception();
+            return null;
         } else {
             JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Menu.class);
             return this.mapper.readValue(permissionListString, type);
@@ -82,10 +83,11 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public UserConfig getUserConfig(String userId) throws Exception {
         String userConfigString = this.redisService.get(JiebaoConstant.USER_CONFIG_CACHE_PREFIX + userId);
-        if (StringUtils.isBlank(userConfigString))
-            throw new Exception();
-        else
+        if (StringUtils.isBlank(userConfigString)) {
+            return null;
+        } else {
             return this.mapper.readValue(userConfigString, UserConfig.class);
+        }
     }
 
     @Override

@@ -281,7 +281,7 @@ public class FileController extends BaseController {
         try {
             multipartFile.transferTo(currentFile);  //保存文件至上传地址
         } catch (IOException e) {
-            log.warn("upload file Excepiton：", e);
+            log.warn("upload file Exception：", e);
         }
         accessPath = host + accessPath + fileNewName + suffix;   //上传后完整文件虚拟访问地址
 

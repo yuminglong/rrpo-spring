@@ -101,7 +101,7 @@ public class ShiroRealm extends AuthorizingRealm {
         try {
             redisService.set(JiebaoConstant.TOKEN_CACHE_PREFIX + encryptToken + StringPool.DOT + ip, encryptToken, jwtTimeOut * 1000L);
         } catch (RedisConnectException e) {
-            log.warn("ShiroRealm：Refresh user token exception,line: 103");
+            log.warn("ShiroRealm：Refresh user token exception");
         }
 
         // 通过用户名查询用户信息
@@ -113,4 +113,5 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new AuthenticationException("token校验不通过");
         return new SimpleAuthenticationInfo(token, token, "jiebao_shiro_realm");
     }
+
 }
