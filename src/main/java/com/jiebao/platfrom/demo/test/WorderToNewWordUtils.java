@@ -65,7 +65,7 @@ public class WorderToNewWordUtils {
 
     }
 
-    public static boolean changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
+    public static void changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
                                          Map<String, String> textMap, List<String[]> tableList) {
         //模板转换默认成功
         boolean changeFlag = true;
@@ -94,10 +94,10 @@ public class WorderToNewWordUtils {
 //            document.write(stream);
 //            stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            changeFlag = false;
+//            e.printStackTrace();
+//            changeFlag = false;
         }
-        return changeFlag;
+
     }
 
     /**
