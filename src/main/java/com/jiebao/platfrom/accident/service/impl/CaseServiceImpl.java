@@ -34,7 +34,16 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
 
     @Override
     public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
+        Dept dept = deptService.getDept();  //当前登陆人部门
         QueryWrapper<Case> queryWrapper = new QueryWrapper<>();
+        if (!dept.getDeptId().equals("0")) {
+            if (cityCsId == null) {
+                cityCsId = dept.getDeptId();
+            }
+            if(!cityCsId.equals(dept.getDeptId())){
+                return new JiebaoResponse().failMessage("无法查看其它市州权限");
+            }
+        }
         if (cityQxId != null) {
             queryWrapper.eq("city_qx_id", cityQxId);
         } else if (cityCsId != null) {
@@ -55,7 +64,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         if (status == null) {
             return new JiebaoResponse().failMessage("请选择类型");
         }
-        List<Dept> childrenList = deptService.getChildrenList("0");  //市州级别  详情
+        List<Dept> childrenList = deptService.getChildrenList(deptService.getDept().getDeptId());  //市州级别  详情
         return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
     }
 
@@ -64,7 +73,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Case> qw = new UpdateWrapper<>();
         qw.set("statu", status);
-        if (caseId != null&&caseId.length!=0) {
+        if (caseId != null && caseId.length != 0) {
             qw.in("case_id", Arrays.asList(caseId));
         } else {
             if (month == null) {

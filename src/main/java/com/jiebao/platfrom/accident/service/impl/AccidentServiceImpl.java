@@ -34,6 +34,15 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
 
     @Override
     public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
+        Dept dept = deptService.getDept();//所属部门
+        if (!dept.getDeptId().equals("0")) {
+            if(cityCsId==null){  //为空 默认  赋值本市
+                cityCsId=dept.getDeptId();
+            }
+            if (!cityCsId.equals(dept.getDeptId())) {
+                return new JiebaoResponse().failMessage("无法查看其它市州权限");
+            }
+        }
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         if (cityQxId != null) {
             queryWrapper.eq("city_qx_id", cityQxId);
@@ -56,7 +65,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (status == null) {
             return new JiebaoResponse().failMessage("请选择类型");
         }
-        List<Dept> childrenList = deptService.getChildrenList("0");  //市州级别  详情
+        List<Dept> childrenList = deptService.getChildrenList(deptService.getDept().getDeptId());  //市州级别  详情
         return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
     }
 
@@ -65,7 +74,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Accident> qw = new UpdateWrapper<>();
         qw.set("statu", status);
-        if (accidentId != null&&accidentId.length!=0) {
+        if (accidentId != null && accidentId.length != 0) {
             qw.in("accident_id", Arrays.asList(accidentId));
         } else {
             if (month == null) {
@@ -74,7 +83,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             }
             qw.likeRight("date", month);
         }
-
         jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }

@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -65,6 +66,14 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
         }
         jiebaoResponse = super.saveOrUpdate(entity) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
+    }
+
+    @Override
+    public boolean updateById(String qunId,String massage) {
+        UpdateWrapper<QunJs> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("wx_id", qunId);
+         updateWrapper.set("sbyj",massage);
+        return update(updateWrapper);
     }
 
     private void fz(QunJs qunJs, Dept dept) {  //判断当前 登陆人的组织级别  主级封装

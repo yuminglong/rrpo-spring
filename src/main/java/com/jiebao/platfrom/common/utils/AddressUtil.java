@@ -33,7 +33,7 @@ public class AddressUtil {
             DataBlock block = searcher.btreeSearch(ip);
             return block.getRegion();
         } catch (Exception e) {
-            log.warn("获取地址信息异常,{}", e.getMessage());
+            // log.warn("获取地址信息异常,{}", e.getMessage());
             return StringUtils.EMPTY;
         } finally {
             if (searcher != null) {

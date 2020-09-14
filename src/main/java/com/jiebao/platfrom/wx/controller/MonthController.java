@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -58,13 +59,13 @@ public class MonthController {
     @GetMapping("list")
     @ApiOperation("查询集合")
     public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
-        return monthService.pageList(queryRequest, month, look,status);
+        return monthService.pageList(queryRequest, month, look, status);
     }
 
     @GetMapping("appear")
     @ApiOperation("上报")
     public JiebaoResponse appear(String monthId, Integer status) {
-        return monthService.appear(monthId,status);
+        return monthService.appear(monthId, status);
     }
 
     @GetMapping("getById")
@@ -72,4 +73,24 @@ public class MonthController {
     public JiebaoResponse getById(String monthId) {
         return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
     }
+
+    @GetMapping("downDocx")
+    @ApiOperation("下载文档")
+    public void downDocx(HttpServletResponse response, String month) {
+        monthService.monthDocx(response, month);
+    }
+
+    @PostMapping("koran")
+    @ApiOperation("可入不可入按钮")
+    public JiebaoResponse koran(String month, Integer status) {
+        return monthService.koran(month, status);
+    }
+
+    @GetMapping("monthDocxText")
+    @ApiOperation("导出表直观样式")
+    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
+        return monthService.monthDocxText(queryRequest, month);
+    }
+
+
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.demo.test.WorderToNewWordUtils;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -18,9 +19,11 @@ import com.jiebao.platfrom.wx.dao.MonthMapper;
 import com.jiebao.platfrom.wx.service.IMonthService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
+import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 
@@ -52,7 +55,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             entity.setDate(new Date());
         }
         boolean b = super.saveOrUpdate(entity);
-        if (b && entity.getFileIds() != null&&entity.getFileIds().length!=0) {
+        if (b && entity.getFileIds() != null && entity.getFileIds().length != 0) {
             UpdateWrapper<File> updateWrapper = new UpdateWrapper<>();
             updateWrapper.in("file_id", Arrays.asList(entity.getFileIds()));
             updateWrapper.set("ref_id", entity.getWxMonthId());
@@ -107,10 +110,13 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         if (!month.getShDeptId().equals(dept.getDeptId())) {
             return jiebaoResponse.failMessage("无权上报");
         }
-        if (dept.getParentId().equals("0")) {  //此为 市级
-            if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
-                return jiebaoResponse.failMessage("超过上报三条记录上限");
-            }
+//        if (dept.getParentId().equals("0")) {  //此为 市级
+//            if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
+//                return jiebaoResponse.failMessage("超过上报三条记录上限");
+//            }
+//        }
+        if (dept.getParentId().equals("0")) { //此为市级
+            month.setSzDeptName(dept.getDeptName());//保存市级单位   做报表要用
         }
         if (status == 1) {  //赞成  //
             if (dept.getParentId().equals("-1")) {//省级
@@ -125,6 +131,54 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         updateById(month);
         return jiebaoResponse.okMessage("操作成功");
     }
+
+    @Override
+    public JiebaoResponse koran(String MonthId, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        UpdateWrapper<Month> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("pre_status", status);
+        updateWrapper.eq("wx_month_id", MonthId);
+        jiebaoResponse = update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
+    }
+
+    @Override
+    public void monthDocx(HttpServletResponse response, String month) {
+        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
+        String newName = UUID.randomUUID().toString();
+        String outputUrl = "D:\\upload\\words\\" + newName;
+        String outPath = outputUrl + ".docx";  //导出地址
+        Map<String, String> map = new HashMap<>();
+        map.put("month", month+"全省乡镇街微信护路推荐汇总表");
+        ArrayList<String[]> list = new ArrayList<>();
+        for (Month Month : listByMonth(month)
+        ) {
+            Dept dept = deptService.getById(Month.getJcDeptId()); //发起最小单位
+            if (Month.getPreStatus() == null) {
+                Month.setPreStatus(0);
+            }
+            list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), dept.getDeptName(), Month.getContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
+        }
+        WorderToNewWordUtils.changWordMonth(response,inputUrl, newName, map, list);
+
+    }
+
+    private List<Month> listByMonth(String month) {
+        QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("month", month);
+        return list(queryWrapper);
+    }
+
+    @Override
+    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
+        QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
+        if (month != null) {
+            queryWrapper.eq("month", month);
+        }
+        Page<Month> page = new Page<>(queryRequest.getPageSize(), queryRequest.getPageNum());
+        return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
+    }
+
 
     @Override
     public Month getById(Serializable id) {

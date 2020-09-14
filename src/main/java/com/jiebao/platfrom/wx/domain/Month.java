@@ -39,6 +39,7 @@ public class Month implements Serializable {
     @TableId(value = "wx_month_id", type = IdType.UUID)
     private String wxMonthId;
 
+    private Integer serial;//需要  自增  主键
     /**
      * 月份
      */
@@ -82,6 +83,10 @@ public class Month implements Serializable {
 
 
     private Integer look;//0  未看  1查看了
+
+    private Integer preStatus;//初选  0不可辱  1  可入
+
+    private String szDeptName;
 
     @TableField(exist = false)
     private String[] fileIds;

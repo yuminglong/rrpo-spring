@@ -78,7 +78,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
                     .or().in("cj_dept_id", resolver).eq("sh_status", 3));
         }
-
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
@@ -92,6 +91,9 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
 
     private List<String> resolver(List<Dept> list) {
         List<String> listR = new ArrayList<>(); //储存数据
+        if (list == null || list.size() == 0) {
+            return listR;
+        }
         for (Dept dept : list
         ) {
             listR.add(dept.getDeptId());
@@ -99,29 +101,29 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         return listR;
     }
 
-    @Override
-    public JiebaoResponse updateStatus(String qunId) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        if (dept.getDeptId().equals(getById(qunId).getCjDeptId())) {
-            return jiebaoResponse.failMessage("无权发起重新提交");
-        }
-        Qun qun = getById(qunId);
-        qun.setStatus(0);
-        qun.setShDeptId(qun.getCjDeptId());
-        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
-        return jiebaoResponse;
-    }
-
-    @Override
-    public JiebaoResponse up(String qunId) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        Qun qun = getById(qunId);
-        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        qun.setShDeptId(dept.getParentId());
-        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
-        return jiebaoResponse;
-    }
+//    @Override
+//    public JiebaoResponse updateStatus(String qunId) {
+//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+//        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+//        if (dept.getDeptId().equals(getById(qunId).getCjDeptId())) {
+//            return jiebaoResponse.failMessage("无权发起重新提交");
+//        }
+//        Qun qun = getById(qunId);
+//        qun.setStatus(0);
+//        qun.setShDeptId(qun.getCjDeptId());
+//        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+//        return jiebaoResponse;
+//    }
+//
+//    @Override
+//    public JiebaoResponse up(String qunId) {
+//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        Qun qun = getById(qunId);
+//        String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+//        Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+//        qun.setShDeptId(dept.getParentId());
+//        jiebaoResponse = updateById(qun) ? jiebaoResponse.okMessage("上报成功") : jiebaoResponse.failMessage("上报失败");
+//        return jiebaoResponse;
+//    }
 }
