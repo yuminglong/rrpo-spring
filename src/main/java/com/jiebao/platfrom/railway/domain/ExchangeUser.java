@@ -24,21 +24,23 @@ import java.util.List;
 @TableName("rail_exchange_user")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@Excel("信息互递接收人")
-public class ExchangeUser {
+@Excel("信息互递回复情况表")
+public class ExchangeUser  {
+
+
 
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ExcelField(value = "和信息互递内容关联ID")
+
     @ApiModelProperty(value = "和信息互递内容关联ID")
     private String exchangeId;
 
-    @ExcelField(value = "接收信息的用户ID")
+
     @ApiModelProperty(value = "接收信息的用户ID")
     private String sendUserId;
 
-    @ExcelField(value = "发件时间", writeConverter = TimeConverter.class)
+
     @ApiModelProperty(value = "发件时间")
     private Date creatTime;
 
@@ -52,21 +54,28 @@ public class ExchangeUser {
     @ApiModelProperty(value = "阅读状态0、未查看 1、已阅读未回复 2、已阅读已回复",example = "1")
     private Integer isRead;
 
-    @ApiModelProperty(value = "接收时间")
-    private Date receiveTime;
+    @ExcelField(value = "组织机构")
+    @TableField(exist = false)
+    private String deptName;
+
+
+    @ExcelField(value = "用户名")
+    @ApiModelProperty(value = "发送给某用户姓名")
+    private String sendUserName;
+
+
 
     @ApiModelProperty(value = "意见")
     private String opinion;
 
-    @ApiModelProperty(value = "发送给某用户姓名")
-    private String sendUserName;
+    @ApiModelProperty(value = "接收时间")
+    @ExcelField(value = "接收时间", writeConverter = TimeConverter.class)
+    private Date receiveTime;
+
+
 
     @ApiModelProperty(value = "回复时间")
     private Date replyTime;
-
-    @ApiModelProperty(value = "部门名")
-    @TableField(exist = false)
-    private String deptName;
 
 
     @TableField(exist = false)

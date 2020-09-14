@@ -198,7 +198,7 @@ public class LoginController {
         String username = user.getUsername();
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("token", token.getToken());
-        userInfo.put("expireTime", token.getExipreAt());
+        //userInfo.put("expireTime", token.getExipreAt());
 
         Set<String> roles = this.userManager.getUserRoles(username);
         userInfo.put("roles", roles);
