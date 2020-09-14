@@ -18,5 +18,10 @@ public interface IMonthService extends IService<Month> {
 
     JiebaoResponse appear(String monthId, Integer status);  //上报
 
+    JiebaoResponse koran(String MonthId, Integer status);//省级触发  审批意见可入否   1 可以 0不可入
+
+    void monthDocx(String month);//微信推荐汇总导出
+
+    JiebaoResponse monthDocxText(QueryRequest queryRequest, String month);  //展示效果
 
 }

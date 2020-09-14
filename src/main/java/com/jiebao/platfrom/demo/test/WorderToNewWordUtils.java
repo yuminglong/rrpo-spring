@@ -64,6 +64,40 @@ public class WorderToNewWordUtils {
 
     }
 
+    public static boolean changWordMonth(String inputUrl, String outputUrl,
+                                         Map<String, String> textMap, List<String[]> tableList) {
+
+        //模板转换默认成功
+        boolean changeFlag = true;
+        try {
+            //获取docx解析对象
+            XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(inputUrl));
+            //解析替换文本段落对象
+            WorderToNewWordUtils.changeText(document, textMap);
+            //解析替换表格对象
+            WorderToNewWordUtils.changeTable(document, textMap, tableList);
+
+            //生成新的word
+            File files = new File("D:\\upload\\words\\");
+            if (!files.exists()) {
+                files.mkdirs();
+            }
+            File file = new File(outputUrl);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream stream = new FileOutputStream(file);
+            document.write(stream);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            changeFlag = false;
+        }
+
+        return changeFlag;
+
+    }
+
     /**
      * 替换段落文本
      *
