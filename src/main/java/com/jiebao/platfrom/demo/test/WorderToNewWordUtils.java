@@ -19,6 +19,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 通过word模板生成新的word工具类
  *
@@ -59,14 +61,12 @@ public class WorderToNewWordUtils {
             e.printStackTrace();
             changeFlag = false;
         }
-
         return changeFlag;
 
     }
 
-    public static boolean changWordMonth(String inputUrl, String outputUrl,
+    public static void changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
                                          Map<String, String> textMap, List<String[]> tableList) {
-
         //模板转换默认成功
         boolean changeFlag = true;
         try {
@@ -76,25 +76,27 @@ public class WorderToNewWordUtils {
             WorderToNewWordUtils.changeText(document, textMap);
             //解析替换表格对象
             WorderToNewWordUtils.changeTable(document, textMap, tableList);
-
             //生成新的word
-            File files = new File("D:\\upload\\words\\");
-            if (!files.exists()) {
-                files.mkdirs();
-            }
-            File file = new File(outputUrl);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileOutputStream stream = new FileOutputStream(file);
-            document.write(stream);
-            stream.close();
+            response.setContentType("application/msword");
+            response.setHeader("Content-Disposition", "attachment; filename=" + returnName+".docx");
+            response.flushBuffer();
+            document.write(response.getOutputStream());
+            document.close();
+//            File files = new File("D:\\upload\\words\\");
+//            if (!files.exists()) {
+//                files.mkdirs();
+//            }
+//            File file = new File(outputUrl);
+//            if (!file.exists()) {
+//                file.createNewFile();
+//            }
+//            FileOutputStream stream = new FileOutputStream(file);
+//            document.write(stream);
+//            stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            changeFlag = false;
+//            e.printStackTrace();
+//            changeFlag = false;
         }
-
-        return changeFlag;
 
     }
 
