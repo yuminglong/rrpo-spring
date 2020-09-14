@@ -93,7 +93,7 @@ jiebao:
     # 后端免认证接口 url
     anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/mini/user/login/**,/mini/user/quickLogin/**
     # token有效期，单位秒
-    jwtTimeOut: 60
+    jwtTimeOut: 600
 
   upload:
     #上传路径
