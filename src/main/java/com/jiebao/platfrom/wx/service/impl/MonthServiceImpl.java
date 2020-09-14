@@ -22,8 +22,10 @@ import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -144,10 +146,13 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
 
     @Override
     public void monthDocx(HttpServletResponse response, String month) {
+//        String inputUrl =null;
+//        try {
+//            inputUrl=ResourceUtils.getFile("classpath:month.docx").getPath();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
         String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
-        String newName = UUID.randomUUID().toString();
-        String outputUrl = "D:\\upload\\words\\" + newName;
-        String outPath = outputUrl + ".docx";  //导出地址
         Map<String, String> map = new HashMap<>();
         map.put("month", month+"全省乡镇街微信护路推荐汇总表");
         ArrayList<String[]> list = new ArrayList<>();
@@ -159,7 +164,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             }
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), dept.getDeptName(), Month.getContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
         }
-        WorderToNewWordUtils.changWordMonth(response,inputUrl, newName, map, list);
+        WorderToNewWordUtils.changWordMonth(response,inputUrl, month, map, list);
 
     }
 

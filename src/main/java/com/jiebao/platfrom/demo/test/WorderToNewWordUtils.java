@@ -66,22 +66,23 @@ public class WorderToNewWordUtils {
     }
 
     public static void changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
-                                         Map<String, String> textMap, List<String[]> tableList) {
+                                      Map<String, String> textMap, List<String[]> tableList) {
         //模板转换默认成功
         boolean changeFlag = true;
         try {
             //获取docx解析对象
             XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(inputUrl));
-            //解析替换文本段落对象
+//            //解析替换文本段落对象
             WorderToNewWordUtils.changeText(document, textMap);
             //解析替换表格对象
             WorderToNewWordUtils.changeTable(document, textMap, tableList);
-            //生成新的word
+       //     生成新的word
             response.setContentType("application/msword");
-            response.setHeader("Content-Disposition", "attachment; filename=" + returnName+".docx");
+            response.setHeader("Content-Disposition", "attachment; filename=" + returnName + ".docx");
             response.flushBuffer();
             document.write(response.getOutputStream());
-            document.close();
+
+
 //            File files = new File("D:\\upload\\words\\");
 //            if (!files.exists()) {
 //                files.mkdirs();
@@ -94,7 +95,7 @@ public class WorderToNewWordUtils {
 //            document.write(stream);
 //            stream.close();
         } catch (IOException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
 //            changeFlag = false;
         }
 
@@ -183,6 +184,7 @@ public class WorderToNewWordUtils {
      * @param tableList 插入数据集合
      */
     public static void insertTable(XWPFTable table, List<String[]> tableList) {
+        System.out.println(table);
         //创建行,根据需要插入的数据添加新行，不处理表头
         for (int i = 1; i < tableList.size(); i++) {
             XWPFTableRow row = table.createRow();
@@ -202,7 +204,6 @@ public class WorderToNewWordUtils {
                 cell.setText(tableList.get(i - 1)[j]);
             }
         }
-
     }
 
 
