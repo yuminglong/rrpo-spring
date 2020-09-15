@@ -82,7 +82,7 @@ public class MonthController {
 
     @PostMapping("koran")
     @ApiOperation("可入不可入按钮")
-    public JiebaoResponse koran(String month, Integer status) {
+    public JiebaoResponse koran(String month, Integer status) {  //month  为id
         return monthService.koran(month, status);
     }
 

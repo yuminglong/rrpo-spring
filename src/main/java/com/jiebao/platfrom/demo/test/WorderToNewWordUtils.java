@@ -183,7 +183,6 @@ public class WorderToNewWordUtils {
      * @param tableList 插入数据集合
      */
     public static void insertTable(XWPFTable table, List<String[]> tableList) {
-        System.out.println(table);
         //创建行,根据需要插入的数据添加新行，不处理表头
         for (int i = 1; i < tableList.size(); i++) {
             XWPFTableRow row = table.createRow();

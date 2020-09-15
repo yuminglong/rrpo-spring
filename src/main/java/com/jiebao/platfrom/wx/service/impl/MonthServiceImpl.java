@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
@@ -146,12 +147,12 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
 
     @Override
     public void monthDocx(HttpServletResponse response, String month) {
-        String inputUrl =null;
-        try {
-            inputUrl=ResourceUtils.getFile("classpath:month.docx").getPath();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        String inputUrl="/usr/word/month.docx";
+//        try {
+//         inputUrl=  ResourceUtils.getFile("classpath:month.docx").getPath();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 //        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
         Map<String, String> map = new HashMap<>();
         map.put("month", month+"全省乡镇街微信护路推荐汇总表");
@@ -176,11 +177,12 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
 
     @Override
     public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
+        System.out.println(month);
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         if (month != null) {
             queryWrapper.eq("month", month);
         }
-        Page<Month> page = new Page<>(queryRequest.getPageSize(), queryRequest.getPageNum());
+        Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
     }
 
