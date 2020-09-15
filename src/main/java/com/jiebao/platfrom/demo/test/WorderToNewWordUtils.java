@@ -68,7 +68,6 @@ public class WorderToNewWordUtils {
     public static void changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
                                       Map<String, String> textMap, List<String[]> tableList) {
         //模板转换默认成功
-        boolean changeFlag = true;
         try {
             //获取docx解析对象
             XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(inputUrl));

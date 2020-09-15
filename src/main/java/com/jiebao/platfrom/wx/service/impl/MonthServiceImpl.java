@@ -146,13 +146,13 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
 
     @Override
     public void monthDocx(HttpServletResponse response, String month) {
-//        String inputUrl =null;
-//        try {
-//            inputUrl=ResourceUtils.getFile("classpath:month.docx").getPath();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
+        String inputUrl =null;
+        try {
+            inputUrl=ResourceUtils.getFile("classpath:month.docx").getPath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+//        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
         Map<String, String> map = new HashMap<>();
         map.put("month", month+"全省乡镇街微信护路推荐汇总表");
         ArrayList<String[]> list = new ArrayList<>();
