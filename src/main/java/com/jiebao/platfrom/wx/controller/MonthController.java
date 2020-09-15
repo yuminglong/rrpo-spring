@@ -74,7 +74,7 @@ public class MonthController {
         return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
     }
 
-    @GetMapping("downDocx")
+    @PostMapping("downDocx")
     @ApiOperation("下载文档")
     public void downDocx(HttpServletResponse response, String month) {
         monthService.monthDocx(response, month);
