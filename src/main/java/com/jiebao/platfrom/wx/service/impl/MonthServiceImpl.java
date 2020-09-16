@@ -171,7 +171,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             }
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
         }
-        return WorderToNewWordUtils.changWordMonth(response, "/usr/word/month.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+        return WorderToNewWordUtils.changWordMonth(response, word1Url, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
     private List<Month> listByMonth(String month, Integer status) {
@@ -221,7 +221,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         ) {
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent()});
         }
-        return WorderToNewWordUtils.changWordMonth(response, "/usr/word/month2.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+        return WorderToNewWordUtils.changWordMonth(response, word2Url, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
     private String forMat(String month) {
