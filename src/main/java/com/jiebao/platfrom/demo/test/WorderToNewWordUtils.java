@@ -65,8 +65,8 @@ public class WorderToNewWordUtils {
 
     }
 
-    public static void changWordMonth(HttpServletResponse response, String inputUrl, String returnName,
-                                      Map<String, String> textMap, List<String[]> tableList) {
+    public static boolean changWordMonth(HttpServletResponse response, String inputUrl, String returnName, Map<String, String> textMap, List<String[]> tableList) {
+        boolean flag = true;
         //模板转换默认成功
         try {
             //获取docx解析对象
@@ -75,29 +75,17 @@ public class WorderToNewWordUtils {
             WorderToNewWordUtils.changeText(document, textMap);
             //解析替换表格对象
             WorderToNewWordUtils.changeTable(document, textMap, tableList);
-       //     生成新的word
+            //     生成新的word
             response.setContentType("application/msword");
             response.setHeader("Content-Disposition", "attachment; filename=" + returnName + ".docx");
             response.flushBuffer();
             document.write(response.getOutputStream());
-
-
-//            File files = new File("D:\\upload\\words\\");
-//            if (!files.exists()) {
-//                files.mkdirs();
-//            }
-//            File file = new File(outputUrl);
-//            if (!file.exists()) {
-//                file.createNewFile();
-//            }
-//            FileOutputStream stream = new FileOutputStream(file);
-//            document.write(stream);
-//            stream.close();
+            document.close();
         } catch (IOException e) {
             e.printStackTrace();
-//            changeFlag = false;
+            flag = false;
         }
-
+        return flag;
     }
 
     /**

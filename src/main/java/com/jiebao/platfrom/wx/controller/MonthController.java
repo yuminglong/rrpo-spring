@@ -76,8 +76,8 @@ public class MonthController {
 
     @PostMapping("downDocx")
     @ApiOperation("下载文档")
-    public void downDocx(HttpServletResponse response, String month) {
-        monthService.monthDocx(response, month);
+    public JiebaoResponse downDocx(HttpServletResponse response, String month) {
+        return monthService.monthDocx(response, month);
     }
 
     @PostMapping("koran")
@@ -90,6 +90,12 @@ public class MonthController {
     @ApiOperation("导出表直观样式")
     public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
         return monthService.monthDocxText(queryRequest, month);
+    }
+
+    @PostMapping("downDocxGood")
+    @ApiOperation("月度评选优秀记录word导出")
+    public JiebaoResponse downDocxGood(HttpServletResponse response, String month, String number, String content) {
+        return monthService.downDocxGood(response, month, number, content);
     }
 
 

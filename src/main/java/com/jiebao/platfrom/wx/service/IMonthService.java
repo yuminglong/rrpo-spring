@@ -22,8 +22,9 @@ public interface IMonthService extends IService<Month> {
 
     JiebaoResponse koran(String MonthId, Integer status);//省级触发  审批意见可入否   1 可以 0不可入
 
-    void monthDocx(HttpServletResponse response,String month);//微信推荐汇总导出
+    JiebaoResponse monthDocx(HttpServletResponse response,String month);//微信推荐汇总导出
 
     JiebaoResponse monthDocxText(QueryRequest queryRequest, String month);  //展示效果
 
+    JiebaoResponse downDocxGood(HttpServletResponse response, String month,String number,String content);
 }

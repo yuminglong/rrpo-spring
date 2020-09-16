@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.wx.domain.Qun;
-import org.apache.ibatis.annotations.One;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -31,9 +28,16 @@ public interface MonthMapper extends BaseMapper<Month> {
             @Result(property = "deptJc", column = "jc_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
             @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
-            @Result(property = "lastDept", column = "last_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     IPage<Month> list(Page<Month> page, QueryWrapper<Month> ew);
 
 
+    @Select("select * from wx_month ${ew.customSqlSegment}")
+    @Results({
+            @Result(property = "qun", column = "qun_id", one = @One(select = "com.jiebao.platfrom.wx.dao.QunMapper.selectById")),
+            @Result(property = "deptJc", column = "jc_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
+    })
+    List<Month> listWord(@Param("ew") QueryWrapper<Month> ew);  //导出word专用
 }
