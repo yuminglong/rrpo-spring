@@ -110,12 +110,12 @@ jiebao:
     #数据库存储虚拟路径
     image: /jbx/cdn/image/
     file: /jbx/cdn/file/
-
+word1: /usr/local/demo/month.docx
+word2: /usr/local/demo/month2.docx
 wx:
   miniapp:
     configs:
       - appid: wx67029b2a97acdda1
         secret: 6da3b18391c7eb57bae8cf3353c6a3d7
         msgDataFormat: JSON
-word1: /usr/local/demo/month.docx
-word2: /usr/local/demo/month2.docx
+
