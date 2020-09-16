@@ -62,13 +62,13 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         deptLineService.setDeptLine(dept.getDeptId(), qunId);
         qun.setShDate(new Date());
         if (status == 0) {
-            qun.setShDeptId(dept.getParentId());
             if (dept.getParentId().equals("-1")) {
                 qun.setShStatus(3);
                 qunJsService.updateById(qunId, massage);
                 qunService.updateById(qun);
                 return jiebaoResponse.okMessage("审核全部完成");
             }
+            qun.setShDeptId(dept.getParentId());
             qun.setShStatus(1);
             qunService.updateById(qun);
             return jiebaoResponse.okMessage("审核节点完成");
