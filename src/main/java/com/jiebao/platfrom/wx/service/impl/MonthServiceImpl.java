@@ -52,10 +52,8 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     UserMapper userMapper;
     @Autowired
     FileService fileService;
-    @Value("${word1}")
-    private String word1Url;  //月度评选初选  地址
-    @Value("${word2}")
-    private String word2Url;  //月度评选  终选地址
+    private final String word1Url = "/usr/local/demo/month.docx";  //月度评选初选  地址
+    private final String word2Url = "/usr/local/demo/month2.docx";  //月度评选  终选地址
 
     @Override
     public boolean saveOrUpdate(Month entity) {
@@ -223,7 +221,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         ) {
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent()});
         }
-        return WorderToNewWordUtils.changWordMonth(response,"/usr/word/month2.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+        return WorderToNewWordUtils.changWordMonth(response, "/usr/word/month2.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
     private String forMat(String month) {

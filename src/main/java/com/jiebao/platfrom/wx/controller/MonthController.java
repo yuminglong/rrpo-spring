@@ -99,26 +99,6 @@ public class MonthController {
         return monthService.downDocxGood(response, month, number, content);
     }
 
-//    public static void main(String[] args) {
-//        String text="老粮仓镇、金洲镇、宁乡城郊镇、流沙河镇。湘湖街、荷花\n" +
-//                "园街、五里牌街、北山镇；大托铺街；暮云街；南托街；文\n" +
-//                "源街；新开铺街。黄兴镇、榔梨镇、湘龙街、安沙镇、黑石\n" +
-//                "铺街。东山街、跳马镇、同升街、洞井街、雨花亭街、黎托\n" +
-//                "街、高桥街、柏加镇、官桥镇、镇头镇。青山桥镇、双江口\n" +
-//                "镇、大屯营镇、菁华铺镇。砂子塘街、圭塘街；丁字街道、\n" +
-//                "桥驿镇、横市镇。道林镇。月亮岛街、大泽湖街、白沙洲街、\n" +
-//                "乌山街、左家塘街道；观沙岭街道天顶街道望岳街道\n" +
-//                "银盆岭街道。先锋街道（20/1）";
-//        char[] chars = text.toCharArray();
-//       List<String> list = new ArrayList<>();
-//       String text1="";
-//        for (char c:chars
-//             ) {
-//            System.out.println(c);
-//        }
-//
-//
-//    }
 
 
 }
