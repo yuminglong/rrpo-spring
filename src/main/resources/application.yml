@@ -68,9 +68,12 @@ mybatis-plus:
   mapper-locations: classpath:mapper/*/*.xml
   configuration:
     jdbc-type-for-null: null
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     # 关闭 mybatis-plus的 banner
     banner: false
+
+
 
 management:
   endpoints:
@@ -114,3 +117,5 @@ wx:
       - appid: wx67029b2a97acdda1
         secret: 6da3b18391c7eb57bae8cf3353c6a3d7
         msgDataFormat: JSON
+word1: /usr/word/month.docx
+word2: /usr/word/month2.docx
