@@ -157,7 +157,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     @Override
     public JiebaoResponse monthDocx(HttpServletResponse response, String month) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
+//        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
         Map<String, String> map = new HashMap<>();
         String forMat = forMat(month);
         map.put("month", forMat + "份全省乡镇街微信护路推荐汇总表");
@@ -173,7 +173,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             }
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
         }
-        return WorderToNewWordUtils.changWordMonth(response, inputUrl, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+        return WorderToNewWordUtils.changWordMonth(response, "/usr/word/month.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
     private List<Month> listByMonth(String month, Integer status) {
@@ -199,14 +199,13 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     @Override
     public JiebaoResponse downDocxGood(HttpServletResponse response, String month, String number, String content) {  //优秀记录导出
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        String inputUrl =null;
-        try {
-            inputUrl= ResourceUtils.getFile("classpath:month2.docx").getPath();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        String inputUrl =null;
+//        try {
+//            inputUrl= ResourceUtils.getFile("classpath:month2.docx").getPath();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 //        String inputUrl = GetResource.class.getClassLoader().getResource("month2.docx").getPath();//模板位置
-        System.out.println(inputUrl);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
         String forMat = forMat(month);
         Map<String, String> map = new HashMap<>();  //参数
@@ -224,7 +223,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         ) {
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent()});
         }
-        return WorderToNewWordUtils.changWordMonth(response,inputUrl, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+        return WorderToNewWordUtils.changWordMonth(response,"/usr/word/month2.docx", month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
     private String forMat(String month) {
