@@ -80,7 +80,7 @@ public class WorderToNewWordUtils {
             response.setHeader("Content-Disposition", "attachment; filename=" + returnName + ".docx");
             response.flushBuffer();
             document.write(response.getOutputStream());
-            document.close();
+
         } catch (IOException e) {
             e.printStackTrace();
             flag = false;
