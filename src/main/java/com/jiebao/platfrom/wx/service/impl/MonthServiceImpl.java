@@ -219,6 +219,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         List<String[]> list = new ArrayList<>();
         for (Month Month : months
         ) {
+            System.out.println(Month);
             list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent()});
         }
         return WorderToNewWordUtils.changWordMonth(response, word2Url, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");

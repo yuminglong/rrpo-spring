@@ -16,5 +16,6 @@ public interface IDeptLineService extends IService<DeptLine> {
 
     void setDeptLine(String deptId, String qunId);
 
-    String getDownDeptId(String qunId, String deptId);//返回  传入部门的下级部门  非全部  线性关系
+    String getDownDeptId(String qunId, String deptId);//返回  传入部门的下级部门  全部  线性关系
+
 }

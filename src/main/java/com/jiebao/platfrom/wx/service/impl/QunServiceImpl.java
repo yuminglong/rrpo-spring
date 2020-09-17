@@ -5,19 +5,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.utils.CheckExcelUtil;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.dao.QunMapper;
+import com.jiebao.platfrom.wx.domain.QunExcel;
 import com.jiebao.platfrom.wx.service.IQunService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +67,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
 
     @Override
     public JiebaoResponse importQun() {  //合格群导入
-                String text = "老粮仓镇、金洲镇、宁乡城郊镇、流沙河镇。湘湖街、荷花" +
+        String text = "老粮仓镇、金洲镇、宁乡城郊镇、流沙河镇。湘湖街、荷花" +
                 "园街、五里牌街、北山镇；大托铺街；暮云街；南托街；文" +
                 "源街；新开铺街。黄兴镇、榔梨镇、湘龙街、安沙镇、黑石" +
                 "铺街。东山街、跳马镇、同升街、洞井街、雨花亭街、黎托" +
@@ -78,19 +82,19 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 "月山镇,万楼街道,云塘街道。湘潭市：云湖桥镇、银田镇、" +
                 "谭家山镇、中路铺镇、新乡街道、长城乡," +
                 "南庄坪镇。苗市镇。零阳镇、溪口镇、岩泊渡镇；西溪" +
-                "坪街、官黎坪街、后坪镇;南山坪乡;"+
+                "坪街、官黎坪街、后坪镇;南山坪乡;" +
                 "安和街。北湖街、下湄桥街、郴江街、华塘镇、石盖塘街、" +
                 "增福街、人民路街、坳上镇、白鹿洞街道、卜里坪街道、良" +
                 "田镇、苏仙岭街道、五里牌镇、许家洞镇；白露塘、飞天山" +
                 "镇、南塔街道、栖凤渡镇、高亭司镇、马田镇、五岭镇、杨" +
                 "梅山镇、唐洞街道、白石渡街道；东江街道、洋塘乡、" +
-                "洋市镇、永乐江镇,"+
+                "洋市镇、永乐江镇," +
                 "芦洪市镇；冷水滩工业园；杨家桥镇、下马渡镇；文富市镇、" +
                 "大盛镇、高溪市镇。肖家园街。蔡市镇、黄阳司镇、菱角山" +
                 "街、马坪开发区、仁湾街、珊瑚街、上岭桥镇；黎家坪镇、" +
                 "大村甸镇、龙山街道、长虹街道；新圩江镇、紫溪市镇" +
                 "、富塘街道、梅花镇、寿雁镇、万家庄街" +
-                "道、祥霖铺镇、营江街道。"+
+                "道、祥霖铺镇、营江街道。" +
                 "解放岩。峒河街、马颈坳镇、小溪镇。木江坪镇。双塘街;古" +
                 "阳镇、默戎镇；芙蓉镇、永茂镇、乾州街道、石家冲街道：" +
                 "镇溪街道。" +
@@ -101,32 +105,32 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 "公镇、西河镇。上梅镇、琅塘镇;" +
                 "槎溪镇、沙塘湾街、维山乡、洋" +
                 "溪镇、甘棠镇。茅塘镇、洪山殿" +
-                "镇、三塘镇、枫林街道、科头乡。"+
+                "镇、三塘镇、枫林街道、科头乡。" +
                 "坪上镇。学院街、塘渡口镇。界岭镇、宋家塘镇、爱莲" +
                 "街、鸭田镇、。廉桥镇、谭溪镇、雨溪街、金石桥镇、" +
                 "牛马司镇、兴隆街；大禾塘街、白仓镇、九公桥镇、渡" +
-                "头桥镇、高崇山镇、火车站乡、石桥街道；"+
+                "头桥镇、高崇山镇、火车站乡、石桥街道；" +
                 "花门街道、南岳庙镇、滩头镇、桃花坪街" +
                 "道、周旺镇、横板桥镇、火厂坪镇、水东江镇、杨桥镇、周" +
                 "官桥乡、茶元头街道、岩口铺镇、长阳铺镇、岩山镇、月溪" +
                 "镇、长塘乡、石江镇、竹市镇、江口镇、雪峰街道、水东镇、" +
-                "市经开区昭阳片区。"+
+                "市经开区昭阳片区。" +
                 "南洲镇；群丰镇、雷打石镇、栗雨街。淦田镇。渌口镇；" +
                 "清水塘街。龙泉街；枫溪街、学林街、井龙街、响石街、" +
                 "铜塘湾街、茨菇塘街、月塘街；贺家土街道、庆云街道、" +
                 "建宁街道街道、建设街道、合泰管委会、马家河街道、" +
                 "三门镇、田心街道、古岳峰镇。东富镇,长庆示范区朱" +
-                "亭镇。枫林镇、王仙镇、沩山镇。"+
+                "亭镇。枫林镇、王仙镇、沩山镇。" +
                 "蔡家岗镇、宝峰街、楚江街、二都街、夹山镇、易家渡" +
                 "镇、永兴街、盘塘街。高新区、太子庙镇。" +
                 "新安镇。樟木桥镇、南坪镇；安福镇。东江街道。石板" +
                 "滩镇、夹山管理处、刻木乡、太浮镇、太浮镇、新铺乡、" +
                 "谢家铺镇、灌溪镇、芷兰街。金罗镇,王家厂镇,佘市" +
                 "桥镇,七里桥街道,芦荻山乡：崔家" +
-                "桥镇、石门桥镇、大堰垱镇。"+
+                "桥镇、石门桥镇、大堰垱镇。" +
                 "朝阳街；衡龙桥镇；渠江镇、烟溪镇。灰山港镇、桃花" +
                 "江镇。沧水铺镇、龙光桥街、平口镇、谢林港镇、修山" +
-                "镇、鱼形山街；龙岭工业区、泥江口镇：柘溪林场。"+
+                "镇、鱼形山街；龙岭工业区、泥江口镇：柘溪林场。" +
                 "灶市镇、哲桥镇、大浦镇、白鹤街、洪桥街、永昌街。开" +
                 "云镇。廖田镇、雨母山镇。衡州路街、鸡笼镇、茶山坳镇、" +
                 "东阳渡镇、和平乡、泉湖镇、南岳镇、公平镇；店门镇、长" +
@@ -138,7 +142,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 "三塘镇,谭子山镇,铁丝塘镇、雁峰街道," +
                 "板市乡、黄家湾镇、角山镇、金兰镇、金源街道、库宗桥镇、" +
                 "栏垅乡、杉桥镇、台源镇、" +
-                "西渡镇、演陂镇。"+"县溪镇、牙屯堡镇。连山乡、中方镇、渠阳镇、黔城镇。" +
+                "西渡镇、演陂镇。" + "县溪镇、牙屯堡镇。连山乡、中方镇、渠阳镇、黔城镇。" +
                 "公平镇、土桥镇、罗旧镇；小龙门乡、林城镇、马鞍、" +
                 "坪村镇、板栗村乡、高村镇、郭公坪镇、江口镇、锦和" +
                 "镇、波洲镇、晃州镇、鱼市镇、泸阳镇、新建镇、城州" +
@@ -148,7 +152,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 "井镇、大江口镇、思蒙镇、沿溪乡、新店坪镇、芷江镇。" +
                 "火马冲镇、堡子镇、大桥江乡、花桥镇" +
                 ",安江镇、岔头乡、大崇乡、塘湾镇、" +
-                "铁山乡、雪峰镇、蒿吉坪乡、桐木镇、铜湾镇；"+
+                "铁山乡、雪峰镇、蒿吉坪乡、桐木镇、铜湾镇；" +
                 "荣家湾镇、黄沙街镇。湖滨街、坦渡镇、" +
                 "羊楼司镇、五里牌街、康王乡、弼" +
                 "时神鼎山镇、新市镇、洛王街道。" +
@@ -160,7 +164,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 "梅仙镇、三市镇、三阳乡" +
                 "、余坪镇、洞庭" +
                 "街道、枫桥湖街道,";
-
         char[] chars = text.toCharArray();
         List<String> list = new ArrayList<>();
         String text1 = "";
@@ -174,12 +177,27 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             }
         }
         for (String str : list
-        ) {
-            System.out.println(str);
+        ) {  //具体创建对象
+            List<Dept> depts = deptService.getDeptByName(str);
+            if (depts.size() == 0)
+                continue;
+            Dept dept = depts.get(0);
+            if (judge(dept.getDeptId())) {//数据库还不存在此街道 群
+                Qun qun = new Qun();
+                qun.setDate(new Date());
+                qun.setWxName(str);
+                qun.setCjDeptId(dept.getDeptId());
+                qun.setShDeptId("0");
+                qun.setShStatus(3);
+                save(qun);
+            }
         }
+        return new JiebaoResponse().okMessage("成功");
+    }
 
-
-        return null;
+    @Override
+    public JiebaoResponse exPort(HttpServletResponse response) {
+        return CheckExcelUtil.export(response, this.baseMapper.listExcel(), QunExcel.class);
     }
 
     private boolean judge(String deptId) {

@@ -75,7 +75,8 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         } else {  //打回操作
             qun.setShStatus(2);
             if (qun.getCjDeptId() != qun.getShDeptId()) {
-                qun.setShDeptId(deptLineService.getDownDeptId(qunId, dept.getDeptId()));
+                String downDeptId = deptLineService.getDownDeptId(qunId, dept.getDeptId());
+                qun.setShDeptId(downDeptId == null ? qun.getCjDeptId() : downDeptId);
             } else {
                 qun.setShDeptId(qun.getCjDeptId());
             }
