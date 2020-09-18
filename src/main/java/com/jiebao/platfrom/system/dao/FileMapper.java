@@ -20,4 +20,7 @@ public interface FileMapper extends BaseMapper<File> {
 
     @Delete("delete from sys_files ${ew.customSqlSegment}")
     Integer deleteByRefId(@Param("ew") QueryWrapper<File> queryWrapper);
+
+    @Update("UPDATE sys_files SET ref_id = #{noticeId} WHERE file_id =#{fileId}")
+    boolean updateNoticeByFileId(String fileId, String noticeId);
 }
