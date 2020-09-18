@@ -196,10 +196,11 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
 
     @Override
     public void exPort(HttpServletResponse response, String[] deptId, String workName) {
+        Dept deptLogin = deptService.getDept(); // 登陆人id
         Map<String, List<?>> map = new HashMap<>();
         List<Dept> childrenList = new ArrayList<>();
         if (deptId == null) {
-            childrenList = deptService.getChildrenList("0");//省级下面所有的大子集
+            childrenList = deptService.getChildrenList(deptLogin.getDeptId());//省级下面所有的大子集
         } else {   //查询对应 市州级别
             childrenList.addAll(deptService.listByIds(Arrays.asList(deptId)));
         }
@@ -250,8 +251,6 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
-
-
 
 
 }
