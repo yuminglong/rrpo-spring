@@ -226,7 +226,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
@@ -246,6 +246,9 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         if (userName != null) {
             queryWrapper.like("wx_user_name", userName);
+        }
+        if (status != null) {
+            queryWrapper.eq("sh_status", status);
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
