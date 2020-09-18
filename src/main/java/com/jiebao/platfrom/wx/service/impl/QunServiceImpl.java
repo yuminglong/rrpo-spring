@@ -219,21 +219,26 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         CheckExcelUtil.exportMap(response, map, QunExcel.class, workName);
     }
+
     private boolean judge(String deptId) {
         return this.baseMapper.judge(deptId) == null ? true : false;
     }
+
     @Override
     public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
-        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
-        List<String> resolver = resolver(childrenList);
-        if (resolver.size() == 0) {
+        List<String> list = new ArrayList<>();  //储存id
+        List<String> listPrentId = new ArrayList<>();  //储存id
+        listPrentId.add(dept.getDeptId());
+        list.add(dept.getDeptId());
+        deptService.getAllIds(listPrentId, list);
+        if (list.size() == 0) {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
         } else {
             queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("cj_dept_id", resolver).eq("sh_status", 3));
+                    .or().in("cj_dept_id", list).eq("sh_status", 3));
         }
         if (name != null) {
             queryWrapper.like("wx_name", name);
@@ -246,17 +251,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
 
-    private List<String> resolver(List<Dept> list) {
-        List<String> listR = new ArrayList<>(); //储存数据
-        if (list == null || list.size() == 0) {
-            return listR;
-        }
-        for (Dept dept : list
-        ) {
-            listR.add(dept.getDeptId());
-        }
-        return listR;
-    }
+
 
 
 }

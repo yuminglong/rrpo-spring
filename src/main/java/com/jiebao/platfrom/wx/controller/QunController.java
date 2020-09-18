@@ -57,7 +57,7 @@ public class QunController {
     }
 
 
-    @GetMapping("")
+    @PostMapping("exPort")
     @ApiOperation("合格群导出  deptId 不传查出全部市级  反之 特定 市级")
     public void exPort(HttpServletResponse response, String[] deptId, String workName) {
         qunService.exPort(response, deptId, workName);
