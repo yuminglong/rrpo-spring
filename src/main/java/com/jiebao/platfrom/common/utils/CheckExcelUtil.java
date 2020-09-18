@@ -19,6 +19,8 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -384,16 +386,19 @@ public class CheckExcelUtil {
         }
     }
 
-    public static JiebaoResponse export(HttpServletResponse response, List<? extends Object> list, Class<?> cla) {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        boolean annotationPresent = cla.isAnnotationPresent(ExcelName.class);
-        if (!annotationPresent) {
-            return jiebaoResponse.failMessage("实体类未使用注解");
-        }
+    public static void exportList(HttpServletResponse response, List<? extends Object> list, Class<?> cla, String workName) {  //大众通用类型 纯集合
         HSSFWorkbook workbook = new HSSFWorkbook();  //创建空间
-        Annotation[] annotations = cla.getAnnotations();
-        ExcelName excelName = (ExcelName) annotations[0]; //表名
-        HSSFSheet sheet = workbook.createSheet(excelName.name());  //创建表
+        HSSFCellStyle cellStyle = workbook.createCellStyle();   //设定格式
+        //垂直居中
+        cellStyle.setVerticalAlignment(cellStyle.getVerticalAlignmentEnum().CENTER);
+        //水平居中
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        if (workName == null) {//为空  去实体类拿去默认的参数
+            Annotation[] annotations = cla.getAnnotations();
+            ExcelName excelName = (ExcelName) annotations[0]; //表名
+            workName = excelName.name();
+        }
+        HSSFSheet sheet = workbook.createSheet(workName);  //创建表
         Field[] declaredFields = cla.getDeclaredFields(); //所有属性
         HSSFRow row = sheet.createRow(0);
         int cellNumber = 0;//记录列数
@@ -421,26 +426,83 @@ public class CheckExcelUtil {
                     e.printStackTrace();
                 }
             }
+            Rows++;
         }
+        allSheet(sheet);
+        applyColor(response, workbook);
+    }
+
+    public static void exportMap(HttpServletResponse response, Map<String, List<? extends Object>> map, Class<?> cla, String workName) {  //涉及到分区导出分组
+        HSSFWorkbook workbook = new HSSFWorkbook();  //创建空间
+        HSSFCellStyle cellStyle = workbook.createCellStyle();   //设定格式
+        //垂直居中
+        cellStyle.setVerticalAlignment(cellStyle.getVerticalAlignmentEnum().CENTER);
+        //水平居中
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        if (workName == null) {
+            Annotation[] annotations = cla.getAnnotations();
+            ExcelName excelName = (ExcelName) annotations[0]; //表名
+            workName = excelName.name();
+        }
+        Iterator<String> iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            String next = iterator.next();// 模块名  KEY
+            HSSFSheet sheet = workbook.createSheet(next + workName);  //创建表
+            Field[] declaredFields = cla.getDeclaredFields(); //所有属性
+            HSSFRow row = sheet.createRow(0);
+            int cellNumber = 0;//记录列数
+            for (Field filed : declaredFields  //创建第一行  表格栏目
+            ) {
+                ExcelName annotation = filed.getAnnotation(ExcelName.class);
+                HSSFCell cell = row.createCell(cellNumber++);
+                cell.setCellValue(annotation.name());
+            }   //标题  以及表的 属性创建完毕
+            int Rows = 1;  //  下标1  相当于 第二行开始
+            for (Object o : map.get(next)
+            ) {
+                HSSFRow row1 = sheet.createRow(Rows);
+                System.out.println(o);
+                Class<?> aClass = o.getClass();
+                Field[] declaredFields1 = aClass.getDeclaredFields();
+                for (int y = 0; y < declaredFields1.length; y++) {
+                    HSSFCell cell = row1.createCell(y);
+                    Field field = declaredFields1[y];
+                    field.setAccessible(true);
+                    try {
+                        Object title = field.get(o);
+                        cell.setCellValue(title == null ? "" : title.toString());
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Rows++;
+            }
+            allSheet(sheet);  //自适应 列宽
+        }
+        applyColor(response, workbook);  //响应s
+    }
+
+    private static void applyColor(HttpServletResponse response, HSSFWorkbook workbook) {// 响应到前端
         response.setContentType("application/ms-excel;charset=utf-8");
-//设置导出Excel的名称
-        response.setHeader("Content-disposition", "attachment;filename=" + "ssd.xls");
-        //刷新缓冲
+        response.setHeader("Content-Disposition", "attachment;filename=" + UUID.randomUUID() + ".xls");
         try {
-            response.flushBuffer();
+            response.flushBuffer();  //刷新缓冲
             workbook.write(response.getOutputStream());
             workbook.close();
-            jiebaoResponse.okMessage("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
-            jiebaoResponse.failMessage("导出excel出现状况");
         }
-
-        return jiebaoResponse;
     }
 
 
-
-
+    private static void allSheet(HSSFSheet sheet) {  //遍历列表  获取  设置最大列宽
+        for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+            HSSFRow row = sheet.getRow(i);
+//            for(int j=0;j<row.getPhysicalNumberOfCells();j++){
+//                sheet.a
+//            }
+            sheet.autoSizeColumn(i);
+        }
+    }
 
 }

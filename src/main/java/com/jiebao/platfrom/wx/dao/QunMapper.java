@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.wx.domain.QunExcel;
-import org.apache.ibatis.annotations.One;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -34,7 +31,7 @@ public interface QunMapper extends BaseMapper<Qun> {
     Integer judge(String deptId);
 
 
-    @Select("select wx_name as wxName from wx_qun")
-    List<QunExcel> listExcel();
+    @Select("select wx_name as wxName,(select dept_name from sys_dept where dept_id=cj_dept_id) as villageDeptName,#{cityDeptName}  as cityDeptName, (select count(*) from wx_user u where u.qun_id=wx_id) as number from wx_qun ${ew.customSqlSegment}")
+    List<QunExcel> listExcel(@Param("cityDeptName") String cityDeptName, @Param("ew") QueryWrapper<Qun> qunQueryWrapper);  //以市州去查
 
 }

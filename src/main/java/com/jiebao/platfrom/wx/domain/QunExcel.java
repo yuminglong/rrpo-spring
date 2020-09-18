@@ -8,9 +8,9 @@ import java.io.Serializable;
 /**
  *
  */
-@ExcelName(name = "合格群导出")
+@ExcelName(name = "合格群导出")   //必写    要不然会有问题
 @Data
-public class QunExcel  implements Serializable {
+public class QunExcel implements Serializable {
     //    private static final long serialVersionUID = 1l;
     @ExcelName(name = "市级单位名称")
     private String cityDeptName;  //市级单位名称

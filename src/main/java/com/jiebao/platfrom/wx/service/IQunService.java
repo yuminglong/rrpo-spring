@@ -24,7 +24,7 @@ public interface IQunService extends IService<Qun> {
 
     JiebaoResponse addOrUpdate(Qun qun);
 
-    JiebaoResponse importQun();
+    JiebaoResponse importQun(String content);
 
-    JiebaoResponse exPort(HttpServletResponse response);//合格群导出
+    void exPort(HttpServletResponse response, String[] deptId,String workName);//合格群导出
 }
