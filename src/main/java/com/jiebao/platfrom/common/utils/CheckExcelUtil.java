@@ -1,5 +1,7 @@
 package com.jiebao.platfrom.common.utils;
 
+import com.baomidou.mybatisplus.extension.api.R;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiebao.platfrom.attendance.daomain.Record;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
@@ -11,7 +13,10 @@ import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
+import com.jiebao.platfrom.wx.domain.Qun;
+import com.jiebao.platfrom.wx.domain.QunExcel;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -45,7 +51,7 @@ public class CheckExcelUtil {
                 cell.setCellType(CellType.STRING);
                 String stringCellValue = cell.getStringCellValue(); //表格内容
                 if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
-                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" +stringCellValue);
+                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" + stringCellValue);
                 }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
@@ -337,13 +343,10 @@ public class CheckExcelUtil {
             i++;
         }
         panMonth(dateMonth);
-
         response.setContentType("application/ms-excel;charset=utf-8");
 //设置导出Excel的名称
         response.setHeader("Content-disposition", "attachment;filename=" + "ssd.xls");
-
         //刷新缓冲
-
         try {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
@@ -380,6 +383,64 @@ public class CheckExcelUtil {
                 return null;
         }
     }
+
+    public static JiebaoResponse export(HttpServletResponse response, List<? extends Object> list, Class<?> cla) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        boolean annotationPresent = cla.isAnnotationPresent(ExcelName.class);
+        if (!annotationPresent) {
+            return jiebaoResponse.failMessage("实体类未使用注解");
+        }
+        HSSFWorkbook workbook = new HSSFWorkbook();  //创建空间
+        Annotation[] annotations = cla.getAnnotations();
+        ExcelName excelName = (ExcelName) annotations[0]; //表名
+        HSSFSheet sheet = workbook.createSheet(excelName.name());  //创建表
+        Field[] declaredFields = cla.getDeclaredFields(); //所有属性
+        HSSFRow row = sheet.createRow(0);
+        int cellNumber = 0;//记录列数
+        for (Field filed : declaredFields
+        ) {
+            ExcelName annotation = filed.getAnnotation(ExcelName.class);
+            HSSFCell cell = row.createCell(cellNumber++);
+            cell.setCellValue(annotation.name());
+        }   //标题  以及表的 属性创建完毕
+        int Rows = 1;
+        for (Object o : list
+        ) {
+            HSSFRow row1 = sheet.createRow(Rows);
+            System.out.println(o);
+            Class<?> aClass = o.getClass();
+            Field[] declaredFields1 = aClass.getDeclaredFields();
+            for (int y = 0; y < declaredFields1.length; y++) {
+                HSSFCell cell = row1.createCell(y);
+                Field field = declaredFields1[y];
+                field.setAccessible(true);
+                try {
+                    Object title = field.get(o);
+                    cell.setCellValue(title == null ? "" : title.toString());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        response.setContentType("application/ms-excel;charset=utf-8");
+//设置导出Excel的名称
+        response.setHeader("Content-disposition", "attachment;filename=" + "ssd.xls");
+        //刷新缓冲
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+            workbook.close();
+            jiebaoResponse.okMessage("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            jiebaoResponse.failMessage("导出excel出现状况");
+        }
+
+        return jiebaoResponse;
+    }
+
+
+
 
 
 }

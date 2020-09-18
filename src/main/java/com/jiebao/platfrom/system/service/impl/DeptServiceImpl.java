@@ -253,6 +253,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return getById(userMapper.getDeptID(username));
     }
 
+    @Override
+    public List<Dept> getDeptByName(String deptName) {
+        QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("dept_name",deptName);
+        return list(queryWrapper);
+    }
+
 
     private List getDeptIds(String id) {
         List list = new ArrayList();

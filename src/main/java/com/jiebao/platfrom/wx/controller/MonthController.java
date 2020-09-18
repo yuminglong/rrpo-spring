@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -74,15 +75,15 @@ public class MonthController {
         return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
     }
 
-    @GetMapping("downDocx")
+    @PostMapping("downDocx")
     @ApiOperation("下载文档")
-    public void downDocx(HttpServletResponse response, String month) {
-        monthService.monthDocx(response, month);
+    public JiebaoResponse downDocx(HttpServletResponse response, String month) {
+        return monthService.monthDocx(response, month);
     }
 
     @PostMapping("koran")
     @ApiOperation("可入不可入按钮")
-    public JiebaoResponse koran(String month, Integer status) {
+    public JiebaoResponse koran(String month, Integer status) {  //month  为id
         return monthService.koran(month, status);
     }
 
@@ -91,6 +92,13 @@ public class MonthController {
     public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
         return monthService.monthDocxText(queryRequest, month);
     }
+
+    @PostMapping("downDocxGood")
+    @ApiOperation("月度评选优秀记录word导出")
+    public JiebaoResponse downDocxGood(HttpServletResponse response, String month, String number, String content) {
+        return monthService.downDocxGood(response, month, number, content);
+    }
+
 
 
 }

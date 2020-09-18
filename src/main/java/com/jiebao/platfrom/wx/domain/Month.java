@@ -50,6 +50,7 @@ public class Month implements Serializable {
      */
     private String content;
 
+    private String fuContent;//富文本有用
     /**
      * 来源于什么群
      */

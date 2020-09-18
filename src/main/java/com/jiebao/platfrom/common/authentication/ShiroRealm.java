@@ -1,12 +1,12 @@
 package com.jiebao.platfrom.common.authentication;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jiebao.platfrom.common.domain.ActiveUser;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.exception.RedisConnectException;
 import com.jiebao.platfrom.common.service.RedisService;
-import com.jiebao.platfrom.common.utils.HttpContextUtil;
-import com.jiebao.platfrom.common.utils.IPUtil;
-import com.jiebao.platfrom.common.utils.JiebaoUtil;
+import com.jiebao.platfrom.common.utils.*;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.manager.UserManager;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -39,6 +41,8 @@ public class ShiroRealm extends AuthorizingRealm {
     private UserManager userManager;
     @Value("${jiebao.shiro.jwtTimeOut}")
     private int jwtTimeOut;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -100,8 +104,13 @@ public class ShiroRealm extends AuthorizingRealm {
 
         try {
             redisService.set(JiebaoConstant.TOKEN_CACHE_PREFIX + encryptToken + StringPool.DOT + ip, encryptToken, jwtTimeOut * 1000L);
+            LocalDateTime expireTime = LocalDateTime.now().plusSeconds(jwtTimeOut);
+            String expireTimeStr = DateUtil.formatFullTime(expireTime);
+            updateZrem(username, ip, expireTimeStr);
         } catch (RedisConnectException e) {
             log.warn("ShiroRealm：Refresh user token exception");
+        } catch (IOException e) {
+            log.warn("ShiroRealm：Refresh user zrem exception");
         }
 
         // 通过用户名查询用户信息
@@ -112,6 +121,34 @@ public class ShiroRealm extends AuthorizingRealm {
         if (!JWTUtil.verify(token, username, user.getPassword()))
             throw new AuthenticationException("token校验不通过");
         return new SimpleAuthenticationInfo(token, token, "jiebao_shiro_realm");
+    }
+
+    /**
+     * 更新在线用户有序集合
+     * @param username
+     * @param ip
+     * @param expireTimeStr
+     * @throws RedisConnectException
+     * @throws IOException
+     */
+    private void updateZrem (String username, String ip, String expireTimeStr) throws RedisConnectException, IOException {
+        String now = DateUtil.formatFullTime(LocalDateTime.now());
+        Set<String> userOnlineStringSet = redisService.zrangeByScore(JiebaoConstant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
+        ActiveUser kickoutUser = null;
+        String kickoutUserString = "";
+        for (String userOnlineString : userOnlineStringSet) {
+            ActiveUser activeUser = mapper.readValue(userOnlineString, ActiveUser.class);
+            if (StringUtils.equals(activeUser.getUsername(), username) && StringUtils.equals(activeUser.getIp(), ip)) {
+                kickoutUser = activeUser;
+                kickoutUserString = userOnlineString;
+            }
+        }
+        if (kickoutUser != null && StringUtils.isNotBlank(kickoutUserString)) {
+            // 删除 zset中的记录
+            redisService.zrem(JiebaoConstant.ACTIVE_USERS_ZSET_PREFIX, kickoutUserString);
+            redisService.zadd(JiebaoConstant.ACTIVE_USERS_ZSET_PREFIX, Double.valueOf(expireTimeStr), mapper.writeValueAsString(kickoutUser));
+        }
+
     }
 
 }

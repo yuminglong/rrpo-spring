@@ -46,5 +46,6 @@ public interface DeptService extends IService<Dept> {
 
     Dept getDept();//获取当前登陆人 部门
 
+    List<Dept> getDeptByName(String deptName);//通过名字查询对应的 部门
 
 }

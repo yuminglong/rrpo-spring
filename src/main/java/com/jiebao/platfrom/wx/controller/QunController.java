@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * 前端控制器
@@ -48,4 +50,16 @@ public class QunController {
 //        return qunService.up(qunId);
 //    }
 
+    @GetMapping("qunCreat")
+    @ApiOperation("加载已经上报的群")
+    public JiebaoResponse qunCreat() {
+        return qunService.importQun();
+    }
+
+
+    @GetMapping("")
+    @ApiOperation("合格群导出")
+    public JiebaoResponse exPort(HttpServletResponse response){
+        return qunService.exPort(response);
+    }
 }

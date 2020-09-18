@@ -1,9 +1,12 @@
 package com.jiebao.platfrom.wx.service.impl;
 
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.wx.domain.DeptLine;
 import com.jiebao.platfrom.wx.dao.DeptLineMapper;
 import com.jiebao.platfrom.wx.service.IDeptLineService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> implements IDeptLineService {
 
+    @Autowired
+    DeptService deptService;
 
     @Override
     public void setDeptLine(String deptId, String qunId) {
@@ -35,6 +40,7 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
     public String getDownDeptId(String qunId, String deptId) {
         DeptLine deptLine = this.baseMapper.selectDeptLine1(qunId, deptId); //本级
         DeptLine deptLine1 = this.baseMapper.selectDeptLine2(qunId, deptLine.getNumber() - 1);  //下级部门
-        return deptLine1.getDeptId();
+        return deptLine1.getDeptId() == null ? null : deptLine1.getDeptId();//直接导入的 可能为0
     }
+
 }

@@ -5,6 +5,8 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * 服务类
@@ -21,4 +23,8 @@ public interface IQunService extends IService<Qun> {
 //    JiebaoResponse up(String qunId);
 
     JiebaoResponse addOrUpdate(Qun qun);
+
+    JiebaoResponse importQun();
+
+    JiebaoResponse exPort(HttpServletResponse response);//合格群导出
 }

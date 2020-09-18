@@ -182,7 +182,7 @@ public class MiniUserController {
     private Map<String, Object> generateUserInfo(JWTToken token, User user) {
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("token", token.getToken());
-        userInfo.put("expireTime", token.getExipreAt());
+        //userInfo.put("expireTime", token.getExipreAt());
 
         user.setPassword("it's a secret");
         user.setOpenid("it's a secret");

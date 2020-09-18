@@ -21,10 +21,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
+import sun.swing.SwingUtilities2;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,6 +44,7 @@ import java.util.*;
  * @since 2020-08-22
  */
 @Service
+@Component
 public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements IMonthService {
     @Autowired
     DeptService deptService;
@@ -43,7 +52,8 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     UserMapper userMapper;
     @Autowired
     FileService fileService;
-
+    private final String word1Url = "/usr/local/demo/month.docx";  //月度评选初选  地址
+    private final String word2Url = "/usr/local/demo/month2.docx";  //月度评选  终选地址
 
     @Override
     public boolean saveOrUpdate(Month entity) {
@@ -143,40 +153,119 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public void monthDocx(HttpServletResponse response, String month) {
-        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
-        String newName = UUID.randomUUID().toString();
-        String outputUrl = "D:\\upload\\words\\" + newName;
-        String outPath = outputUrl + ".docx";  //导出地址
+    public JiebaoResponse monthDocx(HttpServletResponse response, String month) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        String inputUrl = GetResource.class.getClassLoader().getResource("month.docx").getPath();//模板位置
         Map<String, String> map = new HashMap<>();
-        map.put("month", month+"全省乡镇街微信护路推荐汇总表");
+        String forMat = forMat(month);
+        map.put("month", forMat + "份全省乡镇街微信护路推荐汇总表");
         ArrayList<String[]> list = new ArrayList<>();
-        for (Month Month : listByMonth(month)
+        List<Month> months = listByMonth(month, null);
+        if (months.size() == 0) {
+            return jiebaoResponse.failMessage("无数据可导出");
+        }
+        for (Month Month : months
         ) {
-            Dept dept = deptService.getById(Month.getJcDeptId()); //发起最小单位
             if (Month.getPreStatus() == null) {
                 Month.setPreStatus(0);
             }
-            list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), dept.getDeptName(), Month.getContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
+            list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent(), Month.getPreStatus() == 1 ? "可入" : "不可入"});
         }
-        WorderToNewWordUtils.changWordMonth(response,inputUrl, newName, map, list);
-
+        return WorderToNewWordUtils.changWordMonth(response, word1Url, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
     }
 
-    private List<Month> listByMonth(String month) {
+    private List<Month> listByMonth(String month, Integer status) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("month", month);
-        return list(queryWrapper);
+        if (status != null) {
+            queryWrapper.eq("status", status);
+        }
+        return this.baseMapper.listWord(queryWrapper);
     }
 
     @Override
-    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
+    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {  //月报  直观图
+        System.out.println(month);
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         if (month != null) {
             queryWrapper.eq("month", month);
         }
-        Page<Month> page = new Page<>(queryRequest.getPageSize(), queryRequest.getPageNum());
-        return new JiebaoResponse().data(page(page, queryWrapper)).message("查询成功");
+        Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
+    }
+
+    @Override
+    public JiebaoResponse downDocxGood(HttpServletResponse response, String month, String number, String content) {  //优秀记录导出
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        String inputUrl =null;
+//        try {
+//            inputUrl= ResourceUtils.getFile("classpath:month2.docx").getPath();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        String inputUrl = GetResource.class.getClassLoader().getResource("month2.docx").getPath();//模板位置
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        String forMat = forMat(month);
+        Map<String, String> map = new HashMap<>();  //参数
+        map.put("number", number);
+        map.put("content", content);
+        map.put("date", simpleDateFormat.format(new Date()));
+        map.put("monthText1", forMat + "份乡镇街优秀护路微信记录评选");
+        map.put("monthText2", forMat + "份全省乡镇街铁路护路微信优秀记录");
+        List<Month> months = listByMonth(month, 1);
+        if (months.size() == 0) {
+            return jiebaoResponse.failMessage("无数据可导出");
+        }
+        List<String[]> list = new ArrayList<>();
+        for (Month Month : months
+        ) {
+            System.out.println(Month);
+            list.add(new String[]{Month.getSerial().toString(), Month.getSzDeptName(), Month.getDeptJc().getDeptName(), Month.getFuContent()});
+        }
+        return WorderToNewWordUtils.changWordMonth(response, word2Url, month, map, list) ? jiebaoResponse.okMessage("导出成功") : jiebaoResponse.failMessage("导出失败");
+    }
+
+    private String forMat(String month) {
+        String format = month.substring(month.length() - 2);  //截取末尾
+        switch (format) {
+            case "01":
+                format = "一月";
+                break;
+            case "02":
+                format = "二月";
+                break;
+            case "03":
+                format = "三月";
+                break;
+            case "04":
+                format = "四月";
+                break;
+            case "05":
+                format = "五月";
+                break;
+            case "06":
+                format = "六月";
+                break;
+            case "07":
+                format = "七月";
+                break;
+            case "08":
+                format = "八月";
+                break;
+            case "09":
+                format = "九月";
+                break;
+            case "10":
+                format = "十月";
+                break;
+            case "11":
+                format = "十一月";
+                break;
+            case "12":
+                format = "十二月";
+                break;
+        }
+        return format;
     }
 
 
