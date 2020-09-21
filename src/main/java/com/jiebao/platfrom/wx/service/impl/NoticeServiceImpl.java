@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public class NoticeServiceImpl extends ServiceImpl<NoticesMapper, Notice> implements INoticeService {
     @Override
     public boolean save(Notice entity) {
-   //     entity.setDate(LocalDateTime.now());
+        entity.setDate(LocalDateTime.now());
         return super.save(entity);
     }
 

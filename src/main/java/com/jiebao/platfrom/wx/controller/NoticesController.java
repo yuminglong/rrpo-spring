@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * <p>
  * 前端控制器
@@ -33,6 +36,7 @@ public class NoticesController {
     @ApiOperation("新增通知")
     public JiebaoResponse save(Notice notice) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        System.out.println();
         return noticeService.save(notice) ? jiebaoResponse.okMessage("添加成功") : jiebaoResponse.failMessage("操作失败");
     }
 
@@ -41,4 +45,5 @@ public class NoticesController {
     public JiebaoResponse List(QueryRequest queryRequest) {
         return noticeService.List(queryRequest);
     }
+
 }
