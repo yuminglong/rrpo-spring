@@ -55,9 +55,9 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation("登录")
     @Limit(key = "login", period = 60, count = 20, name = "登录接口", prefix = "limit")
-   // @NotBlank(message = "{required}")
+    // @NotBlank(message = "{required}")
     public JiebaoResponse login(
-          String username,
+            String username,
             String password, HttpServletRequest request) throws Exception {
         username = StringUtils.lowerCase(username);
         password = MD5Util.encrypt(username, password);
@@ -77,6 +77,7 @@ public class LoginController {
         // 保存登录记录
         LoginLog loginLog = new LoginLog();
         loginLog.setUsername(username);
+        loginLog.setUserId(user.getUserId());
         this.loginLogService.saveLoginLog(loginLog);
 
         String token = JiebaoUtil.encryptToken(JWTUtil.sign(username, password));

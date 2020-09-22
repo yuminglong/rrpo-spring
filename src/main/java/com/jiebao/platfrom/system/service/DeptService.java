@@ -48,4 +48,5 @@ public interface DeptService extends IService<Dept> {
 
     List<Dept> getDeptByName(String deptName);//通过名字查询对应的 部门
 
+
 }

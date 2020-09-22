@@ -142,6 +142,7 @@ public class MiniUserController {
             // 保存登录记录
             LoginLog loginLog = new LoginLog();
             loginLog.setUsername(user.getUsername());
+            loginLog.setUserId(user.getUserId());
             this.loginLogService.saveLoginLog(loginLog);
 
             String token = JiebaoUtil.encryptToken(JWTUtil.sign(user.getUsername(), user.getPassword()));
