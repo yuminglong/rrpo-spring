@@ -77,7 +77,7 @@ public class LoginController {
         // 保存登录记录
         LoginLog loginLog = new LoginLog();
         loginLog.setUsername(username);
-        loginLog.setUserId(user.getUserId());
+        loginLog.setDeptId(user.getDeptId());
         this.loginLogService.saveLoginLog(loginLog);
 
         String token = JiebaoUtil.encryptToken(JWTUtil.sign(username, password));

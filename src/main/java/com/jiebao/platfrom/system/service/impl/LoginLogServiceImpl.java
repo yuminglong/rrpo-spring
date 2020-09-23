@@ -54,15 +54,19 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             deptService.getAllIds(deptS, list);
             QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("dept_id", list);
-            listLoginCount.add(this.baseMapper.loginCount(queryWrapper).setName(dept.getDeptName()));
+            LoginCount loginCount = this.baseMapper.loginCount(queryWrapper, dept.getDeptName());
+            listLoginCount.add(loginCount.setName(dept.getDeptName()));
         }
         Integer place = null;  //名次
-        if (deptParentId.equals("0"))  //省级第一级
+        if (deptParentId.equals("0")) {
             place = 1;  //省级
-        if (deptService.getById(deptParentId).getParentId().equals("0")) //二级
+        } else if (deptService.getById(deptParentId).getParentId().equals("0")) {
+            //二级
             place = 2;  //市级
-        if (deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId().equals("0"))
+        } else if ((deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId()).equals("0")) {
             place = 3;//县级
+        }
+
         return jiebaoResponse.data(listLoginCount).put("place", place);
     }
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.system.domain.LoginCount;
 import com.jiebao.platfrom.system.domain.LoginLog;
 import com.jiebao.platfrom.system.domain.User;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -43,6 +44,6 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
     List<Map<String, Object>> findLastSevenDaysVisitCount(User user);
 
 
-    @Select("select count(1) from sys_login_log ${ew.customSqlSegment}")
-    LoginCount loginCount(QueryWrapper<LoginLog> ew);  //
+    @Select("select count(1) as number,#{deptName} as deptName  from sys_login_log ${ew.customSqlSegment}")
+    LoginCount loginCount(@Param("ew") QueryWrapper<LoginLog> ew, @Param("deptName") String deptName);  //
 }
