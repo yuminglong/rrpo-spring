@@ -78,8 +78,8 @@ public class LoginController {
         LoginLog loginLog = new LoginLog();
         loginLog.setUsername(username);
         loginLog.setDeptId(user.getDeptId());
+        loginLog.setUserId(user.getUserId());
         this.loginLogService.saveLoginLog(loginLog);
-
         String token = JiebaoUtil.encryptToken(JWTUtil.sign(username, password));
         LocalDateTime expireTime = LocalDateTime.now().plusSeconds(properties.getShiro().getJwtTimeOut());
         String expireTimeStr = DateUtil.formatFullTime(expireTime);

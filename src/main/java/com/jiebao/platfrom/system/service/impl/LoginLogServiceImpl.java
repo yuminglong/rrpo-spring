@@ -42,8 +42,20 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     @Override
     public JiebaoResponse lists(String deptParentId, Date startDate, Date endDate) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Integer place = null;  //名次
+        if (deptParentId.equals("0")) {
+            place = 1;  //省级
+        } else if (deptService.getById(deptParentId).getParentId().equals("0")) {
+            //二级
+            place = 2;  //市级
+        } else if ((deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId()).equals("0")) {
+            place = 3;//县级    //查询时  须精确到人-
+        } else {
+            return jiebaoResponse.failMessage("为查询到数据");
+        }
         List<Dept> childrenList = deptService.getChildrenList(deptParentId);//得到下面的子集
         List<LoginCount> listLoginCount = new ArrayList<>();
+        listLoginCount.add(this.baseMapper.loginCountPrent(deptParentId));//把本级显示出来
         for (Dept dept : childrenList
         ) {
             String deptId = dept.getDeptId();//部门id
@@ -54,19 +66,18 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             deptService.getAllIds(deptS, list);
             QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
             queryWrapper.in("dept_id", list);
-            LoginCount loginCount = this.baseMapper.loginCount(queryWrapper, dept.getDeptName());
-            listLoginCount.add(loginCount.setName(dept.getDeptName()));
+            listLoginCount.add(this.baseMapper.loginCount(queryWrapper, dept.getDeptName(), deptId));
         }
-        Integer place = null;  //名次
-        if (deptParentId.equals("0")) {
-            place = 1;  //省级
-        } else if (deptService.getById(deptParentId).getParentId().equals("0")) {
-            //二级
-            place = 2;  //市级
-        } else if ((deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId()).equals("0")) {
-            place = 3;//县级
-        }
+        return jiebaoResponse.data(listLoginCount).put("place", place).okMessage("查询成功");
+    }
 
-        return jiebaoResponse.data(listLoginCount).put("place", place);
+    @Override
+    public JiebaoResponse listUsers(String deptId, Date startDate, Date endDate) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("dept_id", deptId);
+        queryWrapper.groupBy("user_id");
+        List<LoginCount> loginCounts = this.baseMapper.loginCountUser(queryWrapper);
+        return jiebaoResponse.data(loginCounts).okMessage("查询成功");
     }
 }

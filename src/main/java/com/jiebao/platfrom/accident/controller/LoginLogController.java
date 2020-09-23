@@ -28,4 +28,11 @@ public class LoginLogController {
     public JiebaoResponse list(String deptParentId, Date startDate, Date endDate) {
         return loginLogService.lists(deptParentId, startDate, endDate);
     }
+
+    @PostMapping("userList")
+    @ApiOperation("查询组织 具体人员登录次数")
+    @Log("查询组织 具体人员登录次数")
+    public JiebaoResponse userList(String deptId, Date startDate, Date endDate) {
+        return loginLogService.listUsers(deptId, startDate, endDate);
+    }
 }

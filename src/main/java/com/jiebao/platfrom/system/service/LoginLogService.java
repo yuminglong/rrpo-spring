@@ -11,4 +11,6 @@ public interface LoginLogService extends IService<LoginLog> {
     void saveLoginLog(LoginLog loginLog);
 
     JiebaoResponse lists(String deptParentId, Date startDate, Date endDate);
+
+    JiebaoResponse listUsers(String deptId, Date startDate, Date endDate);
 }

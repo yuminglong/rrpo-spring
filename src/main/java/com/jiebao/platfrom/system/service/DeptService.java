@@ -48,5 +48,6 @@ public interface DeptService extends IService<Dept> {
 
     List<Dept> getDeptByName(String deptName);//通过名字查询对应的 部门
 
+    String seekDeptId(String startDeptId,String endDeptId);// 散列  低位已知   高位已知  得高位到低位的直属下级
 
 }
