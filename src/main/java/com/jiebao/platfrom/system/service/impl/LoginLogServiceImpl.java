@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         } else if ((deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId()).equals("0")) {
             place = 3;//县级    //查询时  须精确到人-
         } else {
-            return jiebaoResponse.failMessage("为查询到数据");
+            return jiebaoResponse.failMessage("查询组织溢出");
         }
         List<Dept> childrenList = deptService.getChildrenList(deptParentId);//得到下面的子集
         List<LoginCount> listLoginCount = new ArrayList<>();
@@ -68,7 +69,12 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             queryWrapper.in("dept_id", list);
             listLoginCount.add(this.baseMapper.loginCount(queryWrapper, dept.getDeptName(), deptId));
         }
-        return jiebaoResponse.data(listLoginCount).put("place", place).okMessage("查询成功");
+        String prentId = null;
+        if (deptParentId.equals("0"))
+            prentId = "0";
+        else
+            prentId = deptService.getById(deptParentId).getParentId();
+        return jiebaoResponse.data(listLoginCount).put("place", place).put("prentId", prentId).okMessage("查询成功");
     }
 
     @Override
@@ -76,8 +82,23 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", deptId);
-        queryWrapper.groupBy("user_id");
-        List<LoginCount> loginCounts = this.baseMapper.loginCountUser(queryWrapper);
-        return jiebaoResponse.data(loginCounts).okMessage("查询成功");
+        queryWrapper.orderByDesc("login_time");
+        return jiebaoResponse.data(this.baseMapper.loginCountUser(queryWrapper)).okMessage("查询成功");
     }
+
+    @Override
+    public JiebaoResponse selectWeekCount(String year) {
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2020);
+        calendar.set(Calendar.MONTH, 8);
+        calendar.set(Calendar.DAY_OF_MONTH, 3);
+        System.out.println(calendar.get(Calendar.DAY_OF_YEAR));
+        System.out.println(calendar.get(Calendar.WEEK_OF_MONTH));
+        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
+    }
+
 }
