@@ -1,12 +1,14 @@
 package com.jiebao.platfrom.accident.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +27,14 @@ public class LoginLogController {
     @PostMapping("list")
     @ApiOperation("查看登录记录")
     @Log("查看登录记录")
-    public JiebaoResponse list(String deptParentId, Date startDate, Date endDate) {
+    public JiebaoResponse list(String deptParentId, @DateTimeFormat(pattern = "yyyy-MM-dd ") Date startDate, @DateTimeFormat(pattern = "yyyy-MM-dd ") Date endDate) {
         return loginLogService.lists(deptParentId, startDate, endDate);
     }
 
     @PostMapping("userList")
     @ApiOperation("查询组织 具体人员登录次数")
     @Log("查询组织 具体人员登录次数")
-    public JiebaoResponse userList(String deptId, Date startDate, Date endDate) {
+    public JiebaoResponse userList(String deptId, @DateTimeFormat(pattern = "yyyy-MM-dd ") Date startDate, @DateTimeFormat(pattern = "yyyy-MM-dd ") Date endDate) {
         return loginLogService.listUsers(deptId, startDate, endDate);
     }
 }

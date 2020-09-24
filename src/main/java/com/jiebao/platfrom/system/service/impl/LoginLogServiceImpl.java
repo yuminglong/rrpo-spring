@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,11 +84,16 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", deptId);
         queryWrapper.orderByDesc("login_time");
+        if (startDate != null)
+            queryWrapper.ge("login_time", startDate);
+        if (endDate != null)
+            queryWrapper.le("login_time", endDate);
         return jiebaoResponse.data(this.baseMapper.loginCountUser(queryWrapper)).okMessage("查询成功");
     }
 
     @Override
     public JiebaoResponse selectWeekCount(String year) {
+
         return null;
     }
 
