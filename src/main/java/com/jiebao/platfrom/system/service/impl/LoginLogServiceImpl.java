@@ -88,7 +88,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         if (startDate != null)
             queryWrapper.ge("login_time", startDate);
         if (endDate != null)
-            queryWrapper.le("login_time)", endDate);
+            queryWrapper.le("login_time", endDate);
         return jiebaoResponse.data(this.baseMapper.loginCountUser(queryWrapper)).okMessage("查询成功");
     }
 
