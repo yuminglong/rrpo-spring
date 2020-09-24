@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
     @Override
-    public JiebaoResponse lists(String deptParentId, Date startDate, Date endDate) {
+    public JiebaoResponse lists(String deptParentId, String startDate, String endDate) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Integer place = null;  //名次
         if (deptParentId.equals("0")) {
@@ -79,7 +80,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
     @Override
-    public JiebaoResponse listUsers(String deptId, Date startDate, Date endDate) {
+    public JiebaoResponse listUsers(String deptId, String startDate, String endDate) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", deptId);
@@ -87,7 +88,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         if (startDate != null)
             queryWrapper.ge("login_time", startDate);
         if (endDate != null)
-            queryWrapper.le("login_time", endDate);
+            queryWrapper.le("login_time)", endDate);
         return jiebaoResponse.data(this.baseMapper.loginCountUser(queryWrapper)).okMessage("查询成功");
     }
 
