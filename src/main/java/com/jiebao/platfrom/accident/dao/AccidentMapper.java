@@ -27,7 +27,7 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictCwd", column = "train_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
-    IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper queryWrapper);
+    IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
 
     @Select("select nature from accident_accident group by nature")

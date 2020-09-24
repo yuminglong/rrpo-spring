@@ -13,6 +13,9 @@ public class LoginLog {
      */
     private String username;
 
+    private String userId;
+
+    private String deptId;
     /**
      * 登录时间
      */

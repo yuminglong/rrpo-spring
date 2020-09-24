@@ -62,6 +62,7 @@ public class MiniUserController {
 
     /**
      * 小程序用户登录
+     *
      * @param code
      * @return
      */
@@ -142,8 +143,9 @@ public class MiniUserController {
             // 保存登录记录
             LoginLog loginLog = new LoginLog();
             loginLog.setUsername(user.getUsername());
+            loginLog.setDeptId(user.getDeptId());
+            loginLog.setUserId(user.getUserId());
             this.loginLogService.saveLoginLog(loginLog);
-
             String token = JiebaoUtil.encryptToken(JWTUtil.sign(user.getUsername(), user.getPassword()));
             LocalDateTime expireTime = LocalDateTime.now().plusSeconds(properties.getShiro().getJwtTimeOut());
             String expireTimeStr = DateUtil.formatFullTime(expireTime);

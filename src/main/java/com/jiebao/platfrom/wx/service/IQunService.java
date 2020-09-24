@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2020-08-20
  */
 public interface IQunService extends IService<Qun> {
-    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName);
+    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status);
 
 //    JiebaoResponse updateStatus(String qunId);
 //
@@ -24,7 +24,12 @@ public interface IQunService extends IService<Qun> {
 
     JiebaoResponse addOrUpdate(Qun qun);
 
-    JiebaoResponse importQun();
+    JiebaoResponse importQun(String content);
 
-    JiebaoResponse exPort(HttpServletResponse response);//合格群导出
+    void exPort(HttpServletResponse response, String[] deptId, String workName);//合格群导出
+
+    public static void main(String[] args) {
+        int[] nums = {1, 0, -1, 0, -2, 2};
+
+    }
 }

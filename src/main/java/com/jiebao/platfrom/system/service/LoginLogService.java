@@ -1,9 +1,19 @@
 package com.jiebao.platfrom.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.LoginLog;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public interface LoginLogService extends IService<LoginLog> {
 
-    void saveLoginLog (LoginLog loginLog);
+    void saveLoginLog(LoginLog loginLog);
+
+    JiebaoResponse lists(String deptParentId, String startDate, String endDate);
+
+    JiebaoResponse listUsers(String deptId, String startDate, String endDate);
+
+    JiebaoResponse selectWeekCount(Integer year,Integer month);
 }

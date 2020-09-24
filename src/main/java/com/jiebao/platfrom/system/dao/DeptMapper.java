@@ -21,4 +21,5 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	Dept getById(String deptId);
 
 
+
 }

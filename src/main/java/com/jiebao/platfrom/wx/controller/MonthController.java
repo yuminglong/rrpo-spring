@@ -13,11 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -32,7 +29,7 @@ import java.util.List;
  * @author qta
  * @since 2020-08-22
  */
-@RestController
+@Controller
 @RequestMapping("/wx/month")
 @Api(tags = "wx_月度评选")
 public class MonthController {
@@ -42,6 +39,7 @@ public class MonthController {
     FileService fileService;
 
     @PostMapping("saveorUpdate")
+    @ResponseBody
     @ApiOperation("添加或者修改")
     public JiebaoResponse saveOrUpdate(Month month, String[] fileIds) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -50,6 +48,7 @@ public class MonthController {
     }
 
     @Delete("delete")
+    @ResponseBody
     @ApiOperation("删除  ")
     public JiebaoResponse saveOrUpdate(String[] ids) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -58,18 +57,21 @@ public class MonthController {
     }
 
     @GetMapping("list")
+    @ResponseBody
     @ApiOperation("查询集合")
     public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
         return monthService.pageList(queryRequest, month, look, status);
     }
 
     @GetMapping("appear")
+    @ResponseBody
     @ApiOperation("上报")
     public JiebaoResponse appear(String monthId, Integer status) {
         return monthService.appear(monthId, status);
     }
 
     @GetMapping("getById")
+    @ResponseBody
     @ApiOperation("查看具体信息")
     public JiebaoResponse getById(String monthId) {
         return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
@@ -82,12 +84,14 @@ public class MonthController {
     }
 
     @PostMapping("koran")
+    @ResponseBody
     @ApiOperation("可入不可入按钮")
     public JiebaoResponse koran(String month, Integer status) {  //month  为id
         return monthService.koran(month, status);
     }
 
     @GetMapping("monthDocxText")
+    @ResponseBody
     @ApiOperation("导出表直观样式")
     public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
         return monthService.monthDocxText(queryRequest, month);

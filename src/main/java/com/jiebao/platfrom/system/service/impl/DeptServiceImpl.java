@@ -260,6 +260,11 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return list(queryWrapper);
     }
 
+    @Override
+    public String seekDeptId(String startDeptId, String endDeptId) {
+        return null;
+    }
+
 
     private List getDeptIds(String id) {
         List list = new ArrayList();

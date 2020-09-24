@@ -8,11 +8,8 @@ import com.jiebao.platfrom.wx.service.IQunService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author qta
  * @since 2020-08-20
  */
-@RestController
+@Controller
 @RequestMapping("/wx/qun")
 @Api(tags = "wx_微信群建立")
 public class QunController {
@@ -32,6 +29,7 @@ public class QunController {
     IQunService qunService;
 
     @PostMapping("addOrUpdate")
+    @ResponseBody
     @ApiOperation("群添加修改")
     public JiebaoResponse saveOrUpdate(Qun qun) {
         return qunService.addOrUpdate(qun);
@@ -39,9 +37,10 @@ public class QunController {
 
 
     @GetMapping("list")
+    @ResponseBody
     @ApiOperation("群查询")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName) {
-        return qunService.pageList(queryRequest, name, userName);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {
+        return qunService.pageList(queryRequest, name, userName, status);
     }
 //
 //    @GetMapping("up")
@@ -51,15 +50,16 @@ public class QunController {
 //    }
 
     @GetMapping("qunCreat")
+    @ResponseBody
     @ApiOperation("加载已经上报的群")
-    public JiebaoResponse qunCreat() {
-        return qunService.importQun();
+    public JiebaoResponse qunCreat(String content) {
+        return qunService.importQun(content);
     }
 
 
-    @GetMapping("")
-    @ApiOperation("合格群导出")
-    public JiebaoResponse exPort(HttpServletResponse response){
-        return qunService.exPort(response);
+    @PostMapping("exPort")
+    @ApiOperation("合格群导出  deptId 不传查出全部市级  反之 特定 市级")
+    public void exPort(HttpServletResponse response, String[] deptId, String workName) {
+        qunService.exPort(response, deptId, workName);
     }
 }
