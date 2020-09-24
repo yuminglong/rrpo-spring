@@ -4,6 +4,7 @@ package com.jiebao.platfrom.accident.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +37,8 @@ public class LoginLogController {
     @GetMapping("week")
     @ApiOperation("传入 年份  月份  得到 月内周数")
     @Log("查询组织 具体人员登录次数")
-    public JiebaoResponse selectWeekCount(Integer year,Integer month){
-        return loginLogService.selectWeekCount(year,month);
+    public JiebaoResponse selectWeekCount(Integer year, Integer month) {
+        return loginLogService.selectWeekCount(year, month);
     }
+
 }

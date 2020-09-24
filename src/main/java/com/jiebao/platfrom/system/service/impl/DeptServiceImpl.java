@@ -256,13 +256,19 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<Dept> getDeptByName(String deptName) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("dept_name",deptName);
+        queryWrapper.eq("dept_name", deptName);
         return list(queryWrapper);
     }
 
     @Override
     public String seekDeptId(String startDeptId, String endDeptId) {
-        return null;
+        Dept dept = getById(startDeptId);
+        String parentId = dept.getParentId();
+        if (parentId.equals(endDeptId)) {
+            return startDeptId;
+        } else {
+            return seekDeptId(parentId, endDeptId);
+        }
     }
 
 
