@@ -10,6 +10,7 @@ import com.jiebao.platfrom.system.dao.LoginLogMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.LoginCount;
 import com.jiebao.platfrom.system.domain.LoginLog;
+import com.jiebao.platfrom.system.domain.Week;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,18 +95,44 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
 
     @Override
     public JiebaoResponse selectWeekCount(Integer year, Integer month) {
-
-        return null;
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Calendar calendar = Calendar.getInstance();//日历
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        int dayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//月 天数
+        int day = 1;
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); //
+        //一周的开始 1----7  西方周日 到周六   国内是  2-1 周一到周日
+        List<Week> list = new ArrayList<>();
+        Week week1 = new Week();
+        week1.setStartDate(year + "-" + month + "-" + day);
+        if (dayOfWeek == 1) {
+            day += 6;
+        } else {
+            day += (8 - dayOfWeek);
+        }
+        week1.setEndDate(year + "-" + month + "-" + day++);
+        list.add(week1);
+        int yuDay = dayOfMonth - day + 1;//剩下的天数
+        int weeks = yuDay / 7;//剩下的整数周
+        int yu = yuDay % 7; //余数
+        for (int j = 0; j < weeks; j++) {
+            Week week = new Week();
+            week.setStartDate(year + "-" + month + "-" + day);
+            day += 6;
+            week.setEndDate(year + "-" + month + "-" + day++);
+            list.add(week);
+        }
+        if (yu != 0) {
+            Week week = new Week();
+            week.setStartDate(year + "-" + month + "-" + day);
+            day += yu - 1;
+            week.setEndDate(year + "-" + month + "-" + day++);
+            list.add(week);
+        }
+        return jiebaoResponse.data(list);
     }
 
-    public static void main(String[] args) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 2020);
-        calendar.set(Calendar.MONTH, 8);
-        calendar.set(Calendar.DAY_OF_MONTH, 3);
-        System.out.println(calendar.get(Calendar.DAY_OF_YEAR));
-        System.out.println(calendar.get(Calendar.WEEK_OF_MONTH));
-        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
-    }
 
 }

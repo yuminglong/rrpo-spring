@@ -19,17 +19,24 @@ public class LoginLogController {
     LoginLogService loginLogService;
 
 
-    @PostMapping("list")
+    @GetMapping("list")
     @ApiOperation("查看登录记录")
     @Log("查看登录记录")
     public JiebaoResponse list(String deptParentId, String startDate, String endDate) {
         return loginLogService.lists(deptParentId, startDate, endDate);
     }
 
-    @PostMapping("userList")
+    @GetMapping("userList")
     @ApiOperation("查询组织 具体人员登录次数")
     @Log("查询组织 具体人员登录次数")
     public JiebaoResponse userList(String deptId, String startDate, String endDate) {
         return loginLogService.listUsers(deptId, startDate, endDate);
+    }
+
+    @GetMapping("week")
+    @ApiOperation("传入 年份  月份  得到 月内周数")
+    @Log("查询组织 具体人员登录次数")
+    public JiebaoResponse selectWeekCount(Integer year,Integer month){
+        return loginLogService.selectWeekCount(year,month);
     }
 }
