@@ -111,10 +111,13 @@ public class ManageFileServiceImpl extends ServiceImpl<ManageFileMapper, ManageF
     @Override
     public List<ManageFile> getManageFileListById(String manageFileId) {
         List<ManageFile> manageFiles = manageFileMapper.selectByParentId(manageFileId);
-        for (ManageFile p: manageFiles
-             ) {
+        for (ManageFile p : manageFiles
+        ) {
             List<ManageFile> manageFileP = manageFileMapper.selectByParentId(p.getId());
-            if (manageFileP.size()>0){
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("ref_id", p.getId());
+            List<File> files = fileMapper.selectByMap(map);
+            if (manageFileP.size() > 0 || files.size() > 0) {
                 p.setHasChildren(true);
             }
         }

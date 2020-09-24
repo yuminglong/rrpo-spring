@@ -15,6 +15,7 @@ import com.jiebao.platfrom.railway.domain.PrivateFile;
 import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PrivateFileService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
+import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
@@ -46,6 +47,9 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
 
     @Autowired
     private PrivateFileMapper privateFileMapper;
+
+    @Autowired
+    private FileMapper fileMapper;
 
     @Override
     public Map<String, Object> findPrivateFileList(QueryRequest request, PrivateFile privateFile) {
@@ -118,11 +122,15 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
     public List<PrivateFile> getPrivateFileListById(String privateFileId) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
-        List<PrivateFile> privateFiles =privateFileMapper.selectByParentId(privateFileId,byName.getUserId());
-        for (PrivateFile p: privateFiles
+        List<PrivateFile> privateFiles = privateFileMapper.selectByParentId(privateFileId, byName.getUserId());
+        for (PrivateFile p : privateFiles
         ) {
-            List<PrivateFile> privateFilesP = privateFileMapper.selectByParentId(p.getId(),byName.getUserId());
-            if (privateFilesP.size()>0){
+            List<PrivateFile> privateFilesP = privateFileMapper.selectByParentId(p.getId(), byName.getUserId());
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("ref_id", p.getId());
+            List<File> files = fileMapper.selectByMap(map);
+            if (privateFilesP.size() > 0 || files.size() > 0) {
+                ;
                 p.setHasChildren(true);
             }
         }

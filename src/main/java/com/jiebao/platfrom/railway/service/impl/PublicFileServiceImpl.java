@@ -109,12 +109,15 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
       /*  Map<String, Object> map = new HashMap<>();
         map.put("parent_id", publicFileId);
         List<PublicFile> publicFiles = publicFileMapper.selectByMap(map);*/
-      
+
         List<PublicFile> publicFiles = publicFileMapper.selectByParentId(publicFileId);
-        for (PublicFile p: publicFiles
-             ) {
+        for (PublicFile p : publicFiles
+        ) {
             List<PublicFile> publicFilesP = publicFileMapper.selectByParentId(p.getId());
-            if (publicFilesP.size()>0){
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("ref_id", p.getId());
+            List<File> files = fileMapper.selectByMap(map);
+            if (publicFilesP.size() > 0 || files.size() > 0) {
                 p.setHasChildren(true);
             }
         }

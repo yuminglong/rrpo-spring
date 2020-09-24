@@ -209,7 +209,9 @@ public class PrizeController extends BaseController {
     @DeleteMapping("/{prizeIds}")
     @ApiOperation(value = "删除一事一奖（包括未发布的，已发布的，已发布的并不会真正删除，但是查询会显示不出）", notes = "删除一事一奖（包括未发布的，已发布的，已发布的并不会真正删除，但是查询会显示不出）", response = JiebaoResponse.class, httpMethod = "DELETE")
     public JiebaoResponse deletePrize(@PathVariable String[] prizeIds) throws JiebaoException {
+
         try {
+
             System.out.println(prizeIds);
             Arrays.stream(prizeIds).forEach(prizeId -> {
                 //不能直接删掉文件（暂时未做文件），不能删除接收人，不能删除该信息本体，直接改状态 status为4
@@ -221,11 +223,16 @@ public class PrizeController extends BaseController {
                     //删除内容本体（文件还没加哦）
                     prizeService.removeById(prizeId);
                     //3为已发送状态，只需改状态为4
+                    message ="删除成功";
                 } else if (byId.getStatus() == 3) {
-                    prizeUserService.ByPrizeId(prizeId);
+                    message = "删除失败";
+                }
+                else if(byId.getStatus() == 2){
+                    //prizeUserService.ByPrizeId(prizeId);
+                    message = "删除失败";
                 }
             });
-            return new JiebaoResponse().message("删除一事一奖成功");
+            return new JiebaoResponse().message(message);
         } catch (Exception e) {
             message = "删除一事一奖失败";
             log.error(message, e);
