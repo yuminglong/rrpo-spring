@@ -92,7 +92,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
     @Override
-    public JiebaoResponse selectWeekCount(String year) {
+    public JiebaoResponse selectWeekCount(Integer year, Integer month) {
 
         return null;
     }
