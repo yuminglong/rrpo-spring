@@ -74,7 +74,7 @@ public class UserController extends BaseController {
     @Log("新增用户")
     @PostMapping
     @RequiresPermissions("user:add")
-    public void addUser(@Valid User user) throws JiebaoException {
+    public void addUser(User user) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username.equals(user.getUsername())){

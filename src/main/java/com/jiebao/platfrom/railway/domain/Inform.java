@@ -61,6 +61,7 @@ public class Inform {
      * 是否为小程序通知
      */
     @ApiModelProperty(value = "是否为小程序通知",example = "1")
+
     private Integer applets;
 
     /**
