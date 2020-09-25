@@ -2,14 +2,20 @@ package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jiebao.platfrom.check.domain.Grade;
 import com.jiebao.platfrom.check.domain.YearBindMenus;
 import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
+import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IYearBindMenusService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -21,6 +27,8 @@ import java.util.Arrays;
  */
 @Service
 public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, YearBindMenus> implements IYearBindMenusService {
+    @Autowired
+    IGradeService gradeService;
 
     @Override
     public JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus) {
@@ -30,16 +38,21 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
     }
 
     @Override
-    public JiebaoResponse delete(String[] ids) {
+    public JiebaoResponse delete(String id) {//如果删除  某一模块   题库不用删除 怕后悔  但是   已经生成的考试项（已经分发的题目）得删除
+        YearBindMenus yearBindMenus = getById(id);
+        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("year_id", yearBindMenus.getYearId());
+        queryWrapper.in("parent_id", yearBindMenus.getBindId());
+        gradeService.remove(queryWrapper);//删除试题
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = removeByIds(Arrays.asList(ids)) ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
+        jiebaoResponse = removeById(id) ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
         return jiebaoResponse;
     }
 
     @Override
     public JiebaoResponse list(String yearId) {
         QueryWrapper<YearBindMenus> queryWrapper = new QueryWrapper<>();
-        if(yearId!=null){
+        if (yearId != null) {
             queryWrapper.eq("year_id", yearId);
         }
 
