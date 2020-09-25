@@ -8,11 +8,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -29,7 +25,7 @@ public class YearBindMenusController {
     @Autowired
     IYearBindMenusService yearBindMenusService;
 
-    @GetMapping("addOrUpdate")
+    @PostMapping("addOrUpdate")
     @ApiOperation("考勤年度规则绑定考核类型模块")
     @Log("绑定 考勤年度规则绑定考核类型模块")
     public JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus) {
@@ -39,8 +35,8 @@ public class YearBindMenusController {
     @DeleteMapping("delete")
     @ApiOperation("删除")
     @Log("绑定 删除")
-    public JiebaoResponse delete(String id) {
-        return yearBindMenusService.delete(id);
+    public JiebaoResponse delete(String yearId, String menusId) {
+        return yearBindMenusService.delete(yearId, menusId);
     }
 
     @GetMapping("list")
