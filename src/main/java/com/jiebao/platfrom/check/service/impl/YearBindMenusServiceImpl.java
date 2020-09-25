@@ -33,6 +33,9 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
     @Override
     public JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (this.baseMapper.exist(yearBindMenus.getYearId(), yearBindMenus.getMenusId()) != null) {
+            return jiebaoResponse.failMessage("不可重复绑定");
+        }
         jiebaoResponse = super.saveOrUpdate(yearBindMenus) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }

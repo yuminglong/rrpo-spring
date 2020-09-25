@@ -35,8 +35,8 @@ public class YearBindMenusController {
     @DeleteMapping("delete")
     @ApiOperation("删除")
     @Log("绑定 删除")
-    public JiebaoResponse delete(String yearId, String menusId) {
-        return yearBindMenusService.delete(yearId, menusId);
+    public JiebaoResponse delete(String id) {
+        return yearBindMenusService.delete(id);
     }
 
     @GetMapping("list")
