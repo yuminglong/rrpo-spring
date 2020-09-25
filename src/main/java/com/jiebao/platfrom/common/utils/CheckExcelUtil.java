@@ -44,32 +44,39 @@ public class CheckExcelUtil {
             workbook = new XSSFWorkbook(inputStream);//2007
             Sheet sheetAt = workbook.getSheetAt(0);
             Row row = sheetAt.getRow(0);
-            String[] arr = new String[row.getPhysicalNumberOfCells()];
-            for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
+            String[] arr = new String[row.getPhysicalNumberOfCells()*2];
+            for (int i = 0; i < row.getPhysicalNumberOfCells()*2; i += 2) {
                 Cell cell = row.getCell(i);
                 if (cell == null) {
                     cell = row.createCell(i);
                 }
                 cell.setCellType(CellType.STRING);
                 String stringCellValue = cell.getStringCellValue(); //表格内容
-                if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
-                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" + stringCellValue);
-                }
+                    if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
+                        return jiebaoResponse.failMessage("本年考核规则不存在此模块" + stringCellValue);
+                    }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
-                row = sheetAt.getRow(i); //对应行
-                for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
-                    Cell cell = row.getCell(j);
+              Row row1 = sheetAt.getRow(i); //对应行
+                for (int j = 0; j < row.getPhysicalNumberOfCells()*2; j += 2) {
+                    Cell cell = row1.getCell(j);
                     if (cell == null) {
-                        cell = row.createCell(j);
+                        cell = row1.createCell(j);
                     }
                     cell.setCellType(CellType.STRING);
                     if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
                         continue;
                     }
+                    Cell cell1 = row1.getCell(j + 1); //摘要
+                    if (cell == null) {
+                        cell1 = row1.createCell(j + 1);
+                    }
+                    cell1.setCellType(CellType.STRING);
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
+                    menusYear.setSummary(cell1.getStringCellValue());
+                    System.out.println(j);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
@@ -356,8 +363,6 @@ public class CheckExcelUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public static Integer panMonth(String month) {  //判断月份多少天  //参数 年份带月
