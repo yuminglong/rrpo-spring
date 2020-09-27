@@ -5,7 +5,7 @@ spring:
   datasource:
     dynamic:
       # 是否开启 SQL日志输出，生产环境建议关闭，有性能损耗
-      p6spy: false
+      p6spy: true
       hikari:
         connection-timeout: 30000
         max-lifetime: 1800000
@@ -26,11 +26,11 @@ spring:
           #url: jdbc:dm://127.0.0.1:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
           url: jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         # 数据源-2，名称为 crm
-        #crm:
-        #  username: root
-        #  password: jiebao@2008
-        #  driver-class-name: com.mysql.cj.jdbc.Driver
-        #  url: jdbc:mysql://114.116.174.5:3306/jiebao_shiro_crm?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        old:
+          username: root
+          password: jiebao@2008
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://114.116.174.5:3306/hlb_old?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
   aop:
     proxy-target-class: true
 
@@ -64,7 +64,7 @@ spring:
 
 #mybatis plus 设置
 mybatis-plus:
-  type-aliases-package: com.jiebao.platfrom.system.domain,com.jiebao.platfrom.demo.domain,com.jiebao.platfrom.railway.domain
+  type-aliases-package: com.jiebao.platfrom.system.domain,com.jiebao.platfrom.demo.domain,com.jiebao.platfrom.railway.domain,com.jiebao.platfrom.common.GuideData.domain
   mapper-locations: classpath:mapper/*/*.xml
   configuration:
     jdbc-type-for-null: null
