@@ -92,7 +92,7 @@ public class UserController extends BaseController {
     @Log("修改用户")
     @PutMapping
     @RequiresPermissions("user:update")
-    public void updateUser(@Valid User user) throws JiebaoException {
+    public void updateUser(User user) throws JiebaoException {
         try {
             this.userService.updateUser(user);
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class UserController extends BaseController {
     }
 
     @PutMapping("profile")
-    public void updateProfile(@Valid User user) throws JiebaoException {
+    public void updateProfile(User user) throws JiebaoException {
         try {
             this.userService.updateProfile(user);
         } catch (Exception e) {
@@ -141,7 +141,7 @@ public class UserController extends BaseController {
     }
 
     @PutMapping("userconfig")
-    public void updateUserConfig(@Valid UserConfig userConfig) throws JiebaoException {
+    public void updateUserConfig(UserConfig userConfig) throws JiebaoException {
         try {
             this.userConfigService.update(userConfig);
         } catch (Exception e) {

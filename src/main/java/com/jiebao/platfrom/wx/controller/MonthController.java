@@ -78,13 +78,13 @@ public class MonthController {
     }
 
     @PostMapping("downDocx")
+    @ResponseBody
     @ApiOperation("下载文档")
     public JiebaoResponse downDocx(HttpServletResponse response, String month) {
         return monthService.monthDocx(response, month);
     }
 
     @PostMapping("koran")
-    @ResponseBody
     @ApiOperation("可入不可入按钮")
     public JiebaoResponse koran(String month, Integer status) {  //month  为id
         return monthService.koran(month, status);

@@ -120,7 +120,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Num num = getById(numId);
         num.setDeadDate(date);
-        jiebaoResponse=updateById(num)?jiebaoResponse.okMessage("操作成功"):jiebaoResponse.failMessage("操作失败");
-        return null;
+        jiebaoResponse = updateById(num) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        return jiebaoResponse;
     }
 }

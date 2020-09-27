@@ -89,7 +89,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Grade> gradeArrayList = new ArrayList<>();
         QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("year_id", yearId);
-        queryWrapper.eq("parent_id", this.baseMapper.listYB(yearId));  //现存的绑定项
+        queryWrapper.in("parent_id", this.baseMapper.listYB(yearId));  //现存的绑定项
         List<MenusYear> menusYearList = menusYearMapper.selectList(queryWrapper); //当年所有的试题
         List<Dept> childrenList = deptService.getChildrenList("0");
         for (Dept dept : childrenList
