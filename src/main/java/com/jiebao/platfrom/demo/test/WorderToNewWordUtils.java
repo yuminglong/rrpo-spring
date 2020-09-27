@@ -74,6 +74,7 @@ public class WorderToNewWordUtils {
 //            //解析替换文本段落对象
             WorderToNewWordUtils.changeText(document, textMap);
             //解析替换表格对象
+            if(!tableList.isEmpty())
             WorderToNewWordUtils.changeTable(document, textMap, tableList);
             //     生成新的word
             response.setContentType("application/msword");

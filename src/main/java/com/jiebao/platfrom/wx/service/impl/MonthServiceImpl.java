@@ -161,9 +161,9 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         map.put("month", forMat + "份全省乡镇街微信护路推荐汇总表");
         ArrayList<String[]> list = new ArrayList<>();
         List<Month> months = listByMonth(month, null);
-        if (months.size() == 0) {
-            return jiebaoResponse.failMessage("无数据可导出");
-        }
+//        if (months.size() == 0) {
+//            return jiebaoResponse.failMessage("无数据可导出");
+//        }
         for (Month Month : months
         ) {
             if (Month.getPreStatus() == null) {
@@ -213,9 +213,9 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         map.put("monthText1", forMat + "份乡镇街优秀护路微信记录评选");
         map.put("monthText2", forMat + "份全省乡镇街铁路护路微信优秀记录");
         List<Month> months = listByMonth(month, 1);
-        if (months.size() == 0) {
-            return jiebaoResponse.failMessage("无数据可导出");
-        }
+//        if (months.size() == 0) {
+//            return jiebaoResponse.failMessage("无数据可导出");
+//        }
         List<String[]> list = new ArrayList<>();
         for (Month Month : months
         ) {

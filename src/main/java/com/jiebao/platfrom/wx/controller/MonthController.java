@@ -85,7 +85,6 @@ public class MonthController {
     }
 
     @PostMapping("koran")
-    @ResponseBody
     @ApiOperation("可入不可入按钮")
     public JiebaoResponse koran(String month, Integer status) {  //month  为id
         return monthService.koran(month, status);
@@ -99,7 +98,6 @@ public class MonthController {
     }
 
     @PostMapping("downDocxGood")
-    @ResponseBody
     @ApiOperation("月度评选优秀记录word导出")
     public JiebaoResponse downDocxGood(HttpServletResponse response, String month, String number, String content) {
         return monthService.downDocxGood(response, month, number, content);
