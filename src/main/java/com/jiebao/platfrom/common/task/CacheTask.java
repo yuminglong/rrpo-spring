@@ -21,7 +21,7 @@ public class CacheTask {
     @Autowired
     private RedisService redisService;
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 600000)
     public void run() {
         try {
             String now = DateUtil.formatFullTime(LocalDateTime.now());
