@@ -20,7 +20,7 @@ public class Info extends Model<Info> implements Serializable {
     }
 
     @TableId(value = "ID", type = IdType.UUID)
-    private Integer ID;
+    private String ID;
 
     private String Title;
 

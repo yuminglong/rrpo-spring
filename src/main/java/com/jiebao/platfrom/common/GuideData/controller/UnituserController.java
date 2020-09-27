@@ -4,6 +4,7 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.jiebao.platfrom.common.GuideData.domain.Unituser;
 import com.jiebao.platfrom.common.GuideData.service.UnitUserService;
 import com.jiebao.platfrom.common.controller.BaseController;
+import com.jiebao.platfrom.common.dataImport.domain.Info;
 import com.jiebao.platfrom.common.dataImport.service.InfoService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.exception.JiebaoException;
@@ -61,7 +62,9 @@ public class UnituserController extends BaseController {
 
     @GetMapping("/info")
     public JiebaoResponse Info() {
-       return null;
+        List<Info> list = infoService.list();
+        System.out.println(list);
+        return new JiebaoResponse().data(list);
 
     }
 
