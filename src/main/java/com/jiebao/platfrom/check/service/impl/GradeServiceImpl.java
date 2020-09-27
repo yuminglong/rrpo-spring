@@ -55,7 +55,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     UserMapper userMapper;
 
     @Override
-    public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id
+    public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id   type代表三组不同的参数
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Grade grade = getById(gradeId);
         Num num = numService.selectByYearAndDept(grade.getYearId(), grade.getDeptId());
@@ -90,16 +90,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setFpMessage(message);
         }
         double math;
-        if (type == 3) {
-            Double math1 = grade.getNum() == null ? 0 : grade.getNum();//第一次自评
-            math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数
+        if (type == 3 && number != null) {
+
+            math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数    取  第一次自评还是第三次自评
             if (number == math) {
                 grade.setStatus(1);
             } else {
                 grade.setStatus(0);
             }
         }
-        if (type == 2) {
+        if (type == 2 && number != null) {
             if (number == grade.getFpNum()) {
                 grade.setStatus(1);
             } else {
