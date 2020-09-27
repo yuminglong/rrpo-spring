@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.domain.Year;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.check.domain.YearBindMenus;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -31,4 +32,7 @@ public interface YearMapper extends BaseMapper<Year> {
 
     @Select("select * from check_year ${ew1.customSqlSegment}")
     List<Year> list(@Param("ew1") QueryWrapper<Year> ew1);
+
+    @Select("select menus_id from check_year_bind_menus where year_id=#{yearId}")
+    List<String> listYB(@Param("yearId") String yearId);// 年度绑定考核项
 }

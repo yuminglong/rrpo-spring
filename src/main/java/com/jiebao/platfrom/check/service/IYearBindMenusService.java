@@ -15,7 +15,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 public interface IYearBindMenusService extends IService<YearBindMenus> {
     JiebaoResponse addOrUpdate(YearBindMenus yearBindMenus);
 
-    JiebaoResponse delete(String[] ids);
+    JiebaoResponse delete(String id);
 
     JiebaoResponse list(String yearId);
 }
