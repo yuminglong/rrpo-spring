@@ -225,11 +225,10 @@ public class PrizeController extends BaseController {
                     //删除内容本体（文件还没加哦）
                     prizeService.removeById(prizeId);
                     //3为已发送状态，只需改状态为4
-                    message ="删除成功";
+                    message = "删除成功";
                 } else if (byId.getStatus() == 3) {
                     message = "删除失败";
-                }
-                else if(byId.getStatus() == 2){
+                } else if (byId.getStatus() == 2) {
                     //prizeUserService.ByPrizeId(prizeId);
                     message = "删除失败";
                 }
@@ -476,7 +475,7 @@ public class PrizeController extends BaseController {
             System.out.println("-------------" + inputUrl + "---------------------");
             Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-不带金额" + "(" + df.format(date) + ")" + ".docx";
+            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
             //新生产的模板文件
             String newName = UUID.randomUUID().toString();
 
@@ -494,10 +493,9 @@ public class PrizeController extends BaseController {
                     records) {
                 PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
                 if (prizeOpinion != null) {
-                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(),(prizeOpinion.getMoney()+"元")});
-                }
-                else {
-                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()," "});
+                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(), (prizeOpinion.getMoney() + "元")});
+                } else {
+                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(), " "});
                 }
 
             }
@@ -557,6 +555,21 @@ public class PrizeController extends BaseController {
             currentFile.delete();
             return new JiebaoResponse().put("status", false).message("上传服务异常，上传失败，请重试！");
         }
+    }
+
+
+    /**
+     * 文件记录删除
+     *
+     * @param fileId
+     * @return
+     */
+    @ApiOperation("文件记录删除")
+    @PostMapping("/deleteFile")
+    public JiebaoResponse deleteFile(String fileId) {
+        System.out.println(fileId + "-------------");
+        int i = fileMapper.deleteById(fileId);
+        return new JiebaoResponse().data(i);
     }
 
 
