@@ -42,12 +42,14 @@ public class QunController {
     public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {
         return qunService.pageList(queryRequest, name, userName, status);
     }
-//
-//    @GetMapping("up")
-//    @ApiOperation("上报审核")
-//    public JiebaoResponse up(String qunId) {
-//        return qunService.up(qunId);
-//    }
+
+    @GetMapping("ListByDeptId")
+    @ResponseBody
+    @ApiOperation("通过部门查询")
+    public JiebaoResponse ListByDeptId(String deptId){
+        return qunService.ListByDeptId(deptId);
+    }
+
 
     @GetMapping("qunCreat")
     @ResponseBody
