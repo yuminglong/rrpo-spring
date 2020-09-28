@@ -254,10 +254,14 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             queryWrapper.like("wx_user_name", userName);
         }
         if (status != null) {
-            if (status == 2)//属于下级  但不需要自己审核   正在 创建的额
+            if (status == 2) {
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());
+                queryWrapper.ne("sh_status", 3);
+            } //属于下级  但不需要自己审核   正在 创建的额
             if (status == 3 || status == 1)//已经成功的
                 queryWrapper.eq("sh_status", status);
+            if (status == 1)//上报中的状态  不管本级创建的群有没有提交审核  都要显示出来
+                queryWrapper.eq("cj_dept_id", dept.getDeptId());
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());

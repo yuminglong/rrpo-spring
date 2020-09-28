@@ -80,7 +80,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         for (String menuId : menusId  //考核分组类型
         ) {
             Menus menus = menusService.getById(menuId);
-            if (menus==null){
+            if (menus == null) {
                 continue;
             }
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
@@ -90,7 +90,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
             yearZu.setNum(menus.getNum());
-            yearZu.setList(Collections.singletonList(this.baseMapper.selectList(queryWrapper)));
+            yearZu.setList(this.baseMapper.selectList(queryWrapper));
             list.add(yearZu);
         }
         return new JiebaoResponse().data(list).message("查询成功");
