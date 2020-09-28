@@ -58,7 +58,7 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
         QueryWrapper<UserI> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("qun_id", wxQunId);
         if (name != null) {
-            queryWrapper.eq("name", name);
+            queryWrapper.like("name", name);
         }
         Page<UserI> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(page(page, queryWrapper));
