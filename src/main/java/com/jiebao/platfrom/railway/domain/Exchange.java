@@ -80,5 +80,8 @@ public class Exchange {
     @TableField(exist = false)
     private List refIds;
 
+    private String sendTouser;
+
+    private String upFile;
 
 }
