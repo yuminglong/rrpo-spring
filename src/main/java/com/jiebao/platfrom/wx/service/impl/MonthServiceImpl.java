@@ -91,13 +91,12 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         if (status != null) {
             if (status == 2) {
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());//审核部门到了自己这里
+                queryWrapper.or();
+                queryWrapper.eq("jc_dept_id", dept.getDeptId());
                 queryWrapper.ne("status", 1);//已经最终通过的
             }
-            if (status == 1) {
+            if (status == 1)
                 queryWrapper.eq("status", 2);
-                queryWrapper.eq("jc_dept_id", dept.getDeptId());
-            }
-
             if (status == 3)
                 queryWrapper.eq("status", 1);
         }
