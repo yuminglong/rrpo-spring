@@ -50,5 +50,9 @@ public interface PrizeMapper extends BaseMapper<Prize> {
 
     @Select("SELECT * FROM rail_prize WHERE `status`=7 AND #{startTime} <= release_time  and release_time <= #{endTime}")
     List<Prize> selectByBriefing(String startTime, String endTime);
+
+
+    @Select("SELECT max(number) FROM rail_prize")
+    Integer findMaxNumber();
 }
 

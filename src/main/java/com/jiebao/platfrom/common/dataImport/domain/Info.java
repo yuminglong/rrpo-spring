@@ -30,21 +30,21 @@ public class Info extends Model<Info> implements Serializable {
 
     private String upTime;
 
-    private String up_user;
+    private String upUser;
 
-    private String info_seq;
+    private String infoSeq;
 
     private String info_class;
 
     private String info_type;
 
-    private String up_file1;
+    private String upFile1;
 
-    private String up_file2;
+    private String upFile2;
 
-    private String up_file3;
+    private String upFile3;
 
-    private String up_file4;
+    private String upFile4;
 
     private String sendTouser;
 

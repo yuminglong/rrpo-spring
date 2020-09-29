@@ -84,4 +84,6 @@ public class Exchange {
 
     private String upFile;
 
+    private String infoSeq;
+
 }

@@ -29,8 +29,8 @@ public class ExchangeUser  {
 
 
 
-    @TableId(value = "id", type = IdType.UUID)
-    private String id;
+    @TableId(value = "id")
+    private int id;
 
 
     @ApiModelProperty(value = "和信息互递内容关联ID")

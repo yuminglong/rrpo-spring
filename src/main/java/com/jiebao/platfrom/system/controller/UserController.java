@@ -266,4 +266,16 @@ public class UserController extends BaseController {
         map.put("user",users);
         return new JiebaoResponse().data(map).okMessage("查询成功");
     }
+
+
+    @GetMapping("/getUserInfo")
+    @ApiOperation(value = "根据userId获取人员信息", notes = "根据userId获取人员信息", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getUserInfo(String [] userIds){
+        ArrayList<User> list = new ArrayList();
+        Arrays.stream(userIds).forEach(userId->{
+            User byId = userService.getById(userId);
+            list.add(byId);
+        });
+        return new JiebaoResponse().data(list);
+    }
 }

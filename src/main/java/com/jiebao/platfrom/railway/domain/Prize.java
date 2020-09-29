@@ -87,7 +87,7 @@ public class Prize {
     /**
      * 编号
      */
-    @ApiModelProperty(value = "编号")
+    @ApiModelProperty(value = "编号",example = "1")
     private String number;
 
     /**
@@ -120,4 +120,7 @@ public class Prize {
 
     @TableField(exist = false)
     private String briefingMoney;
+
+    @ApiModelProperty(value = "新编号")
+    private String newNumber;
 }

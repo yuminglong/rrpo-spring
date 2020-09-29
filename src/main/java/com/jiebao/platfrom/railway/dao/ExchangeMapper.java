@@ -23,4 +23,7 @@ public interface ExchangeMapper extends BaseMapper<Exchange> {
 
     @Update("UPDATE  rail_exchange  r set  r.release_time = now() WHERE r.id =#{exchangeId}")
     boolean releaseSave(String exchangeId);
+
+    @Select("SELECT * FROM `rail_exchange` where  title= #{title}   and info_seq =#{infoSeq}")
+    List<Exchange> selectId(String infoSeq,String title);
 }

@@ -129,9 +129,37 @@ public class PrizeController extends BaseController {
     @ApiOperation(value = "创建一条一事一奖", notes = "创建一条一事一奖", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse creatPrize(@Valid Prize prize, String[] fileIds) throws JiebaoException {
         try {
+            String newNumber =null;
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             prize.setCreatUser(username);
+            //获得number最大值
+            //生成编号
+            Integer maxNumber = prizeMapper.findMaxNumber();
+            String maxNumberString = (maxNumber + 1) + "";
+            for (int i = 0; i < 4; i++) {
+                if (maxNumberString.length() == 4) {
+                    break;
+                } else {
+                    maxNumberString = "0" + maxNumberString;
+                }
+            }
+            String place = prize.getPlace();
+            if (place.contains("衡阳市")) {
+                 newNumber = "01" + maxNumberString;
+            }
+            else if (place.contains("岳阳市")){
+                newNumber = "02" + maxNumberString;
+            }
+            else if (place.contains("怀化市")){
+                newNumber = "03" + maxNumberString;
+            }
+            else if (place.contains("娄底市")){
+                newNumber = "04" + maxNumberString;
+            }
+
+
+            prize.setNewNumber(newNumber);
             boolean save = prizeService.save(prize);
             Arrays.stream(fileIds).forEach(fileId -> {
                 fileMapper.updateByFileId(fileId, prize.getId());
@@ -475,7 +503,7 @@ public class PrizeController extends BaseController {
             System.out.println("-------------" + inputUrl + "---------------------");
             Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
+            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-不带金额" + "(" + df.format(date) + ")" + ".docx";
             //新生产的模板文件
             String newName = UUID.randomUUID().toString();
 
@@ -567,10 +595,12 @@ public class PrizeController extends BaseController {
     @ApiOperation("文件记录删除")
     @PostMapping("/deleteFile")
     public JiebaoResponse deleteFile(String fileId) {
-        System.out.println(fileId + "-------------");
         int i = fileMapper.deleteById(fileId);
         return new JiebaoResponse().data(i);
     }
+
+
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jiebao.platfrom.common.converter.TimeConverter;
@@ -45,5 +46,8 @@ public class Dept implements Serializable {
     private Integer status;
 
     private Integer rank;
+
+    @TableField(exist = false)
+    private String children;
 
 }

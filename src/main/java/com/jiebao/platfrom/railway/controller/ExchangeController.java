@@ -13,6 +13,7 @@ import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.ExchangeMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
 import com.jiebao.platfrom.railway.domain.*;
+import com.jiebao.platfrom.railway.service.AsYearService;
 import com.jiebao.platfrom.railway.service.ExchangeFileService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
@@ -77,23 +78,48 @@ public class ExchangeController extends BaseController {
     @Autowired
     private DeptService deptService;
 
+    @Autowired
+    private AsYearService asYearService;
+
 
     /**
      * 创建一条信息互递
      */
     @PostMapping("/creat")
     @ApiOperation(value = "创建一条信息互递或创建并发送(修改)", notes = "创建一条信息互递或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds, String[] fileIds) throws JiebaoException {
+    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds, String[] fileIds, String[] menusYearIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
                 exchange.setCreatUser(username);
             }
+            User byName = userService.findByName(username);
+            Dept deptOwn = deptService.getById(byName.getDeptId());
+            //修改时间
+            if (exchange.getClaimTime() != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(exchange.getClaimTime());
+                // 将时分秒,毫秒域清零
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                exchange.setClaimTime(cal.getTime());
+            }
             if ("1".equals(exchange.getStatus())) {
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
+                    //关联年度考核项
+                    Arrays.stream(menusYearIds).forEach(menusYearId -> {
+                        AsYear asYear = new AsYear();
+                        asYear.setFileId(fileId);
+                        asYear.setGradeId(menusYearId);
+                        asYear.setType(2);
+                        asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                        asYearService.save(asYear);
+                    });
                 });
+
                 exchangeUserService.deleteByExchangeId(exchange.getId());
                 if (save) {
                     Arrays.stream(sendUserIds).forEach(sendUserId -> {
@@ -107,6 +133,15 @@ public class ExchangeController extends BaseController {
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
+                    //关联年度考核项
+                    Arrays.stream(menusYearIds).forEach(menusYearId -> {
+                        AsYear asYear = new AsYear();
+                        asYear.setFileId(fileId);
+                        asYear.setGradeId(menusYearId);
+                        asYear.setType(2);
+                        asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                        asYearService.save(asYear);
+                    });
                 });
                 if (save) {
                     Arrays.stream(sendUserIds).forEach(sendUserId -> {
@@ -125,6 +160,17 @@ public class ExchangeController extends BaseController {
             log.error(message, e);
             throw new JiebaoException("创建一条信息互递失败");
         }
+    }
+
+    private List<Dept> depts = deptService.list();
+
+    public Dept getParentDept(Dept dept) {
+        if (dept.getRank() == 1) {
+            return dept;
+        }
+        Dept dept1 = depts.stream().filter(x -> Objects.equals(x.getDeptId(), dept.getParentId())
+        ).findFirst().get();
+        return getParentDept(dept1);
     }
 
     @GetMapping("/release/{exchangeIds}")
@@ -378,18 +424,18 @@ public class ExchangeController extends BaseController {
 
     @PostMapping("/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    public void export(String [] exchangeIds,  HttpServletResponse response) throws JiebaoException {
+    public void export(String[] exchangeIds, HttpServletResponse response) throws JiebaoException {
         try {
             List<ExchangeUser> list = new ArrayList<>();
-            Arrays.stream(exchangeIds).forEach(exchangeId->{
-               ExchangeUser byId = exchangeUserService.getById(exchangeId);
+            Arrays.stream(exchangeIds).forEach(exchangeId -> {
+                ExchangeUser byId = exchangeUserService.getById(exchangeId);
                 User user = userService.getById(byId.getSendUserId());
                 Dept dept = deptService.getById(user.getDeptId());
                 byId.setDeptName(dept.getDeptName());
                 list.add(byId);
-           });
-            for (ExchangeUser u: list
-                 ) {
+            });
+            for (ExchangeUser u : list
+            ) {
                 System.out.println(u.toString());
             }
             ExcelKit.$Export(ExchangeUser.class, response).downXlsx(list, false);
