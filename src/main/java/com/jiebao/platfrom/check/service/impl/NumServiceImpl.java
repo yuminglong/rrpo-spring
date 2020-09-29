@@ -123,4 +123,13 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
         jiebaoResponse = updateById(num) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
+
+    @Override
+    public JiebaoResponse status(String numId, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Num num = new Num();
+        num.setStatus(status);
+        num.setNumId(numId);
+        return updateById(num) ? jiebaoResponse.okMessage("操作完成") : jiebaoResponse.failMessage("操作时间");
+    }
 }

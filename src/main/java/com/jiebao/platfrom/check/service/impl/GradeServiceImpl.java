@@ -223,7 +223,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             queryWrapper.eq("dept_id", DeptId);
             queryWrapper.eq("parent_id", menus.getStandardId());
 
-            yearZu.setList(Collections.singletonList(this.baseMapper.queryList(queryWrapper)));
+            yearZu.setList(this.baseMapper.queryList(queryWrapper));
             list1.add(yearZu);
         }
         return new JiebaoResponse().data(list1).message("操作成功");

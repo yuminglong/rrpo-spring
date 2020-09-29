@@ -15,5 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserIService extends IService<UserI> {
     JiebaoResponse deleteS(String[] wxUserIdS,String qunId);
-    JiebaoResponse list(QueryRequest queryRequest, String name,String wxQunId);
+    JiebaoResponse list(QueryRequest queryRequest,String deptId, String name,String wxQunId);
 }

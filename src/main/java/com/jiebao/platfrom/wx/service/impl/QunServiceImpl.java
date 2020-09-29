@@ -220,12 +220,24 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         CheckExcelUtil.exportMap(response, map, QunExcel.class, workName);
     }
 
-    private boolean judge(String deptId) {
+    @Override
+    public JiebaoResponse ListByDeptId(String deptId) {  // 通过部门选择 群
+        List<String> list = new ArrayList<>();  //储存id
+        List<String> listPrentId = new ArrayList<>();  //储存id
+        listPrentId.add(deptId);
+        list.add(deptId);
+        deptService.getAllIds(listPrentId, list); //所有的组织机构
+        QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("cj_dept_id", list);
+        return new JiebaoResponse().data(list(queryWrapper)).okMessage("查询成功");
+    }
+
+    private boolean judge(String deptId) {  //是否存在群
         return this.baseMapper.judge(deptId) == null ? true : false;
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {//status  //分状态展示
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
@@ -234,12 +246,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         listPrentId.add(dept.getDeptId());
         list.add(dept.getDeptId());
         deptService.getAllIds(listPrentId, list);
-        if (list.size() == 0) {
-            queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId()));
-        } else {
-            queryWrapper.and(qunQueryWrapper -> qunQueryWrapper.eq("cj_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("cj_dept_id", list).eq("sh_status", 3));
-        }
+        queryWrapper.in("cj_dept_id", list);
         if (name != null) {
             queryWrapper.like("wx_name", name);
         }
@@ -247,12 +254,18 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             queryWrapper.like("wx_user_name", userName);
         }
         if (status != null) {
-            queryWrapper.eq("sh_status", status);
+            if (status == 2) {
+                queryWrapper.eq("sh_dept_id", dept.getDeptId());
+                queryWrapper.or();
+                queryWrapper.eq("cj_dept_id", dept.getDeptId());   //上报中的状态  不管本级创建的群有没有提交审核  都要显示出来
+                queryWrapper.ne("sh_status", 3);
+            } //属于下级  但不需要自己审核   正在 创建的额
+            if (status == 3 || status == 1)//已经成功的
+                queryWrapper.eq("sh_status", status);
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
     }
-
 
 }

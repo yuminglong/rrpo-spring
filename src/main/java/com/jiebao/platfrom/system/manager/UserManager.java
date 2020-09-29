@@ -119,13 +119,13 @@ public class UserManager {
      */
     public void loadUserRedisCache(User user) throws Exception {
         // 缓存用户
-        cacheService.saveUser(user.getUsername());
+        //cacheService.saveUser(user.getUsername());
         // 缓存用户角色
-        cacheService.saveRoles(user.getUsername());
+        //cacheService.saveRoles(user.getUsername());
         // 缓存用户权限
-        cacheService.savePermissions(user.getUsername());
+        //cacheService.savePermissions(user.getUsername());
         // 缓存用户个性化配置
-        cacheService.saveUserConfigs(String.valueOf(user.getUserId()));
+        //cacheService.saveUserConfigs(String.valueOf(user.getUserId()));
     }
 
     /**
@@ -134,13 +134,13 @@ public class UserManager {
      * @param userIds userIds
      */
     public void loadUserPermissionRoleRedisCache(List<String> userIds) throws Exception {
-        for (String userId : userIds) {
-            User user = userService.getById(userId);
-            // 缓存用户角色
-            cacheService.saveRoles(user.getUsername());
-            // 缓存用户权限
-            cacheService.savePermissions(user.getUsername());
-        }
+//        for (String userId : userIds) {
+//            User user = userService.getById(userId);
+//            // 缓存用户角色
+//            cacheService.saveRoles(user.getUsername());
+//            // 缓存用户权限
+//            cacheService.savePermissions(user.getUsername());
+//        }
     }
 
     /**
@@ -149,15 +149,15 @@ public class UserManager {
      * @param userIds userIds
      */
     public void deleteUserRedisCache(String... userIds) throws Exception {
-        for (String userId : userIds) {
-            User user = userService.getById(userId);
-            if (user != null) {
-                cacheService.deleteUser(user.getUsername());
-                cacheService.deleteRoles(user.getUsername());
-                cacheService.deletePermissions(user.getUsername());
-            }
-            cacheService.deleteUserConfigs(userId);
-        }
+//        for (String userId : userIds) {
+//            User user = userService.getById(userId);
+//            if (user != null) {
+//                cacheService.deleteUser(user.getUsername());
+//                cacheService.deleteRoles(user.getUsername());
+//                cacheService.deletePermissions(user.getUsername());
+//            }
+//            cacheService.deleteUserConfigs(userId);
+//        }
     }
 
 }

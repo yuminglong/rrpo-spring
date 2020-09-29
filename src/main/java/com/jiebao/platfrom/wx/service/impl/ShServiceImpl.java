@@ -44,9 +44,10 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Dept dept = deptService.getDept();  //当前登陆人的部门
         Qun qun = qunService.getById(qunId);
-        if (!dept.getDeptId().equals(qun.getShDeptId())) {
-            return jiebaoResponse.message("无权限审核");
-        }
+        if (!dept.getDeptId().equals(qun.getShDeptId()))
+            return jiebaoResponse.failMessage("无权限审核");
+        if (qun.getShStatus() == 3)
+            return jiebaoResponse.failMessage("已经终审，不可逆");
         Sh sh = new Sh();//创建节点
         sh.setDeptId(dept.getDeptId());
         sh.setWxQunId(qunId);

@@ -75,24 +75,30 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {  //status 2需要自己操作的   1正在走流程的   3  已经成功的
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
-        List<Dept> childrenList = deptService.getChildrenList(dept.getDeptId());//当前部门的所有子集部门
-        List<String> resolver = resolver(childrenList);
-        if (resolver.size() != 0) {
-            queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-                    .or().in("jc_dept_id", resolver).eq("status", 1));
-        } else {
-            queryWrapper.and(monthQueryWrapper -> monthQueryWrapper.eq("jc_dept_id", dept.getDeptId()).or().eq("sh_dept_id", dept.getDeptId())
-            );
-        }
+        List<String> list = new ArrayList<>();  //储存id
+        List<String> listPrentId = new ArrayList<>();  //储存id
+        listPrentId.add(dept.getDeptId());
+        list.add(dept.getDeptId());
+        deptService.getAllIds(listPrentId, list);
+        queryWrapper.in("jc_dept_id", list);
         if (month != null) {
             queryWrapper.eq("month", month);
         }
         if (status != null) {
-            queryWrapper.eq("status", status);
+            if (status == 2) {
+                queryWrapper.eq("sh_dept_id", dept.getDeptId());//审核部门到了自己这里
+                queryWrapper.or();
+                queryWrapper.eq("jc_dept_id", dept.getDeptId());
+                queryWrapper.ne("status", 1);//已经最终通过的
+            }
+            if (status == 1)
+                queryWrapper.eq("status", 2);
+            if (status == 3)
+                queryWrapper.eq("status", 1);
         }
         if (look != null) {
             queryWrapper.eq("look", look);
@@ -102,14 +108,6 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }
 
-    private List<String> resolver(List<Dept> list) {
-        List<String> listR = new ArrayList<>(); //储存数据
-        for (Dept dept : list
-        ) {
-            listR.add(dept.getDeptId());
-        }
-        return listR;
-    }
 
     @Override
     public JiebaoResponse appear(String monthId, Integer status) {
@@ -120,11 +118,6 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         if (!month.getShDeptId().equals(dept.getDeptId())) {
             return jiebaoResponse.failMessage("无权上报");
         }
-//        if (dept.getParentId().equals("0")) {  //此为 市级
-//            if (this.baseMapper.count(month.getMonth(), dept.getDeptId()) >= 3) {
-//                return jiebaoResponse.failMessage("超过上报三条记录上限");
-//            }
-//        }
         if (dept.getParentId().equals("0")) { //此为市级
             month.setSzDeptName(dept.getDeptName());//保存市级单位   做报表要用
         }

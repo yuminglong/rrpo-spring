@@ -43,7 +43,7 @@ public class UserIController {
 
     @GetMapping("List")
     @ApiOperation("查询群成员")
-    public JiebaoResponse list(QueryRequest queryRequest, String name, String qunId) {
-        return userIService.list(queryRequest, name, qunId);
+    public JiebaoResponse list(QueryRequest queryRequest,String deptId, String name, String qunId) {
+        return userIService.list(queryRequest,deptId, name, qunId);
     }
 }

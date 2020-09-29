@@ -35,4 +35,7 @@ public interface YearMapper extends BaseMapper<Year> {
 
     @Select("select menus_id from check_year_bind_menus where year_id=#{yearId}")
     List<String> listYB(@Param("yearId") String yearId);// 年度绑定考核项
+
+    @Select("select year_id from check_year where year_date=#{yearDate}")
+    String selectYearId(String yearDate);
 }

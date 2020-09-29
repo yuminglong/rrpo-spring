@@ -56,6 +56,12 @@ public class NumController {
     @PostMapping("deadDate")
     @ApiOperation("逾期回复时间赋值")
     public JiebaoResponse deadDate(String numId, Date date) {
-        return numService.deadDate(numId,date);
+        return numService.deadDate(numId, date);
+    }
+
+    @GetMapping("changeStatus")
+    @ApiOperation("修改内容状态")
+    public JiebaoResponse changeStatus(String numId, Integer status) {
+        return numService.status(numId, status);
     }
 }

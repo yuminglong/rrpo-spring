@@ -127,6 +127,10 @@ public class QunJs implements Serializable {  //群建设对象
      */
     private String file1;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
     /**
      * 解决具体问题个数及解决主要问题简要情况（可另附页）
      */

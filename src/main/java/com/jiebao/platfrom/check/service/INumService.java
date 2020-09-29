@@ -27,4 +27,6 @@ public interface INumService extends IService<Num> {
 
     JiebaoResponse deadDate(String numId, Date date);
 
+    JiebaoResponse status(String numId, Integer status);
+
 }

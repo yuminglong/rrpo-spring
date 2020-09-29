@@ -3,6 +3,7 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
+import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
@@ -42,6 +43,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     MenusYearMapper menusYearMapper;
     @Autowired
     YearBindMenusMapper yearBindMenusMapper;
+    @Autowired
+    YearMapper yearMapper;
 
 
     @Override
@@ -75,12 +78,19 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
+        if (yearId == null) {
+            Calendar instance = Calendar.getInstance();
+            int i = instance.get(Calendar.YEAR);
+            if (instance.get(Calendar.MONTH) >= 10) //到达新的一年  进1
+                i++;
+            yearId = yearMapper.selectYearId("" + i);
+        }
         List<String> menusId = yearBindMenusMapper.listMenusId(yearId);
         List<YearZu> list = new ArrayList<>();
         for (String menuId : menusId  //考核分组类型
         ) {
             Menus menus = menusService.getById(menuId);
-            if (menus==null){
+            if (menus == null) {
                 continue;
             }
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
@@ -90,7 +100,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
             yearZu.setNum(menus.getNum());
-            yearZu.setList(Collections.singletonList(this.baseMapper.selectList(queryWrapper)));
+            yearZu.setList(this.baseMapper.selectList(queryWrapper));
             list.add(yearZu);
         }
         return new JiebaoResponse().data(list).message("查询成功");
@@ -109,5 +119,10 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper);
     }
 
+    public static void main(String[] args) {
+        Calendar instance = Calendar.getInstance();
+        System.out.println(instance.get(Calendar.MONTH));
+        System.out.println(instance.get(Calendar.YEAR));
+    }
 
 }

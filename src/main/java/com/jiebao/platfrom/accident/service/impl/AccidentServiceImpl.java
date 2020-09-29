@@ -49,7 +49,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         } else if (cityCsId != null) {
             queryWrapper.eq("city_cs_id", cityCsId);
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间
         }
@@ -61,7 +60,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public JiebaoResponse map(String startDate, String endDate, Integer status) {
+    public JiebaoResponse map(String startDate, String endDate, Integer status) {  //视图接口
         if (status == null) {
             return new JiebaoResponse().failMessage("请选择类型");
         }
@@ -70,7 +69,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public JiebaoResponse lock(String[] accidentId, String month, Integer status) {
+    public JiebaoResponse lock(String[] accidentId, String month, Integer status) {//上锁
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Accident> qw = new UpdateWrapper<>();
         qw.set("statu", status);
