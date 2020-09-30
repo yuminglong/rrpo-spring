@@ -48,6 +48,6 @@ public class Dept implements Serializable {
     private Integer rank;
 
     @TableField(exist = false)
-    private String children;
+    private String [] children;
 
 }

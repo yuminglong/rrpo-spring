@@ -162,13 +162,15 @@ public class ExchangeController extends BaseController {
         }
     }
 
-    private List<Dept> depts = deptService.list();
-
+//查询父级，直到rank==1，为市级
+    public List<Dept> depts(){
+        return deptService.list();
+    }
     public Dept getParentDept(Dept dept) {
         if (dept.getRank() == 1) {
             return dept;
         }
-        Dept dept1 = depts.stream().filter(x -> Objects.equals(x.getDeptId(), dept.getParentId())
+        Dept dept1 = depts().stream().filter(x -> Objects.equals(x.getDeptId(), dept.getParentId())
         ).findFirst().get();
         return getParentDept(dept1);
     }

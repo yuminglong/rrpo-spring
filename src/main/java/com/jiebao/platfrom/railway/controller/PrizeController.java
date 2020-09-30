@@ -157,8 +157,45 @@ public class PrizeController extends BaseController {
             else if (place.contains("娄底市")){
                 newNumber = "04" + maxNumberString;
             }
-
-
+            else if (place.contains("郴州市")){
+                newNumber = "05" + maxNumberString;
+            }
+            else if (place.contains("湘西州")){
+                newNumber = "06" + maxNumberString;
+            }
+            else if (place.contains("株洲市")){
+                newNumber = "07" + maxNumberString;
+            }
+            else if (place.contains("永州市")){
+                newNumber = "08" + maxNumberString;
+            }
+            else if (place.contains("张家界市")){
+                newNumber = "09" + maxNumberString;
+            }
+            else if (place.contains("湘潭市")){
+                newNumber = "10" + maxNumberString;
+            }
+            else if (place.contains("邵阳市")){
+                newNumber = "11" + maxNumberString;
+            }
+            else if (place.contains("益阳市")){
+                newNumber = "12" + maxNumberString;
+            }
+            else if (place.contains("长沙市")){
+                newNumber = "13" + maxNumberString;
+            }
+            else if (place.contains("常德市")){
+                newNumber = "14" + maxNumberString;
+            }
+            else if (place.contains("长沙铁路公安处")){
+                newNumber = "15" + maxNumberString;
+            }
+            else if (place.contains("怀化铁路公安处")){
+                newNumber = "16" + maxNumberString;
+            }
+            else if (place.contains("衡阳铁路公安处")){
+                newNumber = "17" + maxNumberString;
+            }
             prize.setNewNumber(newNumber);
             boolean save = prizeService.save(prize);
             Arrays.stream(fileIds).forEach(fileId -> {
