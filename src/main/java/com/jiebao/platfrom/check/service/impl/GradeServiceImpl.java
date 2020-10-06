@@ -10,6 +10,7 @@ import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.railway.service.AsYearService;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
@@ -53,6 +54,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     MenusYearMapper menusYearMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    AsYearService asYearService;
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id   type代表三组不同的参数
@@ -222,7 +225,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("dept_id", DeptId);
             queryWrapper.eq("parent_id", menus.getStandardId());
-
             yearZu.setList(this.baseMapper.queryList(queryWrapper));
             list1.add(yearZu);
         }
@@ -231,17 +233,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     public JiebaoResponse putZz(String gradeId, String[] ids) {//上传新的佐证材料需要修改状态
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        List<File> list = new ArrayList<>();
-        if (ids != null) {
-            for (String fileId : ids  //  自定义模块
-            ) {
-                File file = fileService.getById(fileId);
-                file.setRefId(gradeId);
-                list.add(file);
-            }
-        }
-        return fileService.saveBatch(list) ? jiebaoResponse.okMessage("添加成功") : jiebaoResponse.failMessage("添加失败");
+        return asYearService.addAsYear(gradeId, ids);
     }
 
     private boolean isCuiZai(String gradeId, String ZzId) {

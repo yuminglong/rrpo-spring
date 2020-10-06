@@ -38,7 +38,7 @@ public class AccidentController {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (accident.getAccidentId() != null) {
             Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
-            if (accident1.getStatu()!=null&&accident1.getStatu() == 1)
+            if (accident1.getStatu() != null && accident1.getStatu() == 1)
                 return jiebaoResponse.failMessage("已锁定不可操作");
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -64,15 +64,15 @@ public class AccidentController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
-        return accidentService.list(queryRequest, cityCsId, cityQxId, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String startDate, String endDate) {
+        return accidentService.list(queryRequest, policeId, cityLevelId, startDate, endDate);
     }
 
     @GetMapping("map")
     @ApiOperation("获取地图展示数据")
     @Log("获取地图展示数据")
-    public JiebaoResponse map(String startDate, String endDate, Integer status) {
-        return accidentService.map(startDate, endDate, status);
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {
+        return accidentService.map(policeId, cityLevelId, startDate, endDate);
     }
 
 
@@ -81,6 +81,5 @@ public class AccidentController {
     public JiebaoResponse lock(String[] accidentId, String month, Integer status) {
         return accidentService.lock(accidentId, month, status);
     }
-
 
 }

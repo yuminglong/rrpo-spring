@@ -41,7 +41,7 @@ public class CaseController {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (ca.getCaseId() != null) {
             Case aCase = caseService.getById(ca.getCaseId());
-            if (aCase.getStatu()!=null&&aCase.getStatu() == 1)
+            if (aCase.getStatu() != null && aCase.getStatu() == 1)
                 return jiebaoResponse.failMessage("已锁定不可更改");
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -67,8 +67,8 @@ public class CaseController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
-        return caseService.list(queryRequest, cityCsId, cityQxId, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String lineId, String nature, String startDate, String endDate) {
+        return caseService.list(queryRequest, policeId, cityLevelId, lineId, nature, startDate, endDate);
     }
 
     @GetMapping("map")

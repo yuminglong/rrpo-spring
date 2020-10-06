@@ -59,9 +59,10 @@ public class MonthController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation("查询集合")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {
-        return monthService.pageList(queryRequest, month, look, status);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year) {
+        return monthService.pageList(queryRequest, month, look, status, dptId, year);
     }
+
 
     @GetMapping("appear")
     @ResponseBody

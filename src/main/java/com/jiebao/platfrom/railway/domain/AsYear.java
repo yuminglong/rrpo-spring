@@ -2,8 +2,10 @@ package com.jiebao.platfrom.railway.domain;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.jiebao.platfrom.system.domain.File;
 import com.wuwenze.poi.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,5 +43,6 @@ public class AsYear {
 
     @ApiModelProperty(value = "组织机构ID")
     private String deptId;
-
+   @TableField(exist = false)
+    private File file;
 }
