@@ -54,8 +54,8 @@ public class GradeController {
     @PostMapping("addZz")
     @ApiOperation("佐证上传")
     @Log("佐证上传  参数 gradeid  类型 目标id")
-    public JiebaoResponse addZz(String gradeId, String[] filedS, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {
-        return iGradeService.putZz(gradeId, filedS, xXhd, ySyj, tZgg, gGxx);
+    public JiebaoResponse addZz(String gradeId, String[] filedS) {
+        return iGradeService.putZz(gradeId, filedS);
     }
 
     @GetMapping("commit")

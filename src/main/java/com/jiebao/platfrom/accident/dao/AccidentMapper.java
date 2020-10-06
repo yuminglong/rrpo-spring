@@ -3,6 +3,7 @@ package com.jiebao.platfrom.accident.dao;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
@@ -30,18 +31,6 @@ public interface AccidentMapper extends BaseMapper<Accident> {
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
 
-    @Select("select nature from accident_accident group by nature")
-    List<String> sgXz();  //事故性质类别
-
-    @Select("select age from accident_accident group by age")
-    List<String> age();  //年龄类别
-
-    @Select("select conditions from accident_accident group by conditions")
-    List<String> conditions();  //事故情形类别
-
-    @Select("select identity from accident_accident group by identity")
-    List<String> identity();  //身份类别
-
-    @Select("select count(*) from accident_accident ${ew.customSqlSegment}")
-    Integer count(@Param("ew") QueryWrapper<Accident> ew);  //数量
+    @Select("select ${name} as subscript,count(1) as number from accident_accident ${ew.customSqlSegment}")
+    List<ANumber> listAcc(@Param("ew") QueryWrapper<Accident> queryWrapper, @Param("name") String name);
 }

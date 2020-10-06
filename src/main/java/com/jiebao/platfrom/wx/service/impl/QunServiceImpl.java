@@ -262,6 +262,13 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             } //属于下级  但不需要自己审核   正在 创建的额
             if (status == 3 || status == 1)//已经成功的
                 queryWrapper.eq("sh_status", status);
+            if (status == 4) //未上报的{
+            {
+                queryWrapper.in("jc_dept_id", dept.getDeptId());
+                queryWrapper.isNull("status");
+            }
+        } else {
+            queryWrapper.isNotNull("status");
         }
         queryWrapper.orderByDesc("date");
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());

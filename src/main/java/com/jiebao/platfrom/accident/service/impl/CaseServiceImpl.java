@@ -3,6 +3,7 @@ package com.jiebao.platfrom.accident.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.accident.dao.DeptSMapper;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.daomain.Case;
 import com.jiebao.platfrom.accident.dao.CaseMapper;
@@ -31,23 +32,25 @@ import java.util.*;
 public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements ICaseService {
     @Autowired
     DeptService deptService;
+    @Autowired
+    DeptSMapper deptSMapper;
 
     @Override
-    public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String lineId, String nature, String startDate, String endDate) {
         Dept dept = deptService.getDept();  //当前登陆人部门
         QueryWrapper<Case> queryWrapper = new QueryWrapper<>();
-        if (!dept.getDeptId().equals("0")) {
-            if (cityCsId == null) {
-                cityCsId = dept.getDeptId();
-            }
-            if(!cityCsId.equals(dept.getDeptId())){
-                return new JiebaoResponse().failMessage("无法查看其它市州权限");
+        if (cityLevelId != null) {
+            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+        } else {
+            if (policeId != null) {
+                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
             }
         }
-        if (cityQxId != null) {
-            queryWrapper.eq("city_qx_id", cityQxId);
-        } else if (cityCsId != null) {
-            queryWrapper.eq("city_cs_id", cityCsId);
+        if (lineId != null) {
+            queryWrapper.eq("line_id", lineId);
+        }
+        if (nature != null) {
+            queryWrapper.eq("nature", nature);
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间

@@ -3,6 +3,8 @@ package com.jiebao.platfrom.accident.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.accident.dao.DeptSMapper;
+import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
 import com.jiebao.platfrom.accident.service.IAccidentService;
@@ -31,41 +33,56 @@ import java.util.*;
 public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> implements IAccidentService {
     @Autowired
     DeptService deptService;
+    @Autowired
+    DeptSMapper deptSMapper;
 
     @Override
-    public JiebaoResponse list(QueryRequest queryRequest, String cityCsId, String cityQxId, String startDate, String endDate) {
-        Dept dept = deptService.getDept();//所属部门
-        if (!dept.getDeptId().equals("0")) {
-            if(cityCsId==null){  //为空 默认  赋值本市
-                cityCsId=dept.getDeptId();
-            }
-            if (!cityCsId.equals(dept.getDeptId())) {
-                return new JiebaoResponse().failMessage("无法查看其它市州权限");
-            }
-        }
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String startDate, String endDate) {
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
-        if (cityQxId != null) {
-            queryWrapper.eq("city_qx_id", cityQxId);
-        } else if (cityCsId != null) {
-            queryWrapper.eq("city_cs_id", cityCsId);
+        if (cityLevelId != null) {
+            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+        } else {
+            if (policeId != null) {
+                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
+            }
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间
         }
         if (endDate != null) {
-            queryWrapper.le("date", endDate);//不能大于此时间}
+            queryWrapper.le("date", endDate);//不能大于此时间
         }
         Page<Accident> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse map(String startDate, String endDate, Integer status) {  //视图接口
-        if (status == null) {
-            return new JiebaoResponse().failMessage("请选择类型");
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {  //视图接口
+        HashMap<String, List<ANumber>> map = new HashMap<>();
+        QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (cityLevelId != null) {
+            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+        } else {
+            if (policeId != null) {
+                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
+            }
         }
-        List<Dept> childrenList = deptService.getChildrenList(deptService.getDept().getDeptId());  //市州级别  详情
-        return new JiebaoResponse().data(fz(childrenList, startDate, endDate, status)).okMessage("查询成功");
+        if (startDate != null) {
+            queryWrapper.ge("date", startDate);    //不能小于此时间
+        }
+        if (endDate != null) {
+            queryWrapper.le("date", endDate);//不能大于此时间
+        }
+
+        String[] strings = new String[]{"nature", "instation_section", "road", "age", "closed", "jzd", "distance", "identity", "conditions"};
+        for (String column : strings
+        ) {
+            QueryWrapper<Accident> clone = queryWrapper.clone();
+            clone.groupBy(column);
+            jiebaoResponse.put(column, this.baseMapper.listAcc(clone, column));
+        }
+        return jiebaoResponse.okMessage("查询成功");
     }
 
     @Override
@@ -84,47 +101,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
-    }
-
-    private Map fz(List<Dept> deptList, String StartDate, String endDate, Integer status) {  //事故性质  数据
-        HashMap<String, List<String>> map = new HashMap<>();
-        List<String> city = new ArrayList<>();
-        List<String> list = null;
-        if (status == 1) {
-            list = this.baseMapper.sgXz();  //事故性质
-        } else if (status == 2) {
-            list = this.baseMapper.age(); //年龄
-        } else if (status == 3) {
-            list = this.baseMapper.conditions();//事故情形类别
-        } else if (status == 4) {
-            list = this.baseMapper.identity();//身份
-        }
-        boolean bool = true;
-        for (Dept dept :
-                deptList) {
-            city.add(dept.getDeptName());
-            int b = 1;//记录存储第几个数组
-            for (String str : list
-            ) {
-                QueryWrapper<Accident> queryWrapper = new QueryWrapper();
-                if (StartDate != null) {
-                    queryWrapper.ge("date", StartDate);
-                }
-                if (endDate != null) {
-                    queryWrapper.le("date", endDate);
-                }
-                queryWrapper.eq("city_cs_id", dept.getDeptId());
-                queryWrapper.eq("nature", str);
-                if (bool) {
-                    map.put(str + b, new ArrayList<String>());
-                }
-                map.get(str + b).add(this.baseMapper.count(queryWrapper).toString());
-                ++b;
-            }
-            bool = false; //只需第一次执行
-        }
-        map.put("city", city);
-        return map;
     }
 
 

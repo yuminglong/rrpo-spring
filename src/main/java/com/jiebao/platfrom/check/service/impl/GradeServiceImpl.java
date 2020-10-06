@@ -230,80 +230,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
-    public JiebaoResponse putZz(String gradeId, String[] ids, String[] xXhd, String[] ySyj, String[] tZgg, String[] gGxx) {//上传新的佐证材料需要修改状态
+    public JiebaoResponse putZz(String gradeId, String[] ids) {//上传新的佐证材料需要修改状态
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
         List<File> list = new ArrayList<>();
-        List<GradeZz> gradeZzList = new ArrayList<>();
         if (ids != null) {
             for (String fileId : ids  //  自定义模块
             ) {
                 File file = fileService.getById(fileId);
                 file.setRefId(gradeId);
-                file.setRefType("4");
                 list.add(file);
             }
         }
-        if (xXhd != null) {
-            for (String xXhdId : xXhd
-            ) {
-                if (isCuiZai(gradeId, xXhdId)) {
-                    continue;
-                }
-                GradeZz gradeZz = new GradeZz();
-                gradeZz.setType(1);
-                gradeZz.setGradeId(gradeId);
-                gradeZz.setZzId(xXhdId);
-                gradeZzList.add(gradeZz);
-            }
-        }
-
-        if (ySyj != null) {
-            for (String ySyjId : ySyj
-            ) {
-                System.out.println(ySyjId);
-                if (isCuiZai(gradeId, ySyjId)) {
-                    continue;
-                }
-                GradeZz gradeZz = new GradeZz();
-                gradeZz.setType(2);
-                gradeZz.setGradeId(gradeId);
-                gradeZz.setZzId(ySyjId);
-                gradeZzList.add(gradeZz);
-            }
-        }
-        if (tZgg != null) {
-            for (String tZggId : tZgg
-            ) {
-                if (isCuiZai(gradeId, tZggId)) {
-                    continue;
-                }
-                GradeZz gradeZz = new GradeZz();
-                gradeZz.setType(3);
-                gradeZz.setGradeId(gradeId);
-                gradeZz.setZzId(tZggId);
-                gradeZzList.add(gradeZz);
-            }
-        }
-        if (gGxx != null) {
-            for (String gGxxId : gGxx
-            ) {
-                if (isCuiZai(gradeId, gGxxId)) {
-                    continue;
-                }
-                GradeZz gradeZz = new GradeZz();
-                gradeZz.setType(4);
-                gradeZz.setGradeId(gradeId);
-                gradeZz.setZzId(gGxxId);
-                gradeZzList.add(gradeZz);
-            }
-        }
-        boolean a = true, b = true;
-        if (list.size() != 0) {
-            a = fileService.updateBatchById(list);
-        }
-        if (gradeZzList.size() != 0) {
-            b = gradeZzService.saveBatch(gradeZzList);
-        }
-        return new JiebaoResponse().message(a && b ? "添加成功" : "添加失败").data(gradeId);
+        return fileService.saveBatch(list) ? jiebaoResponse.okMessage("添加成功") : jiebaoResponse.failMessage("添加失败");
     }
 
     private boolean isCuiZai(String gradeId, String ZzId) {

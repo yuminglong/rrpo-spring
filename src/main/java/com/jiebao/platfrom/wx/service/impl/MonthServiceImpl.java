@@ -75,7 +75,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status) {  //status 2需要自己操作的   1正在走流程的   3  已经成功的
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year) {  //status 2需要自己操作的   1正在走流程的   3  已经成功的
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
@@ -91,14 +91,19 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         if (status != null) {
             if (status == 2) {
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());//审核部门到了自己这里
-                queryWrapper.or();
-                queryWrapper.eq("jc_dept_id", dept.getDeptId());
                 queryWrapper.ne("status", 1);//已经最终通过的
             }
             if (status == 1)
                 queryWrapper.eq("status", 2);
             if (status == 3)
                 queryWrapper.eq("status", 1);
+            if (status == 4) //未上报的{
+            {
+                queryWrapper.in("jc_dept_id", dept.getDeptId());
+                queryWrapper.isNull("status");
+            }
+        } else {
+            queryWrapper.isNotNull("status");
         }
         if (look != null) {
             queryWrapper.eq("look", look);
