@@ -26,11 +26,11 @@ spring:
           #url: jdbc:dm://127.0.0.1:5236/SYSDBA?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
           url: jdbc:mysql://114.116.174.5:3306/pwp?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         # 数据源-2，名称为 crm
-        #crm:
-        #  username: root
-        #  password: jiebao@2008
-        #  driver-class-name: com.mysql.cj.jdbc.Driver
-        #  url: jdbc:mysql://114.116.174.5:3306/jiebao_shiro_crm?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        old:
+          username: root
+          password: jiebao@2008
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://114.116.174.5:3306/hlb_old?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
   aop:
     proxy-target-class: true
 
@@ -64,13 +64,15 @@ spring:
 
 #mybatis plus 设置
 mybatis-plus:
-  type-aliases-package: com.jiebao.platfrom.system.domain,com.jiebao.platfrom.demo.domain,com.jiebao.platfrom.railway.domain
+  type-aliases-package: com.jiebao.platfrom.system.domain,com.jiebao.platfrom.demo.domain,com.jiebao.platfrom.railway.domain,com.jiebao.platfrom.common.GuideData.domain
   mapper-locations: classpath:mapper/*/*.xml
   configuration:
     jdbc-type-for-null: null
   global-config:
     # 关闭 mybatis-plus的 banner
     banner: false
+
+
 
 management:
   endpoints:
@@ -80,8 +82,8 @@ management:
 
 
 jiebao:
-  #host: http://114.115.147.159:9527
-  host: http://192.168.10.104:9527
+  host: http://114.115.147.159:9527
+  #host: http://192.168.20.113:9527
   # 是否异步记录用户操作日志
   openAopLog: true
   # 单次最大批量入库数量
@@ -91,16 +93,15 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/mini/user/login/**,/mini/user/quickLogin/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/mini/user/login/**,/mini/user/quickLogin/**,/Unituser/**
     # token有效期，单位秒
-    jwtTimeOut: 3600
+    jwtTimeOut: 600
 
   upload:
     #上传路径
-   #imagePath: /usr/local/rrpo/upload/images/ #D:/upload/images/
-   #filePath: /usr/local/rrpo/upload/files/  #D:/upload/files/
-    imagePath:  D:/upload/images/
-    filePath:  D:/upload/files/
+    imagePath: /usr/local/rrpo/upload/images/ #D:/upload/images/
+    filePath: /usr/local/rrpo/upload/files/  #D:/upload/files/
+
     #虚拟访问路径+
     staticImagePath: /jbx/cdn/image/**
     staticFilePath: /jbx/cdn/file/**
@@ -108,10 +109,10 @@ jiebao:
     #数据库存储虚拟路径
     image: /jbx/cdn/image/
     file: /jbx/cdn/file/
-
 wx:
   miniapp:
     configs:
       - appid: wx67029b2a97acdda1
         secret: 6da3b18391c7eb57bae8cf3353c6a3d7
         msgDataFormat: JSON
+
