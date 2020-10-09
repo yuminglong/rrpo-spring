@@ -7,31 +7,23 @@ import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.demo.test.WorderToNewWordUtils;
-import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
-import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.dao.MonthMapper;
+import com.jiebao.platfrom.wx.domain.MonthMap;
 import com.jiebao.platfrom.wx.service.IMonthService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
-import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
-import sun.swing.SwingUtilities2;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -148,6 +140,17 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         updateWrapper.eq("wx_month_id", MonthId);
         jiebaoResponse = update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
+    }
+    @Override
+    public JiebaoResponse year(Integer year) {
+        QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("month", (year - 1) + "-11");
+        queryWrapper.le("month", (year) + "-10");
+        queryWrapper.eq("status", 1);
+        queryWrapper.isNotNull("sz_dept_name");
+        queryWrapper.groupBy("sz_dept_name");
+        List<MonthMap> monthMaps = this.baseMapper.selectMap(queryWrapper);
+        return new JiebaoResponse().data(monthMaps).okMessage("查询成功");
     }
 
     @Override

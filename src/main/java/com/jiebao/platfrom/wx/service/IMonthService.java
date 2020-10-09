@@ -27,4 +27,6 @@ public interface IMonthService extends IService<Month> {
     JiebaoResponse monthDocxText(QueryRequest queryRequest, String month);  //展示效果
 
     JiebaoResponse downDocxGood(HttpServletResponse response, String month,String number,String content);
+
+    JiebaoResponse year(Integer year);  //通过年份 查找对应数据
 }
