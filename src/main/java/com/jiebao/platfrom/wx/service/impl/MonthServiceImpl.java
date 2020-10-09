@@ -91,11 +91,9 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
                 queryWrapper.eq("status", 1);
             if (status == 4) //未上报的{
             {
-                queryWrapper.in("jc_dept_id", dept.getDeptId());
+                queryWrapper.eq("jc_dept_id", dept.getDeptId());
                 queryWrapper.isNull("status");
             }
-        } else {
-            queryWrapper.isNotNull("status");
         }
         if (look != null) {
             queryWrapper.eq("look", look);
