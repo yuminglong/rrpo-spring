@@ -104,6 +104,11 @@ public class MonthController {
         return monthService.downDocxGood(response, month, number, content);
     }
 
-
+    @GetMapping("year")
+    @ResponseBody
+    @ApiOperation("年度考核统计视图")
+    public JiebaoResponse year(Integer year) { //传入年份 获得对应 统计数据
+        return monthService.year(year);
+    }
 
 }

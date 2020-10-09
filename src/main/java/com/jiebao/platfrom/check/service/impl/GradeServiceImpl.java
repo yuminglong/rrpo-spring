@@ -236,11 +236,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         return asYearService.addAsYear(gradeId, ids);
     }
 
-    private boolean isCuiZai(String gradeId, String ZzId) {
-        if (gradeZzMapper.ExIstGradeZz(gradeId, ZzId) == null)//存在返回true
-            return false;
-        return true;
-    } //判断佐证是否已经和 此对象绑定好
 
     @Override
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.wx.domain.MonthMap;
 import com.jiebao.platfrom.wx.domain.Qun;
 import org.apache.ibatis.annotations.*;
 
@@ -40,4 +41,7 @@ public interface MonthMapper extends BaseMapper<Month> {
             @Result(property = "user", column = "user_id", one = @One(select = "com.jiebao.platfrom.system.dao.UserMapper.selectById")),
     })
     List<Month> listWord(@Param("ew") QueryWrapper<Month> ew);  //导出word专用
+
+    @Select("select sz_dept_name as deptName,count(1) as number from wx_month ${ew.customSqlSegment}")
+    List<MonthMap> selectMap(@Param("ew") QueryWrapper<Month> ew);
 }
