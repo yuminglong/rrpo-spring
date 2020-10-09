@@ -638,6 +638,82 @@ public class PrizeController extends BaseController {
 
 
 
+    @ApiOperation("统计十四市州发布情况")
+    @GetMapping("/countRelease")
+    public JiebaoResponse countRelease(String startTime,String endTime,Integer status) {
+        List changsha = new ArrayList();
+        List changde = new ArrayList();
+        List hengyang = new ArrayList();
+        List shaoyang = new ArrayList();
+        List zhuzhou = new ArrayList();
+        List xiangtan = new ArrayList();
+        List yueyang = new ArrayList();
+        List zhangjiajie = new ArrayList();
+        List yiyang = new ArrayList();
+        List chenzhou = new ArrayList();
+        List yongzhou = new ArrayList();
+        List huaihua = new ArrayList();
+        List loudi = new ArrayList();
+        List xiangxi = new ArrayList();
+
+        List<Map<String, Object>> list = prizeService.countRelease(startTime,endTime,status);
+
+        for(Map<String, Object> item: list) {
+            changsha.add(item.get("changsha"));
+            changde.add(item.get("changde"));
+            hengyang.add(item.get("hengyang"));
+            shaoyang.add(item.get("shaoyang"));
+            zhuzhou.add(item.get("zhuzhou"));
+            xiangtan.add(item.get("xiangtan"));
+            yueyang.add(item.get("yueyang"));
+            zhangjiajie.add(item.get("zhangjiajie"));
+            yiyang.add(item.get("yiyang"));
+            chenzhou.add(item.get("chenzhou"));
+            yongzhou.add(item.get("yongzhou"));
+            huaihua.add(item.get("huaihua"));
+            loudi.add(item.get("loudi"));
+            xiangxi.add(item.get("xiangxi"));
+        }
+
+        String changshaData = JSON.toJSONString(changsha);
+        String changdeData = JSON.toJSONString(changde);
+        String hengyangData = JSON.toJSONString(hengyang);
+        String shaoyangData = JSON.toJSONString(shaoyang);
+        String zhuzhouData = JSON.toJSONString(zhuzhou);
+        String xiangtanData = JSON.toJSONString(xiangtan);
+        String yueyangData = JSON.toJSONString(yueyang);
+        String zhangjiajieData = JSON.toJSONString(zhangjiajie);
+        String yiyangData = JSON.toJSONString(yiyang);
+        String chenzhouData = JSON.toJSONString(chenzhou);
+        String yongzhouData = JSON.toJSONString(yongzhou);
+        String huaihuaData = JSON.toJSONString(huaihua);
+        String loudiData = JSON.toJSONString(loudi);
+        String xiangxiData = JSON.toJSONString(xiangxi);
+
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("changsha", changshaData);
+        jsonObject.put("changde", changdeData);
+        jsonObject.put("hengyang", hengyangData);
+        jsonObject.put("shaoyang", shaoyangData);
+        jsonObject.put("zhuzhou", zhuzhouData);
+        jsonObject.put("xiangtan", xiangtanData);
+        jsonObject.put("yueyang", yueyangData);
+        jsonObject.put("zhangjiajie", zhangjiajieData);
+        jsonObject.put("yiyang", yiyangData);
+        jsonObject.put("chenzhou", chenzhouData);
+        jsonObject.put("yongzhou", yongzhouData);
+        jsonObject.put("huaihua", huaihuaData);
+        jsonObject.put("loudi", loudiData);
+        jsonObject.put("xiangxi", xiangxiData);
+        String result = JSON.toJSONString(jsonObject);
+        return new JiebaoResponse().data(result);
+    }
+
+
+
+
 
 
 }

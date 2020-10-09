@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -54,5 +55,14 @@ public interface PrizeMapper extends BaseMapper<Prize> {
 
     @Select("SELECT max(number) FROM rail_prize")
     Integer findMaxNumber();
+
+    /**
+     * 统计十四个市州发布情况
+     * @param startTime
+     * @param endTime
+     * @param status
+     * @return
+     */
+    List<Map<String, Object>> countRelease(String startTime, String endTime ,Integer status);
 }
 

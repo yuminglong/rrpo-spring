@@ -30,6 +30,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(File::getRefId, refId);
         lambdaQueryWrapper.eq(File::getFileType, 2);
+        lambdaQueryWrapper.eq(File::getRefType,7);
         lambdaQueryWrapper.orderByDesc(File::getTime);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }

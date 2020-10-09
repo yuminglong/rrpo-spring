@@ -162,10 +162,11 @@ public class ExchangeController extends BaseController {
         }
     }
 
-//查询父级，直到rank==1，为市级
+    //查询父级，直到rank==1，为市级
     public List<Dept> depts(){
         return deptService.list();
     }
+
     public Dept getParentDept(Dept dept) {
         if (dept.getRank() == 1) {
             return dept;

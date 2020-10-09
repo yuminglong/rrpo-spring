@@ -154,4 +154,11 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         SortUtil.handleWrapperSort(request, queryWrapper, "place", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
+
+    @Override
+    public List<Map<String, Object>> countRelease(String startTime, String endTime ,Integer status) {
+        return prizeMapper.countRelease(startTime,endTime,status);
+    }
+
+
 }

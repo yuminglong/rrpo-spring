@@ -6,6 +6,9 @@ import com.jiebao.platfrom.railway.domain.Exchange;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 一事一奖内容表 服务类
@@ -45,5 +48,14 @@ public interface PrizeService extends IService<Prize> {
      */
 
     IPage<Prize>  getBriefing( QueryRequest request, Prize prize , String startTime, String endTime);
+
+    /**
+     * 统计十四个市州发布情况
+     * @param startTime
+     * @param endTime
+     * @param status
+     * @return
+     */
+    List<Map<String, Object>> countRelease(String startTime, String endTime,Integer status);
 
 }
