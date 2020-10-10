@@ -11,13 +11,10 @@ import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -101,6 +98,10 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(0.1+2);
     }
 
 
