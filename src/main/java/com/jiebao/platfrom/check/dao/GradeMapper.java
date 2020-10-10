@@ -50,7 +50,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     @Results({
             @Result(property = "menusYear", column = "check_id", one = @One(select = "com.jiebao.platfrom.check.dao.MenusYearMapper.selectById"))
     })
-    List<Grade> queryList(@Param("ew")QueryWrapper<Grade> ew);
+    List<Grade> queryList(@Param("ew") QueryWrapper<Grade> ew);
 
     @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} limit 1")
     Integer exist(String yearId, String deptId);  //是否产生 对应年份试题
@@ -61,4 +61,6 @@ public interface GradeMapper extends BaseMapper<Grade> {
     @Update("update check_grade set status=#{status} where grade_id=#{gradeId}")
     Integer updateStatus(Integer status, String gradeId); //条件 修改状态
 
+    @Delete("delete from check_grade ${ew.customSqlSegment}")
+    Integer deleteByCheckId(@Param("ew") QueryWrapper<Grade> ew);
 }

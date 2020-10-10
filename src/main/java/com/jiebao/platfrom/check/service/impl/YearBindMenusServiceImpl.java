@@ -58,7 +58,6 @@ public class YearBindMenusServiceImpl extends ServiceImpl<YearBindMenusMapper, Y
         if (yearId != null) {
             queryWrapper.eq("year_id", yearId);
         }
-
         return new JiebaoResponse().data(list(queryWrapper)).message("查询成功");
     }
 

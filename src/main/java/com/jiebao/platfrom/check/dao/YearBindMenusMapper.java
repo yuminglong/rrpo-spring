@@ -22,6 +22,4 @@ public interface YearBindMenusMapper extends BaseMapper<YearBindMenus> {
     @Select("select menus_id from check_year_bind_menus where  year_id=#{yearId} ")
     List<String> listMenusId(String yearId);
 
-
-
 }

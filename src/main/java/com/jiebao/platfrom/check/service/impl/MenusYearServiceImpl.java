@@ -1,14 +1,8 @@
 package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.jiebao.platfrom.check.dao.MenusMapper;
-import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
-import com.jiebao.platfrom.check.dao.YearMapper;
-import com.jiebao.platfrom.check.domain.Menus;
-import com.jiebao.platfrom.check.domain.MenusYear;
-import com.jiebao.platfrom.check.dao.MenusYearMapper;
-import com.jiebao.platfrom.check.domain.Year;
-import com.jiebao.platfrom.check.domain.YearZu;
+import com.jiebao.platfrom.check.dao.*;
+import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,6 +12,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.utils.CheckExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -45,6 +40,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     YearBindMenusMapper yearBindMenusMapper;
     @Autowired
     YearMapper yearMapper;
+    @Autowired
+    GradeMapper gradeMapper;
 
 
     @Override
@@ -99,23 +96,25 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return new JiebaoResponse().data(list).message("查询成功");
     }
 
+    @Transactional
     @Override
     public JiebaoResponse deleteByListAndYearDate(String[] list) {
         if (list == null) {
             return new JiebaoResponse().message("空");
         }
-        return new JiebaoResponse().message(removeByIds(Arrays.asList(list)) ? "删除成功" : "删除失败");
+        QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("check_id", Arrays.asList(list));
+        if (gradeMapper.deleteByCheckId(queryWrapper) == 0)
+            System.out.println(1 / 0);
+        boolean b = removeByIds(Arrays.asList(list));
+        if (!b)
+            System.out.println(1 / 0);
+        return new JiebaoResponse().message(b ? "删除成功" : "删除失败");
     }
 
     @Override
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
         return CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper);
-    }
-
-    public static void main(String[] args) {
-        Calendar instance = Calendar.getInstance();
-        System.out.println(instance.get(Calendar.MONTH));
-        System.out.println(instance.get(Calendar.YEAR));
     }
 
 }

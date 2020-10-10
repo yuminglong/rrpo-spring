@@ -4,6 +4,7 @@ import com.jiebao.platfrom.check.domain.MenusYear;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -31,4 +32,5 @@ public interface MenusYearMapper extends BaseMapper<MenusYear> {
 
     @Select("select 1 from check_menus_year where content=#{content} and year_id=#{yearId} limit 1")
     Integer exSit(String content, String yearId);
+
 }

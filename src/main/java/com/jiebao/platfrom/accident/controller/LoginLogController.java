@@ -41,4 +41,8 @@ public class LoginLogController {
         return loginLogService.selectWeekCount(year, month);
     }
 
+//    public static void main(String[] args) {
+//
+//    }
+
 }

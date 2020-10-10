@@ -59,6 +59,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     YearMapper yearMapper;
     @Autowired
     DeptService deptService;
+    @Autowired
+    YearBindMenusMapper yearBindMenusMapper;
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id   type代表三组不同的参数
@@ -217,7 +219,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     @Override
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
         List<YearZu> list1 = new ArrayList<>();  //储存
-        List<Menus> list = menusService.list();
         if (yearId == null) {
             Calendar instance = Calendar.getInstance();
             int i = instance.get(Calendar.YEAR);
@@ -230,6 +231,8 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             DeptId = dept.getDeptId();
         }
+        List<String> menusId = yearBindMenusMapper.listMenusId(yearId); //
+        List<Menus> list = (List<Menus>) menusService.listByIds(menusId);  //所绑定的模块
         for (Menus menus : list
         ) {
             YearZu yearZu = new YearZu();
