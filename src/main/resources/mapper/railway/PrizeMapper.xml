@@ -16,6 +16,7 @@
                 <if test="status != null">
                 and status =#{status}
                 </if>
+                and status != 1
 			) as 'changsha',
 			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='常德市'
             <if test="startTime != null" >
@@ -27,6 +28,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+            and status != 1
 			) as 'changde',
 			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='衡阳市'
             <if test="startTime != null" >
@@ -38,6 +40,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
 			) as 'hengyang',
 			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='邵阳市'
             <if test="startTime != null" >
@@ -49,6 +52,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
 			) as 'shaoyang',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='株洲市'
             <if test="startTime != null" >
@@ -60,6 +64,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'zhuzhou',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘潭市'
             <if test="startTime != null" >
@@ -71,6 +76,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'xiangtan',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='岳阳市'
             <if test="startTime != null" >
@@ -82,6 +88,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'yueyang',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='张家界市'
             <if test="startTime != null" >
@@ -93,6 +100,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'zhangjiajie',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='益阳市'
             <if test="startTime != null" >
@@ -104,6 +112,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'yiyang',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='郴州市'
             <if test="startTime != null" >
@@ -115,6 +124,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'chenzhou',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='永州市'
             <if test="startTime != null" >
@@ -126,6 +136,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'yongzhou',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='怀化市'
             <if test="startTime != null" >
@@ -137,6 +148,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'huaihua',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='娄底市'
             <if test="startTime != null" >
@@ -148,6 +160,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'loudi',
             (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘西州'
             <if test="startTime != null" >
@@ -159,6 +172,7 @@
             <if test="status != null">
                 and status =#{status}
             </if>
+        and status != 1
             ) as 'xiangxi'
 			from  rail_prize
 	</select>

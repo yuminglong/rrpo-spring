@@ -656,7 +656,23 @@ public class PrizeController extends BaseController {
         List loudi = new ArrayList();
         List xiangxi = new ArrayList();
 
+        List changshaOne = new ArrayList();
+        List changdeOne = new ArrayList();
+        List hengyangOne = new ArrayList();
+        List shaoyangOne = new ArrayList();
+        List zhuzhouOne = new ArrayList();
+        List xiangtanOne = new ArrayList();
+        List yueyangOne = new ArrayList();
+        List zhangjiajieOne = new ArrayList();
+        List yiyangOne = new ArrayList();
+        List chenzhouOne = new ArrayList();
+        List yongzhouOne = new ArrayList();
+        List huaihuaOne = new ArrayList();
+        List loudiOne = new ArrayList();
+        List xiangxiOne = new ArrayList();
+
         List<Map<String, Object>> list = prizeService.countRelease(startTime,endTime,status);
+        List<Map<String, Object>> listOne = prizeService.countRelease(startTime,endTime,7);
 
         for(Map<String, Object> item: list) {
             changsha.add(item.get("changsha"));
@@ -675,6 +691,23 @@ public class PrizeController extends BaseController {
             xiangxi.add(item.get("xiangxi"));
         }
 
+        for(Map<String, Object> item: listOne) {
+            changshaOne.add(item.get("changsha"));
+            changdeOne.add(item.get("changde"));
+            hengyangOne.add(item.get("hengyang"));
+            shaoyangOne.add(item.get("shaoyang"));
+            zhuzhouOne.add(item.get("zhuzhou"));
+            xiangtanOne.add(item.get("xiangtan"));
+            yueyangOne.add(item.get("yueyang"));
+            zhangjiajieOne.add(item.get("zhangjiajie"));
+            yiyangOne.add(item.get("yiyang"));
+            chenzhouOne.add(item.get("chenzhou"));
+            yongzhouOne.add(item.get("yongzhou"));
+            huaihuaOne.add(item.get("huaihua"));
+            loudiOne.add(item.get("loudi"));
+            xiangxiOne.add(item.get("xiangxi"));
+        }
+
         String changshaData = JSON.toJSONString(changsha);
         String changdeData = JSON.toJSONString(changde);
         String hengyangData = JSON.toJSONString(hengyang);
@@ -689,6 +722,21 @@ public class PrizeController extends BaseController {
         String huaihuaData = JSON.toJSONString(huaihua);
         String loudiData = JSON.toJSONString(loudi);
         String xiangxiData = JSON.toJSONString(xiangxi);
+
+        String changshaDataOne = JSON.toJSONString(changshaOne);
+        String changdeDataOne = JSON.toJSONString(changdeOne);
+        String hengyangDataOne = JSON.toJSONString(hengyangOne);
+        String shaoyangDataOne = JSON.toJSONString(shaoyangOne);
+        String zhuzhouDataOne = JSON.toJSONString(zhuzhouOne);
+        String xiangtanDataOne = JSON.toJSONString(xiangtanOne);
+        String yueyangDataOne = JSON.toJSONString(yueyangOne);
+        String zhangjiajieDataOne = JSON.toJSONString(zhangjiajieOne);
+        String yiyangDataOne = JSON.toJSONString(yiyangOne);
+        String chenzhouDataOne = JSON.toJSONString(chenzhouOne);
+        String yongzhouDataOne = JSON.toJSONString(yongzhouOne);
+        String huaihuaDataOne = JSON.toJSONString(huaihuaOne);
+        String loudiDataOne = JSON.toJSONString(loudiOne);
+        String xiangxiDataOne = JSON.toJSONString(xiangxiOne);
 
 
 
@@ -708,12 +756,28 @@ public class PrizeController extends BaseController {
         jsonObject.put("loudi", loudiData);
         jsonObject.put("xiangxi", xiangxiData);
         String result = JSON.toJSONString(jsonObject);
-        return new JiebaoResponse().data(result);
+
+        JSONObject jsonObjectOne = new JSONObject();
+        jsonObjectOne.put("changsha", changshaDataOne);
+        jsonObjectOne.put("changde", changdeDataOne);
+        jsonObjectOne.put("hengyang", hengyangDataOne);
+        jsonObjectOne.put("shaoyang", shaoyangDataOne);
+        jsonObjectOne.put("zhuzhou", zhuzhouDataOne);
+        jsonObjectOne.put("xiangtan", xiangtanDataOne);
+        jsonObjectOne.put("yueyang", yueyangDataOne);
+        jsonObjectOne.put("zhangjiajie", zhangjiajieDataOne);
+        jsonObjectOne.put("yiyang", yiyangDataOne);
+        jsonObjectOne.put("chenzhou", chenzhouDataOne);
+        jsonObjectOne.put("yongzhou", yongzhouDataOne);
+        jsonObjectOne.put("huaihua", huaihuaDataOne);
+        jsonObjectOne.put("loudi", loudiDataOne);
+        jsonObjectOne.put("xiangxi", xiangxiDataOne);
+        String resultOne = JSON.toJSONString(jsonObjectOne);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("total",result);
+        map.put("through",resultOne);
+
+        return new JiebaoResponse().data(map);
     }
-
-
-
-
-
-
 }
