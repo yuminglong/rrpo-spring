@@ -11,6 +11,7 @@ public interface FileService extends IService<File> {
 
     List<File> getAppendixList(String refId);
 
+    List<File> getAppendixListReply(String refId);
 
     IPage<File> getFileList(QueryRequest request, File file, String startTime, String endTime);
 
