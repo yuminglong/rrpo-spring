@@ -26,24 +26,24 @@ public class GradeZzController {
     @Autowired
     IGradeZzService gradeZzService;
 
-    @GetMapping("list")
-    @ApiOperation("佐证查询  参数每条扣分记录id")
-    public JiebaoResponse list(String gradeId, String yearId, String deptId, String menusIds, Integer type, QueryRequest queryRequest) {
-        return gradeZzService.list(gradeId, yearId, deptId, menusIds, type,queryRequest);
-    }
+//    @GetMapping("list")
+//    @ApiOperation("佐证查询  参数每条扣分记录id")
+//    public JiebaoResponse list(String gradeId, String yearId, String deptId, String menusIds, Integer type, QueryRequest queryRequest) {
+//        return gradeZzService.list(gradeId, yearId, deptId, menusIds, type,queryRequest);
+//    }
 
-    @DeleteMapping("delete")
-    @ApiOperation("删除佐证")
-    public JiebaoResponse delete(String[] list) {
-        if (list == null) {
-            return new JiebaoResponse().message("未传值");
-        }
-        return gradeZzService.deleteByGradeIdAndZzId(list);
-    }
-
-    @GetMapping("getListCZ")
-    @ApiOperation("去池子里面那数据")
-    public JiebaoResponse getListCZ(Integer type, Integer status, QueryRequest queryRequest) {
-        return gradeZzService.getData(type, status,queryRequest);
-    }
+//    @DeleteMapping("delete")
+//    @ApiOperation("删除佐证")
+//    public JiebaoResponse delete(String[] list) {
+//        if (list == null) {
+//            return new JiebaoResponse().message("未传值");
+//        }
+//        return gradeZzService.deleteByGradeIdAndZzId(list);
+//    }
+//
+//    @GetMapping("getListCZ")
+//    @ApiOperation("去池子里面那数据")
+//    public JiebaoResponse getListCZ(Integer type, Integer status, QueryRequest queryRequest) {
+//        return gradeZzService.getData(type, status,queryRequest);
+//    }
 }

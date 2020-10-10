@@ -1,19 +1,18 @@
 package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.jiebao.platfrom.check.dao.GradeZzMapper;
-import com.jiebao.platfrom.check.dao.MenusMapper;
-import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
-import com.jiebao.platfrom.check.dao.GradeMapper;
 import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.railway.service.AsYearService;
 import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
 import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
@@ -56,6 +55,10 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     UserMapper userMapper;
     @Autowired
     AsYearService asYearService;
+    @Autowired
+    YearMapper yearMapper;
+    @Autowired
+    DeptService deptService;
 
     @Override
     public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id   type代表三组不同的参数
@@ -215,6 +218,18 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     public JiebaoResponse selectByUserIdOrDateYear(String yearId, String DeptId) {  //必填 时间   组织id   年份
         List<YearZu> list1 = new ArrayList<>();  //储存
         List<Menus> list = menusService.list();
+        if (yearId == null) {
+            Calendar instance = Calendar.getInstance();
+            int i = instance.get(Calendar.YEAR);
+            if (instance.get(Calendar.MONTH) >= 10) //到达新的一年  进1
+                i++;
+            yearId = yearMapper.selectYearId("" + i);
+        }
+        if (DeptId == null) {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
+            Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+            DeptId = dept.getDeptId();
+        }
         for (Menus menus : list
         ) {
             YearZu yearZu = new YearZu();
