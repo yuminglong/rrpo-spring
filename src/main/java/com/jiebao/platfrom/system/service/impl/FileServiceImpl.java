@@ -29,11 +29,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public List<File> getAppendixList(String refId) {
         LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(File::getRefId, refId);
-        lambdaQueryWrapper.eq(File::getFileType, 2);
-        lambdaQueryWrapper.eq(File::getRefType,7);
+        lambdaQueryWrapper.eq(File::getFileType, "2");
+        lambdaQueryWrapper.eq(File::getRefType,"7");
         lambdaQueryWrapper.orderByDesc(File::getTime);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
+
+
+    @Override
+    public List<File> getAppendixListReply(String refId) {
+        LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(File::getRefId, refId);
+        lambdaQueryWrapper.eq(File::getFileType, "2");
+        lambdaQueryWrapper.eq(File::getRefType,"1");
+        lambdaQueryWrapper.orderByDesc(File::getTime);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+
+
 
     @Override
 
