@@ -78,13 +78,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
-        if (yearId == null) {
-            Calendar instance = Calendar.getInstance();
-            int i = instance.get(Calendar.YEAR);
-            if (instance.get(Calendar.MONTH) >= 10) //到达新的一年  进1
-                i++;
-            yearId = yearMapper.selectYearId("" + i);
-        }
         List<String> menusId = yearBindMenusMapper.listMenusId(yearId);
         List<YearZu> list = new ArrayList<>();
         for (String menuId : menusId  //考核分组类型

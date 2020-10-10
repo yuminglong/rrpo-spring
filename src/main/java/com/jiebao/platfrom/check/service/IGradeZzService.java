@@ -14,9 +14,9 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
  * @since 2020-08-11
  */
 public interface IGradeZzService extends IService<GradeZz> {
-    JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId, Integer type, QueryRequest queryRequest);
-
-    JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest);
-
-    JiebaoResponse deleteByGradeIdAndZzId(String[] list);
+//    JiebaoResponse list(String gradeId, String yearDate, String deptId, String menusId, Integer type, QueryRequest queryRequest);
+//
+//    JiebaoResponse getData(Integer type, Integer status, QueryRequest queryRequest);
+//
+//    JiebaoResponse deleteByGradeIdAndZzId(String[] list);
 }
