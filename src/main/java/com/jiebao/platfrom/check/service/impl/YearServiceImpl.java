@@ -3,11 +3,8 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.check.dao.GradeMapper;
-import com.jiebao.platfrom.check.dao.MenusMapper;
-import com.jiebao.platfrom.check.dao.MenusYearMapper;
+import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
-import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
@@ -48,6 +45,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     IGradeService gradeService;
     @Autowired
     GradeMapper gradeMapper;
+    @Autowired
+    YearBindMenusMapper yearBindMenusMapper;
 
     @Override
     public JiebaoResponse addOrUpdate(Year year) {
@@ -70,7 +69,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Year> list = this.baseMapper.list(queryWrapper);
         for (Year year : list
         ) {
-            List<Menus> list1 = menusService.list();  //类型分组
+            List<String> menusId = yearBindMenusMapper.listMenusId(year.getYearId()); //
+            List<Menus> list1 = (List<Menus>) menusService.listByIds(menusId);  //所绑定的模块
             List<YearSize> list2 = new ArrayList<>();//赋值存储
             for (Menus menu : list1
             ) {

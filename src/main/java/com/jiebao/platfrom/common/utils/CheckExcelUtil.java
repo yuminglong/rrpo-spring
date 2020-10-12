@@ -36,30 +36,31 @@ import java.util.*;
 
 public class CheckExcelUtil {
 
-    public static JiebaoResponse excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper, YearBindMenusMapper yearBindMenus) {  //年考核 题库导入
+    public static JiebaoResponse excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper, YearBindMenusMapper yearBindMenus, List<MenusYear> list) {  //年考核 题库导入
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        boolean b = false;
         try {
             InputStream inputStream = file.getInputStream();
             Workbook workbook = null;
             workbook = new XSSFWorkbook(inputStream);//2007
             Sheet sheetAt = workbook.getSheetAt(0);
             Row row = sheetAt.getRow(0);
-            String[] arr = new String[row.getPhysicalNumberOfCells()*2];
-            for (int i = 0; i < row.getPhysicalNumberOfCells()*2; i += 2) {
+            String[] arr = new String[row.getPhysicalNumberOfCells() * 2];
+            for (int i = 0; i < row.getPhysicalNumberOfCells() * 2; i += 2) {
                 Cell cell = row.getCell(i);
                 if (cell == null) {
                     cell = row.createCell(i);
                 }
                 cell.setCellType(CellType.STRING);
                 String stringCellValue = cell.getStringCellValue(); //表格内容
-                    if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
-                        return jiebaoResponse.failMessage("本年考核规则不存在此模块" + stringCellValue);
-                    }
+                if (yearBindMenus.exist(yearId, menusService.selectByName(stringCellValue)) == null) {
+                    return jiebaoResponse.failMessage("本年考核规则不存在此模块" + stringCellValue);
+                }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
-              Row row1 = sheetAt.getRow(i); //对应行
-                for (int j = 0; j < row.getPhysicalNumberOfCells()*2; j += 2) {
+                Row row1 = sheetAt.getRow(i); //对应行
+                for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
                     Cell cell = row1.getCell(j);
                     if (cell == null) {
                         cell = row1.createCell(j);
@@ -80,14 +81,15 @@ public class CheckExcelUtil {
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
-                    menusYearService.save(menusYear);
+                    list.add(menusYear);
                 }
             }
+            b = menusYearService.saveBatch(list);
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return jiebaoResponse.okMessage("操作成功");
+        return b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
     }
 
 
