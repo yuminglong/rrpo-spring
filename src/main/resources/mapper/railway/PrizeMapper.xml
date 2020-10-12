@@ -5,176 +5,328 @@
     <select id="countRelease" resultType="Map">
 
 
-		SELECT   DISTINCT
-			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='长沙市'
-                <if test="startTime != null" >
-                 and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-                </if>
-                <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-                </if>
-                <if test="status != null">
-                and status =#{status}
-                </if>
-                and status != 1
-			) as 'changsha',
-			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='常德市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
-            and status != 1
-			) as 'changde',
-			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='衡阳市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        SELECT DISTINCT
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='长沙市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-			) as 'hengyang',
-			(SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='邵阳市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'changsha',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='常德市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-			) as 'shaoyang',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='株洲市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'changde',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='衡阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'zhuzhou',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘潭市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'hengyang',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='邵阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'xiangtan',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='岳阳市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'shaoyang',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='株洲市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'yueyang',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='张家界市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'zhuzhou',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘潭市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'zhangjiajie',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='益阳市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'xiangtan',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='岳阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'yiyang',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='郴州市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'yueyang',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='张家界市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'chenzhou',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='永州市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'zhangjiajie',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='益阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'yongzhou',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='怀化市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'yiyang',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='郴州市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'huaihua',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='娄底市'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'chenzhou',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='永州市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'loudi',
-            (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘西州'
-            <if test="startTime != null" >
-                and  date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
-            </if>
-            <if test="endTime !=null">
-                and  #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
-            </if>
-            <if test="status != null">
-                and status =#{status}
-            </if>
+        ) as 'yongzhou',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='怀化市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
         and status != 1
-            ) as 'xiangxi'
-			from  rail_prize
-	</select>
+        ) as 'huaihua',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='娄底市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
+        and status != 1
+        ) as 'loudi',
+        (SELECT count(*) FROM `rail_prize` WHERE SUBSTRING_INDEX(place,',',1) ='湘西州'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        <if test="status != null">
+            and status =#{status}
+        </if>
+        and status != 1
+        ) as 'xiangxi'
+        from rail_prize
+    </select>
+
+
+    <select id="countMoney" resultType="Map">
+        SELECT DISTINCT
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and
+        SUBSTRING_INDEX(place,',',1) ='长沙市' and o.rank=4
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'changsha',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and
+        SUBSTRING_INDEX(place,',',1) ='常德市' and o.rank=4
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'changde',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and
+        SUBSTRING_INDEX(place,',',1) ='衡阳市' and o.rank=4
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'hengyang',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='邵阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'shaoyang',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='株洲市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'zhuzhou',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='湘潭市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'xiangtan',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='岳阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'yueyang',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='张家界市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'zhangjiajie',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='益阳市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'yiyang',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='郴州市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'chenzhou',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='永州市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'yongzhou',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='怀化市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'huaihua',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='娄底市'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'loudi',
+        (SELECT SUM(o.money) FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id and o.rank=4 and
+        SUBSTRING_INDEX(place,',',1) ='湘西州'
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'xiangxi'
+        from rail_prize
+    </select>
+
+
+    <select id="countTypes" resultType="Map">
+        SELECT DISTINCT (SELECT COUNT(*) FROM `rail_prize` WHERE `status` =2
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'bohui',
+        (SELECT COUNT(*) FROM `rail_prize` WHERE `status` =7
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'tongguo' FROM rail_prize
+    </select>
 
 </mapper>

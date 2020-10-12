@@ -35,13 +35,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -129,7 +129,7 @@ public class PrizeController extends BaseController {
     @ApiOperation(value = "创建一条一事一奖", notes = "创建一条一事一奖", response = JiebaoResponse.class, httpMethod = "POST")
     public JiebaoResponse creatPrize(@Valid Prize prize, String[] fileIds) throws JiebaoException {
         try {
-            String newNumber =null;
+            String newNumber = null;
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             prize.setCreatUser(username);
@@ -146,54 +146,38 @@ public class PrizeController extends BaseController {
             }
             String place = prize.getPlace();
             if (place.contains("衡阳市")) {
-                 newNumber = "01" + maxNumberString;
-            }
-            else if (place.contains("岳阳市")){
+                newNumber = "01" + maxNumberString;
+            } else if (place.contains("岳阳市")) {
                 newNumber = "02" + maxNumberString;
-            }
-            else if (place.contains("怀化市")){
+            } else if (place.contains("怀化市")) {
                 newNumber = "03" + maxNumberString;
-            }
-            else if (place.contains("娄底市")){
+            } else if (place.contains("娄底市")) {
                 newNumber = "04" + maxNumberString;
-            }
-            else if (place.contains("郴州市")){
+            } else if (place.contains("郴州市")) {
                 newNumber = "05" + maxNumberString;
-            }
-            else if (place.contains("湘西州")){
+            } else if (place.contains("湘西州")) {
                 newNumber = "06" + maxNumberString;
-            }
-            else if (place.contains("株洲市")){
+            } else if (place.contains("株洲市")) {
                 newNumber = "07" + maxNumberString;
-            }
-            else if (place.contains("永州市")){
+            } else if (place.contains("永州市")) {
                 newNumber = "08" + maxNumberString;
-            }
-            else if (place.contains("张家界市")){
+            } else if (place.contains("张家界市")) {
                 newNumber = "09" + maxNumberString;
-            }
-            else if (place.contains("湘潭市")){
+            } else if (place.contains("湘潭市")) {
                 newNumber = "10" + maxNumberString;
-            }
-            else if (place.contains("邵阳市")){
+            } else if (place.contains("邵阳市")) {
                 newNumber = "11" + maxNumberString;
-            }
-            else if (place.contains("益阳市")){
+            } else if (place.contains("益阳市")) {
                 newNumber = "12" + maxNumberString;
-            }
-            else if (place.contains("长沙市")){
+            } else if (place.contains("长沙市")) {
                 newNumber = "13" + maxNumberString;
-            }
-            else if (place.contains("常德市")){
+            } else if (place.contains("常德市")) {
                 newNumber = "14" + maxNumberString;
-            }
-            else if (place.contains("长沙铁路公安处")){
+            } else if (place.contains("长沙铁路公安处")) {
                 newNumber = "15" + maxNumberString;
-            }
-            else if (place.contains("怀化铁路公安处")){
+            } else if (place.contains("怀化铁路公安处")) {
                 newNumber = "16" + maxNumberString;
-            }
-            else if (place.contains("衡阳铁路公安处")){
+            } else if (place.contains("衡阳铁路公安处")) {
                 newNumber = "17" + maxNumberString;
             }
             prize.setNewNumber(newNumber);
@@ -430,12 +414,15 @@ public class PrizeController extends BaseController {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
             Arrays.stream(prizeIds).forEach(prizeId -> {
-                this.prizeMapper.reject(prizeId);
-                PrizeRejectOpinion prj = new PrizeRejectOpinion();
-                prj.setAuditOpinion(rejectAuditOpinion);
-                prj.setId(prizeId);
-                prj.setUserId(byName.getUserId());
-                prizeRejectOpinionService.saveOrUpdate(prj);
+                Prize byId = prizeService.getById(prizeId);
+                if (byId.getStatus() != 7) {
+                    this.prizeMapper.reject(prizeId);
+                    PrizeRejectOpinion prj = new PrizeRejectOpinion();
+                    prj.setAuditOpinion(rejectAuditOpinion);
+                    prj.setId(prizeId);
+                    prj.setUserId(byName.getUserId());
+                    prizeRejectOpinionService.saveOrUpdate(prj);
+                }
             });
             return new JiebaoResponse().message("驳回成功").put("status", "200");
         } catch (Exception e) {
@@ -637,10 +624,9 @@ public class PrizeController extends BaseController {
     }
 
 
-
     @ApiOperation("统计十四市州发布情况")
     @GetMapping("/countRelease")
-    public JiebaoResponse countRelease(String startTime,String endTime,Integer status) {
+    public JiebaoResponse countRelease(String startTime, String endTime, Integer status) {
         List changsha = new ArrayList();
         List changde = new ArrayList();
         List hengyang = new ArrayList();
@@ -671,10 +657,10 @@ public class PrizeController extends BaseController {
         List loudiOne = new ArrayList();
         List xiangxiOne = new ArrayList();
 
-        List<Map<String, Object>> list = prizeService.countRelease(startTime,endTime,status);
-        List<Map<String, Object>> listOne = prizeService.countRelease(startTime,endTime,7);
+        List<Map<String, Object>> list = prizeService.countRelease(startTime, endTime, status);
+        List<Map<String, Object>> listOne = prizeService.countRelease(startTime, endTime, 7);
 
-        for(Map<String, Object> item: list) {
+        for (Map<String, Object> item : list) {
             changsha.add(item.get("changsha"));
             changde.add(item.get("changde"));
             hengyang.add(item.get("hengyang"));
@@ -691,7 +677,7 @@ public class PrizeController extends BaseController {
             xiangxi.add(item.get("xiangxi"));
         }
 
-        for(Map<String, Object> item: listOne) {
+        for (Map<String, Object> item : listOne) {
             changshaOne.add(item.get("changsha"));
             changdeOne.add(item.get("changde"));
             hengyangOne.add(item.get("hengyang"));
@@ -739,7 +725,6 @@ public class PrizeController extends BaseController {
         String xiangxiDataOne = JSON.toJSONString(xiangxiOne);
 
 
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("changsha", changshaData);
         jsonObject.put("changde", changdeData);
@@ -775,9 +760,98 @@ public class PrizeController extends BaseController {
         String resultOne = JSON.toJSONString(jsonObjectOne);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("total",result);
-        map.put("through",resultOne);
+        map.put("total", result);
+        map.put("through", resultOne);
 
         return new JiebaoResponse().data(map);
+    }
+
+    @ApiOperation("统计十四市州金额")
+    @GetMapping("/countMoney")
+    public JiebaoResponse countMoney(String startTime, String endTime) {
+        List changsha = new ArrayList();
+        List changde = new ArrayList();
+        List hengyang = new ArrayList();
+        List shaoyang = new ArrayList();
+        List zhuzhou = new ArrayList();
+        List xiangtan = new ArrayList();
+        List yueyang = new ArrayList();
+        List zhangjiajie = new ArrayList();
+        List yiyang = new ArrayList();
+        List chenzhou = new ArrayList();
+        List yongzhou = new ArrayList();
+        List huaihua = new ArrayList();
+        List loudi = new ArrayList();
+        List xiangxi = new ArrayList();
+
+
+        List<Map<String, Object>> list = prizeService.countMoney(startTime, endTime);
+
+        for (Map<String, Object> item : list) {
+            changsha.add(item.get("changsha"));
+            changde.add(item.get("changde"));
+            hengyang.add(item.get("hengyang"));
+            shaoyang.add(item.get("shaoyang"));
+            zhuzhou.add(item.get("zhuzhou"));
+            xiangtan.add(item.get("xiangtan"));
+            yueyang.add(item.get("yueyang"));
+            zhangjiajie.add(item.get("zhangjiajie"));
+            yiyang.add(item.get("yiyang"));
+            chenzhou.add(item.get("chenzhou"));
+            yongzhou.add(item.get("yongzhou"));
+            huaihua.add(item.get("huaihua"));
+            loudi.add(item.get("loudi"));
+            xiangxi.add(item.get("xiangxi"));
+        }
+
+
+        String changshaData = JSON.toJSONString(changsha);
+        String changdeData = JSON.toJSONString(changde);
+        String hengyangData = JSON.toJSONString(hengyang);
+        String shaoyangData = JSON.toJSONString(shaoyang);
+        String zhuzhouData = JSON.toJSONString(zhuzhou);
+        String xiangtanData = JSON.toJSONString(xiangtan);
+        String yueyangData = JSON.toJSONString(yueyang);
+        String zhangjiajieData = JSON.toJSONString(zhangjiajie);
+        String yiyangData = JSON.toJSONString(yiyang);
+        String chenzhouData = JSON.toJSONString(chenzhou);
+        String yongzhouData = JSON.toJSONString(yongzhou);
+        String huaihuaData = JSON.toJSONString(huaihua);
+        String loudiData = JSON.toJSONString(loudi);
+        String xiangxiData = JSON.toJSONString(xiangxi);
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("changsha", changshaData);
+        jsonObject.put("changde", changdeData);
+        jsonObject.put("hengyang", hengyangData);
+        jsonObject.put("shaoyang", shaoyangData);
+        jsonObject.put("zhuzhou", zhuzhouData);
+        jsonObject.put("xiangtan", xiangtanData);
+        jsonObject.put("yueyang", yueyangData);
+        jsonObject.put("zhangjiajie", zhangjiajieData);
+        jsonObject.put("yiyang", yiyangData);
+        jsonObject.put("chenzhou", chenzhouData);
+        jsonObject.put("yongzhou", yongzhouData);
+        jsonObject.put("huaihua", huaihuaData);
+        jsonObject.put("loudi", loudiData);
+        jsonObject.put("xiangxi", xiangxiData);
+        String result = JSON.toJSONString(jsonObject);
+
+        return new JiebaoResponse().data(result);
+    }
+
+
+    @ApiOperation("统计发布情况")
+    @GetMapping("/countTypes")
+    public JiebaoResponse countTypes(String startTime, String endTime) {
+        Map<String, Object> map = prizeService.countTypes(startTime, endTime);
+        JSONObject jsonObject = new JSONObject();
+        String bohuiData = JSON.toJSONString(map.get("bohui"));
+        String tongguoData = JSON.toJSONString(map.get("tongguo"));
+        jsonObject.put("bohui", bohuiData);
+        jsonObject.put("tongguo", tongguoData);
+        String result = JSON.toJSONString(jsonObject);
+        return new JiebaoResponse().data(result);
     }
 }

@@ -121,7 +121,7 @@ public class FileController extends BaseController {
      * @param refId 文件库文件的关联ID
      * @return
      */
-    @ApiOperation("读取信息互递发送附件接口")
+    @ApiOperation("读取信息互递回复附件接口")
     @PostMapping("/getAppendixList")
     public JiebaoResponse getAppendixList(String refId) {
         if (StringUtils.isEmpty(refId)) {
@@ -139,7 +139,7 @@ public class FileController extends BaseController {
      * @param refId 文件库文件的关联ID
      * @return
      */
-    @ApiOperation("读取信息互递回复附件接口")
+    @ApiOperation("读取信息互递发送附件接口")
     @PostMapping("/getAppendixListReply")
     public JiebaoResponse getAppendixListReply(String refId) {
         if (StringUtils.isEmpty(refId)) {
