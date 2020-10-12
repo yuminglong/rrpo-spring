@@ -24,9 +24,10 @@ public interface IQunService extends IService<Qun> {
 
     JiebaoResponse addOrUpdate(Qun qun);
 
-    JiebaoResponse importQun(String content);
+    JiebaoResponse importQun(String content);//合格群 添加  执行  顺序第一位
 
     void exPort(HttpServletResponse response, String[] deptId, String workName);//合格群导出
 
     JiebaoResponse ListByDeptId(String deptId);
+
 }

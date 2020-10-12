@@ -53,7 +53,7 @@ public class QunController {
 
     @GetMapping("qunCreat")
     @ResponseBody
-    @ApiOperation("加载已经上报的群")
+    @ApiOperation("加载已经上报合格的群")
     public JiebaoResponse qunCreat(String content) {
         return qunService.importQun(content);
     }

@@ -3,13 +3,12 @@ package com.jiebao.platfrom.check.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
-import com.jiebao.platfrom.check.service.IMenusService;
-import com.jiebao.platfrom.check.service.IMenusYearService;
+import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jiebao.platfrom.check.service.IYearBindMenusService;
-import com.jiebao.platfrom.check.service.IYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.utils.CheckExcelUtil;
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ import java.util.*;
  * @since 2020-08-05
  */
 @Service
-public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear> implements IMenusYearService {
+public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear> implements IMenusYearService, Runnable {
 
     @Autowired
     MenusMapper menusMapper;
@@ -42,6 +41,14 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     YearMapper yearMapper;
     @Autowired
     GradeMapper gradeMapper;
+    @Autowired
+    DeptService deptService;
+    @Autowired
+    IGradeService gradeService;
+
+    private String yearID;
+
+    private List<MenusYear> lists;
 
 
     @Override
@@ -51,6 +58,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return super.saveOrUpdate(entity);
     }
 
+    @Transactional
     @Override
     public JiebaoResponse addOrUpdate(MenusYear menusYear) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -69,7 +77,22 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
                 }
             }
         }
-        jiebaoResponse = saveOrUpdate(menusYear) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
+        boolean b = saveOrUpdate(menusYear);
+        if (b) {
+            List<Dept> childrenList = deptService.getChildrenList("0");
+            for (Dept dept : childrenList
+            ) {
+                if (!dept.getDeptName().contains("公安处")) {
+                    Grade grade = new Grade();
+                    grade.setYearId(menusYear.getYearId());
+                    grade.setDeptId(dept.getDeptId());
+                    grade.setCheckId(menusYear.getMenusYearId());
+                    grade.setParentId(menusYear.getParentId());
+                    gradeMapper.insert(grade);
+                }
+            }
+        }
+        jiebaoResponse = b ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
 
@@ -86,6 +109,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("parent_id", menus.getStandardId());
+            queryWrapper.orderByDesc("date");
             YearZu yearZu = new YearZu();
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
@@ -96,7 +120,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return new JiebaoResponse().data(list).message("查询成功");
     }
 
-    @Transactional
     @Override
     public JiebaoResponse deleteByListAndYearDate(String[] list) {
         if (list == null) {
@@ -104,17 +127,53 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         }
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("check_id", Arrays.asList(list));
-        if (gradeMapper.deleteByCheckId(queryWrapper) == 0)
-            System.out.println(1 / 0);
         boolean b = removeByIds(Arrays.asList(list));
-        if (!b)
-            System.out.println(1 / 0);
+        if (b)
+            gradeMapper.deleteByCheckId(queryWrapper);
         return new JiebaoResponse().message(b ? "删除成功" : "删除失败");
     }
 
     @Override
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
-        return CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper);
+        List<MenusYear> list = new ArrayList<>();
+        JiebaoResponse jiebaoResponse = CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper, list);
+        if ((int) jiebaoResponse.get("status") == 1) { //操作成功 标志
+            MenusYearServiceImpl menusYearService = new MenusYearServiceImpl();
+            menusYearService.yearID = year_id;
+            menusYearService.yearMapper = this.yearMapper;
+            menusYearService.gradeMapper = this.gradeMapper;
+            menusYearService.menusYearMapper = this.menusYearMapper;
+            menusYearService.deptService = this.deptService;
+            menusYearService.gradeService = this.gradeService;
+            menusYearService.lists = list;
+            Thread thread = new Thread(menusYearService);
+            thread.start();
+        }
+        return jiebaoResponse;
     }
 
+    @Override
+    public void run() {
+        List<Grade> gradeArrayList = new ArrayList<>();
+        QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("year_id", yearID);
+        queryWrapper.in("parent_id", yearMapper.listYB(yearID));  //现存的绑定项
+        List<MenusYear> menusYearList = menusYearMapper.selectList(queryWrapper); //当年所有的试题
+        List<Dept> childrenList = deptService.getChildrenList("0");
+        for (Dept dept : childrenList
+        ) {
+            if (!dept.getDeptName().contains("公安处")) {
+                for (MenusYear m : lists
+                ) {
+                    Grade grade = new Grade();
+                    grade.setYearId(yearID);
+                    grade.setDeptId(dept.getDeptId());
+                    grade.setCheckId(m.getMenusYearId());
+                    grade.setParentId(m.getParentId());
+                    gradeArrayList.add(grade);
+                }
+            }
+        }
+        gradeService.saveBatch(gradeArrayList);
+    }
 }
