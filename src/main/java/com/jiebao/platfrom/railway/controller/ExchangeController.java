@@ -109,15 +109,17 @@ public class ExchangeController extends BaseController {
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
-                    //关联年度考核项
-                    Arrays.stream(menusYearIds).forEach(menusYearId -> {
-                        AsYear asYear = new AsYear();
-                        asYear.setFileId(fileId);
-                        asYear.setGradeId(menusYearId);
-                        asYear.setType(2);
-                        asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
-                        asYearService.save(asYear);
-                    });
+                    if(menusYearIds !=null){
+                        //关联年度考核项
+                        Arrays.stream(menusYearIds).forEach(menusYearId -> {
+                            AsYear asYear = new AsYear();
+                            asYear.setFileId(fileId);
+                            asYear.setGradeId(menusYearId);
+                            asYear.setType(2);
+                            asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                            asYearService.save(asYear);
+                        });
+                    }
                 });
 
                 exchangeUserService.deleteByExchangeId(exchange.getId());
@@ -133,15 +135,17 @@ public class ExchangeController extends BaseController {
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
-                    //关联年度考核项
-                    Arrays.stream(menusYearIds).forEach(menusYearId -> {
-                        AsYear asYear = new AsYear();
-                        asYear.setFileId(fileId);
-                        asYear.setGradeId(menusYearId);
-                        asYear.setType(2);
-                        asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
-                        asYearService.save(asYear);
-                    });
+                    if (menusYearIds!=null){
+                        //关联年度考核项
+                        Arrays.stream(menusYearIds).forEach(menusYearId -> {
+                            AsYear asYear = new AsYear();
+                            asYear.setFileId(fileId);
+                            asYear.setGradeId(menusYearId);
+                            asYear.setType(2);
+                            asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                            asYearService.save(asYear);
+                        });
+                    }
                 });
                 if (save) {
                     Arrays.stream(sendUserIds).forEach(sendUserId -> {

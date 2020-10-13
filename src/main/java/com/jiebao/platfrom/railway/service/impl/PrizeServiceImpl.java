@@ -160,5 +160,15 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         return prizeMapper.countRelease(startTime,endTime,status);
     }
 
+    @Override
+    public List<Map<String, Object>> countMoney(String startTime, String endTime) {
+        return prizeMapper.countMoney(startTime,endTime);
+    }
+
+    @Override
+    public Map<String, Object> countTypes(String startTime, String endTime) {
+        return prizeMapper.countTypes(startTime,endTime);
+    }
+
 
 }

@@ -64,5 +64,21 @@ public interface PrizeMapper extends BaseMapper<Prize> {
      * @return
      */
     List<Map<String, Object>> countRelease(String startTime, String endTime ,Integer status);
+
+    /**
+     * 统计十四个市州金额
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String, Object>> countMoney(String startTime, String endTime);
+
+    /**
+     * 统计发布情况
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+     Map<String, Object> countTypes(String startTime, String endTime);
 }
 
