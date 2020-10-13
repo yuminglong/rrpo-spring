@@ -101,16 +101,16 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if (type == 3 && number != null) {
             math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数    取  第一次自评还是第三次自评
             if (number == math) {
-                grade.setStatus(1);
-            } else {
                 grade.setStatus(0);
+            } else {
+                grade.setStatus(1);
             }
         }
         if (type == 2 && number != null) {
             if (number == grade.getFpNum()) {
-                grade.setStatus(1);
-            } else {
                 grade.setStatus(0);
+            } else {
+                grade.setStatus(1);
             }
         }
         jiebaoResponse = updateById(grade) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
