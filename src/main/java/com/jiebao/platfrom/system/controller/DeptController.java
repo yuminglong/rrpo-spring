@@ -30,6 +30,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -56,7 +57,17 @@ public class DeptController extends BaseController {
     private DeptMapper deptMapper;
 
 
+    @GetMapping("/queryDeptOne")
+    @ApiOperation("查找本级以及本级一下")
+    public JiebaoResponse queryDeptOne() {
+        return new JiebaoResponse().data(deptService.queryDeptOne()).message("查询成功");
+    }
 
+    @GetMapping("/queryDeptChile")
+    @ApiOperation("查找本级以及本级一下")
+    public JiebaoResponse queryDeptChile(String prentId) {
+        return new JiebaoResponse().data(deptService.queryDeptChile(prentId)).message("查询成功");
+    }
 
     @GetMapping
     public Map<String, Object> deptList(QueryRequest request, Dept dept) {
@@ -66,9 +77,9 @@ public class DeptController extends BaseController {
     @GetMapping("/list")
     public List<Dept> List(QueryRequest request, Dept dept) {
         List<Dept> depts = deptService.findDepts(dept, request);
-        for (Dept d: depts
-             ) {
-            String[] a={};
+        for (Dept d : depts
+        ) {
+            String[] a = {};
             d.setChildren(a);
         }
         return depts;
@@ -145,12 +156,11 @@ public class DeptController extends BaseController {
     @GetMapping("/getChildrenAddress")
     public List<Address> deptUserList(String id) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("start:"+simpleDateFormat.format(new Date()));
+        System.out.println("start:" + simpleDateFormat.format(new Date()));
         List<Address> list = deptService.getAddress(id);
-        System.out.println("end:"+simpleDateFormat.format(new Date()));
+        System.out.println("end:" + simpleDateFormat.format(new Date()));
         return list;
     }
-
 
 
     @GetMapping("/findRank")
@@ -159,32 +169,32 @@ public class DeptController extends BaseController {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         Dept byId = deptService.getById(byName.getDeptId());
-        return new JiebaoResponse().data(byId).put("status","200");
+        return new JiebaoResponse().data(byId).put("status", "200");
     }
 
     @GetMapping("/findRankFour")
     @ApiOperation(value = "查询所有公安处", notes = "查询所有公安处", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findRankFour() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("rank",4);
+        map.put("rank", 4);
         List<Dept> depts = deptMapper.selectByMap(map);
-        return new JiebaoResponse().data(depts).put("status","200");
+        return new JiebaoResponse().data(depts).put("status", "200");
     }
 
     @GetMapping("/findCity")
     @ApiOperation(value = "查询所有市州", notes = "查询所有市州", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findCity() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("rank",3);
+        map.put("rank", 3);
         List<Dept> depts = deptMapper.selectByMap(map);
-        return new JiebaoResponse().data(depts).put("status","200");
+        return new JiebaoResponse().data(depts).put("status", "200");
     }
 
     @GetMapping("/findProvince")
     @ApiOperation(value = "查询所有省级", notes = "查询所有省级", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findProvince() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("rank",0);
+        map.put("rank", 0);
         List<Dept> depts = deptMapper.selectByMap(map);
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }

@@ -48,6 +48,12 @@ public interface DeptService extends IService<Dept> {
 
     List<Dept> getDeptByName(String deptName);//通过名字查询对应的 部门
 
-    String seekDeptId(String startDeptId,String endDeptId);// 散列  低位已知   高位已知  得高位到低位的直属下级
+    String seekDeptId(String startDeptId, String endDeptId);// 散列  低位已知   高位已知  得高位到低位的直属下级
+
+    boolean affiliate(String prentId, String chileId); //子类id是否附属 父类 是返回true
+
+    List<Dept> queryDeptOne();  //获取到 本级  以及本级下一级的结构
+
+    List<Dept> queryDeptChile(String prentId); //获得本级一下 组织机构
 
 }

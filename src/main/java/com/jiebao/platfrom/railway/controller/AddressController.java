@@ -13,6 +13,7 @@ import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
@@ -49,7 +50,8 @@ public class AddressController extends BaseController {
 
     @Autowired
     private DeptMapper deptMapper;
-
+    @Autowired
+    DeptService deptService;
 
     /**
      * 使用Mapper操作数据库
@@ -75,6 +77,18 @@ public class AddressController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "批量删除", notes = "批量删除", httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Address address = null;
+        if (ids == null || ids.length != 0) {
+            return jiebaoResponse.failMessage("为传入删除参数");
+        } else {
+            address = addressService.getById(ids[0]);
+        }
+        Dept dept = deptService.getDept();
+        if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+            if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
+                return jiebaoResponse.failMessage("无权限操作");
+        }
         try {
             Arrays.stream(ids).forEach(id -> {
                 addressService.removeById(id);
@@ -90,6 +104,11 @@ public class AddressController extends BaseController {
     @ApiOperation(value = "新增通讯录", notes = "新增通讯录", httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
     public void addAddress(@Valid Address address) throws JiebaoException {
+        Dept dept = deptService.getDept();
+        if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+            if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
+                return;
+        }
         try {
             address.setStatus(1);
             this.addressService.saveOrUpdate(address);
@@ -106,6 +125,11 @@ public class AddressController extends BaseController {
     @ApiOperation(value = "修改通讯录", notes = "修改通讯录", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
     public void updateAddress(@Valid Address address) throws JiebaoException {
+        Dept dept = deptService.getDept();
+        if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+            if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
+                return;
+        }
         try {
             this.addressService.updateByKey(address);
         } catch (Exception e) {
@@ -121,7 +145,7 @@ public class AddressController extends BaseController {
     public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
         try {
-                result = addressService.addAddressList(file, deptId);
+            result = addressService.addAddressList(file, deptId);
         } catch (Exception e) {
             e.printStackTrace();
         }

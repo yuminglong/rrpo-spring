@@ -2,6 +2,7 @@ package com.jiebao.platfrom.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.User;
 
@@ -18,6 +19,7 @@ public interface UserService extends IService<User> {
      * @return user
      */
     User findByName(String username);
+
 
     /**
      * 查询用户详情，包括基本信息，用户角色，用户部门

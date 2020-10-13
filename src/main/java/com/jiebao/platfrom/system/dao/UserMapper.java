@@ -18,6 +18,9 @@ public interface UserMapper extends BaseMapper<User> {
 
     IPage<User> findUserDetail(Page page, @Param("user") User user);
 
+    @Select("select * from sys_user ${ew.customSqlSegment}")
+    IPage<User> queryList(Page<User> page, @Param("ew") QueryWrapper<User> ew);
+
     /**
      * 获取单个用户详情
      *

@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,15 +16,18 @@ import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.manager.UserManager;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserConfigService;
 import com.jiebao.platfrom.system.service.UserRoleService;
 import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +49,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserManager userManager;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    DeptService deptService;
 
 
     @Override
@@ -55,6 +61,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public IPage<User> findUserDetail(User user, QueryRequest request) {
+        String deptId = deptService.getDept().getDeptId();
+        if (StringUtils.isNotBlank(user.getUsername())) {//不等于 null  或者"  "
+            List<String> list = new ArrayList<>();
+            List<String> prentIds = new ArrayList<>();
+            prentIds.add(deptId);
+            list.add(deptId);
+            deptService.getAllIds(prentIds, list);
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.like("username", user.getUsername());
+            queryWrapper.in("dept_id", list);
+            Page<User> page = new Page<>(request.getPageNum(), request.getPageSize());
+            return this.baseMapper.queryList(page, queryWrapper);
+        } else if (StringUtils.isBlank(user.getDeptId())) {
+            user.setDeptId(deptId);
+        }
         try {
             Page<User> page = new Page<>();
             SortUtil.handlePageSort(request, page, "userId", JiebaoConstant.ORDER_ASC, false);
@@ -87,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(MD5Util.encrypt(user.getUsername(), User.DEFAULT_PASSWORD));
         save(user);
 
-        System.out.println(user.getRoleId()+"+++++++++++++++++++++++++++");
+        System.out.println(user.getRoleId() + "+++++++++++++++++++++++++++");
         // 保存用户角色
         String[] roles = user.getRoleId().split(StringPool.COMMA);
         setUserRoles(user, roles);
@@ -203,7 +224,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
     }
-
 
 
     private void setUserRoles(User user, String[] roles) {

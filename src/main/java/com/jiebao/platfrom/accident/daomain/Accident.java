@@ -70,8 +70,8 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "派出所", example = "哈哈")
     private String policeId;
 
-//    @TableField(exist = false)
-//    private Dept deptPolice;
+    @TableField(exist = false)
+    private Dept deptPolice;
     /**
      * 线路
      */
