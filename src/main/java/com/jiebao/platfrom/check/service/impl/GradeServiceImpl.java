@@ -99,7 +99,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         double math;
         if (type == 3 && number != null) {
-
             math = grade.getNum2() == null ? grade.getNum() : grade.getNum2();  //分数    取  第一次自评还是第三次自评
             if (number == math) {
                 grade.setStatus(1);
@@ -262,20 +261,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             return jiebaoResponse.failMessage("请提交必要参数");
         }//给扣分项  给  状态  是否有疑点‘
         jiebaoResponse = this.baseMapper.updateStatus(status, gradeId) == 1 ? jiebaoResponse.okMessage("标记成功") : jiebaoResponse.failMessage("标记失败");
-        if (zzId != null) {   //非自定义佐证材料
-            QueryWrapper<GradeZz> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("grade_zz_id", Arrays.asList(zzId));
-            int i = gradeMapper.updateGradeZZ(status, queryWrapper);
-            jiebaoResponse = i == 1 ? jiebaoResponse.okMessage("年度审核材料佐证疑点标记成功") : jiebaoResponse.failMessage("年度审核材料佐证疑点标记失败");
-        }
-        if (fileId != null) {  //自定义佐证材料
-            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-            queryWrapper.in("file_id", Arrays.asList(fileId));
-            int i = gradeMapper.updateFile(status, queryWrapper);
-            jiebaoResponse = i == 1 ? jiebaoResponse.okMessage("自定义年度审核材料疑点标记成功") : jiebaoResponse.failMessage("自定义年度审核材料疑点标记失败");
-        }
         return jiebaoResponse;
     }
-
-
 }
