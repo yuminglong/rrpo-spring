@@ -14,6 +14,7 @@ import com.jiebao.platfrom.railway.domain.BriefingUser;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
@@ -54,6 +55,8 @@ public class UserController extends BaseController {
     private BriefingUserMapper briefingUserMapper;
     @Autowired
     private DeptMapper deptMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
@@ -77,7 +80,7 @@ public class UserController extends BaseController {
     public void addUser(User user) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            if (username.equals(user.getUsername())){
+            if (username.equals(user.getUsername())) {
                 message = "用户名重复";
                 throw new JiebaoException(message);
             }
@@ -208,74 +211,99 @@ public class UserController extends BaseController {
     }
 
 
-
     @GetMapping("getByDept/{deptIds}")
     @ApiOperation(value = "根据部门查人员", notes = "根据部门查人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public List<User> getByDept( @PathVariable String [] deptIds) {
+    public List<User> getByDept(@PathVariable String[] deptIds) {
         List<User> users = new ArrayList();
         Arrays.stream(deptIds).forEach(deptId -> {
             List<User> byDept = userService.getByDepts(deptId);
             users.addAll(byDept);
         });
-       return users;
+        return users;
     }
 
     @GetMapping("getId")
     @ApiOperation(value = "根据信息互递或者简报ID查接收人员", notes = "根据信息互递或者简报ID查接收人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public List<User> getId( String someId  ,Integer type) {
+    public List<User> getId(String someId, Integer type) {
         List<User> users = new ArrayList();
         //1为信息互递ID
-       if (type ==1){
-           Map<String, Object> exchangeMap = new HashMap<>();
-           exchangeMap.put("exchange_id",someId);
-           List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(exchangeMap);
-           for (ExchangeUser e:exchangeUsers
-                ) {
-             users.add(userService.getById(e.getSendUserId()));
-           }
-       }
-       //2为简报
-       else if (type ==2){
-           Map<String, Object> briefingMap = new HashMap<>();
-           briefingMap.put("briefing_id",someId);
-           List<BriefingUser> briefingUsers = briefingUserMapper.selectByMap(briefingMap);
-           for (BriefingUser b:briefingUsers
-           ) {
-               users.add(userService.getById(b.getSendUserId()));
-           }
-       }
+        if (type == 1) {
+            Map<String, Object> exchangeMap = new HashMap<>();
+            exchangeMap.put("exchange_id", someId);
+            List<ExchangeUser> exchangeUsers = exchangeUserMapper.selectByMap(exchangeMap);
+            for (ExchangeUser e : exchangeUsers
+            ) {
+                users.add(userService.getById(e.getSendUserId()));
+            }
+        }
+        //2为简报
+        else if (type == 2) {
+            Map<String, Object> briefingMap = new HashMap<>();
+            briefingMap.put("briefing_id", someId);
+            List<BriefingUser> briefingUsers = briefingUserMapper.selectByMap(briefingMap);
+            for (BriefingUser b : briefingUsers
+            ) {
+                users.add(userService.getById(b.getSendUserId()));
+            }
+        }
         return users;
     }
 
     @GetMapping("/getDeptAndUser")
     @ApiOperation(value = "根据部门id查子部门和该部门人员", notes = "根据部门id查子部门和该部门人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getDeptAndUser( String [] deptIds) {
+    public JiebaoResponse getDeptAndUser(String[] deptIds) {
         List<User> users = new ArrayList();
-        List<Dept> depts =new ArrayList<>();
+        List<Dept> depts = new ArrayList<>();
         Arrays.stream(deptIds).forEach(deptId -> {
             List<User> byDept = userService.getByDepts(deptId);
             users.addAll(byDept);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("parent_id",deptId);
+            map.put("parent_id", deptId);
             List<Dept> dept = deptMapper.selectByMap(map);
             depts.addAll(dept);
         });
         HashMap<String, Object> map = new HashMap<>();
-        map.put("dept",depts);
-        map.put("user",users);
+        map.put("dept", depts);
+        map.put("user", users);
         return new JiebaoResponse().data(map).okMessage("查询成功");
     }
 
 
     @GetMapping("/getUserInfo")
     @ApiOperation(value = "根据userId获取人员信息", notes = "根据userId获取人员信息", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getUserInfo(String [] userIds){
+    public JiebaoResponse getUserInfo(String[] userIds) {
         ArrayList<User> list = new ArrayList();
-        Arrays.stream(userIds).forEach(userId->{
+        Arrays.stream(userIds).forEach(userId -> {
             User byId = userService.getById(userId);
             list.add(byId);
         });
         return new JiebaoResponse().data(list);
+    }
+
+    @GetMapping("/getDept")
+    @ApiOperation(value = "获取用户是否有组织机构ID", notes = "获取人员是否有组织机构ID", response = JiebaoResponse.class, httpMethod = "GET")
+    public boolean getDept() {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        if (byName.getDeptId() == null || byName.getDeptId() =="") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @GetMapping("/bandingDept")
+    @ApiOperation(value = "若无组织机构id，绑定组织机构id", notes = "绑定组织机构id", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse bandingDept(String deptId)  {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        if (StringUtils.isNotBlank(deptId)){
+            userMapper.updateDept(deptId,byName.getUserId());
+            return new JiebaoResponse().okMessage("绑定组织机构成功");
+        }
+        else {
+            return new JiebaoResponse().okMessage("绑定组织机构失败");
+        }
     }
 }
