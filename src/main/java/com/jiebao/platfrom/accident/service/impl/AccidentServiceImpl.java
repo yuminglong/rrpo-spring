@@ -11,6 +11,7 @@ import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,12 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         if (cityLevelId != null) {
             queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
-        } else {
-            if (policeId != null) {
-                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
-            }
+        } else if (policeId != null) {
+            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
+        } else {  //
+            Dept dept = deptService.getDept();
+            if (!dept.getDeptId().equals("0"))
+                queryWrapper.eq("city_cs_id", dept.getDeptId());
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间
@@ -71,7 +74,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("date", endDate);//不能大于此时间
         }
-
         String[] strings = new String[]{"nature", "instation_section", "road", "age", "closed", "jzd", "distance", "identity", "conditions"};
         for (String column : strings
         ) {
@@ -101,7 +103,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     public static void main(String[] args) {
-        System.out.println(0.1+2);
+        System.out.println(0.1 + 2);
     }
 
 
