@@ -1,5 +1,5 @@
 server:
-  port: 9527
+  port: 29527
 
 spring:
   datasource:
@@ -93,7 +93,7 @@ jiebao:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/address/**,/mini/user/login/**,/mini/user/quickLogin/**,/Unituser/**
+    anonUrl: /login,/logout/**,/regist,/user/check/**,/webjars/**,/swagger-resources/**,/swagger-ui.html#/,/swagger-ui.html,/v2/**,/jbx/cdn/image/**,/demo/**,/mini/user/login/**,/mini/user/quickLogin/**,/Unituser/**
     # token有效期，单位秒
     jwtTimeOut: 600
 
