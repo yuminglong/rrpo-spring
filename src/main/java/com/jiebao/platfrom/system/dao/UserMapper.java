@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -17,6 +16,12 @@ public interface UserMapper extends BaseMapper<User> {
 
 
     IPage<User> findUserDetail(Page page, @Param("user") User user);
+
+    @Select("select * from sys_user ${ew.customSqlSegment}")
+    @Results({
+            @Result(property = "deptName",column = "dept_id",one = @One(select="com.jiebao.platfrom.system.dao.DeptMapper.getByName"))
+    })
+    IPage<User> queryList(Page<User> page, @Param("ew") QueryWrapper<User> ew);
 
     /**
      * 获取单个用户详情

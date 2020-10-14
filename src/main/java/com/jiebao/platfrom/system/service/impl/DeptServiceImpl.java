@@ -167,7 +167,6 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         });
     }
 
-
     @Override
     public Tree<Dept> findDeptUser(QueryRequest request, Dept dept) {
         List<Dept> depts = findDepts(dept, request);
@@ -298,6 +297,42 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         }
     }
 
+    @Override
+    public boolean affiliate(String prentId, String chileId) {
+        Dept dept = getById(chileId);
+        if (dept.getParentId().equals(prentId)) {  //属于子类
+            return true;
+        } else if (dept.getDeptId().equals("0")) { //直接到最高级  则 没有
+            return false;
+        } else {
+            return affiliate(prentId, dept.getParentId());  //找到最优答案
+        }
+    }
+
+
+    @Override
+    public List<Dept> queryDeptChile(String prentId) {
+        Dept dept = getDept();
+        if (!dept.getDeptId().equals(prentId) && prentId != null) {//不相等则  进行查看
+            if (!affiliate(dept.getDeptId(), prentId)) //不属于
+                return null;
+        }
+        List<Dept> childrenList = new ArrayList<>();
+        //   Dept dept = getDept();
+        if (prentId == null && dept.getDeptId().equals("0"))
+            childrenList = getChildrenList("-1");
+        else if (prentId == null)
+            childrenList.add(dept);
+        else if (prentId != null)
+            childrenList.addAll(getChildrenList(prentId));
+        return childrenList;
+    }
+
+    @Override
+    public List<Dept> queryDeptChileNotshiro(String prentId) {
+        return getChildrenList(prentId);
+    }
+
 
     private List getDeptIds(String id) {
         List list = new ArrayList();
@@ -305,8 +340,6 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         list = getAllId(id, list);
         return list;
     }
-
-
 
    /* private List getId(String id,List list){
         List<Dept> forList = deptMapper.getChildId(id);

@@ -11,7 +11,9 @@ import com.jiebao.platfrom.railway.dao.NoticeMapper;
 import com.jiebao.platfrom.railway.domain.Notice;
 import com.jiebao.platfrom.railway.service.NoticeService;
 import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,8 @@ public class NoticeController extends BaseController {
 
     @Autowired
     private FileMapper fileMapper;
+    @Autowired
+    DeptService deptService;
 
 
     /**

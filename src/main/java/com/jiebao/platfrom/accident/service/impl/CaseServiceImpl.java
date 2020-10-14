@@ -37,14 +37,15 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
 
     @Override
     public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String lineId, String nature, String startDate, String endDate) {
-        Dept dept = deptService.getDept();  //当前登陆人部门
         QueryWrapper<Case> queryWrapper = new QueryWrapper<>();
         if (cityLevelId != null) {
             queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+        } else if (policeId != null) {
+            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
         } else {
-            if (policeId != null) {
-                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
-            }
+            Dept dept = deptService.getDept();  //当前登陆人部门
+            if (!dept.getDeptId().equals("0"))
+                queryWrapper.eq("city_cs_id", dept.getDeptId());
         }
         if (lineId != null) {
             queryWrapper.eq("line_id", lineId);

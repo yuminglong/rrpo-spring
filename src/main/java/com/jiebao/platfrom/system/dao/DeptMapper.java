@@ -21,5 +21,6 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	Dept getById(String deptId);
 
 
-
+	@Select("SELECT dept_name FROM `sys_dept` d where d.dept_id = #{deptId}")
+	String getByName(String deptId);
 }
