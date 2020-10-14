@@ -330,6 +330,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public List<Dept> queryDeptChileNotshiro(String prentId) {
+        if (prentId == null) {
+            prentId = "-1";
+        }
         return getChildrenList(prentId);
     }
 
