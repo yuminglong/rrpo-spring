@@ -65,9 +65,9 @@ public class DeptController extends BaseController {
 
     @GetMapping("/list")
     public List<Dept> List(QueryRequest request, Dept dept) {
-        List<Dept> depts = deptService.findDepts(dept, request);
+        List<Dept> depts = deptService.findDeptForDept(dept, request);
         for (Dept d: depts
-             ) {
+        ) {
             String[] a={};
             d.setChildren(a);
         }

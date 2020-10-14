@@ -87,7 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(MD5Util.encrypt(user.getUsername(), User.DEFAULT_PASSWORD));
         save(user);
 
-        System.out.println(user.getRoleId()+"+++++++++++++++++++++++++++");
+
         // 保存用户角色
         String[] roles = user.getRoleId().split(StringPool.COMMA);
         setUserRoles(user, roles);

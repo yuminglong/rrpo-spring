@@ -822,20 +822,77 @@ public class PrizeController extends BaseController {
 
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("changsha", changshaData);
-        jsonObject.put("changde", changdeData);
-        jsonObject.put("hengyang", hengyangData);
-        jsonObject.put("shaoyang", shaoyangData);
-        jsonObject.put("zhuzhou", zhuzhouData);
-        jsonObject.put("xiangtan", xiangtanData);
-        jsonObject.put("yueyang", yueyangData);
-        jsonObject.put("zhangjiajie", zhangjiajieData);
-        jsonObject.put("yiyang", yiyangData);
-        jsonObject.put("chenzhou", chenzhouData);
-        jsonObject.put("yongzhou", yongzhouData);
-        jsonObject.put("huaihua", huaihuaData);
-        jsonObject.put("loudi", loudiData);
-        jsonObject.put("xiangxi", xiangxiData);
+        JSONObject changshaObject = new JSONObject();
+        changshaObject.put("name","长沙市");
+        changshaObject.put("Date",changshaData);
+        jsonObject.put("changsha", changshaObject);
+
+        JSONObject changdeObject = new JSONObject();
+        changdeObject.put("name","常德市");
+        changdeObject.put("Date",changdeData);
+        jsonObject.put("changde", changdeObject);
+
+        JSONObject hengyangObject = new JSONObject();
+        hengyangObject.put("name","衡阳市");
+        hengyangObject.put("Date",hengyangData);
+        jsonObject.put("hengyang", hengyangObject);
+
+        JSONObject shaoyangObject = new JSONObject();
+        shaoyangObject.put("name","邵阳市");
+        shaoyangObject.put("Date",shaoyangData);
+        jsonObject.put("shaoyang", shaoyangObject);
+
+
+        JSONObject zhuzhouObject = new JSONObject();
+        zhuzhouObject.put("name","株洲市");
+        zhuzhouObject.put("Date",zhuzhouData);
+        jsonObject.put("zhuzhou", zhuzhouObject);
+
+        JSONObject xiangtanObject = new JSONObject();
+        xiangtanObject.put("name","湘潭市");
+        xiangtanObject.put("Date",xiangtanData);
+        jsonObject.put("xiangtan", xiangtanObject);
+
+        JSONObject yueyangObject = new JSONObject();
+        yueyangObject.put("name","岳阳市");
+        yueyangObject.put("Date",yueyangData);
+        jsonObject.put("yueyang", yueyangObject);
+
+        JSONObject zhangjiajieObject = new JSONObject();
+        zhangjiajieObject.put("name","张家界市");
+        zhangjiajieObject.put("Date",zhangjiajieData);
+        jsonObject.put("zhangjiajie", zhangjiajieObject);
+
+        JSONObject yiyangObject = new JSONObject();
+        yiyangObject.put("name","益阳市");
+        yiyangObject.put("Date",yiyangData);
+        jsonObject.put("yiyang", yiyangObject);
+
+        JSONObject chenzhouObject = new JSONObject();
+        chenzhouObject.put("name","郴州市");
+        chenzhouObject.put("Date",chenzhouData);
+        jsonObject.put("chenzhou", chenzhouObject);
+
+        JSONObject yongzhouObject = new JSONObject();
+        yongzhouObject.put("name","永州市");
+        yongzhouObject.put("Date",yongzhouData);
+        jsonObject.put("yongzhou", yongzhouObject);
+
+        JSONObject huaihuaObject = new JSONObject();
+        huaihuaObject.put("name","怀化市");
+        huaihuaObject.put("Date",huaihuaData);
+        jsonObject.put("huaihua", huaihuaObject);
+
+        JSONObject loudiObject = new JSONObject();
+        loudiObject.put("name","娄底市");
+        loudiObject.put("Date",loudiData);
+        jsonObject.put("loudi", loudiObject);
+
+        JSONObject xiangxiObject = new JSONObject();
+        xiangxiObject.put("name","湘西州");
+        xiangxiObject.put("Date",xiangxiData);
+        jsonObject.put("xiangxi", xiangxiObject);
+
         String result = JSON.toJSONString(jsonObject);
 
         return new JiebaoResponse().data(result);

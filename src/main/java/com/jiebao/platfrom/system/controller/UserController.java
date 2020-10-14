@@ -15,9 +15,11 @@ import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
+import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.service.UserConfigService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
@@ -57,6 +59,8 @@ public class UserController extends BaseController {
     private DeptMapper deptMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
@@ -300,6 +304,10 @@ public class UserController extends BaseController {
         User byName = userService.findByName(username);
         if (StringUtils.isNotBlank(deptId)){
             userMapper.updateDept(deptId,byName.getUserId());
+            UserRole ur = new UserRole();
+            ur.setUserId(byName.getUserId());
+            ur.setRoleId("72");
+            this.userRoleMapper.insert(ur);
             return new JiebaoResponse().okMessage("绑定组织机构成功");
         }
         else {
