@@ -60,7 +60,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     AddressService addressService;
 
 
-
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
 
@@ -88,7 +87,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         }
         return result;
     }
-
 
 
     @Override
@@ -175,7 +173,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             for (int line = 1; line <= sheet.getLastRowNum(); line++) {
                 Address address = new Address();
                 Row row = sheet.getRow(line);
-                if (row == null ) {
+                if (row == null) {
                     continue;
                 }
                 row.getCell(0).setCellType(CellType.STRING);
@@ -186,38 +184,43 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                  * 获取第一个单元格的内容
                  */
                 String userName = row.getCell(0).getStringCellValue();
-                if( row.getCell(1) == null){
-                    row.createCell(1).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(1) == null) {
+                    row.createCell(1).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(1).setCellType(CellType.STRING);
                 }
-                if( row.getCell(2) == null){
-                    row.createCell(2).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(2) == null) {
+                    row.createCell(2).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(2).setCellType(CellType.STRING);
                 }
-                if( row.getCell(3) == null){
-                    row.createCell(3).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(3) == null) {
+                    row.createCell(3).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(3).setCellType(CellType.STRING);
                 }
-                if( row.getCell(4) == null){
-                    row.createCell(4).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(4) == null) {
+                    row.createCell(4).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(4).setCellType(CellType.STRING);
                 }
-                if( row.getCell(5) == null){
-                    row.createCell(5).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(5) == null) {
+                    row.createCell(5).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(5).setCellType(CellType.STRING);
                 }
 
-                if( row.getCell(6) == null){
-                    row.createCell(6).setCellType(CellType.STRING);;
-                }else {
+                if (row.getCell(6) == null) {
+                    row.createCell(6).setCellType(CellType.STRING);
+                    ;
+                } else {
                     row.getCell(6).setCellType(CellType.STRING);
                 }
-
 
 
                 String phone = row.getCell(1).getStringCellValue();
@@ -227,7 +230,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 String position = row.getCell(5).getStringCellValue();
                 String unit = row.getCell(6).getStringCellValue();
 
-                if(StringUtils.isNotBlank(deptId) && !"".equals(userName)&& !"".equals(position) && !"".equals(unit)&& !"".equals(weiXin)&& !"".equals(telPhone)&& !"".equals(email)&& !"".equals(phone)){
+                if (StringUtils.isNotBlank(deptId) && !"".equals(userName) && !"".equals(position) && !"".equals(unit) && !"".equals(weiXin) && !"".equals(telPhone) && !"".equals(email) && !"".equals(phone)) {
                     address.setUserName(userName);
                     address.setPhone(phone);
                     address.setTelPhone(telPhone);
@@ -248,7 +251,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
 
-
     @Override
     public List<Address> addressList(Address address, QueryRequest request) {
 
@@ -259,7 +261,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_ASC, true);
         return this.baseMapper.selectList(queryWrapper);
     }
-
 
 
     @Override
@@ -286,4 +287,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         lambdaQueryWrapper.eq(Address::getDeptRoot, deptRoot);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
+
+
 }

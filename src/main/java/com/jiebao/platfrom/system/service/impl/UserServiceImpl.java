@@ -66,12 +66,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isNotBlank(user.getUsername())) {//不等于 null  或者"  "
             List<String> list = new ArrayList<>();
             List<String> prentIds = new ArrayList<>();
-            prentIds.add(deptId);
-            list.add(deptId);
-            deptService.getAllIds(prentIds, list);
+//            prentIds.add(deptId);
+//            list.add(deptId);
+//            deptService.getAllIds(prentIds, list);
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
             queryWrapper.like("username", user.getUsername());
-            queryWrapper.in("dept_id", list);
+//            queryWrapper.in("dept_id", list);
             Page<User> page = new Page<>(request.getPageNum(), request.getPageSize());
             return this.baseMapper.queryList(page, queryWrapper);
         } else if (StringUtils.isBlank(user.getDeptId())) {

@@ -272,9 +272,6 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public boolean affiliate(String prentId, String chileId) {
-        System.out.println(prentId);
-        System.out.println("--------------");
-        System.out.println(chileId);
         Dept dept = getById(chileId);
         if (dept.getParentId().equals(prentId)) {  //属于子类
             return true;
@@ -298,7 +295,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (prentId == null && dept.getDeptId().equals("0"))
             childrenList = getChildrenList("-1");
         else if (prentId == null)
-            childrenList.addAll(getChildrenList(dept.getDeptId()));
+            childrenList.add(dept);
         else if (prentId != null)
             childrenList.addAll(getChildrenList(prentId));
         return childrenList;
