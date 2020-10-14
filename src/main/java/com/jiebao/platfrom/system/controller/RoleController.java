@@ -11,6 +11,7 @@ import com.jiebao.platfrom.system.service.RoleMenuServie;
 import com.jiebao.platfrom.system.service.RoleService;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +38,7 @@ public class RoleController extends BaseController {
     private String message;
 
     @GetMapping
-    @RequiresPermissions("role:view")
+    @RequiresPermissions(value={"role:view", "user:add"}, logical = Logical.OR)
     public Map<String, Object> roleList(QueryRequest queryRequest, Role role) {
         return getDataTable(roleService.findRoles(role, queryRequest));
     }
