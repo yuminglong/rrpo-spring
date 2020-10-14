@@ -134,13 +134,15 @@ public class UserManager {
      * @param userIds userIds
      */
     public void loadUserPermissionRoleRedisCache(List<String> userIds) throws Exception {
-//        for (String userId : userIds) {
-//            User user = userService.getById(userId);
-//            // 缓存用户角色
-//            cacheService.saveRoles(user.getUsername());
-//            // 缓存用户权限
-//            cacheService.savePermissions(user.getUsername());
-//        }
+        for (String userId : userIds) {
+            User user = userService.getById(userId);
+            // 缓存用户角色
+            if (null != user) {
+                cacheService.saveRoles(user.getUsername());
+                // 缓存用户权限
+                cacheService.savePermissions(user.getUsername());
+            }
+        }
     }
 
     /**
