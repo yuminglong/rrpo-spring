@@ -57,10 +57,11 @@ public class DeptController extends BaseController {
     private DeptMapper deptMapper;
 
 
-    @GetMapping("/queryDeptOne")
+
+    @GetMapping("/queryDeptChileNotshiro")
     @ApiOperation("查找本级以及本级一下")
-    public JiebaoResponse queryDeptOne() {
-        return new JiebaoResponse().data(deptService.queryDeptOne()).message("查询成功");
+    public JiebaoResponse queryDeptChileNotshiro(String prentId) {
+        return new JiebaoResponse().data(deptService.queryDeptChileNotshiro(prentId)).message("查询成功");
     }
 
     @GetMapping("/queryDeptChile")

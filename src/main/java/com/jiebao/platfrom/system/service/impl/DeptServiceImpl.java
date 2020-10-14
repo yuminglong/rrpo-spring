@@ -272,6 +272,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public boolean affiliate(String prentId, String chileId) {
+        System.out.println(prentId);
+        System.out.println("--------------");
+        System.out.println(chileId);
         Dept dept = getById(chileId);
         if (dept.getParentId().equals(prentId)) {  //属于子类
             return true;
@@ -282,16 +285,27 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         }
     }
 
-    @Override
-    public List<Dept> queryDeptOne() {
-        Dept dept = getDept();
-        List<Dept> list = getChildrenList(dept.getDeptId());
-        list.set(0,dept);
-        return list;
-    }
 
     @Override
     public List<Dept> queryDeptChile(String prentId) {
+        Dept dept = getDept();
+        if (!dept.getDeptId().equals(prentId) && prentId != null) {//不相等则  进行查看
+            if (!affiliate(dept.getDeptId(), prentId)) //不属于
+                return null;
+        }
+        List<Dept> childrenList = new ArrayList<>();
+        //   Dept dept = getDept();
+        if (prentId == null && dept.getDeptId().equals("0"))
+            childrenList = getChildrenList("-1");
+        else if (prentId == null)
+            childrenList.addAll(getChildrenList(dept.getDeptId()));
+        else if (prentId != null)
+            childrenList.addAll(getChildrenList(prentId));
+        return childrenList;
+    }
+
+    @Override
+    public List<Dept> queryDeptChileNotshiro(String prentId) {
         return getChildrenList(prentId);
     }
 

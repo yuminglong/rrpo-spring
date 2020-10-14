@@ -192,6 +192,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 save(qun);
             }
         }
+        importQunN(null);
         return new JiebaoResponse().okMessage("成功");
     }
 
@@ -333,15 +334,16 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         }
         for (String str : list
         ) {  //具体创建对象
-            String str2=null;
+            String str2 = "";
             if (str.contains("（")) {  //有特殊括号
                 char[] chars1 = str.toCharArray();
                 for (char c : chars1
                 ) {
-                 str2+=c;
+                    if (c != '（' && c != '）')
+                        str2 += c;
                 }
             }
-            List<Dept> depts = deptService.getDeptByName(str2==null?str:str2);
+            List<Dept> depts = deptService.getDeptByName(str2 == null ? str : str2);
             if (depts.size() == 0)
                 continue;
             Dept dept = depts.get(0);
@@ -350,8 +352,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
                 qun.setDate(new Date());
                 qun.setWxName(str);
                 qun.setCjDeptId(dept.getDeptId());
-                qun.setShDeptId("0");
-                qun.setShStatus(3);
+                qun.setShDeptId(dept.getDeptId());
                 save(qun);
             }
         }

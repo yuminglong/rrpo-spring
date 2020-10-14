@@ -13,6 +13,7 @@ import com.jiebao.platfrom.common.utils.MD5Util;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.manager.UserManager;
@@ -123,11 +124,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public void updateUser(User user) throws Exception {
+        Dept dept = deptService.getDept();
+        String deptId = getById(user.getUserId()).getDeptId();  //此对象原先id
+        if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
+            if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
+                return;
+        }
         // 更新用户
         user.setPassword(null);
         user.setModifyTime(new Date());
         updateById(user);
-
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getUserId()));
 
         String[] roles = user.getRoleId().split(StringPool.COMMA);
@@ -142,6 +148,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public void deleteUsers(String[] userIds) throws Exception {
+        Dept dept = deptService.getDept();
+        String deptId = getById(userIds[0]).getDeptId();  //此对象原先id
+        if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
+            if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
+                return;
+        }
         // 先删除相应的缓存
         this.userManager.deleteUserRedisCache(userIds);
 

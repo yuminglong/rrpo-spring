@@ -52,8 +52,9 @@ public interface DeptService extends IService<Dept> {
 
     boolean affiliate(String prentId, String chileId); //子类id是否附属 父类 是返回true
 
-    List<Dept> queryDeptOne();  //获取到 本级  以及本级下一级的结构
 
     List<Dept> queryDeptChile(String prentId); //获得本级一下 组织机构
+
+    List<Dept> queryDeptChileNotshiro(String prentId); //无权限
 
 }

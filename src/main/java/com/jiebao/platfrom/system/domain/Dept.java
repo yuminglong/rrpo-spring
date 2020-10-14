@@ -26,6 +26,7 @@ public class Dept implements Serializable {
 
     private String parentId;
 
+
     @NotBlank(message = "{required}")
     @Size(max = 20, message = "{noMoreThan}")
     @ExcelField(value = "部门名称")
