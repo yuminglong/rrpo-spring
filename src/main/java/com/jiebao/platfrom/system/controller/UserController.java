@@ -15,9 +15,12 @@ import com.jiebao.platfrom.railway.domain.ExchangeUser;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
+import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserConfig;
+import com.jiebao.platfrom.system.domain.UserRole;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserConfigService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
@@ -57,6 +60,10 @@ public class UserController extends BaseController {
     private DeptMapper deptMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private DeptService deptService;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
@@ -298,8 +305,41 @@ public class UserController extends BaseController {
     public JiebaoResponse bandingDept(String deptId)  {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
+        Dept byId = deptService.getById(deptId);
         if (StringUtils.isNotBlank(deptId)){
             userMapper.updateDept(deptId,byName.getUserId());
+            UserRole ur = new UserRole();
+            if (username.contains("所")){
+                ur.setUserId(byName.getUserId());
+                ur.setRoleId("a8f32da9a55f1f999a78dc926aecc009");
+            }
+            else {
+                if (byId.getRank()==1){
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("1ef79e30d65cf948db46a7e408f46085");
+                }
+                if (byId.getRank() == 2){ //区县
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("7c8f277c3adb22397b8c38f15ca03ea8");
+                }
+               if(byId.getRank() == 3){
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("8c970a7008c0860ae295e8f0fec3280f");
+                }
+                if (byId.getRank() == 4){
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("4f98f01015aa8dbd853e7208c3b44568");
+                }
+                 if (byId.getRank() == 0){
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("9a6ac9c6c290261b2ed31b5c52c9d74b");
+                }
+                 else {
+                     ur.setUserId(byName.getUserId());
+                     ur.setRoleId("2");
+                 }
+            }
+            userRoleMapper.insert(ur);
             return new JiebaoResponse().okMessage("绑定组织机构成功");
         }
         else {

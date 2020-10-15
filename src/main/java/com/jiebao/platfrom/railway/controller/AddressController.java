@@ -77,41 +77,53 @@ public class AddressController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "批量删除", notes = "批量删除", httpMethod = "DELETE")
     public JiebaoResponse delete(@PathVariable String[] ids) throws JiebaoException {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        Address address = null;
         if (ids == null) {
             throw new JiebaoException("请传入参数");
         } else {
-            address = addressService.getById(ids[0]);
-        }
-        Dept dept = deptService.getDept();
-        if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-            if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
-                throw new JiebaoException("删除失败");
-        }
-        try {
-            Arrays.stream(ids).forEach(id -> {
+            boolean result = Arrays.stream(ids).allMatch(id -> {
+                Address address = null;
+                address = addressService.getById(id);
+                Dept dept = deptService.getDept();
+                Dept byId = deptService.getById(address.getDeptId());
+
+                if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+                    if (dept.getRank().equals(byId.getRank())) {
+                        return false;
+                    }
+                    if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
+                        return false;
+                    }
+                }
                 addressService.removeById(id);
+                return true;
             });
-        } catch (Exception e) {
-            throw new JiebaoException("删除失败");
+            if (result) {
+                return new JiebaoResponse().okMessage("删除成功");
+            } else {
+                return new JiebaoResponse().failMessage("由于权限原因，部分未能删除");
+            }
         }
-        return new JiebaoResponse().message("删除成功");
     }
 
     @PostMapping
     @Log("新增")
     @ApiOperation(value = "新增通讯录", notes = "新增通讯录", httpMethod = "POST")
     @Transactional(rollbackFor = Exception.class)
-    public void addAddress(@Valid Address address) throws JiebaoException {
+    public JiebaoResponse addAddress(@Valid Address address) throws JiebaoException {
         try {
             Dept dept = this.deptService.getDept();
+            Dept byId = deptService.getById(address.getDeptId());
             if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
-                    throw new JiebaoException("修改失败");
+                if (dept.getRank().equals(byId.getRank())){
+                    return new JiebaoResponse().failMessage("无权限新增其他组织机构");
+                }
+                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())){ //不属于
+                    return new JiebaoResponse().failMessage("当前无权限新增");
+                }
             }
             address.setStatus(1);
             this.addressService.saveOrUpdate(address);
+            return new JiebaoResponse().okMessage("新增成功");
         } catch (Exception e) {
             message = "新增通讯录失败";
             log.error(message, e);
@@ -124,14 +136,21 @@ public class AddressController extends BaseController {
     @Log("修改通讯录")
     @ApiOperation(value = "修改通讯录", notes = "修改通讯录", httpMethod = "PUT")
     @Transactional(rollbackFor = Exception.class)
-    public void updateAddress(@Valid Address address) throws JiebaoException {
+    public JiebaoResponse updateAddress(@Valid Address address) throws JiebaoException {
         try {
             Dept dept = this.deptService.getDept();
+            Dept byId = deptService.getById(address.getDeptId());
             if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) //不属于
-                    throw new JiebaoException("修改失败");
+                if (dept.getRank().equals(byId.getRank())){
+                    return new JiebaoResponse().failMessage("无权限修改其他组织机构");
+                }
+                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
+                    return new JiebaoResponse().failMessage("当前无权限修改");
+                }
+
             }
             this.addressService.updateByKey(address);
+            return new JiebaoResponse().okMessage("修改成功");
         } catch (Exception e) {
             message = "修改通讯录失败";
             log.error(message, e);
