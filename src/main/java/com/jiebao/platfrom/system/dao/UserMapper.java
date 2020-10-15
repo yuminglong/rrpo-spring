@@ -62,6 +62,6 @@ public interface UserMapper extends BaseMapper<User> {
     String getDeptID(String userName);
 
     @Select("UPDATE sys_user SET dept_id = #{deptId} WHERE user_id = #{userId}")
-    boolean updateDept(String deptId, String userId);
+    void updateDept(String deptId, String userId);
 
 }

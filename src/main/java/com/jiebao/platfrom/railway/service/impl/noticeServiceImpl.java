@@ -66,20 +66,8 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         QueryWrapper<Notice> queryWrapper = new QueryWrapper();
         //查询状态已发布的3
         queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getStatus, 3).or().eq(Notice::getStatus, 4));
-        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-       /* if (StringUtils.isNotBlank(username)) {
-            User byName = userService.findByName(username);
-            List<NoticeUser> bySendUserId = noticeUserMapper.getByNoticeSendUserId(byName.getUserId());
-            ArrayList<String> noticeUserIds = new ArrayList<>();
-            for (NoticeUser noticeUser : bySendUserId
-            ) {
-                String noticeId = noticeUser.getNoticeId();
-                noticeUserIds.add(noticeId);
-            }
-            if (noticeUserIds.size() > 0) {
-                queryWrapper.lambda().in(Notice::getId, noticeUserIds);
-            }
-        }*/
+
+
         if (StringUtils.isNotBlank(notice.getTitle())) {
             queryWrapper.lambda().like(Notice::getTitle, notice.getTitle());
         }
