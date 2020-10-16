@@ -49,7 +49,7 @@ public class RecordsController {
     @Log("月底接口录入")
     public JiebaoResponse add(Record record) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        jiebaoResponse = recordsService.saveOrUpdate(record) ? jiebaoResponse.okMessage("月底录入成功") : jiebaoResponse.failMessage("月底录入失败");
+          jiebaoResponse = recordsService.saveOrUpdate(record) ? jiebaoResponse.okMessage("月底录入成功") : jiebaoResponse.failMessage("月底录入失败");
         return jiebaoResponse;
     }
 
