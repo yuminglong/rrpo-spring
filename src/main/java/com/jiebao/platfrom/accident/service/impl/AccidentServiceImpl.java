@@ -58,7 +58,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
 
     @Override
     public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {  //视图接口
-        HashMap<String, List<ANumber>> map = new HashMap<>();
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (cityLevelId != null) {
