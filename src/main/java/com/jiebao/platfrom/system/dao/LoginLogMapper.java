@@ -3,6 +3,7 @@ package com.jiebao.platfrom.system.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.system.domain.LoginCount;
 import com.jiebao.platfrom.system.domain.LoginLog;
 import com.jiebao.platfrom.system.domain.User;
@@ -47,8 +48,11 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
     @Select("select count(1) as number,#{deptName} as deptName,#{deptId} as deptId  from sys_login_log ${ew.customSqlSegment}")
     LoginCount loginCount(@Param("ew") QueryWrapper<LoginLog> ew, @Param("deptName") String deptName, @Param("deptId") String deptId);  // 精确到组织结构
 
+    @Select("select count(1)  from sys_login_log where login_time>=#{startDate} and login_time<=#{endDate} and dept_id=#{deptId}")
+    Integer loginCountWeek(String startDate, String endDate, @Param("deptId") String deptId);  // 精确到组织结构
+
     @Select("select * from sys_login_log ${ew.customSqlSegment}")
-    List<LoginLog> loginCountUser(@Param("ew") QueryWrapper<LoginLog> ew);
+    List<LoginLog> loginCountUser(Page page, @Param("ew") QueryWrapper<LoginLog> ew);
 
     @Select("select count(1) as number,(select dept_name from sys_dept where dept_id=#{deptId}) as deptName,#{deptId} as deptId from sys_login_log where dept_id=#{deptId}")
     LoginCount loginCountPrent(@Param("deptId") String deptId);//

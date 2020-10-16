@@ -33,7 +33,6 @@ public class PeopleController {
         return peopleService.listPage(queryRequest, deptId, rank);
     }
 
-
     @PostMapping("saveOrUpdate")
     @ApiOperation("数据集合")
     public JiebaoResponse saveOrUpdate(People people) {

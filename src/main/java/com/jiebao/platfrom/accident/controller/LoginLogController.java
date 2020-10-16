@@ -4,6 +4,7 @@ package com.jiebao.platfrom.accident.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import io.swagger.annotations.Api;
@@ -23,16 +24,17 @@ public class LoginLogController {
     @GetMapping("list")
     @ApiOperation("查看登录记录")
     @Log("查看登录记录")
-    public JiebaoResponse list(String deptParentId, String startDate, String endDate) {
-        return loginLogService.lists(deptParentId, startDate, endDate);
+    public JiebaoResponse list(String deptParentId, Integer year, Integer month) {
+        return loginLogService.lists(deptParentId, year, month);
     }
 
     @GetMapping("userList")
     @ApiOperation("查询组织 具体人员登录次数")
     @Log("查询组织 具体人员登录次数")
-    public JiebaoResponse userList(String deptId, String startDate, String endDate) {
-        return loginLogService.listUsers(deptId, startDate, endDate);
+    public JiebaoResponse userList(QueryRequest queryRequest, String deptId, String startDate, String endDate) {
+        return loginLogService.listUsers(queryRequest, deptId, startDate, endDate);
     }
+
 
     @GetMapping("week")
     @ApiOperation("传入 年份  月份  得到 月内周数")
@@ -42,13 +44,12 @@ public class LoginLogController {
     }
 
     public static void main(String[] args) {
-              
+
     }
 
     private void a(Integer[] arr) {
 
     }
-
 
 
 }
