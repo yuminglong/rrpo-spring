@@ -1,16 +1,15 @@
 package com.jiebao.platfrom.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.AddressUtil;
 import com.jiebao.platfrom.common.utils.HttpContextUtil;
 import com.jiebao.platfrom.common.utils.IPUtil;
 import com.jiebao.platfrom.system.dao.LoginLogMapper;
-import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.LoginCount;
-import com.jiebao.platfrom.system.domain.LoginLog;
-import com.jiebao.platfrom.system.domain.Week;
+import com.jiebao.platfrom.system.domain.*;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.LoginLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,8 +40,9 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         this.save(loginLog);
     }
 
+
     @Override
-    public JiebaoResponse lists(String deptParentId, String startDate, String endDate) {
+    public JiebaoResponse lists(String deptParentId, Integer year, Integer month) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Integer place = null;  //名次
         if (deptParentId.equals("0")) {
@@ -81,7 +79,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
     @Override
-    public JiebaoResponse listUsers(String deptId, String startDate, String endDate) {
+    public JiebaoResponse listUsers(QueryRequest queryRequest, String deptId, String startDate, String endDate) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", deptId);
@@ -90,12 +88,17 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             queryWrapper.ge("login_time", startDate);
         if (endDate != null)
             queryWrapper.le("login_time", endDate);
-        return jiebaoResponse.data(this.baseMapper.loginCountUser(queryWrapper)).okMessage("查询成功");
+        Page<LoginLog> objectPage = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
+        return jiebaoResponse.data(this.baseMapper.loginCountUser(objectPage, queryWrapper)).okMessage("查询成功");
     }
 
     @Override
     public JiebaoResponse selectWeekCount(Integer year, Integer month) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        return jiebaoResponse.data(data(year, month)).okMessage("查询成功");
+    }
+
+    private List<Week> data(Integer year, Integer month) {
         Calendar calendar = Calendar.getInstance();//日历
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
@@ -131,7 +134,20 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             week.setEndDate(year + "-" + month + "-" + day++);
             list.add(week);
         }
-        return jiebaoResponse.data(list);
+        return list;
+    }
+
+    @Override
+    public JiebaoResponse weekList(Integer year, Integer month, String deptId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        List<Week> data = data(year, month);
+        List<LogCount> list = new ArrayList<>();
+        for (Week week : data   //不同周的具体时间
+        ) {
+            LogCount logCount = new LogCount(week.getStartDate() + " 至 " + week.getEndDate(), this.baseMapper.loginCountWeek(week.getStartDate(), week.getEndDate(), deptId));
+            list.add(logCount);
+        }
+        return jiebaoResponse.okMessage("查询完毕").data(list);
     }
 
 
