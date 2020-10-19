@@ -147,7 +147,6 @@ public class AddressController extends BaseController {
                 if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
                     return new JiebaoResponse().failMessage("当前无权限修改");
                 }
-
             }
             this.addressService.updateByKey(address);
             return new JiebaoResponse().okMessage("修改成功");

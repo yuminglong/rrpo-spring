@@ -18,7 +18,9 @@ import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.system.service.impl.DeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +60,11 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Autowired
     AddressService addressService;
+
+    @Autowired
+    UserService userService;
+
+
 
 
     @Override
@@ -269,6 +276,11 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         if (StringUtils.isNotBlank(iPageDeptId)) {
             lambdaQueryWrapper.eq(Address::getDeptId, iPageDeptId);
+        }
+        else {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            lambdaQueryWrapper.eq(Address::getDeptId,byName.getDeptId());
         }
         if (StringUtils.isNotBlank(userName)) {
             lambdaQueryWrapper.like(Address::getUserName, userName);

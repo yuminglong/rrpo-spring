@@ -168,7 +168,38 @@ public class UnituserController extends BaseController {
             exchangeUserService.save(exchangeUser);
         }
         return new JiebaoResponse().okMessage("ok");
-
     }
+
+    @GetMapping("/newUser")
+    @ApiOperation(value = "导新的user表", notes = "导新的user表", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse newUser() {
+        List<Unituser> list = unituserService.list();
+        for (Unituser oldUser : list
+        ) {
+            User user = new User();
+            user.setUsername(oldUser.getUnitUser());
+            user.setMobile(oldUser.getMobileTelephone());
+            user.setStatus("1");
+            user.setCreateTime(new Date());
+            user.setModifyTime(new Date());
+            user.setDescription(oldUser.getHeadship());
+            user.setAvatar("default.jpg");
+            user.setType(0);
+            user.setSsex("2");
+            user.setPassword(MD5Util.encrypt(oldUser.getUnitUser(), Unituser.DEFAULT_PASSWORD));
+            userService.save(user);
+
+            String roleId = "2";
+            // 保存用户角色
+            String[] roles = roleId.split(StringPool.COMMA);
+            setUserRoles(user, roles);
+
+            // 创建用户默认的个性化配置
+            userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+
+        }
+        return new JiebaoResponse().data(list);
+    }
+
 
 }
