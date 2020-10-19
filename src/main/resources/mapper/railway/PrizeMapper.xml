@@ -326,7 +326,16 @@
         <if test="endTime !=null">
             and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
         </if>
-        ) as 'tongguo' FROM rail_prize
+        ) as 'tongguo',
+        (SELECT COUNT(*) FROM `rail_prize` WHERE `status` = 6
+        <if test="startTime != null">
+            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+        </if>
+        ) as 'zongshu'
+         FROM rail_prize
     </select>
 
 </mapper>

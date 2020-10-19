@@ -957,6 +957,7 @@ public class PrizeController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         String bohuiData = JSON.toJSONString(map.get("bohui"));
         String tongguoData = JSON.toJSONString(map.get("tongguo"));
+        String zongshuData = JSON.toJSONString(map.get("zongshu"));
 
         JSONObject bohuiObject = new JSONObject();
         bohuiObject.put("name","驳回");
@@ -964,9 +965,15 @@ public class PrizeController extends BaseController {
         jsonObject.put("bohui", bohuiObject);
 
         JSONObject tongguoObject = new JSONObject();
-        tongguoObject.put("name","驳回");
+        tongguoObject.put("name","通过");
         tongguoObject.put("Date",tongguoData);
         jsonObject.put("tongguo", tongguoObject);
+
+
+        JSONObject zongshuObject = new JSONObject();
+        zongshuObject.put("name","总数");
+        zongshuObject.put("Date",zongshuData);
+        jsonObject.put("zongshu", zongshuObject);
         String result = JSON.toJSONString(jsonObject);
         return new JiebaoResponse().data(result);
     }
