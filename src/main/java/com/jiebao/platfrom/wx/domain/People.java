@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -33,6 +34,7 @@ public class People implements Serializable {
     @TableId(value = "hl_id", type = IdType.UUID)
     private String hlId;
 
+    @ApiModelProperty(value = "添加对象专属id")
     @TableField(exist = false)
     private String deptId;
     /**

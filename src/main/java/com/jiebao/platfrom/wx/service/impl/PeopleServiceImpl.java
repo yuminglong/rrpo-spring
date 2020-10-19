@@ -65,7 +65,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             column = "qu_xian";
         if (rank == 3)
             column = "xiang";
-        queryWrapper.eq(column, DeptId);
+        if (rank != 0)
+            queryWrapper.eq(column, DeptId);
         queryWrapper.orderByDesc("age");
         Page<People> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return jiebaoResponse.data(this.baseMapper.listPage(page, queryWrapper)).message("查询成功");
@@ -76,21 +77,36 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
-        if (people.getHlId() == null) {  //执行 身份证判断年龄
-            try {
-                Map<String, Object> map = IDCard.identityCard18(people.getIdCard());
-                people.setAge((Integer) map.get("age"));
-                people.setSex((String) map.get("sex"));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        packEntity(people);
         jiebaoResponse = super.saveOrUpdate(people) ? jiebaoResponse.okMessage("操作成功").data(people) : jiebaoResponse.failMessage("操作失败").data(people);
         return jiebaoResponse;
     }
 
-
+    private void packEntity(People people) { //封装
+        try {
+            Map<String, Object> map = IDCard.identityCard18(people.getIdCard());
+            people.setAge((Integer) map.get("age"));
+            people.setSex((String) map.get("sex"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Dept dept = deptService.getById(people.getDeptId());
+        if (dept.getRank() == 3) {
+            people.setXiang(dept.getDeptId());
+            Dept quXian = deptService.getById(dept.getParentId()); //区县级别
+            people.setQuXian(quXian.getDeptId());
+            Dept shiZhou = deptService.getById(quXian.getParentId());  //市州级别
+            people.setShi(shiZhou.getDeptId());
+        }
+        if (dept.getRank() == 2) {
+            people.setXiang(dept.getDeptId());
+            Dept shiZhou = deptService.getById(dept.getParentId()); //区县级别
+            people.setQuXian(shiZhou.getDeptId());
+        }
+        if (dept.getRank() == 1) {
+            people.setXiang(dept.getDeptId());
+        }
+    }
 
     @Override
     public JiebaoResponse lock(Integer status) {
