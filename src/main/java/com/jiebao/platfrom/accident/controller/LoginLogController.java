@@ -47,10 +47,15 @@ public class LoginLogController {
     @GetMapping("weekList")
     @ApiOperation("传入 年份  月份  得到 月内周数")
     @Log("查询组织 具体人员登录次数")
-    public JiebaoResponse weekList(Integer year, Integer month,String deptId) {
-        return loginLogService.weekList( year,  month, deptId);
+    public JiebaoResponse weekList(Integer year, Integer month, String deptId) {
+        return loginLogService.weekList(year, month, deptId);
     }
 
-
+    @GetMapping("yearLoginCount")
+    @ApiOperation("年度考核统计次数专用")
+    @Log("年度考核统计次数专用")
+    public JiebaoResponse yearLoginCount(String DeptId, Integer number, String year) {
+        return loginLogService.yearLoginCount(DeptId, number, year);
+    }
 
 }

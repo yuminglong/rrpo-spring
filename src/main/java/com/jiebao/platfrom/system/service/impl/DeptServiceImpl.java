@@ -67,10 +67,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<Dept> findDepts(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dept::getStatus, 1);
-        if (StringUtils.isNotBlank(dept.getDeptId() )) {
+        if (StringUtils.isNotBlank(dept.getDeptId())) {
             queryWrapper.lambda().eq(Dept::getParentId, dept.getDeptId());
         }
-        if (StringUtils.isNotBlank(dept.getDeptName())){
+        if (StringUtils.isNotBlank(dept.getDeptName())) {
             queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
         }
 
@@ -86,25 +86,24 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<Dept> findDeptForDept(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dept::getStatus, 1);
-        if (StringUtils.isNotBlank(dept.getDeptId() )) {
+        if (StringUtils.isNotBlank(dept.getDeptId())) {
             queryWrapper.lambda().eq(Dept::getParentId, dept.getDeptId());
         }
-        if (StringUtils.isNotBlank(dept.getDeptName())){
+        if (StringUtils.isNotBlank(dept.getDeptName())) {
             queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
         }
-        if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo())){
+        if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo())) {
             queryWrapper.lambda()
                     .ge(Dept::getCreateTime, dept.getCreateTimeFrom())
                     .le(Dept::getCreateTime, dept.getCreateTimeTo());
         }
-        if (dept.getDeptId() == null || dept.getDeptId() == "" || dept.getDeptName() ==null || dept.getDeptName() =="" || dept.getCreateTimeFrom() ==null || dept.getCreateTimeFrom() =="" ||dept.getCreateTimeTo()==null ||dept.getCreateTimeTo() ==""){
-            queryWrapper.lambda().ne(Dept::getRank,2);
-            queryWrapper.lambda().ne(Dept::getRank,3);
+        if (dept.getDeptId() == null || dept.getDeptId() == "" || dept.getDeptName() == null || dept.getDeptName() == "" || dept.getCreateTimeFrom() == null || dept.getCreateTimeFrom() == "" || dept.getCreateTimeTo() == null || dept.getCreateTimeTo() == "") {
+            queryWrapper.lambda().ne(Dept::getRank, 2);
+            queryWrapper.lambda().ne(Dept::getRank, 3);
         }
         SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
         return this.baseMapper.selectList(queryWrapper);
     }
-
 
 
     @Override
@@ -300,11 +299,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public boolean affiliate(String prentId, String chileId) {
         Dept dept = getById(chileId);
+        if (dept == null) {
+            return true;
+        }
         if (dept.getParentId().equals(prentId)) {  //属于子类
             return true;
         } else if (dept.getDeptId().equals("0")) { //直接到最高级  则 没有
             return false;
         } else {
+
             return affiliate(prentId, dept.getParentId());  //找到最优答案
         }
     }

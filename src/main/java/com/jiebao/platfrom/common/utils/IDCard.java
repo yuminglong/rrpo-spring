@@ -33,10 +33,10 @@ public class IDCard {
         int age = 0;
         // 当前月份大于用户出身的月份表示已过生日
         if (Integer.parseInt(month) <= Integer.parseInt(currentMonth)) {
-            age = Integer.parseInt(currentYear) - Integer.parseInt(year) + 1;
+            age = Integer.parseInt(currentYear) - Integer.parseInt(year) ;
         } else {
             // 当前用户还没过生日
-            age = Integer.parseInt(currentYear) - Integer.parseInt(year);
+            age = Integer.parseInt(currentYear) - Integer.parseInt(year)-1;
         }
         map.put("sex", sex);
         map.put("age", age);

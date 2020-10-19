@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -77,6 +74,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
+        if (people.getHlId() == null)
+            people.setCreatTime(new Date());
         packEntity(people);
         jiebaoResponse = super.saveOrUpdate(people) ? jiebaoResponse.okMessage("操作成功").data(people) : jiebaoResponse.failMessage("操作失败").data(people);
         return jiebaoResponse;
@@ -99,12 +98,12 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             people.setShi(shiZhou.getDeptId());
         }
         if (dept.getRank() == 2) {
-            people.setXiang(dept.getDeptId());
+            people.setQuXian(dept.getDeptId());
             Dept shiZhou = deptService.getById(dept.getParentId()); //区县级别
-            people.setQuXian(shiZhou.getDeptId());
+            people.setShi(shiZhou.getDeptId());
         }
         if (dept.getRank() == 1) {
-            people.setXiang(dept.getDeptId());
+            people.setShi(dept.getDeptId());
         }
     }
 

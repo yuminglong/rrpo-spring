@@ -19,4 +19,6 @@ public interface LoginLogService extends IService<LoginLog> {
     JiebaoResponse selectWeekCount(Integer year,Integer month);
 
     JiebaoResponse weekList(Integer year, Integer month,String deptId);
+
+    JiebaoResponse yearLoginCount(String DeptId, Integer number,String year);
 }

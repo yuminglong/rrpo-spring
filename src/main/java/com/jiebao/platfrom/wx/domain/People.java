@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -128,5 +129,7 @@ public class People implements Serializable {
      * 0 正常   1此信息是新增的  2 此信息是要删除的
      */
     private Integer status;
+
+    private Date creatTime;
 
 }
