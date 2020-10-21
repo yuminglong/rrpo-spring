@@ -6,6 +6,8 @@ import com.jiebao.platfrom.wx.domain.People;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * 服务类
@@ -17,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 public interface IPeopleService extends IService<People> {
     boolean excelImPort(MultipartFile file);
 
-    JiebaoResponse listPage(QueryRequest queryRequest, String DeptId, Integer rank);  //分页查询
+    JiebaoResponse listPage(QueryRequest queryRequest, String DeptId);  //分页查询
+
+    JiebaoResponse listExcel(String deptId,HttpServletResponse response);//导出
 
     JiebaoResponse saveOrUpdateChile(People people);
 

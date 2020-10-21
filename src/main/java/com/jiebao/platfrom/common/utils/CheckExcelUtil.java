@@ -412,19 +412,24 @@ public class CheckExcelUtil {
         for (Field filed : declaredFields
         ) {
             ExcelName annotation = filed.getAnnotation(ExcelName.class);
+            if (annotation == null)
+                continue;
             HSSFCell cell = row.createCell(cellNumber++);
             cell.setCellValue(annotation.name());
+
         }   //标题  以及表的 属性创建完毕
         int Rows = 1;
         for (Object o : list
         ) {
             HSSFRow row1 = sheet.createRow(Rows);
-            System.out.println(o);
             Class<?> aClass = o.getClass();
             Field[] declaredFields1 = aClass.getDeclaredFields();
             for (int y = 0; y < declaredFields1.length; y++) {
                 HSSFCell cell = row1.createCell(y);
                 Field field = declaredFields1[y];
+                ExcelName annotation = field.getAnnotation(ExcelName.class);
+                if (annotation == null)
+                    continue;
                 field.setAccessible(true);
                 try {
                     Object title = field.get(o);

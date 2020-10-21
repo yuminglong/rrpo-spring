@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 /**
@@ -29,12 +30,18 @@ public class PeopleController {
 
     @GetMapping("list")
     @ApiOperation("数据集合")
-    public JiebaoResponse list(QueryRequest queryRequest, String deptId, Integer rank) {
-        return peopleService.listPage(queryRequest, deptId, rank);
+    public JiebaoResponse list(QueryRequest queryRequest, String deptId) {
+        return peopleService.listPage(queryRequest, deptId);
+    }
+
+    @GetMapping("listExcel")
+    @ApiOperation("数据集合导出")
+    public JiebaoResponse listExcel(String deptId, HttpServletResponse response) {
+        return peopleService.listExcel(deptId, response);
     }
 
     @PostMapping("saveOrUpdate")
-    @ApiOperation("数据集合")
+    @ApiOperation("新增")
     public JiebaoResponse saveOrUpdate(People people) {
         return peopleService.saveOrUpdateChile(people);
     }
