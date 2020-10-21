@@ -126,10 +126,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateUser(User user) throws Exception {
         Dept dept = deptService.getDept();
         String deptId = getById(user.getUserId()).getDeptId();  //此对象原先id
-        if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
-            if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
-                return;
-        }
+        if (dept.getRank() != 0)
+            if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
+                if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
+                    return;
+            }
         // 更新用户
         user.setPassword(null);
         user.setModifyTime(new Date());
@@ -150,10 +151,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void deleteUsers(String[] userIds) throws Exception {
         Dept dept = deptService.getDept();
         String deptId = getById(userIds[0]).getDeptId();  //此对象原先id
-        if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
-            if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
-                return;
-        }
+        if (dept.getRank() != 0)
+            if (!dept.getDeptId().equals(deptId)) {//不相等则  进行查看
+                if (!deptService.affiliate(dept.getDeptId(), deptId)) //不属于
+                    return;
+            }
         // 先删除相应的缓存
         this.userManager.deleteUserRedisCache(userIds);
 

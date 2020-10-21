@@ -80,20 +80,20 @@ public class AddressController extends BaseController {
         if (ids == null) {
             throw new JiebaoException("请传入参数");
         } else {
+            Dept dept = deptService.getDept();
             boolean result = Arrays.stream(ids).allMatch(id -> {
                 Address address = null;
                 address = addressService.getById(id);
-                Dept dept = deptService.getDept();
                 Dept byId = deptService.getById(address.getDeptId());
-
-                if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-                    if (dept.getRank().equals(byId.getRank())) {
-                        return false;
+                if (dept.getRank() != 0)
+                    if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+                        if (dept.getRank().equals(byId.getRank())) {
+                            return false;
+                        }
+                        if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
+                            return false;
+                        }
                     }
-                    if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
-                        return false;
-                    }
-                }
                 addressService.removeById(id);
                 return true;
             });
@@ -113,14 +113,15 @@ public class AddressController extends BaseController {
         try {
             Dept dept = this.deptService.getDept();
             Dept byId = deptService.getById(address.getDeptId());
-            if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-                if (dept.getRank().equals(byId.getRank())){
-                    return new JiebaoResponse().failMessage("无权限新增其他组织机构");
+            if (dept.getRank() != 0)
+                if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+                    if (dept.getRank().equals(byId.getRank())) {
+                        return new JiebaoResponse().failMessage("无权限新增其他组织机构");
+                    }
+                    if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) { //不属于
+                        return new JiebaoResponse().failMessage("当前无权限新增");
+                    }
                 }
-                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())){ //不属于
-                    return new JiebaoResponse().failMessage("当前无权限新增");
-                }
-            }
             address.setStatus(1);
             this.addressService.saveOrUpdate(address);
             return new JiebaoResponse().okMessage("新增成功");
@@ -140,14 +141,15 @@ public class AddressController extends BaseController {
         try {
             Dept dept = this.deptService.getDept();
             Dept byId = deptService.getById(address.getDeptId());
-            if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
-                if (dept.getRank().equals(byId.getRank())){
-                    return new JiebaoResponse().failMessage("无权限修改其他组织机构");
+            if (dept.getRank() != 0)
+                if (!dept.getDeptId().equals(address.getDeptId())) {//不相等则  进行查看
+                    if (dept.getRank().equals(byId.getRank())) {
+                        return new JiebaoResponse().failMessage("无权限修改其他组织机构");
+                    }
+                    if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
+                        return new JiebaoResponse().failMessage("当前无权限修改");
+                    }
                 }
-                if (!deptService.affiliate(dept.getDeptId(), address.getDeptId())) {//不属于
-                    return new JiebaoResponse().failMessage("当前无权限修改");
-                }
-            }
             this.addressService.updateByKey(address);
             return new JiebaoResponse().okMessage("修改成功");
         } catch (Exception e) {
