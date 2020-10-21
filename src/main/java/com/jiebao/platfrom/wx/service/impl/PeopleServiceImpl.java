@@ -101,6 +101,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     @Override
     public JiebaoResponse saveOrUpdateChile(People people) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (deptService.getById(people.getDeptId()).getRank() != 3)
+            return jiebaoResponse.failMessage("请选择到乡镇街道");
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
         if (people.getHlId() == null)
@@ -118,9 +120,6 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         } catch (Exception e) {
             e.printStackTrace();
         }
-        people.setShi(null);
-        people.setQuXian(null);
-        people.setXiang(null);
         Dept dept = deptService.getById(people.getDeptId());
         if (dept.getRank() == 3) {
             people.setXiang(dept.getDeptId());
