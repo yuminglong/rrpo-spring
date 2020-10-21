@@ -321,13 +321,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
                 return null;
         }
         List<Dept> childrenList = new ArrayList<>();
-        //   Dept dept = getDept();
         if (prentId == null && dept.getDeptId().equals("0"))
             childrenList = getChildrenList("-1");
         else if (prentId == null)
             childrenList.add(dept);
-        else if (prentId != null)
-            childrenList.addAll(getChildrenList(prentId));
+        else if (prentId != null) {
+            List<Dept> childrenList1 = getChildrenList(prentId);
+            if (childrenList1 != null)
+                childrenList.addAll(childrenList1);
+        }
         return childrenList;
     }
 
