@@ -2,8 +2,9 @@ package com.jiebao.platfrom.wx.controller;
 
 
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
-import com.jiebao.platfrom.wx.entity.DeptLine;
+import com.jiebao.platfrom.wx.domain.DeptLine;
 import com.jiebao.platfrom.wx.service.IDeptLineService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx/dept-line")
+@Api(tags = "wx-街道绑定线路")
 public class DeptLineController {
     @Autowired
     IDeptLineService deptLineService;
@@ -42,4 +44,5 @@ public class DeptLineController {
     public JiebaoResponse delete(String[] ids) {
         return deptLineService.delete(ids);
     }
+
 }
