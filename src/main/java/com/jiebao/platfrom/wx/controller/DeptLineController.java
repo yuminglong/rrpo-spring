@@ -1,0 +1,45 @@
+package com.jiebao.platfrom.wx.controller;
+
+
+import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.wx.entity.DeptLine;
+import com.jiebao.platfrom.wx.service.IDeptLineService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * <p>
+ * 前端控制器
+ * </p>
+ *
+ * @author qta
+ * @since 2020-10-21
+ */
+@RestController
+@RequestMapping("/wx/dept-line")
+public class DeptLineController {
+    @Autowired
+    IDeptLineService deptLineService;
+
+    @GetMapping("getLine")
+    @ApiOperation("根据对应的 部门去查询 对应的 线路")
+    public JiebaoResponse getLine(String deptId) {
+        return deptLineService.getLine(deptId);
+    }
+
+    @GetMapping("add")
+    @ApiOperation("添加对象")
+    public JiebaoResponse add(DeptLine deptLine) {
+        return deptLineService.add(deptLine);
+    }
+
+    @GetMapping("delete")
+    @ApiOperation("解除关系")
+    public JiebaoResponse delete(String[] ids) {
+        return deptLineService.delete(ids);
+    }
+}

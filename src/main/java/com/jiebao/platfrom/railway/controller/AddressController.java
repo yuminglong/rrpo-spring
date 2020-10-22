@@ -184,7 +184,6 @@ public class AddressController extends BaseController {
             List<Address> addresses = this.addressService.addressList(address, request);
             for (Address addr : addresses
             ) {
-
                 if (addr.getDeptId() == null) {
                     addr.setDeptName("");
                 } else {

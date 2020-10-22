@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.utils.CheckExcelUtil;
 import com.jiebao.platfrom.common.utils.IDCard;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -44,7 +46,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     private static int lock = 1;//默认上锁
 
     @Override
-    public JiebaoResponse listPage(QueryRequest queryRequest, String DeptId, Integer rank) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String DeptId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         QueryWrapper<People> queryWrapper = new QueryWrapper<>();
         Dept dept = null;
@@ -54,7 +56,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         } else {
             dept = deptService.getById(DeptId);
         }
-        rank = dept.getRank();
+        Integer rank = dept.getRank();
         String column = "";
         if (rank == 1)
             column = "shi";
@@ -70,8 +72,37 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     }
 
     @Override
+    public JiebaoResponse listExcel(String deptId, HttpServletResponse response) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        QueryWrapper<People> queryWrapper = new QueryWrapper<>();
+        Dept dept = null;
+        if (deptId == null) {
+            dept = deptService.getDept();
+            deptId = dept.getDeptId();
+        } else {
+            dept = deptService.getById(deptId);
+        }
+        Integer rank = dept.getRank();
+        String column = "";
+        if (rank == 1)
+            column = "shi";
+        if (rank == 2)
+            column = "qu_xian";
+        if (rank == 3)
+            column = "xiang";
+        if (rank != 0)
+            queryWrapper.eq(column, deptId);
+        queryWrapper.orderByDesc("age");
+        List<People> lists = this.baseMapper.lists(queryWrapper);
+        CheckExcelUtil.exportList(response, lists, People.class, null);
+        return jiebaoResponse.message("查询成功");
+    }
+
+    @Override
     public JiebaoResponse saveOrUpdateChile(People people) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (deptService.getById(people.getDeptId()).getRank() != 3)
+            return jiebaoResponse.failMessage("请选择到乡镇街道");
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
         if (people.getHlId() == null)

@@ -316,6 +316,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<Dept> queryDeptChile(String prentId) {
         Dept dept = getDept();
+        if (dept.getParentId() != null) {
+            Dept byId = deptMapper.getById(dept.getParentId());
+            if (byId != null) {
+                dept.setParentDeptName(byId.getDeptName());
+            }
+        }
         if (!dept.getDeptId().equals(prentId) && prentId != null) {//不相等则  进行查看
             if (!affiliate(dept.getDeptId(), prentId)) //不属于
                 return null;
