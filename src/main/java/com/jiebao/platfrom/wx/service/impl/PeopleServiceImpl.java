@@ -141,7 +141,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         if (dept.getRank() == 1) {
             people.setShi(dept.getDeptId());
         }
-        people.setLuDuan(people.getLu1() + people.getLu2() + "+" + people.getLu3() + "-" + people.getLu1() + people.getLu4() + "+" + people.getLu5());
+        if (people.getLu1() != null)
+            people.setLuDuan(people.getLu1() + people.getLu2() + "+" + people.getLu3() + "-" + people.getLu1() + people.getLu4() + "+" + people.getLu5());
         people.setLuNumber(people.getLu2());
     }
 
