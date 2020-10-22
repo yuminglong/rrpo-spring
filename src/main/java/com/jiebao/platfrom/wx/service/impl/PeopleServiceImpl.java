@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.common.utils.CheckExcelUtil;
 import com.jiebao.platfrom.common.utils.IDCard;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -21,13 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     private static int lock = 1;//默认上锁
 
     @Override
-    public JiebaoResponse listPage(QueryRequest queryRequest, String DeptId, Integer rank) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String DeptId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         QueryWrapper<People> queryWrapper = new QueryWrapper<>();
         Dept dept = null;
@@ -57,7 +56,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         } else {
             dept = deptService.getById(DeptId);
         }
-        rank = dept.getRank();
+        Integer rank = dept.getRank();
         String column = "";
         if (rank == 1)
             column = "shi";
@@ -65,32 +64,79 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             column = "qu_xian";
         if (rank == 3)
             column = "xiang";
-        queryWrapper.eq(column, DeptId);
+        if (rank != 0)
+            queryWrapper.eq(column, DeptId);
         queryWrapper.orderByDesc("age");
         Page<People> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return jiebaoResponse.data(this.baseMapper.listPage(page, queryWrapper)).message("查询成功");
     }
 
     @Override
+    public JiebaoResponse listExcel(String deptId, HttpServletResponse response) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        QueryWrapper<People> queryWrapper = new QueryWrapper<>();
+        Dept dept = null;
+        if (deptId == null) {
+            dept = deptService.getDept();
+            deptId = dept.getDeptId();
+        } else {
+            dept = deptService.getById(deptId);
+        }
+        Integer rank = dept.getRank();
+        String column = "";
+        if (rank == 1)
+            column = "shi";
+        if (rank == 2)
+            column = "qu_xian";
+        if (rank == 3)
+            column = "xiang";
+        if (rank != 0)
+            queryWrapper.eq(column, deptId);
+        queryWrapper.orderByDesc("age");
+        List<People> lists = this.baseMapper.lists(queryWrapper);
+        CheckExcelUtil.exportList(response, lists, People.class, null);
+        return jiebaoResponse.message("查询成功");
+    }
+
+    @Override
     public JiebaoResponse saveOrUpdateChile(People people) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (deptService.getById(people.getDeptId()).getRank() != 3)
+            return jiebaoResponse.failMessage("请选择到乡镇街道");
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
-        if (people.getHlId() == null) {  //执行 身份证判断年龄
-            try {
-                Map<String, Object> map = IDCard.identityCard18(people.getIdCard());
-                people.setAge((Integer) map.get("age"));
-                people.setSex((String) map.get("sex"));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        if (people.getHlId() == null)
+            people.setCreatTime(new Date());
+        packEntity(people);
         jiebaoResponse = super.saveOrUpdate(people) ? jiebaoResponse.okMessage("操作成功").data(people) : jiebaoResponse.failMessage("操作失败").data(people);
         return jiebaoResponse;
     }
 
-
+    private void packEntity(People people) { //封装
+        try {
+            Map<String, Object> map = IDCard.identityCard18(people.getIdCard());
+            people.setAge((Integer) map.get("age"));
+            people.setSex((String) map.get("sex"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Dept dept = deptService.getById(people.getDeptId());
+        if (dept.getRank() == 3) {
+            people.setXiang(dept.getDeptId());
+            Dept quXian = deptService.getById(dept.getParentId()); //区县级别
+            people.setQuXian(quXian.getDeptId());
+            Dept shiZhou = deptService.getById(quXian.getParentId());  //市州级别
+            people.setShi(shiZhou.getDeptId());
+        }
+        if (dept.getRank() == 2) {
+            people.setQuXian(dept.getDeptId());
+            Dept shiZhou = deptService.getById(dept.getParentId()); //区县级别
+            people.setShi(shiZhou.getDeptId());
+        }
+        if (dept.getRank() == 1) {
+            people.setShi(dept.getDeptId());
+        }
+    }
 
     @Override
     public JiebaoResponse lock(Integer status) {

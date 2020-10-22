@@ -412,19 +412,25 @@ public class CheckExcelUtil {
         for (Field filed : declaredFields
         ) {
             ExcelName annotation = filed.getAnnotation(ExcelName.class);
+            if (annotation == null)
+                continue;
             HSSFCell cell = row.createCell(cellNumber++);
             cell.setCellValue(annotation.name());
+
         }   //标题  以及表的 属性创建完毕
         int Rows = 1;
         for (Object o : list
         ) {
             HSSFRow row1 = sheet.createRow(Rows);
-            System.out.println(o);
             Class<?> aClass = o.getClass();
             Field[] declaredFields1 = aClass.getDeclaredFields();
+            int cellNumbers = 0;//记录列数
             for (int y = 0; y < declaredFields1.length; y++) {
-                HSSFCell cell = row1.createCell(y);
                 Field field = declaredFields1[y];
+                ExcelName annotation = field.getAnnotation(ExcelName.class);
+                if (annotation == null)
+                    continue;
+                HSSFCell cell = row1.createCell(cellNumbers++);
                 field.setAccessible(true);
                 try {
                     Object title = field.get(o);
@@ -432,6 +438,8 @@ public class CheckExcelUtil {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
+                if (y == declaredFields1.length - 1)
+                    cellNumbers = 0;
             }
             Rows++;
         }

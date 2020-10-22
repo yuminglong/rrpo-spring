@@ -299,11 +299,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public boolean affiliate(String prentId, String chileId) {
         Dept dept = getById(chileId);
+        if (dept == null) {
+            return true;
+        }
         if (dept.getParentId().equals(prentId)) {  //属于子类
             return true;
         } else if (dept.getDeptId().equals("0")) { //直接到最高级  则 没有
             return false;
         } else {
+
             return affiliate(prentId, dept.getParentId());  //找到最优答案
         }
     }
@@ -323,13 +327,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
                 return null;
         }
         List<Dept> childrenList = new ArrayList<>();
-        //   Dept dept = getDept();
         if (prentId == null && dept.getDeptId().equals("0"))
             childrenList = getChildrenList("-1");
         else if (prentId == null)
             childrenList.add(dept);
-        else if (prentId != null)
-            childrenList.addAll(getChildrenList(prentId));
+        else if (prentId != null) {
+            List<Dept> childrenList1 = getChildrenList(prentId);
+            if (childrenList1 != null)
+                childrenList.addAll(childrenList1);
+        }
         return childrenList;
     }
 

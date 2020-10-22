@@ -8,6 +8,7 @@ import java.util.Date;
 @TableName("sys_login_log")
 @Data
 public class LoginLog {
+    private static final long serialVersionUID = 1L;
     /**
      * 用户 ID
      */

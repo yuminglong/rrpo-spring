@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,6 +13,7 @@ import com.jiebao.platfrom.system.dao.LoginLogMapper;
 import com.jiebao.platfrom.system.domain.*;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.LoginLogService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,12 +24,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service("loginLogService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> implements LoginLogService {
     @Autowired
     DeptService deptService;
+
 
     @Override
     @Transactional
@@ -44,20 +48,22 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     @Override
     public JiebaoResponse lists(String deptParentId, Integer year, Integer month) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        Dept deptMe = deptService.getById(deptParentId);
         Integer place = null;  //名次
-        if (deptParentId.equals("0")) {
+        if (deptMe.getRank() == 0) {
             place = 1;  //省级
-        } else if (deptService.getById(deptParentId).getParentId().equals("0")) {
+        } else if (deptMe.getRank() == 1) {
             //二级
             place = 2;  //市级
-        } else if ((deptService.getById(deptService.getById(deptParentId).getParentId()).getParentId()).equals("0")) {
+        } else if (deptMe.getRank() == 2) {
             place = 3;//县级    //查询时  须精确到人-
         } else {
             return jiebaoResponse.failMessage("查询组织溢出");
         }
+        String yearMonth = year + "-" + month;
         List<Dept> childrenList = deptService.getChildrenList(deptParentId);//得到下面的子集
         List<LoginCount> listLoginCount = new ArrayList<>();
-        listLoginCount.add(this.baseMapper.loginCountPrent(deptParentId));//把本级显示出来
+        listLoginCount.add(this.baseMapper.loginCountPrent(deptParentId, yearMonth));//把本级显示出来
         for (Dept dept : childrenList
         ) {
             String deptId = dept.getDeptId();//部门id
@@ -67,6 +73,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             list.add(deptId);
             deptService.getAllIds(deptS, list);
             QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
+            queryWrapper.likeRight("login_time", yearMonth);
             queryWrapper.in("dept_id", list);
             listLoginCount.add(this.baseMapper.loginCount(queryWrapper, dept.getDeptName(), deptId));
         }
@@ -98,7 +105,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         return jiebaoResponse.data(data(year, month)).okMessage("查询成功");
     }
 
-    private List<Week> data(Integer year, Integer month) {
+    private List<Week> data(Integer year, Integer month) {   //得到  月内不同的周
         Calendar calendar = Calendar.getInstance();//日历
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
@@ -150,5 +157,40 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
         return jiebaoResponse.okMessage("查询完毕").data(list);
     }
 
+    @Override
+    public JiebaoResponse yearLoginCount(String DeptId, Integer number, String year) {
+        long s = System.currentTimeMillis();
+        List<Dept> childrenList = deptService.getChildrenList(DeptId);  //所有区县
+        List<LogYearCout> list = new ArrayList<>();
+        for (Dept dept : childrenList
+        ) {
+           packLogin(dept.getDeptId(),dept.getDeptName(),number,year,list);
+        }
+        long e = System.currentTimeMillis();
+        System.out.println(e - s);
+        return new JiebaoResponse().data(list).okMessage("查询成功");
+    }
 
+    private void packLogin(String deptId, String deptName, Integer number, String year, List<LogYearCout> list) {  //区县  达标月份的统计
+        QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<>();
+        LogYearCout logYearCout = new LogYearCout();
+        logYearCout.setDeptName(deptName);
+        logYearCout.setGreater(0);
+        logYearCout.setLess(0);
+        queryWrapper.eq("dept_id", deptId);
+        for (int i = 1; i <= 12; i++) {
+            String yearS = year + "-";
+            if (i >= 10)
+                yearS += i;
+            else
+                yearS = yearS + "0" + i;
+            QueryWrapper<LoginLog> clone = queryWrapper.clone();
+            clone.likeRight("login_time", yearS);
+            if (count(clone) >= number)
+                logYearCout.setGreater(logYearCout.getGreater() + 1);
+            else
+                logYearCout.setLess(logYearCout.getLess() + 1);
+        }
+        list.add(logYearCout);
+    }
 }

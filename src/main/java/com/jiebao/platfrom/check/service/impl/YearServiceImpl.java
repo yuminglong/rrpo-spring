@@ -94,7 +94,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         List<Dept> childrenList = deptService.getChildrenList("0");
         for (Dept dept : childrenList
         ) {
-            if (!dept.getDeptName().contains("公安处")) {
+            if (dept.getDeptName().contains("市")) {
                 for (MenusYear m : menusYearList
                 ) {
                     if (gradeMapper.exist(yearId, dept.getDeptId(), m.getMenusYearId()) != null) //判断是否绑定已经

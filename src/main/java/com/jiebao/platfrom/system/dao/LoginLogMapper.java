@@ -54,6 +54,6 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
     @Select("select * from sys_login_log ${ew.customSqlSegment}")
     List<LoginLog> loginCountUser(Page page, @Param("ew") QueryWrapper<LoginLog> ew);
 
-    @Select("select count(1) as number,(select dept_name from sys_dept where dept_id=#{deptId}) as deptName,#{deptId} as deptId from sys_login_log where dept_id=#{deptId}")
-    LoginCount loginCountPrent(@Param("deptId") String deptId);//
+    @Select("select count(1) as number,(select dept_name from sys_dept where dept_id=#{deptId}) as deptName,#{deptId} as deptId from sys_login_log where dept_id=#{deptId} and login_time like '${yearMonth}%'")
+    LoginCount loginCountPrent(@Param("deptId") String deptId, String yearMonth);//
 }
