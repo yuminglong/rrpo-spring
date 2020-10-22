@@ -51,4 +51,7 @@ public class Dept implements Serializable {
     @TableField(exist = false)
     private String [] children;
 
+    @TableField(exist = false)
+    private String parentDeptName;
+
 }

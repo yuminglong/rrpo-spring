@@ -19,7 +19,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("select * from sys_user ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "deptName",column = "dept_id",one = @One(select="com.jiebao.platfrom.system.dao.DeptMapper.getByName"))
+            @Result(property = "deptName", column = "dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.getByName"))
     })
     IPage<User> queryList(Page<User> page, @Param("ew") QueryWrapper<User> ew);
 
@@ -63,5 +63,18 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("UPDATE sys_user SET dept_id = #{deptId} WHERE user_id = #{userId}")
     void updateDept(String deptId, String userId);
+
+    @Select("SELECT * FROM `sys_user` WHERE dept_id is null")
+    List<User> nullList();
+
+    @Update("UPDATE sys_user SET dept_id = #{deptId} WHERE username =#{userName}")
+     boolean updateNew(String deptId , String userName);
+
+    /**
+     * 查询导入部分角色后剩下哪些用户还没有角色
+     * @return
+     */
+    @Select("SELECT * FROM sys_user WHERE user_id not in (SELECT u.user_id FROM `sys_user` u,sys_user_role r WHERE u.user_id =r.user_id)")
+    List<User> remainList();
 
 }

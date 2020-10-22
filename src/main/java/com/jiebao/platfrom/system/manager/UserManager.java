@@ -46,10 +46,9 @@ public class UserManager {
      * @return 用户基本信息
      */
     public User getUser(String username) {
-//        return JiebaoUtil.selectCacheByTemplate(
-//                () -> this.cacheService.getUser(username),
-//                () -> this.userService.findByName(username));
-        return this.userService.findByName(username);
+        return JiebaoUtil.selectCacheByTemplate(
+                () -> this.cacheService.getUser(username),
+                () -> this.userService.findByName(username));
     }
 
     /**
@@ -59,10 +58,9 @@ public class UserManager {
      * @return 角色集合
      */
     public Set<String> getUserRoles(String username) {
-//        List<Role> roleList = JiebaoUtil.selectCacheByTemplate(
-//                () -> this.cacheService.getRoles(username),
-//                () -> this.roleService.findUserRole(username));
-        List<Role> roleList = this.roleService.findUserRole(username);
+        List<Role> roleList = JiebaoUtil.selectCacheByTemplate(
+                () -> this.cacheService.getRoles(username),
+                () -> this.roleService.findUserRole(username));
         return roleList.stream().map(Role::getRoleName).collect(Collectors.toSet());
     }
 
@@ -73,10 +71,9 @@ public class UserManager {
      * @return 权限集合
      */
     public Set<String> getUserPermissions(String username) {
-//        List<Menu> permissionList = JiebaoUtil.selectCacheByTemplate(
-//                () -> this.cacheService.getPermissions(username),
-//                () -> this.menuService.findUserPermissions(username));
-        List<Menu> permissionList = this.menuService.findUserPermissions(username);
+        List<Menu> permissionList = JiebaoUtil.selectCacheByTemplate(
+                () -> this.cacheService.getPermissions(username),
+                () -> this.menuService.findUserPermissions(username));
         return permissionList.stream().map(Menu::getPerms).collect(Collectors.toSet());
     }
 
@@ -110,10 +107,9 @@ public class UserManager {
      * @return 前端系统个性化配置
      */
     public UserConfig getUserConfig(String userId) {
-//        return JiebaoUtil.selectCacheByTemplate(
-//                () -> this.cacheService.getUserConfig(userId),
-//                () -> this.userConfigService.findByUserId(userId));
-        return this.userConfigService.findByUserId(userId);
+        return JiebaoUtil.selectCacheByTemplate(
+                () -> this.cacheService.getUserConfig(userId),
+                () -> this.userConfigService.findByUserId(userId));
     }
 
     /**
@@ -122,16 +118,16 @@ public class UserManager {
      * @param user user
      */
     public void loadUserRedisCache(User user) throws Exception {
-//        if (null != user) {
-//            // 缓存用户
-//            cacheService.saveUser(user.getUsername());
-//            // 缓存用户角色
-//            cacheService.saveRoles(user.getUsername());
-//            // 缓存用户权限
-//            cacheService.savePermissions(user.getUsername());
-//            // 缓存用户个性化配置
-//            cacheService.saveUserConfigs(String.valueOf(user.getUserId()));
-//        }
+        if (null != user) {
+            // 缓存用户
+            cacheService.saveUser(user.getUsername());
+            // 缓存用户角色
+            cacheService.saveRoles(user.getUsername());
+            // 缓存用户权限
+            cacheService.savePermissions(user.getUsername());
+            // 缓存用户个性化配置
+            cacheService.saveUserConfigs(String.valueOf(user.getUserId()));
+        }
     }
 
     /**
@@ -140,15 +136,15 @@ public class UserManager {
      * @param userIds userIds
      */
     public void loadUserPermissionRoleRedisCache(List<String> userIds) throws Exception {
-//        for (String userId : userIds) {
-//            User user = userService.getById(userId);
-//            // 缓存用户角色
-//            if (null != user) {
-//                cacheService.saveRoles(user.getUsername());
-//                // 缓存用户权限
-//                cacheService.savePermissions(user.getUsername());
-//            }
-//        }
+        for (String userId : userIds) {
+            User user = userService.getById(userId);
+            // 缓存用户角色
+            if (null != user) {
+                cacheService.saveRoles(user.getUsername());
+                // 缓存用户权限
+                cacheService.savePermissions(user.getUsername());
+            }
+        }
     }
 
     /**
@@ -157,15 +153,15 @@ public class UserManager {
      * @param userIds userIds
      */
     public void deleteUserRedisCache(String... userIds) throws Exception {
-//        for (String userId : userIds) {
-//            User user = userService.getById(userId);
-//            if (user != null) {
-//                cacheService.deleteUser(user.getUsername());
-//                cacheService.deleteRoles(user.getUsername());
-//                cacheService.deletePermissions(user.getUsername());
-//            }
-//            cacheService.deleteUserConfigs(userId);
-//        }
+        for (String userId : userIds) {
+            User user = userService.getById(userId);
+            if (user != null) {
+                cacheService.deleteUser(user.getUsername());
+                cacheService.deleteRoles(user.getUsername());
+                cacheService.deletePermissions(user.getUsername());
+            }
+            cacheService.deleteUserConfigs(userId);
+        }
     }
 
 }
