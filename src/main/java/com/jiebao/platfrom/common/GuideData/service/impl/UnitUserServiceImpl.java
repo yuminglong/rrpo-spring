@@ -6,9 +6,12 @@ import com.jiebao.platfrom.common.GuideData.dao.UnituserMapper;
 import com.jiebao.platfrom.common.GuideData.domain.Unituser;
 import com.jiebao.platfrom.common.GuideData.service.UnitUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service("UnitUserService")
@@ -16,5 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 @DS("old")
 public class UnitUserServiceImpl extends ServiceImpl<UnituserMapper, Unituser> implements UnitUserService {
 
+    @Autowired
+    private  UnituserMapper unituserMapper;
 
+    @Override
+    public List<Unituser> selectNew() {
+        return unituserMapper.selectNew();
+    }
+
+    @Override
+    public Unituser selectName(String userName) {
+        return unituserMapper.selectName(userName);
+    }
 }

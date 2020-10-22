@@ -260,4 +260,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         lambdaQueryWrapper.eq(User::getType, 1);
         return this.baseMapper.selectOne(lambdaQueryWrapper);
     }
+
+    @Override
+    public List<User> nullList() {
+        return userMapper.nullList();
+    }
 }

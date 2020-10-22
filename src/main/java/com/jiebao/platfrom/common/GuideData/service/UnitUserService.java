@@ -13,6 +13,8 @@ import java.util.Map;
 
 public interface UnitUserService extends IService<Unituser> {
 
+    List<Unituser> selectNew();
 
+    Unituser selectName(String userName);
 
 }
