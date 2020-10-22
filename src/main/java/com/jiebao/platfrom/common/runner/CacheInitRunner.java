@@ -38,14 +38,14 @@ public class CacheInitRunner implements ApplicationRunner {
             log.info("Redis连接中 ······");
             cacheService.testConnect();
 
-            log.info("缓存初始化 ······");
+//            log.info("缓存初始化 ······");
 //            log.info("缓存用户数据 ······");
 //            List<User> list = this.userService.list();
 //            for (User user : list) {
 //                userManager.loadUserRedisCache(user);
 //            }
-            log.info("缓存组织机构 ······");
-            cacheService.saveDept();
+//            log.info("缓存组织机构 ······");
+//            cacheService.saveDept();
 
             log.info("缓存加载完成 ······");
         } catch (Exception e) {

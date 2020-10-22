@@ -2,14 +2,18 @@ package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
-import com.jiebao.platfrom.wx.entity.DeptLine;
-import com.jiebao.platfrom.wx.mapper.DeptLineMapper;
+import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.wx.dao.DeptLineMapper;
+import com.jiebao.platfrom.wx.domain.DeptLine;
 import com.jiebao.platfrom.wx.service.IDeptLineService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -22,17 +26,30 @@ import java.util.Arrays;
 @Service
 public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> implements IDeptLineService {
 
+    @Autowired
+    DeptService deptService;
+
     @Override
     public JiebaoResponse getLine(String deptId) {
         QueryWrapper<DeptLine> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("dept_id", deptId);
-        return new JiebaoResponse().data(list(queryWrapper)).okMessage("查询成功");
+        if (deptId == null) {
+            deptId = deptService.getDept().getDeptId();//当前登陆人
+        }
+        List<String> ids = new ArrayList<>();  //参数存储
+        ids.add(deptId);
+        List<String> list = new ArrayList<>();//  附属 id存储
+        deptService.getAllIds(ids, list);
+        queryWrapper.in("dept_id", list);
+        queryWrapper.groupBy("line_id");
+        return new JiebaoResponse().data(this.baseMapper.queryList(queryWrapper)).okMessage("查询成功");
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse add(DeptLine deptLine) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (deptService.getById(deptLine.getDeptId()).getRank() != 3)
+            return jiebaoResponse.failMessage("选择组织机构必须是乡镇街道级别");
         return save(deptLine) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败").data(deptLine);
     }
 
