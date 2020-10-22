@@ -74,8 +74,12 @@ public class People implements Serializable {
     /**
      * 线路
      */
-    @ExcelName(name = "线路")
+
     private String line;
+    @ExcelName(name = "线路")
+    @TableField(exist = false)
+    @ApiModelProperty(value = "不用管 展示用的")
+    private String lineName;
 
     /**
      * 名字
@@ -119,6 +123,19 @@ public class People implements Serializable {
     @ExcelName(name = "责任路段")
     private String luDuan;
 
+    private Integer luNumber;  //编号
+
+    @TableField(exist = false)
+    private String lu1;   //编号  K
+    @TableField(exist = false)
+    private Integer lu2;  // 163
+    @TableField(exist = false)
+    private Integer lu3;  //多少米处
+    @TableField(exist = false)
+    private Integer lu4;//164
+    @TableField(exist = false)
+    private Integer lu5;//多少米处
+  //最后组合  k163+500-k164+300
     /**
      * 电话号码
      */
@@ -146,8 +163,10 @@ public class People implements Serializable {
     /**
      * 0 正常   1此信息是新增的  2 此信息是要删除的
      */
+    @ApiModelProperty(value = "0代表信息正常  1 刚是新增的  2 刚修改的  3是刚删除  4真正执行逻辑删除以后不再用",example = "2")
     private Integer status;
 
     private Date creatTime;
+
 
 }

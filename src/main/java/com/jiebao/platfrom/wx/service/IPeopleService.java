@@ -19,13 +19,15 @@ import javax.servlet.http.HttpServletResponse;
 public interface IPeopleService extends IService<People> {
     boolean excelImPort(MultipartFile file);
 
-    JiebaoResponse listPage(QueryRequest queryRequest, String DeptId);  //分页查询
+    JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId,Integer status);  //分页查询
 
-    JiebaoResponse listExcel(String deptId,HttpServletResponse response);//导出
+    JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status);//导出
 
     JiebaoResponse saveOrUpdateChile(People people);
 
     JiebaoResponse lock(Integer status);  //上锁 解锁
 
     JiebaoResponse checkLock();
+
+    JiebaoResponse confirm(String[] ids,Integer status);
 }

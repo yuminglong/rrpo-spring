@@ -30,14 +30,14 @@ public class PeopleController {
 
     @GetMapping("list")
     @ApiOperation("数据集合")
-    public JiebaoResponse list(QueryRequest queryRequest, String deptId) {
-        return peopleService.listPage(queryRequest, deptId);
+    public JiebaoResponse list(QueryRequest queryRequest, String deptId, String LineId, Integer status) {
+        return peopleService.listPage(queryRequest, deptId, LineId, status);
     }
 
     @GetMapping("listExcel")
     @ApiOperation("数据集合导出")
-    public JiebaoResponse listExcel(String deptId, HttpServletResponse response) {
-        return peopleService.listExcel(deptId, response);
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status) {
+        return peopleService.listExcel(response, deptId, lineId, status);
     }
 
     @PostMapping("saveOrUpdate")
@@ -64,4 +64,11 @@ public class PeopleController {
     public JiebaoResponse checkLock() {
         return peopleService.checkLock();
     }
+
+    @GetMapping("confirm")
+    @ApiOperation("变更查看 确认")
+    public JiebaoResponse confirm(String[] ids, Integer status) {
+        return peopleService.confirm(ids, status);
+    }
+
 }

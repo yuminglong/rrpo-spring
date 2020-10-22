@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +34,7 @@ public class DeptLineController {
         return deptLineService.getLine(deptId);
     }
 
-    @GetMapping("add")
+    @PostMapping("add")
     @ApiOperation("添加对象")
     public JiebaoResponse add(DeptLine deptLine) {
         return deptLineService.add(deptLine);

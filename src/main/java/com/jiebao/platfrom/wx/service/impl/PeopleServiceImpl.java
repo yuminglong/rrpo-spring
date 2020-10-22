@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -13,6 +14,7 @@ import com.jiebao.platfrom.wx.domain.People;
 import com.jiebao.platfrom.wx.dao.PeopleMapper;
 import com.jiebao.platfrom.wx.service.IPeopleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -20,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -46,34 +49,21 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     private static int lock = 1;//默认上锁
 
     @Override
-    public JiebaoResponse listPage(QueryRequest queryRequest, String DeptId) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        QueryWrapper<People> queryWrapper = new QueryWrapper<>();
-        Dept dept = null;
-        if (DeptId == null) {
-            dept = deptService.getDept();
-            DeptId = dept.getDeptId();
-        } else {
-            dept = deptService.getById(DeptId);
-        }
-        Integer rank = dept.getRank();
-        String column = "";
-        if (rank == 1)
-            column = "shi";
-        if (rank == 2)
-            column = "qu_xian";
-        if (rank == 3)
-            column = "xiang";
-        if (rank != 0)
-            queryWrapper.eq(column, DeptId);
-        queryWrapper.orderByDesc("age");
         Page<People> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return jiebaoResponse.data(this.baseMapper.listPage(page, queryWrapper)).message("查询成功");
+        return jiebaoResponse.data(this.baseMapper.listPage(page, packQueryWra(deptId, LineId, status))).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse listExcel(String deptId, HttpServletResponse response) {
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status));
+        CheckExcelUtil.exportList(response, lists, People.class, null);
+        return jiebaoResponse.message("查询成功");
+    }
+
+    private QueryWrapper<People> packQueryWra(String deptId, String lineId, Integer status) {
         QueryWrapper<People> queryWrapper = new QueryWrapper<>();
         Dept dept = null;
         if (deptId == null) {
@@ -92,25 +82,40 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             column = "xiang";
         if (rank != 0)
             queryWrapper.eq(column, deptId);
-        queryWrapper.orderByDesc("age");
-        List<People> lists = this.baseMapper.lists(queryWrapper);
-        CheckExcelUtil.exportList(response, lists, People.class, null);
-        return jiebaoResponse.message("查询成功");
+        if (StringUtils.isNotBlank(lineId))
+            queryWrapper.eq("line", lineId);
+        queryWrapper.eq("status", status);
+        queryWrapper.orderByDesc("lu_number");
+        return queryWrapper;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse saveOrUpdateChile(People people) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        if (deptService.getById(people.getDeptId()).getRank() != 3)
+        if (deptService.getById(people.getDeptId()).getRank() != 3)  //必须精确到乡镇
             return jiebaoResponse.failMessage("请选择到乡镇街道");
         if (isNotLock())
             return jiebaoResponse.failMessage("时间锁定不可更改");
-        if (people.getHlId() == null)
+        if (people.getHlId() == null) {
             people.setCreatTime(new Date());
+            people.setStatus(1);
+        } else {   //修改   如果 改身份证号码  或者名字 等同 删除  在新增一个
+            People peopleOld = getById(people.getHlId());  //数据库的对象
+            if ((!people.getName().equals(peopleOld.getName())) || (!people.getIdCard().equals(peopleOld.getIdCard()))) { //有一个修改则视为  新增删减人数
+                peopleOld.setStatus(3);
+                updateById(peopleOld);  //老数据定义为将要删除的
+                people.setHlId(null);
+                people.setStatus(1); //新数据 定义为 添加的
+                save(people);
+            } else
+                updateById(people.setStatus(2));//定义为 修改的
+        }
         packEntity(people);
         jiebaoResponse = super.saveOrUpdate(people) ? jiebaoResponse.okMessage("操作成功").data(people) : jiebaoResponse.failMessage("操作失败").data(people);
         return jiebaoResponse;
     }
+
 
     private void packEntity(People people) { //封装
         try {
@@ -136,6 +141,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         if (dept.getRank() == 1) {
             people.setShi(dept.getDeptId());
         }
+        people.setLuDuan(people.getLu1() + people.getLu2() + "+" + people.getLu3() + "-" + people.getLu1() + people.getLu4() + "+" + people.getLu5());
+        people.setLuNumber(people.getLu2());
     }
 
     @Override
@@ -145,16 +152,32 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         if (isNotLock())
             return false;
-        return super.removeByIds(idList);
+        UpdateWrapper<People> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("hl_id", idList);
+        updateWrapper.set("status", 3);//提示将要删除的
+        return update(updateWrapper);
     }
 
     @Override
     public JiebaoResponse checkLock() {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         return isNotLock() ? jiebaoResponse.okMessage("状态锁定") : jiebaoResponse.failMessage("锁定解除");
+    }
+
+    @Override
+    public JiebaoResponse confirm(String[] ids, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        UpdateWrapper<People> updateWrapper = new UpdateWrapper<>();
+        if (status == 3)
+            updateWrapper.lambda().set(People::getStatus, 4);
+        else
+            updateWrapper.lambda().set(People::getStatus, null);
+        updateWrapper.lambda().in(People::getHlId, Arrays.asList(ids));
+        return update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
     }
 
     private boolean isNotLock() { //判断当前是否上锁

@@ -48,6 +48,7 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse add(DeptLine deptLine) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        deptLine.setDeptId(deptService.getDept().getDeptId());
         if (deptService.getById(deptLine.getDeptId()).getRank() != 3)
             return jiebaoResponse.failMessage("选择组织机构必须是乡镇街道级别");
         return save(deptLine) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败").data(deptLine);
