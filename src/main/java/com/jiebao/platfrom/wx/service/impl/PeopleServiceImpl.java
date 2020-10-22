@@ -175,7 +175,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         if (status == 3)
             updateWrapper.lambda().set(People::getStatus, 4);
         else
-            updateWrapper.lambda().set(People::getStatus, null);
+            updateWrapper.lambda().set(People::getStatus, 5);
         updateWrapper.lambda().in(People::getHlId, Arrays.asList(ids));
         return update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
     }

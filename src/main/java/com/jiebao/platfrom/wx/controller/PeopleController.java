@@ -34,7 +34,7 @@ public class PeopleController {
         return peopleService.listPage(queryRequest, deptId, LineId, status);
     }
 
-    @GetMapping("listExcel")
+    @PostMapping("listExcel")
     @ApiOperation("数据集合导出")
     public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status) {
         return peopleService.listExcel(response, deptId, lineId, status);
