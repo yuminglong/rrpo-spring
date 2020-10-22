@@ -92,7 +92,6 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         map2.put("field_name",dict.getFieldName());
         List<Dict> dictes = dictMapper.selectByMap(map2);
         if (dicts.size()>0 || dictes.size()>0){
-            System.out.println(dicts.size()  +"---------"+dictes.size());
            return new JiebaoResponse().failMessage("字段名重复");
         }
         else {

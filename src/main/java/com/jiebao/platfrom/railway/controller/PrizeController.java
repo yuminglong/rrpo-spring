@@ -517,7 +517,8 @@ public class PrizeController extends BaseController {
         if (moneyType == 0) {
             for (Prize p :
                     records) {
-                testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent()});
+                String[] split = p.getPlace().split(",");
+                testList.add(new String[]{p.getNumber(), split[0], p.getContent()});
             }
             //模板文件地址
             //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
@@ -545,9 +546,11 @@ public class PrizeController extends BaseController {
                     records) {
                 PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
                 if (prizeOpinion != null) {
-                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(), (prizeOpinion.getMoney() + "元")});
+                    String[] split = p.getPlace().split(",");
+                    testList.add(new String[]{p.getNumber(), split[0], p.getContent(), (prizeOpinion.getMoney() + "元")});
                 } else {
-                    testList.add(new String[]{p.getNumber(), p.getPlace(), p.getContent(), " "});
+                    String[] split = p.getPlace().split(",");
+                    testList.add(new String[]{p.getNumber(), split[0], p.getContent(), " "});
                 }
 
             }
