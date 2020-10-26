@@ -37,7 +37,6 @@ public class Accident implements Serializable {
     private String accidentId;
 
 
-
     /**
      * 事故发生时间
      */
@@ -49,7 +48,6 @@ public class Accident implements Serializable {
      */
     @ApiModelProperty(value = "发生城市", example = "哈哈")
     private String cityCsId;
-
 
 
     @TableField(exist = false)
@@ -146,6 +144,9 @@ public class Accident implements Serializable {
      */
     @ApiModelProperty(value = "性别", example = "哈哈")
     private String sex;
+
+    @TableField(exist = false)
+    private Dict sexDict;
 
     /**
      * 身份判断

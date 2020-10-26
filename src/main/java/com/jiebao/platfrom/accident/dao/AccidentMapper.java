@@ -27,6 +27,7 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictXl", column = "line_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictCwd", column = "train_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "sexDict", column = "sex", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
