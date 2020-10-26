@@ -36,8 +36,9 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
             deptId = deptService.getDept().getDeptId();//当前登陆人
         }
         List<String> ids = new ArrayList<>();  //参数存储
-        ids.add(deptId);
         List<String> list = new ArrayList<>();//  附属 id存储
+        ids.add(deptId);
+        list.add(deptId);
         deptService.getAllIds(ids, list);
         queryWrapper.in("dept_id", list);
         queryWrapper.groupBy("line_id");

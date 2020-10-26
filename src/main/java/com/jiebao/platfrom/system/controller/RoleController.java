@@ -38,7 +38,7 @@ public class RoleController extends BaseController {
     private String message;
 
     @GetMapping
-    @RequiresPermissions(value={"role:view", "user:add"}, logical = Logical.OR)
+    @RequiresPermissions(value={"role:view","user:add"}, logical = Logical.OR)
     public Map<String, Object> roleList(QueryRequest queryRequest, Role role) {
         return getDataTable(roleService.findRoles(role, queryRequest));
     }
@@ -107,4 +107,7 @@ public class RoleController extends BaseController {
             throw new JiebaoException(message);
         }
     }
+
+
+
 }
