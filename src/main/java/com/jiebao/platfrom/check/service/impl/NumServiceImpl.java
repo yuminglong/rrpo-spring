@@ -17,6 +17,7 @@ import com.jiebao.platfrom.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse deadDate(String numId, Date date) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Num num = getById(numId);
@@ -125,6 +127,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse status(String numId, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Num num = new Num();

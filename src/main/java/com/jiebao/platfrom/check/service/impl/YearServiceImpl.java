@@ -18,6 +18,7 @@ import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     YearBindMenusMapper yearBindMenusMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addOrUpdate(Year year) {
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
         if (year.getYearId() != null) {
@@ -85,6 +87,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse ok(String yearId) {
         List<Grade> gradeArrayList = new ArrayList<>();
         QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();

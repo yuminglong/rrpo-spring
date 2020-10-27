@@ -50,6 +50,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     private final String word2Url = "/usr/local/demo/month2.docx";  //月度评选  终选地址
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdate(Month entity) {
         if (entity.getWxMonthId() == null) {
             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
@@ -107,6 +108,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse appear(String monthId, Integer status) {
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门

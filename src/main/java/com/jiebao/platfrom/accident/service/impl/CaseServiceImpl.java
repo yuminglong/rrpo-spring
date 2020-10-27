@@ -15,6 +15,7 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +74,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse lock(String[] caseId, String month, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Case> qw = new UpdateWrapper<>();

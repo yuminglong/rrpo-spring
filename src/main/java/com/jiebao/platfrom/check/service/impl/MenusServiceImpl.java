@@ -13,6 +13,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Menu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +51,7 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse deleteById(String menusId) {
         Menus menus = getById(menusId);
         return new JiebaoResponse().message(removeById(menusId) ? "删除成功" : "删除成功");

@@ -58,8 +58,8 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
         return super.saveOrUpdate(entity);
     }
 
-    @Transactional
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addOrUpdate(MenusYear menusYear) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (menusYear.getMenusYearId() == null) {
@@ -121,6 +121,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse deleteByListAndYearDate(String[] list) {
         if (list == null) {
             return new JiebaoResponse().message("空");

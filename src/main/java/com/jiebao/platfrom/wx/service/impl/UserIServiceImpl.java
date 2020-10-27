@@ -13,6 +13,7 @@ import com.jiebao.platfrom.wx.service.IUserIService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
     DeptService deptService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdate(UserI entity) {
         boolean a = false;//记录此次为修改还是添加
         if (entity.getWxUserId() == null) {
@@ -46,6 +48,7 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse deleteS(String[] wxUserIdS, String qunId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = removeByIds(Arrays.asList(wxUserIdS));

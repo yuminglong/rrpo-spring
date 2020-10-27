@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +46,7 @@ public class QunJsServiceImpl extends ServiceImpl<QunJsMapper, QunJs> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addOrUpdate(QunJs entity) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (entity.getJsId() == null) {
