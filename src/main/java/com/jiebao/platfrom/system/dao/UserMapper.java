@@ -68,13 +68,21 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> nullList();
 
     @Update("UPDATE sys_user SET dept_id = #{deptId} WHERE username =#{userName}")
-     boolean updateNew(String deptId , String userName);
+    boolean updateNew(String deptId, String userName);
 
     /**
      * 查询导入部分角色后剩下哪些用户还没有角色
+     *
      * @return
      */
     @Select("SELECT * FROM sys_user WHERE user_id not in (SELECT u.user_id FROM `sys_user` u,sys_user_role r WHERE u.user_id =r.user_id)")
     List<User> remainList();
 
+    /**
+     * 导数据，更改部分人的组织机构
+     * @param userName
+     * @return
+     */
+    @Update("UPDATE sys_user set dept_id = '4000' WHERE username = #{userName}")
+    boolean updateByName(String userName);
 }

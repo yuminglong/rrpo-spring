@@ -7,6 +7,7 @@ import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.system.dao.DictMapper;
 import com.jiebao.platfrom.system.domain.Dict;
 import com.jiebao.platfrom.system.service.DictService;
 import com.wuwenze.poi.ExcelKit;
@@ -36,6 +37,9 @@ public class DictController extends BaseController {
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    private DictMapper dictMapper;
 
   /*  @GetMapping
 //    @RequiresPermissions("dict:view")
@@ -107,23 +111,32 @@ public class DictController extends BaseController {
     @PostMapping("deleteTable")
    // @RequiresPermissions("dict:deleteTable")
     @ApiOperation(value = "删除", notes = "删除", response = JiebaoResponse.class, httpMethod = "POST")
-    public void deleteTable( String [] dictIds) throws JiebaoException {
-        try {
+    public JiebaoResponse deleteTable( String [] dictIds) throws JiebaoException {
+        if (dictIds == null) {
+            return new JiebaoResponse().failMessage("请传入参数");
+        }
+        else {
             //String[] ids = dictIds.split(StringPool.COMMA);
-           // dictService.removeByIds(dictIds);
-            Arrays.stream(dictIds).forEach(id -> {
+            // dictService.removeByIds(dictIds);
+            boolean result = Arrays.stream(dictIds).allMatch(id -> {
                 Dict byId = dictService.getById(id);
-                if (zero.equals(byId.getParentId())){
+                if (zero.equals(byId.getParentId())) {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("parent_id",id);
-                    dictService.removeByMap(map);
+                    map.put("parent_id", id);
+                    List<Dict> dicts = dictMapper.selectByMap(map);
+                    if (dicts.size() > 0) {
+                        return false;
+                    }
                 }
                 dictService.removeById(id);
+                return true;
             });
-        } catch (Exception e) {
-            message = "删除失败";
-            log.error(message, e);
-            throw new JiebaoException(message);
+            if (result){
+                return new JiebaoResponse().okMessage("删除成功");
+            }
+            else {
+                return new JiebaoResponse().failMessage("字典中有字典项，该字典不能删除");
+            }
         }
     }
 

@@ -13,11 +13,15 @@ public class Sample {
 
 
     public static void main(String[] args) throws IOException {
-        String image ="D:\\upload\\images\\2020-08-10\\11.jpg";
+      /*  String image ="D:\\upload\\images\\2020-08-10\\11.jpg";
         String brief ="周杰伦";
         String url ="http://192.168.10.104:9527/jbx/cdn/image/2020-08-10/38f9be69-194f-4c78-8295-f29ff0df64d3.png";
        // Sample.ware(image,brief,url);
-        Sample.sample(image);
+        Sample.sample(image);*/
+
+      String a= "12，2,3";
+        String[] split = a.split(",");
+        System.out.println(split[0]);
     }
 
     /**

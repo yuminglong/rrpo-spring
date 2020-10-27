@@ -157,6 +157,7 @@ public class ExchangeController extends BaseController {
             log.error(message, e);
             throw new JiebaoException("创建一条信息互递失败");
         }
+
     }
 
     //查询父级，直到rank==1，为市级

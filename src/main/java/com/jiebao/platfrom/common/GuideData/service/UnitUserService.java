@@ -17,4 +17,9 @@ public interface UnitUserService extends IService<Unituser> {
 
     Unituser selectName(String userName);
 
+    List<Unituser> selectCT();
+
+    List<Unituser> selectHT();
+
+    List<Unituser> selectHHT();
 }

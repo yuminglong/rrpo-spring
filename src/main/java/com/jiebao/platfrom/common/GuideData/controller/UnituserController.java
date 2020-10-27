@@ -263,7 +263,17 @@ public class UnituserController extends BaseController {
         return new JiebaoResponse().okMessage("可以");
     }
 
-
+    @GetMapping("/updateDept")
+    @ApiOperation(value = "修改组织机构", notes = "修改组织机构", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse updateDept(){
+        //查找所有长铁用户
+        List<Unituser> list = unituserService.selectHHT();
+        for (Unituser u: list
+        ) {
+            userMapper.updateByName(u.getUnitUser());
+        }
+        return new JiebaoResponse().okMessage("可以");
+    }
 
 
 
