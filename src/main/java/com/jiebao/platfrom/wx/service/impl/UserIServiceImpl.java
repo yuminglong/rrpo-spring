@@ -65,6 +65,8 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
         if (deptId != null) {
             List<String> prentIdS = new ArrayList<>();
             List<String> deptIds = new ArrayList<>(); //存储id
+            prentIdS.add(deptId);
+            deptIds.add(deptId);
             deptService.getAllIds(prentIdS, deptIds);
             QueryWrapper<Qun> queryWrapper1 = new QueryWrapper<>();
             queryWrapper1.in("cj_dept_id", deptIds);
