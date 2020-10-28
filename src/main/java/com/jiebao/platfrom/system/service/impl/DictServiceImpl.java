@@ -122,10 +122,10 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     public IPage<Dict> getListTable(QueryRequest request, Dict dict) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(dict.getTableName())){
-            queryWrapper.lambda().eq(Dict::getTableName,dict.getTableName());
+            queryWrapper.lambda().like(Dict::getTableName,dict.getTableName());
         }
         if (StringUtils.isNotBlank(dict.getFieldName())){
-            queryWrapper.lambda().eq(Dict::getFieldName,dict.getFieldName());
+            queryWrapper.lambda().like(Dict::getFieldName,dict.getFieldName());
         }
         if (StringUtils.isNotBlank(dict.getParentId())){
             queryWrapper.lambda().eq(Dict::getParentId,dict.getParentId());

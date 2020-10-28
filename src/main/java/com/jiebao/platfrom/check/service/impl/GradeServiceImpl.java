@@ -18,6 +18,7 @@ import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,6 +64,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     YearBindMenusMapper yearBindMenusMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addGrade(String gradeId, Double number, String message, Integer type) {  //menusId  既是 扣分项id   type代表三组不同的参数
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Grade grade = getById(gradeId);
@@ -119,6 +121,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse commit(String yearId, String deptId, Integer status) {   //  生成报表
         if (this.baseMapper.exist(yearId, deptId) == null) {
             return null;
@@ -249,12 +252,14 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse putZz(String gradeId, String[] ids) {//上传新的佐证材料需要修改状态
         return asYearService.addAsYear(gradeId, ids);
     }
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (gradeId == null) {

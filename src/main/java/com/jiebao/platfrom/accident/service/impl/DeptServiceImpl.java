@@ -7,6 +7,7 @@ import com.jiebao.platfrom.accident.daomain.Dept;
 import com.jiebao.platfrom.accident.service.IDeptService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptSMapper, Dept> implements I
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse bind(String[] ids, String prentId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         List<Dept> list = new ArrayList<>();

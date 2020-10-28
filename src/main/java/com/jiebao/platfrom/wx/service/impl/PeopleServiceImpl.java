@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -257,5 +258,19 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         }
 
         return saveBatch(list);
+    }
+
+    public static void main(String[] args) {
+        List<Date> list = new ArrayList<>();
+        list.add(new Date());
+        list.add(new Date());
+        Date date = new Date();
+        list.add(date);
+//        list.remove(date);
+        for (Date i:list
+        ) {
+            System.out.println(i);
+//            list.remove(i);
+        }
     }
 }

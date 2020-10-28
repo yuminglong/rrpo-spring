@@ -29,6 +29,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticesMapper, Notice> implem
     }
 
     @Override
+
     public JiebaoResponse List(QueryRequest queryRequest) {
         QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("date");
@@ -36,7 +37,4 @@ public class NoticeServiceImpl extends ServiceImpl<NoticesMapper, Notice> implem
         return new JiebaoResponse().data(page(page, queryWrapper));
     }
 
-    public static void main(String[] args) {
-        System.out.println(LocalDateTime.now());
-    }
 }

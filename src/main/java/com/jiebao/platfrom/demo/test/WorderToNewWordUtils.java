@@ -155,8 +155,12 @@ public class WorderToNewWordUtils {
                 if (checkText(cell.getText())) {
                     List<XWPFParagraph> paragraphs = cell.getParagraphs();
                     for (XWPFParagraph paragraph : paragraphs) {
+                       /* XWPFRun run1 = paragraph.createRun();
+                            run1.setFontFamily();*/
                         List<XWPFRun> runs = paragraph.getRuns();
                         for (XWPFRun run : runs) {
+                            run.setFontFamily("仿宋");
+                            run.setFontSize(12);
                             run.setText(changeValue(run.toString(), textMap), 0);
                         }
                     }
@@ -178,6 +182,7 @@ public class WorderToNewWordUtils {
         }
         //遍历表格插入数据
         List<XWPFTableRow> rows = table.getRows();
+
         for (int i = 1; i < rows.size(); i++) {
             XWPFTableRow newRow = table.getRow(i);
             List<XWPFTableCell> cells = newRow.getTableCells();
@@ -191,6 +196,9 @@ public class WorderToNewWordUtils {
                 cell.setText(tableList.get(i - 1)[j]);
             }
         }
+
+
+
     }
 
 

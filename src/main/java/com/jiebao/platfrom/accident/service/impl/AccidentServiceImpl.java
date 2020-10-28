@@ -15,6 +15,7 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,6 +85,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse lock(String[] accidentId, String month, Integer status) {//上锁
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<Accident> qw = new UpdateWrapper<>();

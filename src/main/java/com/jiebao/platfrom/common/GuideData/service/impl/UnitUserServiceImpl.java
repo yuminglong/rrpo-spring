@@ -31,4 +31,19 @@ public class UnitUserServiceImpl extends ServiceImpl<UnituserMapper, Unituser> i
     public Unituser selectName(String userName) {
         return unituserMapper.selectName(userName);
     }
+
+    @Override
+    public List<Unituser> selectCT() {
+        return unituserMapper.selectCT();
+    }
+
+    @Override
+    public List<Unituser> selectHT() {
+        return unituserMapper.selectHT();
+    }
+
+    @Override
+    public List<Unituser> selectHHT() {
+        return unituserMapper.selectHHT();
+    }
 }

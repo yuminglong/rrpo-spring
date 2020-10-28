@@ -19,6 +19,7 @@ import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -41,6 +42,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     DeptService deptService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addOrUpdate(Qun entity) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());

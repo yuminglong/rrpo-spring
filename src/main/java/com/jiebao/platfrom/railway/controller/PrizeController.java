@@ -518,6 +518,7 @@ public class PrizeController extends BaseController {
             for (Prize p :
                     records) {
                 String[] split = p.getPlace().split(",");
+                System.out.println("++++++++++++++++"+split+"+++++++++++++++++++++++");
                 testList.add(new String[]{p.getNumber(), split[0], p.getContent()});
             }
             //模板文件地址
