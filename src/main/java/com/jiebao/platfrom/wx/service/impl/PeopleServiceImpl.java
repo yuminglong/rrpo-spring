@@ -56,10 +56,10 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     }
 
     @Override
-    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status) {
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status,String title) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status));
-        CheckExcelUtil.exportList(response, lists, People.class, null);
+        CheckExcelUtil.exportList(response, lists, People.class, null,title);
         return jiebaoResponse.message("查询成功");
     }
 
@@ -85,7 +85,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         if (StringUtils.isNotBlank(lineId))
             queryWrapper.eq("line", lineId);
         queryWrapper.eq("status", status);
-        queryWrapper.orderByDesc("lu_number");
+        queryWrapper.orderByAsc("lu_number");
         return queryWrapper;
     }
 

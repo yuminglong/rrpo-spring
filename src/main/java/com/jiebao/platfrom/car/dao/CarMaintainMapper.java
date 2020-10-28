@@ -28,5 +28,4 @@ public interface CarMaintainMapper extends BaseMapper<CarMaintain> {
     })
     CarMaintain selectMaintainId(String maintainId);
 
-
 }
