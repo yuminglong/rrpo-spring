@@ -53,17 +53,17 @@ public class PeopleController {
         return peopleService.removeByIds(Arrays.asList(ids)) ? jiebaoResponse.okMessage("删除成功") : jiebaoResponse.failMessage("删除失败");
     }
 
-    @GetMapping("lock")
-    @ApiOperation("上锁 解锁")
-    public JiebaoResponse lock(Integer status) {
-        return peopleService.lock(status);
-    }
-
-    @GetMapping("checkLock")
-    @ApiOperation("查看锁的状态")
-    public JiebaoResponse checkLock() {
-        return peopleService.checkLock();
-    }
+//    @GetMapping("lock")
+//    @ApiOperation("上锁 解锁")
+//    public JiebaoResponse lock(Integer status) {
+//        return peopleService.lock(status);
+//    }
+//
+//    @GetMapping("checkLock")
+//    @ApiOperation("查看锁的状态")
+//    public JiebaoResponse checkLock() {
+//        return peopleService.checkLock();
+//    }
 
     @GetMapping("confirm")
     @ApiOperation("变更查看 确认")

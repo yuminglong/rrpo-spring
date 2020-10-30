@@ -25,9 +25,9 @@ public interface IPeopleService extends IService<People> {
 
     JiebaoResponse saveOrUpdateChile(People people);
 
-    JiebaoResponse lock(Integer status);  //上锁 解锁
+//    JiebaoResponse lock(Integer status);  //上锁 解锁
 
-    JiebaoResponse checkLock();
+//    JiebaoResponse checkLock();
 
     JiebaoResponse confirm(String[] ids,Integer status);
 }

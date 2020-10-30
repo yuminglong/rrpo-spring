@@ -47,7 +47,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     DeptMapper deptMapper;
     @Autowired
     DeptService deptService;
-    private static int lock = 1;//默认上锁
+//    private static int lock = 1;//默认上锁
 
     @Override
     public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status) {
@@ -57,10 +57,10 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     }
 
     @Override
-    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status,String title) {
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status));
-        CheckExcelUtil.exportList(response, lists, People.class, null,title);
+        CheckExcelUtil.exportList(response, lists, People.class, null, title);
         return jiebaoResponse.message("查询成功");
     }
 
@@ -96,8 +96,6 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (deptService.getById(people.getDeptId()).getRank() != 3)  //必须精确到乡镇
             return jiebaoResponse.failMessage("请选择到乡镇街道");
-        if (isNotLock())
-            return jiebaoResponse.failMessage("时间锁定不可更改");
         if (people.getHlId() == null) {
             people.setCreatTime(new Date());
             people.setStatus(1);
@@ -147,30 +145,31 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         people.setLuNumber(people.getLu2());
     }
 
-    @Override
-    public JiebaoResponse lock(Integer status) {
-        lock = status;
-        return new JiebaoResponse().okMessage("操作成功");
-    }
+//    @Override
+//    public JiebaoResponse lock(Integer status) {
+//        lock = status;
+//        return new JiebaoResponse().okMessage("操作成功");
+//    }
+
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public boolean removeByIds(Collection<? extends Serializable> idList) {
+//        if (isNotLock())
+//            return false;
+//        UpdateWrapper<People> updateWrapper = new UpdateWrapper<>();
+//        updateWrapper.in("hl_id", idList);
+//        updateWrapper.set("status", 3);//提示将要删除的
+//        return update(updateWrapper);
+//    }
+
+//    @Override
+//    public JiebaoResponse checkLock() {
+//        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+//        return isNotLock() ? jiebaoResponse.okMessage("状态锁定") : jiebaoResponse.failMessage("锁定解除");
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeByIds(Collection<? extends Serializable> idList) {
-        if (isNotLock())
-            return false;
-        UpdateWrapper<People> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.in("hl_id", idList);
-        updateWrapper.set("status", 3);//提示将要删除的
-        return update(updateWrapper);
-    }
-
-    @Override
-    public JiebaoResponse checkLock() {
-        JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        return isNotLock() ? jiebaoResponse.okMessage("状态锁定") : jiebaoResponse.failMessage("锁定解除");
-    }
-
-    @Override
     public JiebaoResponse confirm(String[] ids, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         UpdateWrapper<People> updateWrapper = new UpdateWrapper<>();
@@ -182,9 +181,9 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         return update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
     }
 
-    private boolean isNotLock() { //判断当前是否上锁
-        return lock == 1 ? true : false;
-    }
+//    private boolean isNotLock() { //判断当前是否上锁
+//        return lock == 1 ? true : false;
+//    }
 
     @Override
     public boolean excelImPort(MultipartFile file) {
@@ -260,17 +259,4 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
         return saveBatch(list);
     }
 
-    public static void main(String[] args) {
-        List<Date> list = new ArrayList<>();
-        list.add(new Date());
-        list.add(new Date());
-        Date date = new Date();
-        list.add(date);
-//        list.remove(date);
-        for (Date i:list
-        ) {
-            System.out.println(i);
-//            list.remove(i);
-        }
-    }
 }
