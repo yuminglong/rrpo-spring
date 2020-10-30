@@ -63,7 +63,7 @@ public class CheckExcelUtil {
                 for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
                     Cell cell = row1.getCell(j);
                     if (cell == null) {
-                        cell = row1.createCell(j);
+                        continue;
                     }
                     cell.setCellType(CellType.STRING);
                     if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
@@ -73,11 +73,13 @@ public class CheckExcelUtil {
                     if (cell == null) {
                         cell1 = row1.createCell(j + 1);
                     }
+                    if(cell1==null){
+                        continue;
+                    }
                     cell1.setCellType(CellType.STRING);
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
                     menusYear.setSummary(cell1.getStringCellValue());
-                    System.out.println(j);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());

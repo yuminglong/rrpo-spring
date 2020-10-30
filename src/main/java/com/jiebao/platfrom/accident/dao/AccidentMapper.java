@@ -37,6 +37,6 @@ public interface AccidentMapper extends BaseMapper<Accident> {
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
 
-    @Select("select ${name} as subscript,count(1) as number from accident_accident ${ew.customSqlSegment}")
+    @Select("select (select value from sys_dict_new where dict_id=a.${name}) as subscript,count(1) as number from accident_accident a ${ew.customSqlSegment}")
     List<ANumber> listAcc(@Param("ew") QueryWrapper<Accident> queryWrapper, @Param("name") String name);
 }

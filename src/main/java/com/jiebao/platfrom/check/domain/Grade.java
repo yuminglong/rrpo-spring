@@ -66,6 +66,8 @@ public class Grade implements Serializable {
 
     private Integer status; //疑点状态
 
+    private Integer sorts;
+
 
 
 }

@@ -53,7 +53,7 @@ public interface GradeMapper extends BaseMapper<Grade> {
     List<Grade> queryList(@Param("ew") QueryWrapper<Grade> ew);
 
     @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} limit 1")
-    Integer exist(String yearId, String deptId);  //是否产生 对应年份试题
+    Integer exists(String yearId, String deptId);  //是否产生 对应年份试题
 
     @Select("select 1 from check_grade where year_id=#{yearId} and dept_id=#{deptId} and check_id=#{menusId} limit 1")
     Integer exist(String yearId, String deptId, String menusId);  //试题中的具体某一题

@@ -53,6 +53,8 @@ public class Dict implements Serializable {
     @ApiModelProperty(value = "系数占比")
     private Double coefficient;
 
+    @ApiModelProperty(value = "值")
+    private String value;
    /* private static final long serialVersionUID = 7780820231535870010L;
 
     @TableId(value = "dict_id", type = IdType.UUID)
