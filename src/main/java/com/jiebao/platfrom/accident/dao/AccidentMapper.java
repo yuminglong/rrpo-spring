@@ -27,10 +27,16 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictXl", column = "line_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictCwd", column = "train_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "sexDict", column = "sex", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "dictNature", column = "nature", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "dictInstationSection", column = "instation_section", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "dictRoad", column = "road", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "dictAge", column = "age", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+            @Result(property = "dictClosed", column = "closed", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
 
-    @Select("select ${name} as subscript,count(1) as number from accident_accident ${ew.customSqlSegment}")
+    @Select("select (select value from sys_dict_new where dict_id=a.${name}) as subscript,count(1) as number from accident_accident a ${ew.customSqlSegment}")
     List<ANumber> listAcc(@Param("ew") QueryWrapper<Accident> queryWrapper, @Param("name") String name);
 }

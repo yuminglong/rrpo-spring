@@ -34,6 +34,13 @@ public class DeptLineController {
         return deptLineService.getLine(deptId);
     }
 
+    @GetMapping("childGetLine")
+    @ApiOperation("根据对应的 部门去查询 对应的 线路")
+    public JiebaoResponse childGetLine(String deptId) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        return jiebaoResponse.data(deptLineService.childGetLine(deptId));
+    }
+
     @PostMapping("add")
     @ApiOperation("添加对象")
     public JiebaoResponse add(DeptLine deptLine) {
@@ -45,5 +52,6 @@ public class DeptLineController {
     public JiebaoResponse delete(String[] ids) {
         return deptLineService.delete(ids);
     }
+
 
 }

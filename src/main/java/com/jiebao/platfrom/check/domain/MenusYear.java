@@ -46,4 +46,6 @@ public class MenusYear implements Serializable {
     private String summary;//摘要
 
     private Date date;
+
+    private Integer sorts;
 }

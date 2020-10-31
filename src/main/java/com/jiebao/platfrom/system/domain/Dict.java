@@ -9,6 +9,7 @@ import com.wuwenze.poi.annotation.ExcelField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -43,7 +44,17 @@ public class Dict implements Serializable {
     @ApiModelProperty(value = "创建时间")
     private Date creatTime;
 
+    @ApiModelProperty(value = "公里数", example = "125")
+    private Integer revenue;
 
+    @ApiModelProperty(value = "线路性质")
+    private String nature;
+
+    @ApiModelProperty(value = "系数占比")
+    private Double coefficient;
+
+    @ApiModelProperty(value = "值")
+    private String value;
    /* private static final long serialVersionUID = 7780820231535870010L;
 
     @TableId(value = "dict_id", type = IdType.UUID)

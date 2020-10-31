@@ -21,13 +21,13 @@ public interface IPeopleService extends IService<People> {
 
     JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId,Integer status);  //分页查询
 
-    JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status);//导出
+    JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status,String title);//导出
 
     JiebaoResponse saveOrUpdateChile(People people);
 
-    JiebaoResponse lock(Integer status);  //上锁 解锁
+//    JiebaoResponse lock(Integer status);  //上锁 解锁
 
-    JiebaoResponse checkLock();
+//    JiebaoResponse checkLock();
 
     JiebaoResponse confirm(String[] ids,Integer status);
 }

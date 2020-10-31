@@ -25,7 +25,7 @@ import java.util.*;
  * @since 2020-08-05
  */
 @Service
-public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear> implements IMenusYearService, Runnable {
+public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear> implements IMenusYearService {
 
     @Autowired
     MenusMapper menusMapper;
@@ -46,10 +46,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     @Autowired
     IGradeService gradeService;
 
-    private String yearID;
-
-    private List<MenusYear> lists;
-
 
     @Override
     public boolean saveOrUpdate(MenusYear entity) {
@@ -68,6 +64,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
                 jiebaoResponse.failMessage("内容重复");
             }
             menusYear.setDate(new Date());
+            menusYear.setSorts(1000);
         } else {
             MenusYear menusYear1 = getById(menusYear.getMenusYearId()); //数据库已存在的
             if (!menusYear1.getContent().equals(menusYear.getContent())) {  //如果内容发生了变化
@@ -88,6 +85,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
                     grade.setDeptId(dept.getDeptId());
                     grade.setCheckId(menusYear.getMenusYearId());
                     grade.setParentId(menusYear.getParentId());
+                    grade.setSorts(menusYear.getSorts());
                     gradeMapper.insert(grade);
                 }
             }
@@ -109,7 +107,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("parent_id", menus.getStandardId());
-            queryWrapper.orderByDesc("date");
+            queryWrapper.orderByAsc("sorts");
             YearZu yearZu = new YearZu();
             yearZu.setId(menus.getStandardId());
             yearZu.setName(menus.getName());
@@ -135,46 +133,35 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
         List<MenusYear> list = new ArrayList<>();
         JiebaoResponse jiebaoResponse = CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper, list);
+        int number = 0;
         if ((int) jiebaoResponse.get("status") == 1) { //操作成功 标志
-            MenusYearServiceImpl menusYearService = new MenusYearServiceImpl();
-            menusYearService.yearID = year_id;
-            menusYearService.yearMapper = this.yearMapper;
-            menusYearService.gradeMapper = this.gradeMapper;
-            menusYearService.menusYearMapper = this.menusYearMapper;
-            menusYearService.deptService = this.deptService;
-            menusYearService.gradeService = this.gradeService;
-            menusYearService.lists = list;
-            Thread thread = new Thread(menusYearService);
-            thread.start();
-        }
-        return jiebaoResponse;
-    }
-
-    @Override
-    public void run() {
-        List<Grade> gradeArrayList = new ArrayList<>();
-        QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("year_id", yearID);
-        queryWrapper.in("parent_id", yearMapper.listYB(yearID));  //现存的绑定项
-        List<MenusYear> menusYearList = menusYearMapper.selectList(queryWrapper); //当年所有的试题
-        List<Dept> childrenList = deptService.getChildrenList("0");
-        for (Dept dept : childrenList
-        ) {
-            if (!dept.getDeptName().contains("公安处")) {
-                for (MenusYear m : lists
-                ) {
-                    Grade grade = new Grade();
-                    grade.setYearId(yearID);
-                    grade.setDeptId(dept.getDeptId());
-                    grade.setCheckId(m.getMenusYearId());
-                    grade.setParentId(m.getParentId());
-                    gradeArrayList.add(grade);
+            List<Grade> gradeArrayList = new ArrayList<>();
+            QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("year_id", year_id);
+            queryWrapper.in("parent_id", yearMapper.listYB(year_id));  //现存的绑定项
+            List<MenusYear> menusYearList = menusYearMapper.selectList(queryWrapper); //当年所有的试题
+            List<Dept> childrenList = deptService.getChildrenList("0");
+            for (Dept dept : childrenList
+            ) {
+                if (!dept.getDeptName().contains("公安处")) {
+                    for (MenusYear m : list
+                    ) {
+                        Grade grade = new Grade();
+                        grade.setYearId(year_id);
+                        grade.setDeptId(dept.getDeptId());
+                        grade.setCheckId(m.getMenusYearId());
+                        grade.setParentId(m.getParentId());
+                        grade.setSorts(number++);
+                        gradeArrayList.add(grade);
+                    }
                 }
             }
+            gradeService.saveBatch(gradeArrayList);
         }
-        gradeService.saveBatch(gradeArrayList);
+        return jiebaoResponse;
     }
 }

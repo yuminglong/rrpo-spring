@@ -123,7 +123,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse commit(String yearId, String deptId, Integer status) {   //  生成报表
-        if (this.baseMapper.exist(yearId, deptId) == null) {
+        if (this.baseMapper.exists(yearId, deptId) == null) {
             return null;
         }
         double JCKF = 0;  //基础工作的扣分项
@@ -245,6 +245,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
             queryWrapper.eq("year_id", yearId);
             queryWrapper.eq("dept_id", DeptId);
             queryWrapper.eq("parent_id", menus.getStandardId());
+            queryWrapper.orderByAsc("sorts");
             yearZu.setList(this.baseMapper.queryList(queryWrapper));
             list1.add(yearZu);
         }

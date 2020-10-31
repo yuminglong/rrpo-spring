@@ -2,6 +2,7 @@ package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.wx.dao.DeptLineMapper;
 import com.jiebao.platfrom.wx.domain.DeptLine;
@@ -46,12 +47,27 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
     }
 
     @Override
+    public List<DeptLine> childGetLine(String deptId) {
+        QueryWrapper<DeptLine> queryWrapper = new QueryWrapper<>();
+        Dept dept = null;
+        if (deptId == null)
+            dept = deptService.getDept();//当前登陆人
+        else
+            dept = deptService.getById(deptId);
+        System.out.println(dept);
+        if (dept.getRank() < 1)
+            return null;
+        while (dept.getRank() != 1) {
+            dept = deptService.getById(dept.getParentId());
+        }
+        queryWrapper.lambda().eq(DeptLine::getDeptId, dept.getDeptId());
+        return this.baseMapper.queryList(queryWrapper);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse add(DeptLine deptLine) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        deptLine.setDeptId(deptService.getDept().getDeptId());
-        if (deptService.getById(deptLine.getDeptId()).getRank() != 3)
-            return jiebaoResponse.failMessage("选择组织机构必须是乡镇街道级别");
         return save(deptLine) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败").data(deptLine);
     }
 

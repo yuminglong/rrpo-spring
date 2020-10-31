@@ -63,7 +63,7 @@ public class CheckExcelUtil {
                 for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
                     Cell cell = row1.getCell(j);
                     if (cell == null) {
-                        cell = row1.createCell(j);
+                        continue;
                     }
                     cell.setCellType(CellType.STRING);
                     if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
@@ -73,11 +73,13 @@ public class CheckExcelUtil {
                     if (cell == null) {
                         cell1 = row1.createCell(j + 1);
                     }
+                    if(cell1==null){
+                        continue;
+                    }
                     cell1.setCellType(CellType.STRING);
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
                     menusYear.setSummary(cell1.getStringCellValue());
-                    System.out.println(j);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
@@ -393,7 +395,7 @@ public class CheckExcelUtil {
         }
     }
 
-    public static void exportList(HttpServletResponse response, List<? extends Object> list, Class<?> cla, String workName) {  //大众通用类型 纯集合
+    public static void exportList(HttpServletResponse response, List<? extends Object> list, Class<?> cla, String workName,String titles) {  //大众通用类型 纯集合
         HSSFWorkbook workbook = new HSSFWorkbook();  //创建空间
         HSSFCellStyle cellStyle = workbook.createCellStyle();   //设定格式
         //垂直居中
@@ -407,7 +409,10 @@ public class CheckExcelUtil {
         }
         HSSFSheet sheet = workbook.createSheet(workName);  //创建表
         Field[] declaredFields = cla.getDeclaredFields(); //所有属性
-        HSSFRow row = sheet.createRow(0);
+        HSSFRow row2 = sheet.createRow(0);
+        HSSFCell cell1 = row2.createCell(0);
+        cell1.setCellValue(titles);
+        HSSFRow row = sheet.createRow(1);
         int cellNumber = 0;//记录列数
         for (Field filed : declaredFields
         ) {
@@ -418,7 +423,7 @@ public class CheckExcelUtil {
             cell.setCellValue(annotation.name());
 
         }   //标题  以及表的 属性创建完毕
-        int Rows = 1;
+        int Rows = 2;
         for (Object o : list
         ) {
             HSSFRow row1 = sheet.createRow(Rows);
