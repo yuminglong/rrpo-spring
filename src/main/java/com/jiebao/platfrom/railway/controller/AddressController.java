@@ -47,7 +47,8 @@ public class AddressController extends BaseController {
 
     @Autowired
     private AddressService addressService;
-
+    @Autowired
+    private UserService userService;
     @Autowired
     private DeptMapper deptMapper;
     @Autowired
@@ -210,6 +211,20 @@ public class AddressController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse findByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
         IPage<Address> deptList = addressService.getByDept(request, iPageDeptId, userName, telPhone);
+        List<Address> records = deptList.getRecords();
+        ArrayList<Address> addressByUser = new ArrayList<>();
+        List<User> list = userService.list();
+        for (User user:list
+             ) {
+            Address address = new Address();
+            address.setUserName(user.getUsername());
+            address.setPhone(user.getMobile());
+            address.setEmail(user.getEmail());
+            address.setPosition(user.getDescription());
+            address.setDeptId(user.getDeptId());
+            addressByUser.add(address);
+        }
+        records.addAll(addressByUser);
         return new JiebaoResponse().data(this.getDataTable(deptList));
     }
 }
