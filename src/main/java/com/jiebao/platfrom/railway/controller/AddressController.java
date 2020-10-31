@@ -211,7 +211,7 @@ public class AddressController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse findByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
         IPage<Address> deptList = addressService.getByDept(request, iPageDeptId, userName, telPhone);
-        List<Address> records = deptList.getRecords();
+      /*  List<Address> records = deptList.getRecords();
         ArrayList<Address> addressByUser = new ArrayList<>();
         List<User> list = userService.list();
         for (User user:list
@@ -224,7 +224,7 @@ public class AddressController extends BaseController {
             address.setDeptId(user.getDeptId());
             addressByUser.add(address);
         }
-        records.addAll(addressByUser);
+        records.addAll(addressByUser);*/
         return new JiebaoResponse().data(this.getDataTable(deptList));
     }
 }

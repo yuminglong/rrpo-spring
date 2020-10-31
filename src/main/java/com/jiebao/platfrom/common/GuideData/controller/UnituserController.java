@@ -15,8 +15,10 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.common.utils.MD5Util;
 import com.jiebao.platfrom.railway.dao.ExchangeMapper;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Exchange;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
+import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
@@ -86,6 +88,8 @@ public class UnituserController extends BaseController {
     private UserMapper userMapper;
     @Autowired
     private DeptMapper deptMapper;
+    @Autowired
+    private AddressService addressService;
 
     @GetMapping
     public JiebaoResponse getList() {
@@ -275,6 +279,29 @@ public class UnituserController extends BaseController {
         return new JiebaoResponse().okMessage("可以");
     }
 
+
+    @GetMapping("/addAddress")
+    @ApiOperation(value = "人员导入通讯录", notes = "人员导入通讯录", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse addAddress(){
+        //查找所有长铁用户
+        List<User> list = userService.list();
+        for (User u: list
+        ) {
+            Address address = new Address();
+            address.setDeptId(u.getDeptId());
+            address.setPosition(u.getDescription());
+            address.setEmail(u.getEmail());
+            if (u.getDeptId() !=null && !"".equals(u.getDeptId())){
+                Dept byId = deptService.getById(u.getDeptId());
+                address.setUnit(byId.getDeptName());
+            }
+            address.setTelPhone(u.getMobile());
+            address.setUserName(u.getUsername());
+            address.setStatus(1);
+            addressService.save(address);
+        }
+        return new JiebaoResponse().okMessage("可以");
+    }
 
 
 }

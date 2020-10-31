@@ -11,6 +11,8 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.service.CacheService;
 import com.jiebao.platfrom.common.utils.MD5Util;
 import com.jiebao.platfrom.common.utils.SortUtil;
+import com.jiebao.platfrom.railway.domain.Address;
+import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -51,7 +53,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    DeptService deptService;
+    private DeptService deptService;
+    @Autowired
+    private AddressService addressService;
 
 
     @Override
@@ -119,6 +123,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 将用户相关信息保存到 Redis中
         userManager.loadUserRedisCache(user);
+
+
+        Address address = new Address();
+        address.setDeptId(user.getDeptId());
+        address.setPosition(user.getDescription());
+        address.setEmail(user.getEmail());
+        if (user.getDeptId() !=null && !"".equals(user.getDeptId())){
+            Dept byId = deptService.getById(user.getDeptId());
+            address.setUnit(byId.getDeptName());
+        }
+        address.setTelPhone(user.getMobile());
+        address.setUserName(user.getUsername());
+        address.setStatus(1);
+        addressService.save(address);
     }
 
     @Override
