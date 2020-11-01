@@ -77,6 +77,6 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
             queryWrapper.in("qun_id", list);
         }
         Page<UserI> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(page(page, queryWrapper));
+        return new JiebaoResponse().data(this.baseMapper.listPage(page, queryWrapper));
     }
 }

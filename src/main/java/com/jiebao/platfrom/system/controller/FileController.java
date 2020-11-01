@@ -115,6 +115,7 @@ public class FileController extends BaseController {
         return this.upload(file, this.APPENDIX_FILE_TYPE, refType, refId, request);
     }
 
+
     /**
      * 读取附件
      *
@@ -205,7 +206,7 @@ public class FileController extends BaseController {
     @ApiOperation("文件删除接口")
     @PostMapping("/deleteFile")
     public JiebaoResponse deleteFile(String fileId) {
-        System.out.println(fileId+"-------------");
+        System.out.println(fileId + "-------------");
         File file = fileService.getById(fileId);
         if (null != file) {
             java.io.File deleteFile = new java.io.File(file.getFileUrl() + file.getNewName());
@@ -377,6 +378,7 @@ public class FileController extends BaseController {
 
     /**
      * 读取一事一奖word文档接口
+     *
      * @return
      */
     @ApiOperation("读取附件接口")
@@ -384,8 +386,8 @@ public class FileController extends BaseController {
     public JiebaoResponse getPrizeList(QueryRequest request, File file, String startTime, String endTime) {
         IPage<File> fileList = fileService.getFileList(request, file, startTime, endTime);
         List<File> records = fileList.getRecords();
-        for (File f:records
-             ) {
+        for (File f : records
+        ) {
             User byId = userService.getById(f.getUserId());
             f.setUserName(byId.getUsername());
         }

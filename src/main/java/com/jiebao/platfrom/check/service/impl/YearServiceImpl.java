@@ -72,6 +72,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         for (Year year : list
         ) {
             List<String> menusId = yearBindMenusMapper.listMenusId(year.getYearId()); //
+            if (menusId == null || menusId.size() == 0)
+                continue;
             List<Menus> list1 = (List<Menus>) menusService.listByIds(menusId);  //所绑定的模块
             List<YearSize> list2 = new ArrayList<>();//赋值存储
             for (Menus menu : list1

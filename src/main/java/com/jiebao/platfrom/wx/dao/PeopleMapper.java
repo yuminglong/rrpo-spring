@@ -31,7 +31,7 @@ public interface PeopleMapper extends BaseMapper<People> {
             "(select dept_name from sys_dept where dept_id=w.xiang)   as xiangName," +
             "proper ," +
             "line," +
-            "(select field_name from sys_dict_new where dict_id=w.line) as lineName" +
+            "(select field_name from sys_dict_new where dict_id=w.line) as lineName," +
             "name," +
             "sex," +
             "age," +

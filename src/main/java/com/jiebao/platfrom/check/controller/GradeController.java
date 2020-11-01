@@ -66,9 +66,16 @@ public class GradeController {
     }
 
     @PostMapping("checkStatus")
-    @ApiOperation("疑点标记")
+    @ApiOperation("考题 疑点标记")
     @Log("疑点标记")
-    public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
-        return iGradeService.checkStatus(gradeId, zzId, fileId, status);
+    public JiebaoResponse checkStatus(String gradeId, Integer status) {
+        return iGradeService.checkStatus(gradeId, status);
+    }
+
+    @PostMapping("checkStatus")
+    @ApiOperation("佐证附件标记 疑点标记")
+    @Log("疑点标记")
+    public JiebaoResponse checkStatusZZ( String zzId, Integer status) {
+        return iGradeService.checkStatus(zzId,status);
     }
 }

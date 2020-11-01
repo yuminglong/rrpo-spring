@@ -26,7 +26,9 @@ public interface IGradeService extends IService<Grade> {
 
     JiebaoResponse putZz(String gradeId, String[] ids);//上传佐证操作
 
-    JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status);//审核 考核项是否存在问题
+    JiebaoResponse checkStatus(String gradeId, Integer status);//审核 考核项是否存在问题
+
+    JiebaoResponse checkStatusZZ(String zzId, Integer status);//审核 考核项是否存在问题
 
 
 }

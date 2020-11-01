@@ -1,11 +1,14 @@
 package com.jiebao.platfrom.wx.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -13,7 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -26,7 +29,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class UserI implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableId(value = "wx_user_id",type = IdType.UUID)
+    @TableId(value = "wx_user_id", type = IdType.UUID)
     private String wxUserId;
 
     /**
@@ -53,5 +56,9 @@ public class UserI implements Serializable {
     private Date date;
 
     private String qunId;//群
+
+    @ApiModelProperty(hidden = true)
+    @TableField(exist = false)
+    private String wxName;
 
 }

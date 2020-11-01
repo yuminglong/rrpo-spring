@@ -79,7 +79,7 @@ public class Month implements Serializable {
     private User user;
 
     private Date date;
-    //最终是否选上  0 未选上  1选上
+    //最终是否选上  0 未选上  1选上   2 上报中
     private Integer status;
 
 
