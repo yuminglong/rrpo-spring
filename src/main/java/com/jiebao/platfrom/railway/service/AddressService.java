@@ -51,12 +51,12 @@ public interface AddressService extends IService<Address> {
     /**
      *
      * @param request
-     * @param iPageDeptId
+     * @param address
      * @param userName
      * @param telPhone
      * @return
      */
-    IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone);
+    IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone);
 
     /**
      * 查询所处市级
