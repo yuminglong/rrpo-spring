@@ -35,8 +35,16 @@ public class DeptLine implements Serializable {
     private String lineId;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "不用管 返回用的")
+    @ApiModelProperty(value = "不用管 返回用的", hidden = true)
     private String LineName;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "不用管 返回用的", hidden = true)
+    private String nature;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "不用管 返回用的", hidden = true)
+    private String revenue;
 
 
 }

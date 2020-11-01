@@ -84,18 +84,18 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             queryWrapper.eq("month", month);
         }
         if (status != null) {
-            if (status == 2) {
-                queryWrapper.eq("sh_dept_id", dept.getDeptId());//审核部门到了自己这里
-                queryWrapper.ne("status", 1);//已经最终通过的
-            }
             if (status == 1)
                 queryWrapper.eq("status", 2);
-            if (status == 3)
+            if (status == 1) {  //未审核需要审核的
+                queryWrapper.eq("status", 2);
+                queryWrapper.eq("sh_dept_id", dept.getDeptId());
+            }
+            if (status == 3)  //已通过
                 queryWrapper.eq("status", 1);
-            if (status == 4) //未上报的{
-            {
+            if (status == 4) {  //未上报
+                queryWrapper.eq("status", 0);
                 queryWrapper.eq("jc_dept_id", dept.getDeptId());
-                queryWrapper.isNull("status");
+                queryWrapper.eq("sh_dept_id", dept.getDeptId());
             }
         }
         if (look != null) {
@@ -121,7 +121,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             month.setSzDeptName(dept.getDeptName());//保存市级单位   做报表要用
         }
         if (status == 1) {  //赞成  //
-            if (dept.getParentId().equals("-1")) {//省级
+            if (dept.getRank() == 0) {//省级
                 month.setStatus(1);
             } else {  //非省级 继续上报
                 month.setStatus(2);
@@ -143,6 +143,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         jiebaoResponse = update(updateWrapper) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
     }
+
     @Override
     public JiebaoResponse year(Integer year) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
@@ -180,19 +181,21 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     private List<Month> listByMonth(String month, Integer status) {
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("month", month);
-        if (status != null) {
+        if (status != null)
             queryWrapper.eq("status", status);
-        }
+        else
+            queryWrapper.eq("sh_dept_id", "0");
         return this.baseMapper.listWord(queryWrapper);
     }
 
     @Override
-    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {  //月报  直观图
+    public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {  //月报  直观图  非导出状态
         System.out.println(month);
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         if (month != null) {
             queryWrapper.eq("month", month);
         }
+        queryWrapper.eq("status", 1);//已通过数据才有意义
         Page<Month> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).message("查询成功");
     }

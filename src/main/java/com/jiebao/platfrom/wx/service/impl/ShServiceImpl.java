@@ -57,7 +57,7 @@ public class ShServiceImpl extends ServiceImpl<ShMapper, Sh> implements IShServi
         save(sh);//节点完毕
         qun.setShDate(new Date());
         if (status == 0) {
-            if (dept.getParentId().equals("-1")) {
+            if (dept.getRank()==0) {
                 qun.setShStatus(3);
                 qunJsService.updateById(qunId, massage);
                 qunService.updateById(qun);

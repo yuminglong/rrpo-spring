@@ -1,6 +1,8 @@
 package com.jiebao.platfrom.check.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.service.*;
@@ -261,12 +263,28 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse checkStatus(String gradeId, String[] zzId, String[] fileId, Integer status) {
+    public JiebaoResponse checkStatus(String gradeId, Integer status) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (gradeId == null) {
             return jiebaoResponse.failMessage("请提交必要参数");
         }//给扣分项  给  状态  是否有疑点‘
         jiebaoResponse = this.baseMapper.updateStatus(status, gradeId) == 1 ? jiebaoResponse.okMessage("标记成功") : jiebaoResponse.failMessage("标记失败");
+        return jiebaoResponse;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse checkStatusZZ(String zzId, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (zzId == null) {
+            return jiebaoResponse.failMessage("请提交必要参数");
+        }//给扣分项  给  状态  是否有疑点‘
+        LambdaUpdateWrapper<File> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        lambdaQueryWrapper.eq(File::getFileId, zzId);
+        lambdaQueryWrapper.set(File::getZzStatus, status);
+        jiebaoResponse = fileService.update(lambdaQueryWrapper) ? jiebaoResponse.okMessage("标记成功") : jiebaoResponse.failMessage("标记失败");
+        if (status == 1)
+            checkStatus(fileService.getById(zzId).getRefId(), status);
         return jiebaoResponse;
     }
 }

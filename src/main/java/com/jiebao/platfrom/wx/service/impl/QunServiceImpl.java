@@ -359,7 +359,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             }
         }
         return true;
-    }
+    }  //数据
 
     @Override
     public void exPort(HttpServletResponse response, String[] deptId, String workName) {
@@ -422,16 +422,18 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             queryWrapper.like("wx_user_name", userName);
         }
         if (status != null) {
-            if (status == 2) {
+            if (status == 2) {  //未审核
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());
                 queryWrapper.ne("sh_status", 3);
+                queryWrapper.ne("sh_status", 0);
             } //属于下级  但不需要自己审核   正在 创建的额
             if (status == 3 || status == 1)//已经成功的
                 queryWrapper.eq("sh_status", status);
             if (status == 4) //未上报的{
             {
                 queryWrapper.eq("cj_dept_id", dept.getDeptId());
-                queryWrapper.isNull("status");
+                queryWrapper.eq("sh_dept_id", dept.getDeptId());
+                queryWrapper.ne("sh_status",0);
             }
         }
         queryWrapper.orderByDesc("date");

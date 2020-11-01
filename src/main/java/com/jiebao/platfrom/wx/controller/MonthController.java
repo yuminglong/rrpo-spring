@@ -80,7 +80,7 @@ public class MonthController {
 
     @PostMapping("downDocx")
     @ResponseBody
-    @ApiOperation("下载文档")
+    @ApiOperation("月报可入不可入 导出文档")
     public JiebaoResponse downDocx(HttpServletResponse response, String month) {
         return monthService.monthDocx(response, month);
     }
