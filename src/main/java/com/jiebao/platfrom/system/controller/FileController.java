@@ -122,13 +122,30 @@ public class FileController extends BaseController {
      * @param refId 文件库文件的关联ID
      * @return
      */
-    @ApiOperation("读取信息互递回复附件接口")
+    @ApiOperation("读取附件接口")
     @PostMapping("/getAppendixList")
     public JiebaoResponse getAppendixList(String refId) {
         if (StringUtils.isEmpty(refId)) {
             return new JiebaoResponse().put("status", false);
         } else {
             List<File> list = fileService.getAppendixList(refId);
+            return new JiebaoResponse().put("status", true).put("fileList", list);
+        }
+    }
+
+    /**
+     * 读取附件
+     *
+     * @param refId 文件库文件的关联ID
+     * @return
+     */
+    @ApiOperation("读取信息互递回复附件接口")
+    @PostMapping("/getAppendixListForEX")
+    public JiebaoResponse getAppendixListForEX(String refId) {
+        if (StringUtils.isEmpty(refId)) {
+            return new JiebaoResponse().put("status", false);
+        } else {
+            List<File> list = fileService.getAppendixListForEX(refId);
             return new JiebaoResponse().put("status", true).put("fileList", list);
         }
     }

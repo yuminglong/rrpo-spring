@@ -30,7 +30,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(File::getRefId, refId);
         lambdaQueryWrapper.eq(File::getFileType, "2");
-        lambdaQueryWrapper.eq(File::getRefType, "7");
         lambdaQueryWrapper.orderByDesc(File::getTime);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
@@ -41,10 +40,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(File::getRefId, refId);
         lambdaQueryWrapper.eq(File::getFileType, "2");
-        lambdaQueryWrapper.eq(File::getRefType, "1");
+        lambdaQueryWrapper.eq(File::getRefType,"1");
         lambdaQueryWrapper.orderByDesc(File::getTime);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
+
+    @Override
+    public List<File> getAppendixListForEX(String refId) {
+        LambdaQueryWrapper<File> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(File::getRefId, refId);
+        lambdaQueryWrapper.eq(File::getFileType, "2");
+        lambdaQueryWrapper.eq(File::getRefType,"7");
+        lambdaQueryWrapper.orderByDesc(File::getTime);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+
 
 
     @Override
@@ -69,6 +80,5 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         queryWrapper.in("ref_id", refIds);
         return this.baseMapper.deleteByRefId(queryWrapper);
     }
-
 
 }

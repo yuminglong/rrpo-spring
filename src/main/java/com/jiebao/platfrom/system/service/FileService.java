@@ -17,6 +17,5 @@ public interface FileService extends IService<File> {
 
     Integer deleteByRefIds(List<String> refIds);
 
-
-
+    List<File> getAppendixListForEX(String refId);
 }

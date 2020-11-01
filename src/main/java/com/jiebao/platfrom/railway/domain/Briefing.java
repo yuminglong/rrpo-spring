@@ -65,6 +65,10 @@ public class Briefing {
 
     @TableField(exist = false)
     private String [] userName;
-
+    /**
+     * 是否同步到门户网站
+     */
+    @ApiModelProperty(value = "是否同步到门户网站",example = "1")
+    private Integer synchronizeWeb;
 
 }

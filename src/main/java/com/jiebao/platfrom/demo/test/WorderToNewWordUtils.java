@@ -161,6 +161,7 @@ public class WorderToNewWordUtils {
                         for (XWPFRun run : runs) {
                             run.setFontFamily("仿宋");
                             run.setFontSize(12);
+                            System.out.println("+++++++++++");
                             run.setText(changeValue(run.toString(), textMap), 0);
                         }
                     }

@@ -271,11 +271,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
 
     @Override
-    public IPage<Address> getByDept(QueryRequest request, String iPageDeptId, String userName, String telPhone) {
+    public IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone) {
 
+        System.out.println("--------------------------------");
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
-        if (StringUtils.isNotBlank(iPageDeptId)) {
-            lambdaQueryWrapper.eq(Address::getDeptId, iPageDeptId);
+        if (StringUtils.isNotBlank(address.getDeptId())) {
+            lambdaQueryWrapper.eq(Address::getDeptId, address.getDeptId());
         }
         else {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
