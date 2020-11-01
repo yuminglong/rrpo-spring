@@ -29,7 +29,7 @@ import java.util.List;
  * @author qta
  * @since 2020-08-22
  */
-@Controller
+@RestController
 @RequestMapping("/wx/month")
 @Api(tags = "wx_月度评选")
 public class MonthController {
@@ -39,7 +39,6 @@ public class MonthController {
     FileService fileService;
 
     @PostMapping("saveorUpdate")
-    @ResponseBody
     @ApiOperation("添加或者修改")
     public JiebaoResponse saveOrUpdate(Month month, String[] fileIds) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -48,7 +47,6 @@ public class MonthController {
     }
 
     @Delete("delete")
-    @ResponseBody
     @ApiOperation("删除  ")
     public JiebaoResponse saveOrUpdate(String[] ids) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
@@ -57,7 +55,6 @@ public class MonthController {
     }
 
     @GetMapping("list")
-    @ResponseBody
     @ApiOperation("查询集合")
     public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year) {
         return monthService.pageList(queryRequest, month, look, status, dptId, year);
@@ -65,21 +62,18 @@ public class MonthController {
 
 
     @GetMapping("appear")
-    @ResponseBody
     @ApiOperation("上报")
     public JiebaoResponse appear(String monthId, Integer status) {
         return monthService.appear(monthId, status);
     }
 
     @GetMapping("getById")
-    @ResponseBody
     @ApiOperation("查看具体信息")
     public JiebaoResponse getById(String monthId) {
         return new JiebaoResponse().data(monthService.getById(monthId)).okMessage("查询成功");
     }
 
     @PostMapping("downDocx")
-    @ResponseBody
     @ApiOperation("月报可入不可入 导出文档")
     public JiebaoResponse downDocx(HttpServletResponse response, String month) {
         return monthService.monthDocx(response, month);
@@ -92,7 +86,6 @@ public class MonthController {
     }
 
     @GetMapping("monthDocxText")
-    @ResponseBody
     @ApiOperation("导出表直观样式")
     public JiebaoResponse monthDocxText(QueryRequest queryRequest, String month) {
         return monthService.monthDocxText(queryRequest, month);
@@ -105,7 +98,6 @@ public class MonthController {
     }
 
     @GetMapping("year")
-    @ResponseBody
     @ApiOperation("年度考核统计视图")
     public JiebaoResponse year(Integer year) { //传入年份 获得对应 统计数据
         return monthService.year(year);

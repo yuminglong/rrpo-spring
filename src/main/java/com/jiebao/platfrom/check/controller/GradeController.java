@@ -72,10 +72,10 @@ public class GradeController {
         return iGradeService.checkStatus(gradeId, status);
     }
 
-    @PostMapping("checkStatus")
+    @PostMapping("checkStatusZZ")
     @ApiOperation("佐证附件标记 疑点标记")
     @Log("疑点标记")
     public JiebaoResponse checkStatusZZ( String zzId, Integer status) {
-        return iGradeService.checkStatus(zzId,status);
+        return iGradeService.checkStatusZZ(zzId,status);
     }
 }
