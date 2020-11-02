@@ -28,7 +28,7 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictCwd", column = "train_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "sexDict", column = "sex", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictNature", column = "nature", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById")),
+            @Result(property = "dictNature", column = "nature", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictInstationSection", column = "instation_section", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictRoad", column = "road", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictAge", column = "age", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),

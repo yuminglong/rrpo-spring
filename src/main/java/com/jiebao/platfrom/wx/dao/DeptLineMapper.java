@@ -20,7 +20,7 @@ public interface DeptLineMapper extends BaseMapper<DeptLine> {
 
     @Select("select dept_line_id,dept_id,line_id,(select field_name from sys_dict_new where dict_id=line_id) as lineName," +
             "(select nature from sys_dict_new where dict_id=line_id) as nature," +
-            "(select revenue from sys_dict_new where dict_id=line_id) as revenue," +
+            "(select revenue from sys_dict_new where dict_id=line_id) as revenue" +
             " from wx_dept_line ${ew.customSqlSegment} ")
     List<DeptLine> queryList(@Param("ew") QueryWrapper<DeptLine> queryWrapper);
 
