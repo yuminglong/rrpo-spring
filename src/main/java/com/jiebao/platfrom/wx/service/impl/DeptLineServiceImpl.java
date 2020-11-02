@@ -60,6 +60,7 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
         while (dept.getRank() != 1) {
             dept = deptService.getById(dept.getParentId());
         }
+        System.out.println(dept.getDeptId());
         queryWrapper.lambda().eq(DeptLine::getDeptId, dept.getDeptId());
         return this.baseMapper.queryList(queryWrapper);
     }
