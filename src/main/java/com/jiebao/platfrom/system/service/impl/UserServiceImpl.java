@@ -67,7 +67,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public IPage<User> findUserDetail(User user, QueryRequest request) {
         String deptId = deptService.getDept().getDeptId();
-        if (StringUtils.isNotBlank(user.getUsername())) {//不等于 null  或者"  "
+        if (StringUtils.isNotBlank(user.getUsername())) {//不等于 null  或者"  "    名字的模糊查询优先级最大      所以选了名字再选部门无效
             List<String> list = new ArrayList<>();
             List<String> prentIds = new ArrayList<>();
             prentIds.add(deptId);

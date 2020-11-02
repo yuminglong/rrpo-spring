@@ -12,6 +12,7 @@ import lombok.Data;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("sys_user")
@@ -98,6 +99,9 @@ public class User implements Serializable {
     private transient String roleId;
     @ExcelField(value = "角色")
     private transient String roleName;
+
+    @ExcelField(value = "角色对象")
+    private transient List<Role> roleList;
 
     // 排序字段
     private transient String sortField;
