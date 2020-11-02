@@ -28,12 +28,23 @@ import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -130,6 +141,57 @@ public class BriefingController extends BaseController {
                 }
                 briefingMapper.releaseSave(briefing.getId());
                 briefingUserMapper.setCreatTime(briefing.getId());
+                if (briefing.getSynchronizeWeb() == 1){
+                    //1.创建HttpClient对象
+                    CloseableHttpClient httpClient= HttpClients.createDefault();
+                    //2.创建HttpPost对象，设置URL地址
+                    HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
+
+                    //声明list集合，用来分装表单中的参数
+                    //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
+                    List<NameValuePair> params=new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("channelId","4"));
+                    params.add(new BasicNameValuePair("title",briefing.getTitle()));
+                    params.add(new BasicNameValuePair("html",briefing.getContent()));
+                    // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
+                    UrlEncodedFormEntity formEntity= null;
+                    try {
+                        formEntity = new UrlEncodedFormEntity(params,"utf8");
+                    } catch (UnsupportedEncodingException e) {
+
+                        e.printStackTrace();
+                    }
+                    //设置表单的Entity对象到Post请求中
+                    httpPost.setEntity(formEntity);
+
+
+                    //使用httpClient发起响应获取repsonse
+                    CloseableHttpResponse response=null;
+                    try {
+                        response=httpClient.execute(httpPost);
+                        //4.解析响应，获取数据
+                        //判断状态码是否是200
+                        if(response.getStatusLine().getStatusCode()==200){
+                            HttpEntity httpEntity=response.getEntity();
+                            String content= EntityUtils.toString(httpEntity,"utf8");
+                            System.out.println(content.length());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        try {
+                            response.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            httpClient.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
                 return new JiebaoResponse().message("创建并发布一条护路简报成功");
             }
             return new JiebaoResponse().message("系统错误");
@@ -151,6 +213,57 @@ public class BriefingController extends BaseController {
                     //状态status改为3
                     briefingMapper.release(briefingId);
                     briefingUserMapper.setCreatTime(briefingId);
+                    Briefing byId = briefingService.getById(briefingId);
+                    if (byId.getSynchronizeWeb() == 1){
+                        //1.创建HttpClient对象
+                        CloseableHttpClient httpClient= HttpClients.createDefault();
+                        //2.创建HttpPost对象，设置URL地址
+                        HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
+
+                        //声明list集合，用来分装表单中的参数
+                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
+                        List<NameValuePair> params=new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("channelId","4"));
+                        params.add(new BasicNameValuePair("title",byId.getTitle()));
+                        params.add(new BasicNameValuePair("html",byId.getContent()));
+                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
+                        UrlEncodedFormEntity formEntity= null;
+                        try {
+                            formEntity = new UrlEncodedFormEntity(params,"utf8");
+                        } catch (UnsupportedEncodingException e) {
+
+                            e.printStackTrace();
+                        }
+                        //设置表单的Entity对象到Post请求中
+                        httpPost.setEntity(formEntity);
+
+
+                        //使用httpClient发起响应获取repsonse
+                        CloseableHttpResponse response=null;
+                        try {
+                            response=httpClient.execute(httpPost);
+                            //4.解析响应，获取数据
+                            //判断状态码是否是200
+                            if(response.getStatusLine().getStatusCode()==200){
+                                HttpEntity httpEntity=response.getEntity();
+                                String content= EntityUtils.toString(httpEntity,"utf8");
+                                System.out.println(content.length());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            try {
+                                response.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                httpClient.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 });
                 return new JiebaoResponse().message("发布护路简报成功");
             }

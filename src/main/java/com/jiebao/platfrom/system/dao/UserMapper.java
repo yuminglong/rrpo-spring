@@ -17,9 +17,11 @@ public interface UserMapper extends BaseMapper<User> {
 
     IPage<User> findUserDetail(Page page, @Param("user") User user);
 
-    @Select("select * from sys_user ${ew.customSqlSegment}")
+    @Select("select user_id,user_id as userId,username,password,dept_id,(select dept_name from sys_dept d where u.dept_id=d.dept_id) as deptName,email," +
+            "mobile,status,create_time,modify_time,last_login_time,ssex,description,avatar,openid,type,real_name,idcard" +
+            "  from sys_user u ${ew.customSqlSegment}")
     @Results({
-            @Result(property = "deptName", column = "dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.getByName"))
+            @Result(property = "roleList",column = "user_id",many = @Many(select = "com.jiebao.platfrom.system.dao.RoleMapper.listRole"))
     })
     IPage<User> queryList(Page<User> page, @Param("ew") QueryWrapper<User> ew);
 
