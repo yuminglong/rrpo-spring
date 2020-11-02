@@ -36,6 +36,18 @@ import io.swagger.annotations.ApiOperation;
 import jdk.nashorn.internal.ir.ContinueNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +63,7 @@ import javax.validation.Valid;
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -242,6 +255,57 @@ public class PrizeController extends BaseController {
                         //把status改为3,并创建发布时间
                         prizeMapper.release(prizeId);
                         prizeUserMapper.setCreatTime(prizeId);
+                    }
+                    if (prize.getSynchronizeWeb() == 1) {
+                        //1.创建HttpClient对象
+                        CloseableHttpClient httpClient= HttpClients.createDefault();
+                        //2.创建HttpPost对象，设置URL地址
+                        HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
+
+                        //声明list集合，用来分装表单中的参数
+                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
+                        List<NameValuePair> params=new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("channelId","4"));
+                        params.add(new BasicNameValuePair("title",prize.getTitle()));
+                        params.add(new BasicNameValuePair("html",prize.getContent()));
+                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
+                        UrlEncodedFormEntity formEntity= null;
+                        try {
+                            formEntity = new UrlEncodedFormEntity(params,"utf8");
+                        } catch (UnsupportedEncodingException e) {
+
+                            e.printStackTrace();
+                        }
+                        //设置表单的Entity对象到Post请求中
+                        httpPost.setEntity(formEntity);
+
+
+                        //使用httpClient发起响应获取repsonse
+                        CloseableHttpResponse response=null;
+                        try {
+                            response=httpClient.execute(httpPost);
+                            //4.解析响应，获取数据
+                            //判断状态码是否是200
+                            if(response.getStatusLine().getStatusCode()==200){
+                                HttpEntity httpEntity=response.getEntity();
+                                String content= EntityUtils.toString(httpEntity,"utf8");
+                                System.out.println(content.length());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            try {
+                                response.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                httpClient.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     }
                 });
             } else {
@@ -842,21 +906,22 @@ public class PrizeController extends BaseController {
 
         List<Map<String, Object>> list = prizeService.countMoney(startTime, endTime);
 
+        if (list.size()>0){
         for (Map<String, Object> item : list) {
-            changsha.add(item.get("changsha"));
-            changde.add(item.get("changde"));
-            hengyang.add(item.get("hengyang"));
-            shaoyang.add(item.get("shaoyang"));
-            zhuzhou.add(item.get("zhuzhou"));
-            xiangtan.add(item.get("xiangtan"));
-            yueyang.add(item.get("yueyang"));
-            zhangjiajie.add(item.get("zhangjiajie"));
-            yiyang.add(item.get("yiyang"));
-            chenzhou.add(item.get("chenzhou"));
-            yongzhou.add(item.get("yongzhou"));
-            huaihua.add(item.get("huaihua"));
-            loudi.add(item.get("loudi"));
-            xiangxi.add(item.get("xiangxi"));
+            changsha.add(NullOrZero(item.get("changsha")));
+            changde.add(NullOrZero(item.get("changde")));
+            hengyang.add(NullOrZero(item.get("hengyang")));
+            shaoyang.add(NullOrZero(item.get("shaoyang")));
+            zhuzhou.add(NullOrZero(item.get("zhuzhou")));
+            xiangtan.add(NullOrZero(item.get("xiangtan")));
+            yueyang.add(NullOrZero(item.get("yueyang")));
+            zhangjiajie.add(NullOrZero(item.get("zhangjiajie")));
+            yiyang.add(NullOrZero(item.get("yiyang")));
+            chenzhou.add(NullOrZero(item.get("chenzhou")));
+            yongzhou.add(NullOrZero(item.get("yongzhou")));
+            huaihua.add(NullOrZero(item.get("huaihua")));
+            loudi.add(NullOrZero(item.get("loudi")));
+            xiangxi.add(NullOrZero(item.get("xiangxi")));
         }
 
 
@@ -950,7 +1015,11 @@ public class PrizeController extends BaseController {
 
         String result = JSON.toJSONString(jsonObject);
 
-        return new JiebaoResponse().data(result);
+        return new JiebaoResponse().data(result);}
+
+        else {
+            return new JiebaoResponse().data(null);
+        }
     }
 
 
@@ -980,5 +1049,11 @@ public class PrizeController extends BaseController {
         jsonObject.put("zongshu", zongshuObject);
         String result = JSON.toJSONString(jsonObject);
         return new JiebaoResponse().data(result);
+    }
+
+
+    public String NullOrZero(Object obj) {
+        return obj== null?"0":obj.toString();
+
     }
 }
