@@ -74,12 +74,19 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("date", endDate);//不能大于此时间
         }
-        String[] strings = new String[]{"nature", "instation_section", "road", "age", "closed", "jzd", "distance", "identity", "conditions"};
-        for (String column : strings
+        String[] stringDict = new String[]{"nature", "instation_section", "road", "age", "closed"};  //存储字典类
+        for (String column : stringDict
         ) {
             QueryWrapper<Accident> clone = queryWrapper.clone();
             clone.groupBy(column);
-            jiebaoResponse.put(column, this.baseMapper.listAcc(clone, column));
+            jiebaoResponse.put(column, this.baseMapper.listDict(clone, column));
+        }
+        String[] stringCg = new String[]{"jzd", "distance", "identity", "conditions"};  //常规
+        for (String column : stringCg
+        ) {
+            QueryWrapper<Accident> clone = queryWrapper.clone();
+            clone.groupBy(column);
+            jiebaoResponse.put(column, this.baseMapper.listCg(clone, column));
         }
         return jiebaoResponse.okMessage("查询成功");
     }

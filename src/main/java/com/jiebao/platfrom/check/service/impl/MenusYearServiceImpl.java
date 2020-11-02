@@ -137,7 +137,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     public JiebaoResponse excel(MultipartFile multipartFile, String year_id) {
         List<MenusYear> list = new ArrayList<>();
         JiebaoResponse jiebaoResponse = CheckExcelUtil.excel(year_id, multipartFile, menusService, this, menusYearMapper, yearBindMenusMapper, list);
-        int number = 0;
         if ((int) jiebaoResponse.get("status") == 1) { //操作成功 标志
             List<Grade> gradeArrayList = new ArrayList<>();
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
@@ -155,7 +154,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
                         grade.setDeptId(dept.getDeptId());
                         grade.setCheckId(m.getMenusYearId());
                         grade.setParentId(m.getParentId());
-                        grade.setSorts(number++);
+                        grade.setSorts(m.getSorts());
                         gradeArrayList.add(grade);
                     }
                 }

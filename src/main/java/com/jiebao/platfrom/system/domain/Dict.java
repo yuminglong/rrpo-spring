@@ -50,7 +50,7 @@ public class Dict implements Serializable {
     @ApiModelProperty(value = "线路性质")
     private String nature;
 
-    @ApiModelProperty(value = "系数占比")
+    @ApiModelProperty(value = "系数占比",example = "12.23")
     private Double coefficient;
 
     @ApiModelProperty(value = "值")
