@@ -58,6 +58,7 @@ public class CheckExcelUtil {
                 }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
+            int sort=0;   //排序用的
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 Row row1 = sheetAt.getRow(i); //对应行
                 for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
@@ -83,6 +84,7 @@ public class CheckExcelUtil {
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
+                    menusYear.setSorts(sort++);
                     list.add(menusYear);
                 }
             }
