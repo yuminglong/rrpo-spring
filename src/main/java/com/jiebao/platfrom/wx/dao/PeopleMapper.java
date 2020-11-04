@@ -43,7 +43,7 @@ public interface PeopleMapper extends BaseMapper<People> {
             "phone," +
             "is_wx isWx," +
             "is_qun as isQun," +
-            "police from wx_people w ${ew.customSqlSegment}")
+            "police,km from wx_people w ${ew.customSqlSegment}")
     IPage<People> listPage(Page<People> page, @Param("ew") QueryWrapper<People> queryWrapper);
 
     @Select("select hl_id as hlId,shi as shi,qu_xian as quXian,xiang as xiang,(select dept_name from sys_dept where dept_id=w.shi) as shiName, (select dept_name from sys_dept where dept_id=w.qu_xian) " +
