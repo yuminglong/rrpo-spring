@@ -33,6 +33,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -44,7 +46,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -142,54 +148,76 @@ public class BriefingController extends BaseController {
                 briefingMapper.releaseSave(briefing.getId());
                 briefingUserMapper.setCreatTime(briefing.getId());
                 if (briefing.getSynchronizeWeb() == 1){
-                    //1.创建HttpClient对象
-                    CloseableHttpClient httpClient= HttpClients.createDefault();
-                    //2.创建HttpPost对象，设置URL地址
-                    HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
+                        //获取文件url
+                        String fileUrl = "https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
+                        //获取文件名
+                        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 
-                    //声明list集合，用来分装表单中的参数
-                    //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
-                    List<NameValuePair> params=new ArrayList<NameValuePair>();
-                    params.add(new BasicNameValuePair("channelId","4"));
-                    params.add(new BasicNameValuePair("title",briefing.getTitle()));
-                    params.add(new BasicNameValuePair("html",briefing.getContent()));
-                    // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
-                    UrlEncodedFormEntity formEntity= null;
-                    try {
-                        formEntity = new UrlEncodedFormEntity(params,"utf8");
-                    } catch (UnsupportedEncodingException e) {
-
-                        e.printStackTrace();
-                    }
-                    //设置表单的Entity对象到Post请求中
-                    httpPost.setEntity(formEntity);
-
-
-                    //使用httpClient发起响应获取repsonse
-                    CloseableHttpResponse response=null;
-                    try {
-                        response=httpClient.execute(httpPost);
-                        //4.解析响应，获取数据
-                        //判断状态码是否是200
-                        if(response.getStatusLine().getStatusCode()==200){
-                            HttpEntity httpEntity=response.getEntity();
-                            String content= EntityUtils.toString(httpEntity,"utf8");
-                            System.out.println(content.length());
+                        //1.创建HttpClient对象
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        //2.创建HttpPost对象，设置URL地址
+                        HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
+                        //声明list集合，用来分装表单中的参数
+                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("targetsId", briefing.getTargetsId()));
+                        params.add(new BasicNameValuePair("source", briefing.getSource()));
+                        params.add(new BasicNameValuePair("title", briefing.getTitle()));
+                        params.add(new BasicNameValuePair("html", briefing.getContent()));
+                        if (briefing.getTime()!=null){
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(briefing.getTime());
+                            params.add(new BasicNameValuePair("relTime", relTime));
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }finally {
+                        else {
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                            params.add(new BasicNameValuePair("relTime", relTime));
+                        }
+                        params.add(new BasicNameValuePair("createUser", username));
+                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
+                        UrlEncodedFormEntity formEntity = null;
+                        HttpEntity entity = null;
                         try {
-                            response.close();
+                            //转换成文件流
+                            InputStream is = new URL(fileUrl).openStream();
+                            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                            builder.addBinaryBody("file", is, ContentType.MULTIPART_FORM_DATA, fileName);
+                            entity = builder.build();
+                            formEntity = new UrlEncodedFormEntity(params, "utf8");
+                        } catch (UnsupportedEncodingException | MalformedURLException e) {
+                            e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        //设置表单的Entity对象到Post请求中
+                        httpPost.setEntity(formEntity);
+                        httpPost.setEntity(entity);
+
+                        //使用httpClient发起响应获取repsonse
+                        CloseableHttpResponse response = null;
                         try {
-                            httpClient.close();
+                            response = httpClient.execute(httpPost);
+                            //4.解析响应，获取数据
+                            //判断状态码是否是200
+
+                            if (response.getStatusLine().getStatusCode() == 200) {
+                                HttpEntity httpEntity = response.getEntity();
+                                String content = EntityUtils.toString(httpEntity, "utf8");
+                                System.out.println(content.length());
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
+                        } finally {
+                            try {
+                                response.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                httpClient.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
 
                 }
                 return new JiebaoResponse().message("创建并发布一条护路简报成功");
@@ -215,6 +243,11 @@ public class BriefingController extends BaseController {
                     briefingUserMapper.setCreatTime(briefingId);
                     Briefing byId = briefingService.getById(briefingId);
                     if (byId.getSynchronizeWeb() == 1){
+                        //获取文件url
+                        String fileUrl ="https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
+                        //获取文件名
+                        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
+
                         //1.创建HttpClient对象
                         CloseableHttpClient httpClient= HttpClients.createDefault();
                         //2.创建HttpPost对象，设置URL地址
@@ -223,27 +256,47 @@ public class BriefingController extends BaseController {
                         //声明list集合，用来分装表单中的参数
                         //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
                         List<NameValuePair> params=new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("channelId","4"));
-                        params.add(new BasicNameValuePair("title",byId.getTitle()));
-                        params.add(new BasicNameValuePair("html",byId.getContent()));
+                        params.add(new BasicNameValuePair("targetsId", byId.getTargetsId()));
+                        params.add(new BasicNameValuePair("source", byId.getSource()));
+                        params.add(new BasicNameValuePair("title", byId.getTitle()));
+                        params.add(new BasicNameValuePair("html", byId.getContent()));
+                        if (byId.getTime()!=null){
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
+                            params.add(new BasicNameValuePair("relTime", relTime));
+                        }
+                        else {
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                            params.add(new BasicNameValuePair("relTime", relTime));
+                        }
+                        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+                        params.add(new BasicNameValuePair("createUser", username));
                         // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
                         UrlEncodedFormEntity formEntity= null;
+                        HttpEntity entity =null;
                         try {
+                            //转换成文件流
+                            InputStream is = new URL(fileUrl).openStream();
+                            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                            builder.addBinaryBody("file",is, ContentType.MULTIPART_FORM_DATA,fileName);
+                            entity = builder.build();
                             formEntity = new UrlEncodedFormEntity(params,"utf8");
-                        } catch (UnsupportedEncodingException e) {
-
+                        } catch (UnsupportedEncodingException | MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                         //设置表单的Entity对象到Post请求中
                         httpPost.setEntity(formEntity);
-
+                        httpPost.setEntity(entity);
 
                         //使用httpClient发起响应获取repsonse
                         CloseableHttpResponse response=null;
                         try {
                             response=httpClient.execute(httpPost);
+                            System.out.println("++++++++++++++++++传输局了+++++++++++++");
                             //4.解析响应，获取数据
                             //判断状态码是否是200
+
                             if(response.getStatusLine().getStatusCode()==200){
                                 HttpEntity httpEntity=response.getEntity();
                                 String content= EntityUtils.toString(httpEntity,"utf8");
@@ -257,6 +310,7 @@ public class BriefingController extends BaseController {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
                             try {
                                 httpClient.close();
                             } catch (IOException e) {
@@ -264,15 +318,15 @@ public class BriefingController extends BaseController {
                             }
                         }
                     }
+
                 });
-                return new JiebaoResponse().message("发布护路简报成功");
+                return new JiebaoResponse().okMessage("发布护路简报成功");
             }
         } catch (Exception e) {
-            message = "发布护路简报失败";
             log.error(message, e);
             throw new JiebaoException(message);
         }
-        return new JiebaoResponse().message("发布护路简报失败");
+        return new JiebaoResponse().failMessage("发布护路简报失败");
     }
 
 
@@ -472,4 +526,5 @@ public class BriefingController extends BaseController {
         }
         return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
     }
+
 }

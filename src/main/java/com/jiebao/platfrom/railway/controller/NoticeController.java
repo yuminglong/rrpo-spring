@@ -28,7 +28,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -41,10 +43,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -207,68 +214,71 @@ public class NoticeController extends BaseController {
                     noticeService.release(noticeId);
                     Notice byId = noticeService.getById(noticeId);
                     if (byId.getSynchronizeWeb() == 1) {
-                    /*    String url = "http://192.168.20.105:123/push";
-                      //  String url ="http://192.168.20.105:123/push?channelId=4&title=123&html=123";
-                        HttpClient client = HttpClients.createDefault();
-                        //post
-                        HttpPost post = new HttpPost(url);
-                        //拼接参数
-                        JSONObject json = new JSONObject();
-                        json.put("channelId",4);
-                        json.put("title", byId.getTitle());
-                        json.put("content",byId.getContent());
-                        json.put("createTime", byId.getCreateTime());
-                        try {
-                            post.addHeader("Content-type", "application/json; charset=utf-8");
-                            post.setHeader("Accept", "application/json");
-                            post.setEntity(new StringEntity(json.toString(), Charset.forName("utf-8")));
-                            client.execute(post);
-                            System.out.println("+++++++++++++传参数了++++++++++++++++++");
-                        } catch (UnsupportedEncodingException e1) {
-                            e1.printStackTrace();
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
+                        //获取文件url
+                        String fileUrl = "https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
+                        //获取文件名
+                        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 
                         //1.创建HttpClient对象
-                        CloseableHttpClient httpClient= HttpClients.createDefault();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
                         //2.创建HttpPost对象，设置URL地址
-                        HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
-
+                        HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
                         //声明list集合，用来分装表单中的参数
                         //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
-                        List<NameValuePair> params=new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("channelId","4"));
-                        params.add(new BasicNameValuePair("title",byId.getTitle()));
-                        params.add(new BasicNameValuePair("html",byId.getContent()));
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("targetsId", byId.getTargetsId()));
+                        params.add(new BasicNameValuePair("source", byId.getSource()));
+                        params.add(new BasicNameValuePair("title", byId.getTitle()));
+                        params.add(new BasicNameValuePair("html", byId.getContent()));
+                        if (byId.getTime()!=null){
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
+                            params.add(new BasicNameValuePair("relTime", relTime));
+                        }
+                        else {
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                            params.add(new BasicNameValuePair("relTime", relTime));
+                        }
+                        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+                        params.add(new BasicNameValuePair("createUser", username));
                         // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
-                        UrlEncodedFormEntity formEntity= null;
+                        UrlEncodedFormEntity formEntity = null;
+                        HttpEntity entity = null;
                         try {
-                            formEntity = new UrlEncodedFormEntity(params,"utf8");
-                        } catch (UnsupportedEncodingException e) {
-
+                            //转换成文件流
+                            InputStream is = new URL(fileUrl).openStream();
+                            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                            builder.addBinaryBody("file", is, ContentType.MULTIPART_FORM_DATA, fileName);
+                            entity = builder.build();
+                            formEntity = new UrlEncodedFormEntity(params, "utf8");
+                        } catch (UnsupportedEncodingException | MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                         //设置表单的Entity对象到Post请求中
                         httpPost.setEntity(formEntity);
-
+                        httpPost.setEntity(entity);
 
                         //使用httpClient发起响应获取repsonse
-                        CloseableHttpResponse response=null;
+                        CloseableHttpResponse response = null;
                         try {
-                            response=httpClient.execute(httpPost);
+                            response = httpClient.execute(httpPost);
+
+                            Notice notice = new Notice();
+                            notice.setId(noticeId);
+                            notice.setSynchronizeWeb(2);
+                            noticeService.updateById(notice);
                             //4.解析响应，获取数据
                             //判断状态码是否是200
-                            if(response.getStatusLine().getStatusCode()==200){
-                                HttpEntity httpEntity=response.getEntity();
-                                String content= EntityUtils.toString(httpEntity,"utf8");
+
+                            if (response.getStatusLine().getStatusCode() == 200) {
+                                HttpEntity httpEntity = response.getEntity();
+                                String content = EntityUtils.toString(httpEntity, "utf8");
                                 System.out.println(content.length());
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }finally {
+                        } finally {
                             try {
                                 response.close();
                             } catch (IOException e) {

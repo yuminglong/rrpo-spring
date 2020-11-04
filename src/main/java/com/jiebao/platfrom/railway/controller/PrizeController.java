@@ -43,7 +43,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -61,6 +63,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -149,6 +152,9 @@ public class PrizeController extends BaseController {
             //获得number最大值
             //生成编号
             Integer maxNumber = prizeMapper.findMaxNumber();
+            if (maxNumber==null){
+                maxNumber =0;
+            }
             String maxNumberString = (maxNumber + 1) + "";
             for (int i = 0; i < 4; i++) {
                 if (maxNumberString.length() == 4) {
@@ -227,7 +233,7 @@ public class PrizeController extends BaseController {
      */
     @GetMapping("/{prizeIds}")
     @ApiOperation(value = "批量发布一事一奖", notes = "批量发布一事一奖", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse creatPrize(@PathVariable String[] prizeIds) throws JiebaoException {
+    public JiebaoResponse creatPrize(@PathVariable String[] prizeIds, String source) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -255,57 +261,6 @@ public class PrizeController extends BaseController {
                         //把status改为3,并创建发布时间
                         prizeMapper.release(prizeId);
                         prizeUserMapper.setCreatTime(prizeId);
-                    }
-                    if (prize.getSynchronizeWeb() == 1) {
-                        //1.创建HttpClient对象
-                        CloseableHttpClient httpClient= HttpClients.createDefault();
-                        //2.创建HttpPost对象，设置URL地址
-                        HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
-
-                        //声明list集合，用来分装表单中的参数
-                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
-                        List<NameValuePair> params=new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("channelId","4"));
-                        params.add(new BasicNameValuePair("title",prize.getTitle()));
-                        params.add(new BasicNameValuePair("html",prize.getContent()));
-                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
-                        UrlEncodedFormEntity formEntity= null;
-                        try {
-                            formEntity = new UrlEncodedFormEntity(params,"utf8");
-                        } catch (UnsupportedEncodingException e) {
-
-                            e.printStackTrace();
-                        }
-                        //设置表单的Entity对象到Post请求中
-                        httpPost.setEntity(formEntity);
-
-
-                        //使用httpClient发起响应获取repsonse
-                        CloseableHttpResponse response=null;
-                        try {
-                            response=httpClient.execute(httpPost);
-                            //4.解析响应，获取数据
-                            //判断状态码是否是200
-                            if(response.getStatusLine().getStatusCode()==200){
-                                HttpEntity httpEntity=response.getEntity();
-                                String content= EntityUtils.toString(httpEntity,"utf8");
-                                System.out.println(content.length());
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }finally {
-                            try {
-                                response.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                httpClient.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
                     }
                 });
             } else {
@@ -582,12 +537,12 @@ public class PrizeController extends BaseController {
             for (Prize p :
                     records) {
                 String[] split = p.getPlace().split(",");
-                System.out.println("++++++++++++++++"+split+"+++++++++++++++++++++++");
+                System.out.println("++++++++++++++++" + split + "+++++++++++++++++++++++");
                 testList.add(new String[]{p.getNumber(), split[0], p.getContent()});
             }
             //模板文件地址
             String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
- //           String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
+            //           String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
 
 
             System.out.println("-------------" + inputUrl + "---------------------");
@@ -599,7 +554,7 @@ public class PrizeController extends BaseController {
 
 
             String outputUrl = "D:/upload/words/" + newName;
-   //         String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            //         String outputUrl = "/usr/local/rrpo/upload/" + newName;
             String outPath = outputUrl + ".docx";
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -621,7 +576,7 @@ public class PrizeController extends BaseController {
             }
             //模板文件地址
             String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc_amount.docx").getPath();
-   //         String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
+            //         String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
 
 
             System.out.println("-------------" + inputUrl + "---------------------");
@@ -633,7 +588,7 @@ public class PrizeController extends BaseController {
 
 
             String outputUrl = "D:/upload/words/" + newName;
-    //        String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            //        String outputUrl = "/usr/local/rrpo/upload/" + newName;
             String outPath = outputUrl + ".docx";
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -651,7 +606,7 @@ public class PrizeController extends BaseController {
 
 
         path = "D:/upload/words/";
-   //     path = "/usr/local/rrpo/upload/";
+        //     path = "/usr/local/rrpo/upload/";
         accessPath = "/jbx/cdn/file/";
         String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
         java.io.File currentFile = new java.io.File(path + newName + ".docx");
@@ -793,91 +748,90 @@ public class PrizeController extends BaseController {
         String xiangxiDataOne = JSON.toJSONString(xiangxiOne);
 
 
-
         JSONObject jsonObject = new JSONObject();
         JSONObject changshaObject = new JSONObject();
-        changshaObject.put("name","长沙市");
-        changshaObject.put("not",changshaData);
-        changshaObject.put("pass",changshaDataOne);
+        changshaObject.put("name", "长沙市");
+        changshaObject.put("not", changshaData);
+        changshaObject.put("pass", changshaDataOne);
         jsonObject.put("changsha", changshaObject);
 
         JSONObject changdeObject = new JSONObject();
-        changdeObject.put("name","常德市");
-        changdeObject.put("not",changdeData);
-        changdeObject.put("pass",changdeDataOne);
+        changdeObject.put("name", "常德市");
+        changdeObject.put("not", changdeData);
+        changdeObject.put("pass", changdeDataOne);
         jsonObject.put("changde", changdeObject);
 
         JSONObject hengyangObject = new JSONObject();
-        hengyangObject.put("name","衡阳市");
-        hengyangObject.put("not",hengyangData);
-        hengyangObject.put("pass",hengyangDataOne);
+        hengyangObject.put("name", "衡阳市");
+        hengyangObject.put("not", hengyangData);
+        hengyangObject.put("pass", hengyangDataOne);
         jsonObject.put("hengyang", hengyangObject);
 
         JSONObject shaoyangObject = new JSONObject();
-        shaoyangObject.put("name","邵阳市");
-        shaoyangObject.put("not",shaoyangData);
-        shaoyangObject.put("pass",shaoyangDataOne);
+        shaoyangObject.put("name", "邵阳市");
+        shaoyangObject.put("not", shaoyangData);
+        shaoyangObject.put("pass", shaoyangDataOne);
         jsonObject.put("shaoyang", shaoyangObject);
 
 
         JSONObject zhuzhouObject = new JSONObject();
-        zhuzhouObject.put("name","株洲市");
-        zhuzhouObject.put("not",zhuzhouData);
-        zhuzhouObject.put("pass",zhuzhouDataOne);
+        zhuzhouObject.put("name", "株洲市");
+        zhuzhouObject.put("not", zhuzhouData);
+        zhuzhouObject.put("pass", zhuzhouDataOne);
         jsonObject.put("zhuzhou", zhuzhouObject);
 
         JSONObject xiangtanObject = new JSONObject();
-        xiangtanObject.put("name","湘潭市");
-        xiangtanObject.put("not",xiangtanData);
-        xiangtanObject.put("pass",xiangtanDataOne);
+        xiangtanObject.put("name", "湘潭市");
+        xiangtanObject.put("not", xiangtanData);
+        xiangtanObject.put("pass", xiangtanDataOne);
         jsonObject.put("xiangtan", xiangtanObject);
 
         JSONObject yueyangObject = new JSONObject();
-        yueyangObject.put("name","岳阳市");
-        yueyangObject.put("not",yueyangData);
-        yueyangObject.put("pass",yueyangDataOne);
+        yueyangObject.put("name", "岳阳市");
+        yueyangObject.put("not", yueyangData);
+        yueyangObject.put("pass", yueyangDataOne);
         jsonObject.put("yueyang", yueyangObject);
 
         JSONObject zhangjiajieObject = new JSONObject();
-        zhangjiajieObject.put("name","张家界市");
-        zhangjiajieObject.put("not",zhangjiajieData);
-        zhangjiajieObject.put("pass",zhangjiajieDataOne);
+        zhangjiajieObject.put("name", "张家界市");
+        zhangjiajieObject.put("not", zhangjiajieData);
+        zhangjiajieObject.put("pass", zhangjiajieDataOne);
         jsonObject.put("zhangjiajie", zhangjiajieObject);
 
         JSONObject yiyangObject = new JSONObject();
-        yiyangObject.put("name","益阳市");
-        yiyangObject.put("not",yiyangData);
-        yiyangObject.put("pass",yiyangDataOne);
+        yiyangObject.put("name", "益阳市");
+        yiyangObject.put("not", yiyangData);
+        yiyangObject.put("pass", yiyangDataOne);
         jsonObject.put("yiyang", yiyangObject);
 
         JSONObject chenzhouObject = new JSONObject();
-        chenzhouObject.put("name","郴州市");
-        chenzhouObject.put("not",chenzhouData);
-        chenzhouObject.put("pass",chenzhouDataOne);
+        chenzhouObject.put("name", "郴州市");
+        chenzhouObject.put("not", chenzhouData);
+        chenzhouObject.put("pass", chenzhouDataOne);
         jsonObject.put("chenzhou", chenzhouObject);
 
         JSONObject yongzhouObject = new JSONObject();
-        yongzhouObject.put("name","永州市");
-        yongzhouObject.put("not",yongzhouData);
-        yongzhouObject.put("pass",yongzhouDataOne);
+        yongzhouObject.put("name", "永州市");
+        yongzhouObject.put("not", yongzhouData);
+        yongzhouObject.put("pass", yongzhouDataOne);
         jsonObject.put("yongzhou", yongzhouObject);
 
         JSONObject huaihuaObject = new JSONObject();
-        huaihuaObject.put("name","怀化市");
-        huaihuaObject.put("not",huaihuaData);
-        huaihuaObject.put("pass",huaihuaDataOne);
+        huaihuaObject.put("name", "怀化市");
+        huaihuaObject.put("not", huaihuaData);
+        huaihuaObject.put("pass", huaihuaDataOne);
         jsonObject.put("huaihua", huaihuaObject);
 
         JSONObject loudiObject = new JSONObject();
-        loudiObject.put("name","娄底市");
-        loudiObject.put("not",loudiData);
-        loudiObject.put("pass",loudiDataOne);
+        loudiObject.put("name", "娄底市");
+        loudiObject.put("not", loudiData);
+        loudiObject.put("pass", loudiDataOne);
         jsonObject.put("loudi", loudiObject);
 
         JSONObject xiangxiObject = new JSONObject();
-        xiangxiObject.put("name","湘西州");
-        xiangxiObject.put("not",xiangxiData);
-        xiangxiObject.put("pass",xiangxiDataOne);
+        xiangxiObject.put("name", "湘西州");
+        xiangxiObject.put("not", xiangxiData);
+        xiangxiObject.put("pass", xiangxiDataOne);
         jsonObject.put("xiangxi", xiangxiObject);
 
         String result = JSON.toJSONString(jsonObject);
@@ -906,118 +860,117 @@ public class PrizeController extends BaseController {
 
         List<Map<String, Object>> list = prizeService.countMoney(startTime, endTime);
 
-        if (list.size()>0){
-        for (Map<String, Object> item : list) {
-            changsha.add(NullOrZero(item.get("changsha")));
-            changde.add(NullOrZero(item.get("changde")));
-            hengyang.add(NullOrZero(item.get("hengyang")));
-            shaoyang.add(NullOrZero(item.get("shaoyang")));
-            zhuzhou.add(NullOrZero(item.get("zhuzhou")));
-            xiangtan.add(NullOrZero(item.get("xiangtan")));
-            yueyang.add(NullOrZero(item.get("yueyang")));
-            zhangjiajie.add(NullOrZero(item.get("zhangjiajie")));
-            yiyang.add(NullOrZero(item.get("yiyang")));
-            chenzhou.add(NullOrZero(item.get("chenzhou")));
-            yongzhou.add(NullOrZero(item.get("yongzhou")));
-            huaihua.add(NullOrZero(item.get("huaihua")));
-            loudi.add(NullOrZero(item.get("loudi")));
-            xiangxi.add(NullOrZero(item.get("xiangxi")));
-        }
+        if (list.size() > 0) {
+            for (Map<String, Object> item : list) {
+                changsha.add(NullOrZero(item.get("changsha")));
+                changde.add(NullOrZero(item.get("changde")));
+                hengyang.add(NullOrZero(item.get("hengyang")));
+                shaoyang.add(NullOrZero(item.get("shaoyang")));
+                zhuzhou.add(NullOrZero(item.get("zhuzhou")));
+                xiangtan.add(NullOrZero(item.get("xiangtan")));
+                yueyang.add(NullOrZero(item.get("yueyang")));
+                zhangjiajie.add(NullOrZero(item.get("zhangjiajie")));
+                yiyang.add(NullOrZero(item.get("yiyang")));
+                chenzhou.add(NullOrZero(item.get("chenzhou")));
+                yongzhou.add(NullOrZero(item.get("yongzhou")));
+                huaihua.add(NullOrZero(item.get("huaihua")));
+                loudi.add(NullOrZero(item.get("loudi")));
+                xiangxi.add(NullOrZero(item.get("xiangxi")));
+            }
 
 
-        String changshaData = JSON.toJSONString(changsha);
-        String changdeData = JSON.toJSONString(changde);
-        String hengyangData = JSON.toJSONString(hengyang);
-        String shaoyangData = JSON.toJSONString(shaoyang);
-        String zhuzhouData = JSON.toJSONString(zhuzhou);
-        String xiangtanData = JSON.toJSONString(xiangtan);
-        String yueyangData = JSON.toJSONString(yueyang);
-        String zhangjiajieData = JSON.toJSONString(zhangjiajie);
-        String yiyangData = JSON.toJSONString(yiyang);
-        String chenzhouData = JSON.toJSONString(chenzhou);
-        String yongzhouData = JSON.toJSONString(yongzhou);
-        String huaihuaData = JSON.toJSONString(huaihua);
-        String loudiData = JSON.toJSONString(loudi);
-        String xiangxiData = JSON.toJSONString(xiangxi);
+            String changshaData = JSON.toJSONString(changsha);
+            String changdeData = JSON.toJSONString(changde);
+            String hengyangData = JSON.toJSONString(hengyang);
+            String shaoyangData = JSON.toJSONString(shaoyang);
+            String zhuzhouData = JSON.toJSONString(zhuzhou);
+            String xiangtanData = JSON.toJSONString(xiangtan);
+            String yueyangData = JSON.toJSONString(yueyang);
+            String zhangjiajieData = JSON.toJSONString(zhangjiajie);
+            String yiyangData = JSON.toJSONString(yiyang);
+            String chenzhouData = JSON.toJSONString(chenzhou);
+            String yongzhouData = JSON.toJSONString(yongzhou);
+            String huaihuaData = JSON.toJSONString(huaihua);
+            String loudiData = JSON.toJSONString(loudi);
+            String xiangxiData = JSON.toJSONString(xiangxi);
 
 
-        JSONObject jsonObject = new JSONObject();
-        JSONObject changshaObject = new JSONObject();
-        changshaObject.put("name","长沙市");
-        changshaObject.put("Date",changshaData);
-        jsonObject.put("changsha", changshaObject);
+            JSONObject jsonObject = new JSONObject();
+            JSONObject changshaObject = new JSONObject();
+            changshaObject.put("name", "长沙市");
+            changshaObject.put("Date", changshaData);
+            jsonObject.put("changsha", changshaObject);
 
-        JSONObject changdeObject = new JSONObject();
-        changdeObject.put("name","常德市");
-        changdeObject.put("Date",changdeData);
-        jsonObject.put("changde", changdeObject);
+            JSONObject changdeObject = new JSONObject();
+            changdeObject.put("name", "常德市");
+            changdeObject.put("Date", changdeData);
+            jsonObject.put("changde", changdeObject);
 
-        JSONObject hengyangObject = new JSONObject();
-        hengyangObject.put("name","衡阳市");
-        hengyangObject.put("Date",hengyangData);
-        jsonObject.put("hengyang", hengyangObject);
+            JSONObject hengyangObject = new JSONObject();
+            hengyangObject.put("name", "衡阳市");
+            hengyangObject.put("Date", hengyangData);
+            jsonObject.put("hengyang", hengyangObject);
 
-        JSONObject shaoyangObject = new JSONObject();
-        shaoyangObject.put("name","邵阳市");
-        shaoyangObject.put("Date",shaoyangData);
-        jsonObject.put("shaoyang", shaoyangObject);
+            JSONObject shaoyangObject = new JSONObject();
+            shaoyangObject.put("name", "邵阳市");
+            shaoyangObject.put("Date", shaoyangData);
+            jsonObject.put("shaoyang", shaoyangObject);
 
 
-        JSONObject zhuzhouObject = new JSONObject();
-        zhuzhouObject.put("name","株洲市");
-        zhuzhouObject.put("Date",zhuzhouData);
-        jsonObject.put("zhuzhou", zhuzhouObject);
+            JSONObject zhuzhouObject = new JSONObject();
+            zhuzhouObject.put("name", "株洲市");
+            zhuzhouObject.put("Date", zhuzhouData);
+            jsonObject.put("zhuzhou", zhuzhouObject);
 
-        JSONObject xiangtanObject = new JSONObject();
-        xiangtanObject.put("name","湘潭市");
-        xiangtanObject.put("Date",xiangtanData);
-        jsonObject.put("xiangtan", xiangtanObject);
+            JSONObject xiangtanObject = new JSONObject();
+            xiangtanObject.put("name", "湘潭市");
+            xiangtanObject.put("Date", xiangtanData);
+            jsonObject.put("xiangtan", xiangtanObject);
 
-        JSONObject yueyangObject = new JSONObject();
-        yueyangObject.put("name","岳阳市");
-        yueyangObject.put("Date",yueyangData);
-        jsonObject.put("yueyang", yueyangObject);
+            JSONObject yueyangObject = new JSONObject();
+            yueyangObject.put("name", "岳阳市");
+            yueyangObject.put("Date", yueyangData);
+            jsonObject.put("yueyang", yueyangObject);
 
-        JSONObject zhangjiajieObject = new JSONObject();
-        zhangjiajieObject.put("name","张家界市");
-        zhangjiajieObject.put("Date",zhangjiajieData);
-        jsonObject.put("zhangjiajie", zhangjiajieObject);
+            JSONObject zhangjiajieObject = new JSONObject();
+            zhangjiajieObject.put("name", "张家界市");
+            zhangjiajieObject.put("Date", zhangjiajieData);
+            jsonObject.put("zhangjiajie", zhangjiajieObject);
 
-        JSONObject yiyangObject = new JSONObject();
-        yiyangObject.put("name","益阳市");
-        yiyangObject.put("Date",yiyangData);
-        jsonObject.put("yiyang", yiyangObject);
+            JSONObject yiyangObject = new JSONObject();
+            yiyangObject.put("name", "益阳市");
+            yiyangObject.put("Date", yiyangData);
+            jsonObject.put("yiyang", yiyangObject);
 
-        JSONObject chenzhouObject = new JSONObject();
-        chenzhouObject.put("name","郴州市");
-        chenzhouObject.put("Date",chenzhouData);
-        jsonObject.put("chenzhou", chenzhouObject);
+            JSONObject chenzhouObject = new JSONObject();
+            chenzhouObject.put("name", "郴州市");
+            chenzhouObject.put("Date", chenzhouData);
+            jsonObject.put("chenzhou", chenzhouObject);
 
-        JSONObject yongzhouObject = new JSONObject();
-        yongzhouObject.put("name","永州市");
-        yongzhouObject.put("Date",yongzhouData);
-        jsonObject.put("yongzhou", yongzhouObject);
+            JSONObject yongzhouObject = new JSONObject();
+            yongzhouObject.put("name", "永州市");
+            yongzhouObject.put("Date", yongzhouData);
+            jsonObject.put("yongzhou", yongzhouObject);
 
-        JSONObject huaihuaObject = new JSONObject();
-        huaihuaObject.put("name","怀化市");
-        huaihuaObject.put("Date",huaihuaData);
-        jsonObject.put("huaihua", huaihuaObject);
+            JSONObject huaihuaObject = new JSONObject();
+            huaihuaObject.put("name", "怀化市");
+            huaihuaObject.put("Date", huaihuaData);
+            jsonObject.put("huaihua", huaihuaObject);
 
-        JSONObject loudiObject = new JSONObject();
-        loudiObject.put("name","娄底市");
-        loudiObject.put("Date",loudiData);
-        jsonObject.put("loudi", loudiObject);
+            JSONObject loudiObject = new JSONObject();
+            loudiObject.put("name", "娄底市");
+            loudiObject.put("Date", loudiData);
+            jsonObject.put("loudi", loudiObject);
 
-        JSONObject xiangxiObject = new JSONObject();
-        xiangxiObject.put("name","湘西州");
-        xiangxiObject.put("Date",xiangxiData);
-        jsonObject.put("xiangxi", xiangxiObject);
+            JSONObject xiangxiObject = new JSONObject();
+            xiangxiObject.put("name", "湘西州");
+            xiangxiObject.put("Date", xiangxiData);
+            jsonObject.put("xiangxi", xiangxiObject);
 
-        String result = JSON.toJSONString(jsonObject);
+            String result = JSON.toJSONString(jsonObject);
 
-        return new JiebaoResponse().data(result);}
-
-        else {
+            return new JiebaoResponse().data(result);
+        } else {
             return new JiebaoResponse().data(null);
         }
     }
@@ -1033,19 +986,19 @@ public class PrizeController extends BaseController {
         String zongshuData = JSON.toJSONString(map.get("zongshu"));
 
         JSONObject bohuiObject = new JSONObject();
-        bohuiObject.put("name","驳回");
-        bohuiObject.put("Date",bohuiData);
+        bohuiObject.put("name", "驳回");
+        bohuiObject.put("Date", bohuiData);
         jsonObject.put("bohui", bohuiObject);
 
         JSONObject tongguoObject = new JSONObject();
-        tongguoObject.put("name","通过");
-        tongguoObject.put("Date",tongguoData);
+        tongguoObject.put("name", "通过");
+        tongguoObject.put("Date", tongguoData);
         jsonObject.put("tongguo", tongguoObject);
 
 
         JSONObject zongshuObject = new JSONObject();
-        zongshuObject.put("name","总数");
-        zongshuObject.put("Date",zongshuData);
+        zongshuObject.put("name", "总数");
+        zongshuObject.put("Date", zongshuData);
         jsonObject.put("zongshu", zongshuObject);
         String result = JSON.toJSONString(jsonObject);
         return new JiebaoResponse().data(result);
@@ -1053,7 +1006,93 @@ public class PrizeController extends BaseController {
 
 
     public String NullOrZero(Object obj) {
-        return obj== null?"0":obj.toString();
+        return obj == null ? "0" : obj.toString();
 
+    }
+
+
+    /**
+     * 同步到门户网
+     *
+     * @return
+     */
+    @ApiOperation("同步到门户网")
+    @PostMapping("/menHu")
+    public JiebaoResponse menHu(String prizeId, String source, Date time,String targetsId) {
+        Prize byId = prizeService.getById(prizeId);
+        if (byId.getSynchronizeWeb() == 0) {
+            //获取文件url
+            String fileUrl = "https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
+            //获取文件名
+            String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+            //1.创建HttpClient对象
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            //2.创建HttpPost对象，设置URL地址
+            HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
+            //声明list集合，用来分装表单中的参数
+            //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("targetsId", targetsId));
+            params.add(new BasicNameValuePair("source", source));
+            params.add(new BasicNameValuePair("title", byId.getTitle()));
+            params.add(new BasicNameValuePair("html", byId.getContent()));
+            if (time !=null){
+                String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(time);
+                params.add(new BasicNameValuePair("relTime", relTime));
+            }
+            else {
+                String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                params.add(new BasicNameValuePair("relTime", relTime));
+            }
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            params.add(new BasicNameValuePair("createUser", username));
+            // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
+            UrlEncodedFormEntity formEntity = null;
+            HttpEntity entity = null;
+            try {
+                //转换成文件流
+                InputStream is = new URL(fileUrl).openStream();
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.addBinaryBody("file", is, ContentType.MULTIPART_FORM_DATA, fileName);
+                entity = builder.build();
+                formEntity = new UrlEncodedFormEntity(params, "utf8");
+            } catch (UnsupportedEncodingException | MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //设置表单的Entity对象到Post请求中
+            httpPost.setEntity(formEntity);
+            httpPost.setEntity(entity);
+
+            //使用httpClient发起响应获取repsonse
+            CloseableHttpResponse response = null;
+            try {
+                response = httpClient.execute(httpPost);
+                //4.解析响应，获取数据
+                //判断状态码是否是200
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    HttpEntity httpEntity = response.getEntity();
+                    String content = EntityUtils.toString(httpEntity, "utf8");
+                    System.out.println(content.length());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        return new JiebaoResponse().okMessage("同步成功");
     }
 }
