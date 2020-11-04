@@ -75,4 +75,19 @@ public class Notice {
     private Date releaseTime;
 
     private Integer isCheck;
+    /**
+     *
+     * 门户网（自填时间）
+     */
+    private Date time;
+
+    /**
+     * 门户网（自填来源）
+     */
+    private String source;
+    /**
+     * 门户网栏目ID
+     */
+    private String targetsId;
+
 }

@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.system.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
@@ -13,6 +14,15 @@ import com.jiebao.platfrom.system.service.DictService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -160,4 +171,19 @@ public class DictController extends BaseController {
         IPage<Dict> listTable = this.dictService.getListTable(queryRequest, dict);
         return new JiebaoResponse().data(listTable).okMessage("查询成功");
     }
+
+    @GetMapping("getTargets")
+    @ApiOperation(value = "获取推送栏目", notes = "获取推送栏目", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getTargets() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://192.168.20.105:123/push/targets");
+        CloseableHttpResponse response = null;
+        response = httpClient.execute(httpGet);
+        HttpEntity httpEntity  = response.getEntity();
+        String result = EntityUtils.toString(httpEntity, "UTF-8");
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        return new JiebaoResponse().data(jsonObject).okMessage("查询成功");
+    }
+
+
 }

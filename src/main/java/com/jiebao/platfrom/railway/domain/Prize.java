@@ -128,4 +128,6 @@ public class Prize {
      */
     @ApiModelProperty(value = "是否同步到门户网站",example = "1")
     private Integer synchronizeWeb;
+
+
 }

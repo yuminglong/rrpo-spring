@@ -71,4 +71,20 @@ public class Briefing {
     @ApiModelProperty(value = "是否同步到门户网站",example = "1")
     private Integer synchronizeWeb;
 
+    /**
+     *
+     * 门户网（自填时间）
+     */
+    private Date time;
+
+    /**
+     * 门户网（自填来源）
+     */
+    private String source;
+
+    /**
+     * 门户网栏目ID
+     */
+    private String targetsId;
+
 }
