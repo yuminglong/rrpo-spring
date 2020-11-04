@@ -82,7 +82,7 @@ public class People implements Serializable {
     private String lineName;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "公里数", hidden = true,example = "12.25")
+    @ApiModelProperty(value = "公里数", hidden = true, example = "12.25")
     private Double lineRevenue;
 
     @TableField(exist = false)
@@ -175,6 +175,9 @@ public class People implements Serializable {
     private Integer status;
 
     private Date creatTime;
+
+    @ApiModelProperty(value = "km数")
+    private String km;
 
 
 }

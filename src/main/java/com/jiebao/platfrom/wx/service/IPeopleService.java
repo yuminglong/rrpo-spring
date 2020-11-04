@@ -19,9 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 public interface IPeopleService extends IService<People> {
     boolean excelImPort(MultipartFile file);
 
-    JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId,Integer status);  //分页查询
+    JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId,Integer status,String km);  //分页查询
 
-    JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status,String title);//导出
+    JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status,String title,String km);//导出
 
     JiebaoResponse saveOrUpdateChile(People people);
 

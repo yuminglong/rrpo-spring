@@ -50,21 +50,21 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
 //    private static int lock = 1;//默认上锁
 
     @Override
-    public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status,String km) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Page<People> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return jiebaoResponse.data(this.baseMapper.listPage(page, packQueryWra(deptId, LineId, status))).message("查询成功");
+        return jiebaoResponse.data(this.baseMapper.listPage(page, packQueryWra(deptId, LineId, status,km))).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title) {
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title,String km) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status));
+        List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status,km));
         CheckExcelUtil.exportList(response, lists, People.class, null, title);
         return jiebaoResponse.message("查询成功");
     }
 
-    private QueryWrapper<People> packQueryWra(String deptId, String lineId, Integer status) {
+    private QueryWrapper<People> packQueryWra(String deptId, String lineId, Integer status,String km) {
         QueryWrapper<People> queryWrapper = new QueryWrapper<>();
         Dept dept = null;
         if (deptId == null) {
@@ -85,6 +85,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             queryWrapper.eq(column, deptId);
         if (StringUtils.isNotBlank(lineId))
             queryWrapper.eq("line", lineId);
+        if(StringUtils.isNoneBlank(km))
+            queryWrapper.eq("km",km);
         queryWrapper.eq("status", status);
         queryWrapper.orderByAsc("lu_number");
         return queryWrapper;

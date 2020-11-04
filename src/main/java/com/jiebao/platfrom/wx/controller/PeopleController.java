@@ -30,14 +30,14 @@ public class PeopleController {
 
     @GetMapping("list")
     @ApiOperation("数据集合")
-    public JiebaoResponse list(QueryRequest queryRequest, String deptId, String LineId, Integer status) {
-        return peopleService.listPage(queryRequest, deptId, LineId, status);
+    public JiebaoResponse list(QueryRequest queryRequest, String deptId, String LineId, Integer status,String km) {
+        return peopleService.listPage(queryRequest, deptId, LineId, status,km);
     }
 
     @PostMapping("listExcel")
     @ApiOperation("数据集合导出")
-    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title) {
-        return peopleService.listExcel(response, deptId, lineId, status, title);
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title,String km) {
+        return peopleService.listExcel(response, deptId, lineId, status, title,km);
     }
 
     @PostMapping("saveOrUpdate")
