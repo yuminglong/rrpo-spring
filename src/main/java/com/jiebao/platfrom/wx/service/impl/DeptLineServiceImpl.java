@@ -54,13 +54,11 @@ public class DeptLineServiceImpl extends ServiceImpl<DeptLineMapper, DeptLine> i
             dept = deptService.getDept();//当前登陆人
         else
             dept = deptService.getById(deptId);
-        System.out.println(dept);
         if (dept.getRank() < 1)
             return null;
         while (dept.getRank() != 1) {
             dept = deptService.getById(dept.getParentId());
         }
-        System.out.println(dept.getDeptId());
         queryWrapper.lambda().eq(DeptLine::getDeptId, dept.getDeptId());
         return this.baseMapper.queryList(queryWrapper);
     }
