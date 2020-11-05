@@ -29,7 +29,7 @@ public class DeptLineController {
     IDeptLineService deptLineService;
 
     @GetMapping("getLine")
-    @ApiOperation("根据对应的 部门去查询 对应的 线路")
+    @ApiOperation("根据对应的 部门去查询 对应的 线路   《=======》废弃")
     public JiebaoResponse getLine(String deptId) {
         return deptLineService.getLine(deptId);
     }
