@@ -29,6 +29,7 @@ import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserConfigService;
+import com.jiebao.platfrom.system.service.UserRoleService;
 import com.jiebao.platfrom.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -90,6 +91,8 @@ public class UnituserController extends BaseController {
     private DeptMapper deptMapper;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @GetMapping
     public JiebaoResponse getList() {
@@ -109,8 +112,8 @@ public class UnituserController extends BaseController {
             user.setPassword(MD5Util.encrypt(oldUser.getUnitUser(), Unituser.DEFAULT_PASSWORD));
 
             List<Dept> depts = deptService.list();
-            for (Dept dept : depts){
-                if (oldUser.getUnit().equals(dept.getDeptName())){
+            for (Dept dept : depts) {
+                if (oldUser.getUnit().equals(dept.getDeptName())) {
                     user.setDeptId(dept.getDeptId());
                 }
             }
@@ -141,7 +144,7 @@ public class UnituserController extends BaseController {
     @GetMapping("/info")
     @ApiOperation(value = "导信息互递主表", notes = "导信息互递主表", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse Info() {
-        List<Info> list = infoService.list();
+        List<Info> list = infoService.listForYear();
         for (Info info : list
         ) {
             Exchange exchange = new Exchange();
@@ -164,33 +167,35 @@ public class UnituserController extends BaseController {
     @GetMapping("/infoComment")
     @ApiOperation(value = "导信息互递接收人表", notes = "导信息互递接收人表", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse infoComment() {
-        List<InfoComment> list = infoCommentService.list();
-        for (InfoComment c : list) {
-            ExchangeUser exchangeUser = new ExchangeUser();
-            List<Exchange> exchanges = exchangeMapper.selectId(c.getInfoSeq(), c.getTitle());
-            if (exchanges != null || exchanges.size() == 1) {
-                for (Exchange exchange : exchanges
-                ) {
-                    exchangeUser.setExchangeId(exchange.getId());
+        // List<InfoComment> list = infoCommentService.list();
+        List<Exchange> list = exchangeService.list();
+        for (Exchange e : list) {
+
+            List<InfoComment> infoComment = infoCommentService.selectId(e.getInfoSeq(), e.getTitle());
+
+            for (InfoComment info : infoComment
+            ) {
+                ExchangeUser exchangeUser = new ExchangeUser();
+                exchangeUser.setExchangeId(e.getId());
+                User byName = userService.findByName(info.getCommentUser());
+                if (byName != null) {
+                    exchangeUser.setSendUserId(byName.getUserId());
                 }
+                exchangeUser.setSendUserName(info.getCommentUser());
+                exchangeUser.setType("1");
+                exchangeUser.setCreatTime(new Date());
+                if (info.getCommentContent() != null && info.getViewTime() != null) {
+                    exchangeUser.setIsRead(2);
+                } else if (info.getViewTime() != null) {
+                    exchangeUser.setIsRead(1);
+                } else {
+                    exchangeUser.setIsRead(0);
+                }
+                exchangeUser.setReceiveTime(info.getViewTime());
+                exchangeUser.setOpinion(info.getCommentContent());
+                exchangeUserService.save(exchangeUser);
             }
-            User byName = userService.findByName(c.getCommentUser());
-            if (byName != null) {
-                exchangeUser.setSendUserId(byName.getUserId());
-            }
-            exchangeUser.setSendUserName(c.getCommentUser());
-            exchangeUser.setType("1");
-            exchangeUser.setCreatTime(new Date());
-            if (c.getCommentContent() != null && c.getViewTime() != null) {
-                exchangeUser.setIsRead(2);
-            } else if (c.getViewTime() != null) {
-                exchangeUser.setIsRead(1);
-            } else {
-                exchangeUser.setIsRead(0);
-            }
-            exchangeUser.setReceiveTime(c.getViewTime());
-            exchangeUser.setOpinion(c.getCommentContent());
-            exchangeUserService.save(exchangeUser);
+
         }
         return new JiebaoResponse().okMessage("ok");
     }
@@ -199,23 +204,23 @@ public class UnituserController extends BaseController {
     @ApiOperation(value = "导新的user表Dept", notes = "导新的user表Dept", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse newUserDept() {
         List<User> list = userService.nullList();
-       // List<Unituser> users = unituserService.selectNew();
-      // List<Unituser> arrayList = new ArrayList<>();
+        // List<Unituser> users = unituserService.selectNew();
+        // List<Unituser> arrayList = new ArrayList<>();
         List<Dept> depts = deptService.list();
-        for (User user: list
-             ) {
+        for (User user : list
+        ) {
             Unituser unituser = unituserService.selectName(user.getUsername());
-            if (unituser.getUnit().contains("所")){
+            if (unituser.getUnit().contains("所")) {
                 String xian = unituser.getUnit().replace(unituser.getUnit().charAt(unituser.getUnit().length() - 2) + "", "市");
                 String substring = xian.substring(0, xian.length() - 1);
-                System.out.println("++++++++++++++++"+substring);
+                System.out.println("++++++++++++++++" + substring);
                 //  String qu = unituser.getUnit().replace(unituser.getUnit().charAt(unituser.getUnit().length() - 1) + "", "市");
-              //  String zhen = unituser.getUnit().replace(unituser.getUnit().charAt(unituser.getUnit().length() - 1) + "", "镇");
+                //  String zhen = unituser.getUnit().replace(unituser.getUnit().charAt(unituser.getUnit().length() - 1) + "", "镇");
                 Dept byNewName = deptMapper.getByNewName(substring);
-              //  Dept byNewName1 = deptMapper.getByNewName(qu);
-              //  Dept byNewName2 = deptMapper.getByNewName(zhen);
-                if (byNewName!=null){
-                    user.setDeptId( byNewName.getDeptId());
+                //  Dept byNewName1 = deptMapper.getByNewName(qu);
+                //  Dept byNewName2 = deptMapper.getByNewName(zhen);
+                if (byNewName != null) {
+                    user.setDeptId(byNewName.getDeptId());
                     userMapper.updateById(user);
                 }
               /*  if (byNewName1!=null){
@@ -228,25 +233,25 @@ public class UnituserController extends BaseController {
                 }*/
             }
         }
-            return new JiebaoResponse().okMessage("ok");
+        return new JiebaoResponse().okMessage("ok");
     }
 
 
     @GetMapping("/setRole")
     @ApiOperation(value = "导入角色", notes = "导入角色", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse setRole(){
+    public JiebaoResponse setRole() {
         //查询剩下还没有角色用户
         List<User> users = userMapper.remainList();
-        for (User u: users
-             ) {
+        for (User u : users
+        ) {
             Unituser unituser = unituserService.selectName(u.getUsername());
-            if ( unituser.getUnit().contains("中央护路办")){
+            if (unituser.getUnit().contains("中央护路办")) {
                 String roleId = "c587617e33ea164323cca19975286867";
                 // 保存用户角色
                 String[] roles = roleId.split(StringPool.COMMA);
                 setUserRoles(u, roles);
             }
-            if ( unituser.getUnit().contains("路口铺")){
+            if (unituser.getUnit().contains("路口铺")) {
                 String roleId = "a72d53a97f6ad3dcaada94280a9142c8";
                 // 保存用户角色
                 String[] roles = roleId.split(StringPool.COMMA);
@@ -258,10 +263,10 @@ public class UnituserController extends BaseController {
 
     @GetMapping("/setUserConfig")
     @ApiOperation(value = "个性化配置", notes = "个性化配置", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse setUserConfig(){
+    public JiebaoResponse setUserConfig() {
         List<User> list = userService.list();
-        for (User u: list
-             ) {
+        for (User u : list
+        ) {
             userConfigService.initDefaultUserConfig(String.valueOf(u.getUserId()));
         }
         return new JiebaoResponse().okMessage("可以");
@@ -269,10 +274,10 @@ public class UnituserController extends BaseController {
 
     @GetMapping("/updateDept")
     @ApiOperation(value = "修改组织机构", notes = "修改组织机构", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse updateDept(){
+    public JiebaoResponse updateDept() {
         //查找所有长铁用户
         List<Unituser> list = unituserService.selectHHT();
-        for (Unituser u: list
+        for (Unituser u : list
         ) {
             userMapper.updateByName(u.getUnitUser());
         }
@@ -282,16 +287,16 @@ public class UnituserController extends BaseController {
 
     @GetMapping("/addAddress")
     @ApiOperation(value = "人员导入通讯录", notes = "人员导入通讯录", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse addAddress(){
+    public JiebaoResponse addAddress() {
         //查找所有长铁用户
         List<User> list = userService.list();
-        for (User u: list
+        for (User u : list
         ) {
             Address address = new Address();
             address.setDeptId(u.getDeptId());
             address.setPosition(u.getDescription());
             address.setEmail(u.getEmail());
-            if (u.getDeptId() !=null && !"".equals(u.getDeptId())){
+            if (u.getDeptId() != null && !"".equals(u.getDeptId())) {
                 Dept byId = deptService.getById(u.getDeptId());
                 address.setUnit(byId.getDeptName());
             }
@@ -300,6 +305,32 @@ public class UnituserController extends BaseController {
             address.setStatus(1);
             addressService.save(address);
         }
+        return new JiebaoResponse().okMessage("可以");
+    }
+
+
+
+    @GetMapping("/updateDeptOne")
+    @ApiOperation(value = "公安处人员重新更改组织机构和角色", notes = "公安处人员重新更改组织机构和角色", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse updateDeptOne() {
+        //查找所有长铁用户
+        List<Unituser> list = unituserService.list();
+        List<User> users = userService.list();
+        for (Unituser u:list
+             ) {
+            if (u.getUnit().contains("省政府办公厅")){
+                for (User user:users
+                     ) {
+                    if (u.getUnitUser().equals(user.getUsername())){
+                        User user1 = new User();
+                        user1.setUserId(user.getUserId());
+                        user1.setDeptId("dd6b6b562884d4590c9c2a4b176a5580");
+                        userService.updateById(user1);
+                    }
+                }
+            }
+        }
+
         return new JiebaoResponse().okMessage("可以");
     }
 

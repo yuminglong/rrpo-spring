@@ -192,11 +192,15 @@ public class DeptController extends BaseController {
     }
 
     @GetMapping("/findProvince")
-    @ApiOperation(value = "查询所有省级", notes = "查询所有省级", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "查询所有省级和公安处", notes = "查询所有省级和公安处", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findProvince() {
         HashMap<String, Object> map = new HashMap<>();
         map.put("rank", 0);
         List<Dept> depts = deptMapper.selectByMap(map);
+        HashMap<String, Object> map1 = new HashMap<>();
+        map1.put("rank", 4);
+        List<Dept> depts1 = deptMapper.selectByMap(map1);
+        depts.addAll(depts1);
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }
 

@@ -187,13 +187,13 @@ public class ExchangeController extends BaseController {
                    //声明list集合，用来分装表单中的参数
                    //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
                    List<NameValuePair> params = new ArrayList<NameValuePair>();
-                   params.add(new BasicNameValuePair("targetsId", exchange.getTargetsId()));
+                   params.add(new BasicNameValuePair("id", exchange.getTargetsId()));
                    params.add(new BasicNameValuePair("source", exchange.getSource()));
                    params.add(new BasicNameValuePair("title", exchange.getTitle()));
                    params.add(new BasicNameValuePair("html", exchange.getContent()));
                    String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(exchange.getTime());
-                   params.add(new BasicNameValuePair("relTime", relTime));
-                   params.add(new BasicNameValuePair("createUser", username));
+                   params.add(new BasicNameValuePair("time", relTime));
+                   params.add(new BasicNameValuePair("user", username));
                    // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
                    UrlEncodedFormEntity formEntity = null;
                    HttpEntity entity = null;

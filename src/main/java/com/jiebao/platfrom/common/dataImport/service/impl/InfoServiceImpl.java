@@ -10,8 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service("infoService")
 @DS("old")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class InfoServiceImpl extends ServiceImpl<InfoMapper, Info> implements InfoService {
+    @Override
+    public List<Info> listForYear() {
+        return baseMapper.listForYear();
+    }
 }

@@ -182,6 +182,7 @@ public class DictController extends BaseController {
         HttpEntity httpEntity  = response.getEntity();
         String result = EntityUtils.toString(httpEntity, "UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(result);
+        System.out.println(jsonObject);
         return new JiebaoResponse().data(jsonObject).okMessage("查询成功");
     }
 
