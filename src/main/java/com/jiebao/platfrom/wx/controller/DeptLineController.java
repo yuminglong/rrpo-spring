@@ -44,7 +44,12 @@ public class DeptLineController {
     @PostMapping("add")
     @ApiOperation("添加对象")
     public JiebaoResponse add(DeptLine deptLine) {
-        return deptLineService.add(deptLine);
+        try {
+            return deptLineService.add(deptLine);
+        } catch (org.springframework.dao.DuplicateKeyException e) {
+            return new JiebaoResponse().failMessage("不可重复绑定");
+        }
+
     }
 
     @GetMapping("delete")
@@ -52,6 +57,4 @@ public class DeptLineController {
     public JiebaoResponse delete(String[] ids) {
         return deptLineService.delete(ids);
     }
-
-
 }
