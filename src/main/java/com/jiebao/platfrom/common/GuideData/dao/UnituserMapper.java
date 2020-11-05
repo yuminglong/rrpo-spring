@@ -3,6 +3,7 @@ package com.jiebao.platfrom.common.GuideData.dao;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.common.GuideData.domain.Unituser;
+import com.jiebao.platfrom.common.dataImport.domain.Info;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -39,4 +40,6 @@ public interface UnituserMapper extends BaseMapper<Unituser> {
      */
     @Select("SELECT * FROM `unituser` WHERE pcode BETWEEN 11801 AND 11826 ")
     List<Unituser> selectHHT();
+
+
 }

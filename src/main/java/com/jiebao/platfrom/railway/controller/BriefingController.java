@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -30,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -39,17 +41,24 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.ibatis.annotations.Select;
 import org.apache.shiro.SecurityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
+import sun.misc.BASE64Encoder;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -90,6 +99,8 @@ public class BriefingController extends BaseController {
 
     @Autowired
     private BriefingCountService briefingCountService;
+
+
 
 
     /**
@@ -160,19 +171,19 @@ public class BriefingController extends BaseController {
                         //声明list集合，用来分装表单中的参数
                         //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("targetsId", briefing.getTargetsId()));
+                        params.add(new BasicNameValuePair("id", briefing.getTargetsId()));
                         params.add(new BasicNameValuePair("source", briefing.getSource()));
                         params.add(new BasicNameValuePair("title", briefing.getTitle()));
                         params.add(new BasicNameValuePair("html", briefing.getContent()));
                         if (briefing.getTime()!=null){
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(briefing.getTime());
-                            params.add(new BasicNameValuePair("relTime", relTime));
+                            params.add(new BasicNameValuePair("time", relTime));
                         }
                         else {
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
-                            params.add(new BasicNameValuePair("relTime", relTime));
+                            params.add(new BasicNameValuePair("time", relTime));
                         }
-                        params.add(new BasicNameValuePair("createUser", username));
+                        params.add(new BasicNameValuePair("user", username));
                         // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
                         UrlEncodedFormEntity formEntity = null;
                         HttpEntity entity = null;
@@ -199,10 +210,10 @@ public class BriefingController extends BaseController {
                             //4.解析响应，获取数据
                             //判断状态码是否是200
 
-                            if (response.getStatusLine().getStatusCode() == 200) {
+                            if (response.getStatusLine().getStatusCode() == 0) {
                                 HttpEntity httpEntity = response.getEntity();
                                 String content = EntityUtils.toString(httpEntity, "utf8");
-                                System.out.println(content.length());
+                                System.out.println(content);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -243,78 +254,118 @@ public class BriefingController extends BaseController {
                     briefingUserMapper.setCreatTime(briefingId);
                     Briefing byId = briefingService.getById(briefingId);
                     if (byId.getSynchronizeWeb() == 1){
-                        //获取文件url
-                        String fileUrl ="https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
-                        //获取文件名
-                        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
 
-                        //1.创建HttpClient对象
-                        CloseableHttpClient httpClient= HttpClients.createDefault();
-                        //2.创建HttpPost对象，设置URL地址
-                        HttpPost httpPost=new HttpPost("http://192.168.20.105:123/push");;
-
-                        //声明list集合，用来分装表单中的参数
-                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
-                        List<NameValuePair> params=new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("targetsId", byId.getTargetsId()));
-                        params.add(new BasicNameValuePair("source", byId.getSource()));
-                        params.add(new BasicNameValuePair("title", byId.getTitle()));
-                        params.add(new BasicNameValuePair("html", byId.getContent()));
-                        if (byId.getTime()!=null){
-                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
-                            params.add(new BasicNameValuePair("relTime", relTime));
-                        }
-                        else {
-                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
-                            params.add(new BasicNameValuePair("relTime", relTime));
-                        }
-                        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-                        params.add(new BasicNameValuePair("createUser", username));
-                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
-                        UrlEncodedFormEntity formEntity= null;
-                        HttpEntity entity =null;
+                        //HttpPost请求实体
+                        HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
+                        //使用工具类创建 httpClient
+                        CloseableHttpClient client = HttpClients.createDefault();
+                        CloseableHttpResponse resp = null;
+                        String respondBody = null;
                         try {
-                            //转换成文件流
-                            InputStream is = new URL(fileUrl).openStream();
-                            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                            builder.addBinaryBody("file",is, ContentType.MULTIPART_FORM_DATA,fileName);
-                            entity = builder.build();
-                            formEntity = new UrlEncodedFormEntity(params,"utf8");
-                        } catch (UnsupportedEncodingException | MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        //设置表单的Entity对象到Post请求中
-                        httpPost.setEntity(formEntity);
-                        httpPost.setEntity(entity);
+                            //设置请求超时时间和 sockect 超时时间
+                            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(200000).setSocketTimeout(200000000).build();
+                            httpPost.setConfig(requestConfig);
+                            //附件参数需要用到的请求参数实体构造器
+                            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-                        //使用httpClient发起响应获取repsonse
-                        CloseableHttpResponse response=null;
-                        try {
-                            response=httpClient.execute(httpPost);
-                            System.out.println("++++++++++++++++++传输局了+++++++++++++");
-                            //4.解析响应，获取数据
-                            //判断状态码是否是200
+                          /*
+                            //获取文件url
+                            String fileUrl ="D:\\tempDoc.docx";
+                            String fileu = "D:\\newDoc.docx";
+                            File is = new File(fileUrl);
+                            File fil =new File(fileu);
+                           *//* Map<String, File> files = new HashMap<>();
+                             files.put("file",is);
+                            files.put("file",fil);*//*
+                            ArrayList<File> filess =new ArrayList<>();
+                            filess.add(is);
+                            filess.add(fil);*/
 
-                            if(response.getStatusLine().getStatusCode()==200){
-                                HttpEntity httpEntity=response.getEntity();
-                                String content= EntityUtils.toString(httpEntity,"utf8");
-                                System.out.println(content.length());
+                            //获取附件
+                            ArrayList<File> filess =new ArrayList<>();
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("ref_type",8);
+                            map.put("file_type",2);
+                            List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
+                            if (files.size()>0){
+                                for (com.jiebao.platfrom.system.domain.File f: files
+                                ) {
+                                    String url = f.getFileUrl() + f.getOldName();
+                                    File is = new File(url);
+                                    filess.add(is);
+                                }
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }finally {
-                            try {
-                                response.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            if (!CollectionUtils.isEmpty(filess)) {
+                                for (File file:filess) {
+                                    multipartEntityBuilder.addBinaryBody("file",file);
+                                }
                             }
+                            System.out.println(byId.getTargetsId()+"----------------");
+                            Map<String, String> params = new HashMap<>();
+                            params.put("id", byId.getTargetsId());
+                            params.put("source", byId.getSource());
+                            params.put("title", byId.getTitle());
+                            //如果富编辑器里有图片，转换成base64替换img标签所有内容
+                            Map<String, Object> mapF = new HashMap<>();
+                            map.put("ref_type",8);
+                            map.put("file_type",1);
+                            List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
+                            if (filesF.size()>0){
+                                Element doc = Jsoup.parseBodyFragment(byId.getContent()).body();
+                                Elements jpg = doc.select("img[src]");
+                                for (com.jiebao.platfrom.system.domain.File f: files
+                                ) {
+                                    String url = f.getFileUrl() + f.getOldName();
+                                    //转换为base64
+                                    BASE64Encoder encoder = new BASE64Encoder();
+                                    InputStream   in = new FileInputStream(url);
+                                    byte[] data = new byte[in.available()];
+                                    String encode = encoder.encode(data);
 
-                            try {
-                                httpClient.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                }
+
+                            }else {
+                                params.put("html", byId.getContent());
+                            }
+                            if (byId.getTime()!=null){
+                                String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
+                                params.put("time", relTime);
+                            }
+                            else {
+                                String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                                params.put("time", relTime);
+                            }
+                            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+                            params.put("user", username);
+
+                            ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
+                            if (!CollectionUtils.isEmpty(params)) {
+                                params.forEach((key, value) -> {
+                                    //此处的字符串参数会被设置到请求体Query String Parameters中
+
+                                    multipartEntityBuilder.addTextBody(key, value,strContent);
+                                });
+                            }
+                            HttpEntity httpEntity = multipartEntityBuilder.build();
+                            //将请求参数放入 HttpPost 请求体中
+                            //使用 httpEntity 后 Content-Type会自动被设置成 multipart/form-data
+                            httpPost.setEntity(httpEntity);
+                            //执行发送post请求
+                            resp = client.execute(httpPost);
+                            //将返回结果转成String
+                            respondBody = EntityUtils.toString(resp.getEntity());
+                            System.out.println("++++++++++++++"+respondBody);
+                        } catch (IOException e) {
+                            //日志信息及异常处理
+
+                        } finally {
+                            if (resp != null) {
+                                try {
+                                    //关闭请求
+                                    resp.close();
+                                } catch (IOException e) {
+
+                                }
                             }
                         }
                     }

@@ -82,7 +82,7 @@ management:
 
 
 jiebao:
-  host: http://114.115.147.159:9527
+  host: http://114.115.147.159:19527
   #host: http://192.168.20.113:9527
   # 是否异步记录用户操作日志
   openAopLog: true
@@ -102,7 +102,7 @@ jiebao:
     imagePath: /usr/local/rrpo/upload/images/ #D:/upload/images/
     filePath: /usr/local/rrpo/upload/files/  #D:/upload/files/
 
-    #虚拟访问路径+
+    #虚拟访问路径
     staticImagePath: /jbx/cdn/image/**
     staticFilePath: /jbx/cdn/file/**
 

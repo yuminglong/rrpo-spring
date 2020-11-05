@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service("InfoCommentService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -20,4 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class InfoCommentServiceImpl extends ServiceImpl<InfoCommentMapper, InfoComment> implements InfoCommentService {
 
 
+    @Override
+    public List<InfoComment> selectId(String infoSeq, String title) {
+        return baseMapper.selectId(infoSeq ,title);
+    }
 }

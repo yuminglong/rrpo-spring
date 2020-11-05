@@ -87,4 +87,8 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Update("UPDATE sys_user set dept_id = '4000' WHERE username = #{userName}")
     boolean updateByName(String userName);
+
+
+    @Update("UPDATE sys_user set dept_id = #{deptId} WHERE user_id = #{userId}")
+     boolean updateByUserId(String userId ,String deptId);
 }
