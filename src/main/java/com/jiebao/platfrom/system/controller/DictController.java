@@ -176,7 +176,7 @@ public class DictController extends BaseController {
     @ApiOperation(value = "获取推送栏目", notes = "获取推送栏目", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getTargets() throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet("http://192.168.20.105:123/push/targets");
+        HttpGet httpGet = new HttpGet("http://114.116.174.5:888/push/targets");
         CloseableHttpResponse response = null;
         response = httpClient.execute(httpGet);
         HttpEntity httpEntity  = response.getEntity();
