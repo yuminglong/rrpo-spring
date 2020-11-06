@@ -69,8 +69,8 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(prize.getTitle())) {
             queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
         }
-        if (StringUtils.isNotBlank(prize.getNumber())){
-            queryWrapper.lambda().like(Prize::getNumber, prize.getNumber());
+        if (StringUtils.isNotBlank(prize.getNewNumber())){
+            queryWrapper.lambda().like(Prize::getNewNumber, prize.getNewNumber());
         }
         if (StringUtils.isNotBlank(prize.getPlace())){
             queryWrapper.lambda().like(Prize::getPlace, prize.getPlace());
@@ -116,8 +116,8 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
                 queryWrapper.lambda().in(Prize::getId, "111111111111111111111111111111111");
             }
         }
-        if (StringUtils.isNotBlank(prize.getNumber())){
-            queryWrapper.lambda().like(Prize::getNumber, prize.getNumber());
+        if (StringUtils.isNotBlank(prize.getNewNumber())){
+            queryWrapper.lambda().like(Prize::getNewNumber, prize.getNewNumber());
         }
         if (StringUtils.isNotBlank(prize.getTitle())) {
             queryWrapper.lambda().like(Prize::getTitle, prize.getTitle());
