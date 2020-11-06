@@ -58,7 +58,6 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             entity.setJcDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getDeptId());
             entity.setDate(new Date());
-            entity.setStatus(0);
         }
         boolean b = super.saveOrUpdate(entity);
         if (b && entity.getFileIds() != null && entity.getFileIds().length != 0) {
@@ -94,7 +93,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             if (status == 3)  //已通过
                 queryWrapper.eq("status", 1);
             if (status == 4) {  //未上报
-                queryWrapper.eq("status", 0);
+                queryWrapper.isNull("status");
                 queryWrapper.eq("jc_dept_id", dept.getDeptId());
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());
             }
