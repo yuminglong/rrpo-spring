@@ -256,7 +256,7 @@ public class BriefingController extends BaseController {
                     if (byId.getSynchronizeWeb() == 1){
 
                         //HttpPost请求实体
-                        HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
+                        HttpPost httpPost = new HttpPost("http://114.116.174.5:888/push");
                         //使用工具类创建 httpClient
                         CloseableHttpClient client = HttpClients.createDefault();
                         CloseableHttpResponse resp = null;
