@@ -43,6 +43,6 @@ public class InfoComment implements Serializable {
     /**
      * 阅读时间
      */
-    private Date viewTime;
+    private String viewTime;
 
 }

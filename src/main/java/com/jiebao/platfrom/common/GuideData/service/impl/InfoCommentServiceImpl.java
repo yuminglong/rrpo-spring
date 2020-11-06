@@ -9,6 +9,7 @@ import com.jiebao.platfrom.common.GuideData.domain.Unituser;
 import com.jiebao.platfrom.common.GuideData.service.InfoCommentService;
 import com.jiebao.platfrom.common.GuideData.service.UnitUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +22,12 @@ import java.util.List;
 @DS("old")
 public class InfoCommentServiceImpl extends ServiceImpl<InfoCommentMapper, InfoComment> implements InfoCommentService {
 
+    @Autowired
+    private InfoCommentMapper infoCommentMapper;
+
 
     @Override
     public List<InfoComment> selectId(String infoSeq, String title) {
-        return baseMapper.selectId(infoSeq ,title);
+        return infoCommentMapper.selectId(infoSeq, title);
     }
 }

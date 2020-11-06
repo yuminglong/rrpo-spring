@@ -263,8 +263,8 @@ public class BriefingController extends BaseController {
                         String respondBody = null;
                         try {
                             //设置请求超时时间和 sockect 超时时间
-                            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(200000).setSocketTimeout(200000000).build();
-                            httpPost.setConfig(requestConfig);
+                           /* RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(20000).setSocketTimeout(20000000).build();
+                            httpPost.setConfig(requestConfig);*/
                             //附件参数需要用到的请求参数实体构造器
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
@@ -321,6 +321,7 @@ public class BriefingController extends BaseController {
                                     InputStream   in = new FileInputStream(url);
                                     byte[] data = new byte[in.available()];
                                     String encode = encoder.encode(data);
+
 
                                 }
 

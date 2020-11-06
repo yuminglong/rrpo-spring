@@ -166,7 +166,7 @@ public class UnituserController extends BaseController {
 
     @GetMapping("/infoComment")
     @ApiOperation(value = "导信息互递接收人表", notes = "导信息互递接收人表", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse infoComment() {
+    public JiebaoResponse infoComment() throws ParseException {
         // List<InfoComment> list = infoCommentService.list();
         List<Exchange> list = exchangeService.list();
         for (Exchange e : list) {
@@ -191,7 +191,11 @@ public class UnituserController extends BaseController {
                 } else {
                     exchangeUser.setIsRead(0);
                 }
-                exchangeUser.setReceiveTime(info.getViewTime());
+                if (info.getViewTime() !=null){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = sdf.parse(info.getViewTime());
+                    exchangeUser.setReceiveTime(date);
+                }
                 exchangeUser.setOpinion(info.getCommentContent());
                 exchangeUserService.save(exchangeUser);
             }
