@@ -541,8 +541,8 @@ public class PrizeController extends BaseController {
                 testList.add(new String[]{p.getNumber(), split[0], p.getContent()});
             }
             //模板文件地址
-            String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
-            //           String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
+            //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc.docx").getPath();
+           String inputUrl = "/usr/local/rrpo/word/tempDoc.docx";
 
 
             System.out.println("-------------" + inputUrl + "---------------------");
@@ -553,8 +553,8 @@ public class PrizeController extends BaseController {
             String newName = UUID.randomUUID().toString();
 
 
-            String outputUrl = "D:/upload/words/" + newName;
-            //         String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            //String outputUrl = "D:/upload/words/" + newName;
+             String outputUrl = "/usr/local/rrpo/upload/" + newName;
             String outPath = outputUrl + ".docx";
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -575,8 +575,8 @@ public class PrizeController extends BaseController {
 
             }
             //模板文件地址
-            String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc_amount.docx").getPath();
-            //         String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
+            //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc_amount.docx").getPath();
+             String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
 
 
             System.out.println("-------------" + inputUrl + "---------------------");
@@ -587,8 +587,8 @@ public class PrizeController extends BaseController {
             String newName = UUID.randomUUID().toString();
 
 
-            String outputUrl = "D:/upload/words/" + newName;
-            //        String outputUrl = "/usr/local/rrpo/upload/" + newName;
+            //String outputUrl = "D:/upload/words/" + newName;
+            String outputUrl = "/usr/local/rrpo/upload/" + newName;
             String outPath = outputUrl + ".docx";
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -605,8 +605,8 @@ public class PrizeController extends BaseController {
         String accessPath = ""; //文件访问虚拟地址
 
 
-        path = "D:/upload/words/";
-        //     path = "/usr/local/rrpo/upload/";
+        //path = "D:/upload/words/";
+        path = "/usr/local/rrpo/upload/";
         accessPath = "/jbx/cdn/file/";
         String currentTimeFolder = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
         java.io.File currentFile = new java.io.File(path + newName + ".docx");
