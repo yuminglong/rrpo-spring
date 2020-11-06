@@ -400,6 +400,11 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
         return new JiebaoResponse().data(list(queryWrapper)).okMessage("查询成功");
     }
 
+    /**
+     *
+     * @param deptId
+     * @return
+     */
     private boolean judge(String deptId) {  //是否存在群
         return this.baseMapper.judge(deptId) == null ? true : false;
     }
@@ -433,7 +438,7 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             {
                 queryWrapper.eq("cj_dept_id", dept.getDeptId());
                 queryWrapper.eq("sh_dept_id", dept.getDeptId());
-                queryWrapper.ne("sh_status",0);
+                queryWrapper.eq("sh_status",0);
             }
         }
         queryWrapper.orderByDesc("date");

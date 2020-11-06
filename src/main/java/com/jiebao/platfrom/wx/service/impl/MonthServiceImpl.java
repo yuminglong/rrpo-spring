@@ -58,6 +58,7 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
             entity.setJcDeptId(dept.getDeptId());
             entity.setShDeptId(dept.getDeptId());
             entity.setDate(new Date());
+            entity.setStatus(0);
         }
         boolean b = super.saveOrUpdate(entity);
         if (b && entity.getFileIds() != null && entity.getFileIds().length != 0) {
