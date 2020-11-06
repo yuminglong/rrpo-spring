@@ -159,77 +159,118 @@ public class BriefingController extends BaseController {
                 briefingMapper.releaseSave(briefing.getId());
                 briefingUserMapper.setCreatTime(briefing.getId());
                 if (briefing.getSynchronizeWeb() == 1){
-                        //获取文件url
-                        String fileUrl = "https://img1.doubanio.com/view/photo/l/public/p2537149328.webp";
-                        //获取文件名
-                        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                    //HttpPost请求实体
+                    HttpPost httpPost = new HttpPost("http://114.116.174.5:888/push");
+                    //使用工具类创建 httpClient
+                    CloseableHttpClient client = HttpClients.createDefault();
+                    CloseableHttpResponse resp = null;
+                    String respondBody = null;
+                    try {
+                        //设置请求超时时间和 sockect 超时时间
+                           /* RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(20000).setSocketTimeout(20000000).build();
+                            httpPost.setConfig(requestConfig);*/
+                        //附件参数需要用到的请求参数实体构造器
+                        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-                        //1.创建HttpClient对象
-                        CloseableHttpClient httpClient = HttpClients.createDefault();
-                        //2.创建HttpPost对象，设置URL地址
-                        HttpPost httpPost = new HttpPost("http://192.168.20.105:123/push");
-                        //声明list集合，用来分装表单中的参数
-                        //要求：设置请求的地址是：http://192.168.20.105:123/push?channelId=4&title=xxx&html=xxx
-                        List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("id", briefing.getTargetsId()));
-                        params.add(new BasicNameValuePair("source", briefing.getSource()));
-                        params.add(new BasicNameValuePair("title", briefing.getTitle()));
-                        params.add(new BasicNameValuePair("html", briefing.getContent()));
+                          /*
+                            //获取文件url
+                            String fileUrl ="D:\\tempDoc.docx";
+                            String fileu = "D:\\newDoc.docx";
+                            File is = new File(fileUrl);
+                            File fil =new File(fileu);
+                           *//* Map<String, File> files = new HashMap<>();
+                             files.put("file",is);
+                            files.put("file",fil);*//*
+                            ArrayList<File> filess =new ArrayList<>();
+                            filess.add(is);
+                            filess.add(fil);*/
+
+                        //获取附件
+                        ArrayList<File> filess =new ArrayList<>();
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("ref_type",8);
+                        map.put("file_type",2);
+                        List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
+                        if (files.size()>0){
+                            for (com.jiebao.platfrom.system.domain.File f: files
+                            ) {
+                                String url = f.getFileUrl() + f.getOldName();
+                                File is = new File(url);
+                                filess.add(is);
+                            }
+                        }
+                        if (!CollectionUtils.isEmpty(filess)) {
+                            for (File file:filess) {
+                                multipartEntityBuilder.addBinaryBody("file",file);
+                            }
+                        }
+                        System.out.println(briefing.getTargetsId()+"----------------");
+                        Map<String, String> params = new HashMap<>();
+                        params.put("id", briefing.getTargetsId());
+                        params.put("source", briefing.getSource());
+                        params.put("title", briefing.getTitle());
+                        //如果富编辑器里有图片，转换成base64替换img标签所有内容
+                        Map<String, Object> mapF = new HashMap<>();
+                        map.put("ref_type",8);
+                        map.put("file_type",1);
+                        List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
+                        if (filesF.size()>0){
+                            Element doc = Jsoup.parseBodyFragment(briefing.getContent()).body();
+                            Elements jpg = doc.select("img[src]");
+                            for (com.jiebao.platfrom.system.domain.File f: files
+                            ) {
+                                String url = f.getFileUrl() + f.getOldName();
+                                //转换为base64
+                                BASE64Encoder encoder = new BASE64Encoder();
+                                InputStream   in = new FileInputStream(url);
+                                byte[] data = new byte[in.available()];
+                                String encode = encoder.encode(data);
+                            }
+
+                        }else {
+                            params.put("html", briefing.getContent());
+                        }
                         if (briefing.getTime()!=null){
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(briefing.getTime());
-                            params.add(new BasicNameValuePair("time", relTime));
+                            params.put("time", relTime);
                         }
                         else {
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
-                            params.add(new BasicNameValuePair("time", relTime));
+                            params.put("time", relTime);
                         }
-                        params.add(new BasicNameValuePair("user", username));
-                        // 创建表单的Entity对象,第一个参数是封装好的表单数据，第二个参数就是编码方式
-                        UrlEncodedFormEntity formEntity = null;
-                        HttpEntity entity = null;
-                        try {
-                            //转换成文件流
-                            InputStream is = new URL(fileUrl).openStream();
-                            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                            builder.addBinaryBody("file", is, ContentType.MULTIPART_FORM_DATA, fileName);
-                            entity = builder.build();
-                            formEntity = new UrlEncodedFormEntity(params, "utf8");
-                        } catch (UnsupportedEncodingException | MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+
+                        params.put("user", username);
+
+                        ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
+                        if (!CollectionUtils.isEmpty(params)) {
+                            params.forEach((key, value) -> {
+                                //此处的字符串参数会被设置到请求体Query String Parameters中
+
+                                multipartEntityBuilder.addTextBody(key, value,strContent);
+                            });
                         }
-                        //设置表单的Entity对象到Post请求中
-                        httpPost.setEntity(formEntity);
-                        httpPost.setEntity(entity);
+                        HttpEntity httpEntity = multipartEntityBuilder.build();
+                        //将请求参数放入 HttpPost 请求体中
+                        //使用 httpEntity 后 Content-Type会自动被设置成 multipart/form-data
+                        httpPost.setEntity(httpEntity);
+                        //执行发送post请求
+                        resp = client.execute(httpPost);
+                        //将返回结果转成String
+                        respondBody = EntityUtils.toString(resp.getEntity());
+                        System.out.println("++++++++++++++"+respondBody);
+                    } catch (IOException e) {
+                        //日志信息及异常处理
 
-                        //使用httpClient发起响应获取repsonse
-                        CloseableHttpResponse response = null;
-                        try {
-                            response = httpClient.execute(httpPost);
-                            //4.解析响应，获取数据
-                            //判断状态码是否是200
-
-                            if (response.getStatusLine().getStatusCode() == 0) {
-                                HttpEntity httpEntity = response.getEntity();
-                                String content = EntityUtils.toString(httpEntity, "utf8");
-                                System.out.println(content);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
+                    } finally {
+                        if (resp != null) {
                             try {
-                                response.close();
+                                //关闭请求
+                                resp.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                httpClient.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+
                             }
                         }
-
+                    }
                 }
                 return new JiebaoResponse().message("创建并发布一条护路简报成功");
             }
@@ -321,8 +362,6 @@ public class BriefingController extends BaseController {
                                     InputStream   in = new FileInputStream(url);
                                     byte[] data = new byte[in.available()];
                                     String encode = encoder.encode(data);
-
-
                                 }
 
                             }else {
