@@ -1,5 +1,6 @@
-package com.jiebao.platfrom.accident.entity;
+package com.jiebao.platfrom.accident.daomain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -24,7 +25,7 @@ public class Jk implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("ID")
+    @TableId(value = "ID",type = IdType.UUID)
     private Integer id;
 
     @TableField("PK")

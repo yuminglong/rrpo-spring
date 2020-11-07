@@ -39,7 +39,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String quDeptId, String startDate, String endDate) {
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         if (quDeptId != null) {
-
+            queryWrapper.eq("city_qx_id", quDeptId);
         } else if (cityLevelId != null) {
             queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
         } else if (policeId != null) {

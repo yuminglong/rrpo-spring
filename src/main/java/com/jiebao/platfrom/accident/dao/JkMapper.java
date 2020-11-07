@@ -1,6 +1,6 @@
-package com.jiebao.platfrom.accident.mapper;
+package com.jiebao.platfrom.accident.dao;
 
-import com.jiebao.platfrom.accident.entity.Jk;
+import com.jiebao.platfrom.accident.daomain.Jk;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

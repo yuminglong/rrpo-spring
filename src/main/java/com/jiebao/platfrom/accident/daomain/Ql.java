@@ -1,8 +1,11 @@
-package com.jiebao.platfrom.accident.entity;
+package com.jiebao.platfrom.accident.daomain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.time.LocalTime;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,11 +22,14 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("accident_ql")
+/**
+ * 老系统直接  拷过来的
+ */
 public class Ql implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("ID")
+    @TableId(value = "ID",type = IdType.UUID)
     private Integer id;
 
     private String bm;
@@ -59,6 +65,8 @@ public class Ql implements Serializable {
     private String tp;
 
     private String delflag;
+
+    private LocalTime creatTime;
 
 
 }

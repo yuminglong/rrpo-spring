@@ -1,7 +1,9 @@
 package com.jiebao.platfrom.accident.service;
 
-import com.jiebao.platfrom.accident.entity.Ql;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.jiebao.platfrom.accident.daomain.Ql;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 
 /**
  * <p>
@@ -12,5 +14,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-11-07
  */
 public interface IQlService extends IService<Ql> {
+    IPage<Ql> listPage(QueryRequest queryRequest,String deptName,String policeName,String gwdName);
+
+    boolean importExcel(String deptName,String policeName,String gwdName);
+
+    boolean addOrUpdate(Ql ql);
+
+    boolean delete(String[] idList);
 
 }

@@ -1,7 +1,7 @@
 package com.jiebao.platfrom.accident.service.impl;
 
-import com.jiebao.platfrom.accident.entity.Jk;
-import com.jiebao.platfrom.accident.mapper.JkMapper;
+import com.jiebao.platfrom.accident.daomain.Jk;
+import com.jiebao.platfrom.accident.dao.JkMapper;
 import com.jiebao.platfrom.accident.service.IJkService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

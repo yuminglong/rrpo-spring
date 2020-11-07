@@ -24,7 +24,7 @@ public interface DeptSMapper extends BaseMapper<Dept> {
 
 
     @Select("select dept_id from accident_dept where id=#{id}")
-    String selectDeptId(String id); //获得单一对象的id
+    String selectDeptId(String id); //获得组织机构对应的真实  id
 
 
     @Select("select dept_id from accident_dept where parent_id=#{parentId}")

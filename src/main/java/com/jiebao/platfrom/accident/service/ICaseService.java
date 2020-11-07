@@ -14,7 +14,7 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
  * @since 2020-08-05
  */
 public interface ICaseService extends IService<Case> {
-    JiebaoResponse list(QueryRequest queryRequest, String police, String cityLevel, String lineId, String nature, String startDate, String endDate);
+    JiebaoResponse list(QueryRequest queryRequest, String police, String cityLevel,String quDeptId, String lineId, String nature, String startDate, String endDate);
 
     JiebaoResponse map(String startDate, String endDate, Integer status);//地图视角
 
