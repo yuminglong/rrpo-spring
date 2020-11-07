@@ -51,12 +51,12 @@ public class QunController {
     }
 
 
-    @GetMapping("qunCreat")
-    @ResponseBody
-    @ApiOperation("加载已经上报合格的群")
-    public JiebaoResponse qunCreat(String content) {
-        return qunService.importQun(content);
-    }
+//    @GetMapping("qunCreat")
+//    @ResponseBody
+//    @ApiOperation("加载已经上报合格的群")
+//    public JiebaoResponse qunCreat(String content) {
+//        return qunService.importQun(content);
+//    }
 
 
     @PostMapping("exPort")
