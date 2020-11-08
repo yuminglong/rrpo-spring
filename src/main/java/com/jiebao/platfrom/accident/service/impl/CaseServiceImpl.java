@@ -42,9 +42,9 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         if (quDeptId != null) {
             queryWrapper.eq("city_qx_id", quDeptId);
         } else if (cityLevelId != null) {
-            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+            queryWrapper.eq("city_cs_id", cityLevelId);
         } else if (policeId != null) {
-            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
+            queryWrapper.in("city_cs_id",  deptSMapper.selectDeptIds(policeId));
         } else {
             Dept dept = deptService.getDept();  //当前登陆人部门
             if (!dept.getDeptId().equals("0"))

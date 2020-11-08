@@ -18,7 +18,7 @@ import java.util.Date;
 public interface IAccidentService extends IService<Accident> {
     JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId,String quDeptId, String startDate, String endDate);//查询
 
-    JiebaoResponse map(String policeId, String cityLevelId,String startDate, String endDate);//地图视角
+    JiebaoResponse map(String policeId, String cityLevelId,String startDate, String endDate,String quDeptId);//地图视角
 
     JiebaoResponse lock(String[] accidentId,String month,Integer status);
 }

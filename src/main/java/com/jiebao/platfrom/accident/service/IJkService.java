@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.accident.daomain.Ql;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * 服务类
@@ -15,12 +17,12 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
  * @since 2020-11-07
  */
 public interface IJkService extends IService<Jk> {
-//    IPage<Ql> listPage(QueryRequest queryRequest)
-//
-//    boolean importExcel();
-//
-//    boolean saveOrUpdate(Ql ql);
-//
-//
-//    boolean delete(String[] idList);
+    IPage<Jk> listPage(QueryRequest queryRequest,String gac,String dzs);
+
+    boolean importExcel(HttpServletResponse response,String gac, String dzs);
+
+    boolean addOrUpdate(Jk jk);
+
+
+    boolean delete(String[] idList);
 }

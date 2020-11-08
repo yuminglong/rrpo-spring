@@ -41,7 +41,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (quDeptId != null) {
             queryWrapper.eq("city_qx_id", quDeptId);
         } else if (cityLevelId != null) {
-            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+            queryWrapper.eq("city_cs_id", cityLevelId);
         } else if (policeId != null) {
             queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
         } else {  //
@@ -60,15 +60,16 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {  //视图接口
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {  //视图接口
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (quDeptId != null) {
+            queryWrapper.eq("city_qx_id", quDeptId);
+        }
         if (cityLevelId != null) {
-            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
-        } else {
-            if (policeId != null) {
-                queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
-            }
+            queryWrapper.eq("city_cs_id", cityLevelId);
+        } else if (policeId != null){
+                queryWrapper.in("city_cs_id",deptSMapper.selectDeptIds(policeId));
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间

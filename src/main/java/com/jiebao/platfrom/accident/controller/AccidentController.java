@@ -71,8 +71,8 @@ public class AccidentController {
     @GetMapping("map")
     @ApiOperation("获取地图展示数据")
     @Log("获取地图展示数据")
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {
-        return accidentService.map(policeId, cityLevelId, startDate, endDate);
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {
+        return accidentService.map(policeId, cityLevelId, startDate, endDate,quDeptId);
     }
 
 
