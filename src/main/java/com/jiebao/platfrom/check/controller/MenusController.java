@@ -56,8 +56,8 @@ public class MenusController {
     @DeleteMapping("deleteById/{menusId}")
     @ApiOperation("删除")
     @Log("删除")
-    public JiebaoResponse deleteById(String menusId) {
-        return menusService.deleteById(menusId);
+    public JiebaoResponse deleteById(String menusId,Integer status) {
+        return menusService.deleteById(menusId,status);
     }
 
 //    @DeleteMapping("deleteListById/{menusIdS}")

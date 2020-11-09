@@ -58,29 +58,29 @@ public class CheckExcelUtil {
                 }
                 arr[i] = menusService.selectByName(stringCellValue);
             }
-            int sort=0;   //排序用的
+            int sort = 0;   //排序用的
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 Row row1 = sheetAt.getRow(i); //对应行
                 for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
                     Cell cell = row1.getCell(j);
-                    if (cell == null) {
+                    if (cell == null) {  //空返回
                         continue;
                     }
                     cell.setCellType(CellType.STRING);
-                    if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) {
+                    if (menusYearMapper.exSit(cell.getStringCellValue(), yearId) != null) { //存在返回
                         continue;
                     }
                     Cell cell1 = row1.getCell(j + 1); //摘要
                     if (cell == null) {
                         cell1 = row1.createCell(j + 1);
                     }
-                    if(cell1==null){
-                        continue;
-                    }
-                    cell1.setCellType(CellType.STRING);
+
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
-                    menusYear.setSummary(cell1.getStringCellValue());
+                    if (cell1 != null) {//不等于null 就赋值
+                        cell1.setCellType(CellType.STRING);
+                        menusYear.setSummary(cell1.getStringCellValue());
+                    }
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
@@ -397,7 +397,7 @@ public class CheckExcelUtil {
         }
     }
 
-    public static void exportList(HttpServletResponse response, List<? extends Object> list, Class<?> cla, String workName,String titles) {  //大众通用类型 纯集合
+    public static void exportList(HttpServletResponse response, List<? extends Object> list, Class<?> cla, String workName, String titles) {  //大众通用类型 纯集合
         HSSFWorkbook workbook = new HSSFWorkbook();  //创建空间
         HSSFCellStyle cellStyle = workbook.createCellStyle();   //设定格式
         //垂直居中

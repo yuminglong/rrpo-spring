@@ -3,6 +3,7 @@ package com.jiebao.platfrom.wx.dao;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.wx.domain.QunExcel;
@@ -34,4 +35,9 @@ public interface QunMapper extends BaseMapper<Qun> {
     @Select("select wx_name as wxName,(select dept_name from sys_dept where dept_id=cj_dept_id) as villageDeptName,#{cityDeptName}  as cityDeptName, (select count(*) from wx_user u where u.qun_id=wx_id) as number from wx_qun ${ew.customSqlSegment}")
     List<QunExcel> listExcel(@Param("cityDeptName") String cityDeptName, @Param("ew") QueryWrapper<Qun> qunQueryWrapper);  //以市州去查
 
+    @Select("select dept_id from sys_dept where dept_id=(select cj_dept_id from wx_qun where wx_id=#{qunId})")
+    String getIdByQunId(String qunId);//群id  查对应组织机构
+
+    @Select("select rank from sys_dept where dept_id=(select cj_dept_id from wx_qun where wx_id=#{qunId})")
+    Integer getRankByQunId(String qunId);//群id  查对应组织机构
 }

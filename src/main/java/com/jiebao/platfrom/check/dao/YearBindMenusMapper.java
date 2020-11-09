@@ -17,9 +17,15 @@ import java.util.List;
  */
 public interface YearBindMenusMapper extends BaseMapper<YearBindMenus> {
     @Select("select 1 from check_year_bind_menus where menus_id=#{mid} and year_id=#{yearId} limit 1")
-    Integer exist(String yearId, String mid);
+    Integer exist(String yearId, String mid);  //查询  此年度 跟  模块是否绑定
 
     @Select("select menus_id from check_year_bind_menus where  year_id=#{yearId} ")
     List<String> listMenusId(String yearId);
+
+    @Select("select 1 from check_year_bind_menus where  menus_id=#{mid} limit 1")
+    Integer existByMenusId(String mid);  //查看某模块是否有绑定
+
+    @Select("select year_id from check_year_bind_menus where  menus_id=#{mid}")
+    List<String> existByMenusIdToYearId(String mid);  //查看某模块绑定的年度考核
 
 }

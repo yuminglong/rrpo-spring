@@ -40,7 +40,7 @@ public class JkController {
         }
     }
 
-    @GetMapping("excel")
+    @PostMapping("excel")
     @ApiOperation("导出")
     public JiebaoResponse importExcel(HttpServletResponse response,String gac,String dzs) {
         return new JiebaoResponse().data(jkService.importExcel(response, gac, dzs)) ;

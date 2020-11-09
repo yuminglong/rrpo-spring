@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.jiebao.platfrom.system.domain.Dept;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -60,5 +61,32 @@ public class UserI implements Serializable {
     @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private String wxName;
+
+    //乡镇 组织
+    private String deptXz;
+
+    //曲线 组织
+    private String deptQx;
+
+    //市州 组织
+    private String deptSz;
+    /**
+     * 下面对应实体
+     */
+    //乡镇 组织
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private Dept deptXzO;
+
+    //曲线 组织
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private Dept deptQxO;
+
+    //市州 组织
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private Dept deptSzO;
+
 
 }

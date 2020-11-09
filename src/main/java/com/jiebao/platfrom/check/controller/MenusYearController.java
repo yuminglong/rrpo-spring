@@ -51,13 +51,18 @@ public class MenusYearController {
     @ApiOperation("集合删除")
     @Log("年份考核项集合删除")
     public JiebaoResponse deleteByLists(String[] listS) {
-        return menusYearService.deleteByListAndYearDate(listS);
+        return menusYearService.deleteByListAndYearDate(Arrays.asList(listS)) ? new JiebaoResponse().okMessage("操作成功") : new JiebaoResponse().failMessage("操作失败");
     }
 
     @PostMapping("excel")
     @ApiOperation("excel上传绑定  参数 第二个 年份考核id")
     public JiebaoResponse excel(MultipartFile multipartFile, String yearId) {
-        return menusYearService.excel(multipartFile, yearId);
+        try {
+            return menusYearService.excel(multipartFile, yearId);
+        } catch (Exception e) {
+            return new JiebaoResponse().failMessage("导入失败");
+        }
+
     }
 
 

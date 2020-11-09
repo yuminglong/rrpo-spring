@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.wx.dao.QunMapper;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.domain.UserI;
 import com.jiebao.platfrom.wx.dao.UserIMapper;
@@ -34,17 +37,52 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
     IQunService qunService;
     @Autowired
     DeptService deptService;
+    @Autowired
+    QunMapper qunMapper;
+    @Autowired
+    DeptMapper deptMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdate(UserI entity) {
-        boolean a = false;//记录此次为修改还是添加
         if (entity.getWxUserId() == null) {
             entity.setDate(new Date());
-            a = true;
+            Integer rank = qunMapper.getRankByQunId(entity.getQunId());
+            if (rank == 3)
+                diZuiXz(entity);
+            if (rank == 2)
+                diZuiQx(entity);
+            if (rank == 1)
+                diZuiSz(entity);
         }
         boolean b = super.saveOrUpdate(entity);
         return b;
+    }
+
+    private void diZuiXz(UserI userI) {
+        userI.setDeptXz(qunMapper.getIdByQunId(userI.getQunId()));
+        diZuiQx(userI);
+    }
+
+    private void diZuiQx(UserI userI) {
+        if (userI.getDeptXz() == null)
+            userI.setDeptQx(qunMapper.getIdByQunId(userI.getQunId()));
+        else {
+            Dept dept = deptService.getById(userI.getDeptXz());
+            String idById = deptMapper.getIdById(dept.getParentId());
+            userI.setDeptQx(idById);
+        }
+        diZuiSz(userI);
+    }
+
+    private void diZuiSz(UserI userI) {
+        if (userI.getDeptQx() == null)
+            userI.setDeptSz(qunMapper.getIdByQunId(userI.getQunId()));
+        else {
+            Dept dept = deptService.getById(userI.getDeptQx());
+            String idById = deptMapper.getIdById(dept.getParentId());
+            userI.setDeptSz(idById);
+        }
     }
 
     @Override
@@ -76,6 +114,7 @@ public class UserIServiceImpl extends ServiceImpl<UserIMapper, UserI> implements
             List<String> list = this.baseMapper.listWxId(queryWrapper1);//所有的群的id
             queryWrapper.in("qun_id", list);
         }
+        queryWrapper.orderByDesc("date");
         Page<UserI> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.listPage(page, queryWrapper));
     }

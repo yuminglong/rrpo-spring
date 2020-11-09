@@ -1,7 +1,10 @@
 package com.jiebao.platfrom.check.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.check.domain.Year;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.io.Serializable;
@@ -16,8 +19,8 @@ import java.util.List;
  * @since 2020-08-05
  */
 public interface MenusYearMapper extends BaseMapper<MenusYear> {
-    @Select("select menus_id from check_menus_year where year_id=#{yearId} and parent_id=#{parentId}")
-    List<String> getMenusIdList(String yearId, String parentId);
+    @Select("select menus_id from check_menus_year ${ew.customSqlSegment} ")
+    List<String> getMenusIdList(@Param("ew") LambdaQueryWrapper<MenusYear> queryWrapper);
 
 
     @Select("select count(*) from check_menus_year where year_id=#{yearId} and parent_id=(select standard_id from check_menus where content='基础工作')")

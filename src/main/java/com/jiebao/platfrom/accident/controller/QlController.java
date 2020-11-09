@@ -40,7 +40,7 @@ public class QlController {
 
     }
 
-    @GetMapping("excel")
+    @PostMapping("excel")
     @ApiOperation("导出")
     public JiebaoResponse importExcel(HttpServletResponse response,String deptName, String policeName, String gwdName) {
         return new JiebaoResponse().data(qlService.importExcel(response,deptName,policeName,gwdName));
