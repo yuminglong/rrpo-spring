@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.check.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -37,5 +38,8 @@ public interface NumMapper extends BaseMapper<Num> {
 
     @Select("select 1 from check_num where year_id=#{yearId} and dept_id=#{deptId} limit 1")
     Integer exist(String yearId, String deptId);
+
+    @Delete("delete from check_num ${ew.customSqlSegment}")
+    boolean deleteByYearId(@Param("ew") LambdaQueryWrapper<Num> ew);
 
 }

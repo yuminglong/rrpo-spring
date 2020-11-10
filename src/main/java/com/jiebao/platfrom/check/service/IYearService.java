@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ import java.util.List;
  * @since 2020-08-05
  */
 public interface IYearService extends IService<Year> {
-    JiebaoResponse addOrUpdate(Year year);  //年份考核规则   绑定  模块
+    JiebaoResponse addOrUpdate(Year year,String[] menusIdS);  //年份考核规则   绑定  模块
 
     JiebaoResponse pageList(QueryRequest queryRequest, String yearDate);//年份查询
 
@@ -26,5 +28,7 @@ public interface IYearService extends IService<Year> {
     List<Year> list(QueryWrapper<Year> queryWrapper);
 
     JiebaoResponse ok(String yearId);
+
+    boolean deleteByIds(Collection<? extends Serializable> list);
 
 }

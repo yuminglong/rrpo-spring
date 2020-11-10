@@ -1,5 +1,7 @@
 package com.jiebao.platfrom.common.utils;
 
+import com.jiebao.platfrom.check.domain.Menus;
+import com.jiebao.platfrom.check.domain.YearBindMenus;
 import org.apache.http.HttpResponse;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -58,6 +60,37 @@ public class ExportExcel {
                     e.printStackTrace();
                 }
             }
+        }
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            byte[] bytes = bos.toByteArray();
+            InputStream is = new ByteArrayInputStream(bytes);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            is.close();
+            response.setHeader("Content-Disposition", "attachment;filename=" + UUID.randomUUID() + ".xls");
+            OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+            outputStream.write(buffer);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean imTemplate(List<Menus> list, HttpServletResponse response) {  //纯列表导出
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("模板");
+        HSSFRow row = sheet.createRow(0);
+        int i = 0;
+        for (Menus menus : list
+        ) {
+            HSSFCell cell = row.createCell(i++);
+            cell.setCellValue(menus.getName());
+            i++;
         }
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

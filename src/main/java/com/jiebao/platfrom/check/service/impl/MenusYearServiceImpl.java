@@ -7,6 +7,7 @@ import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.utils.CheckExcelUtil;
+import com.jiebao.platfrom.common.utils.ExportExcel;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 
@@ -162,5 +164,15 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             gradeService.saveBatch(gradeArrayList);
         }
         return jiebaoResponse;
+    }
+
+    @Override
+    public boolean importTemplate(String yearId, HttpServletResponse response) {
+        List<String> list = yearBindMenusMapper.listMenusId(yearId);//得到模块分组
+        List<Menus> listMenus = (List<Menus>) menusService.listByIds(list);
+        if (listMenus == null)
+            return false;
+        ExportExcel.imTemplate(listMenus, response);
+        return true;
     }
 }

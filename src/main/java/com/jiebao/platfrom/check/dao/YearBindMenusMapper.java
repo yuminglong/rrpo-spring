@@ -25,7 +25,5 @@ public interface YearBindMenusMapper extends BaseMapper<YearBindMenus> {
     @Select("select 1 from check_year_bind_menus where  menus_id=#{mid} limit 1")
     Integer existByMenusId(String mid);  //查看某模块是否有绑定
 
-    @Select("select year_id from check_year_bind_menus where  menus_id=#{mid}")
-    List<String> existByMenusIdToYearId(String mid);  //查看某模块绑定的年度考核
 
 }

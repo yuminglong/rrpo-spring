@@ -30,8 +30,8 @@ public class YearController {
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改  考核年份规则生成")
-    public JiebaoResponse saveOrUpdate(Year year) {
-        return yearService.addOrUpdate(year);
+    public JiebaoResponse saveOrUpdate(Year year,String[] menusIdS) {
+        return yearService.addOrUpdate(year,menusIdS);
     }
 
     @GetMapping("list")
@@ -51,7 +51,7 @@ public class YearController {
     @DeleteMapping("deleteByLists/{lists}")
     @ApiOperation("集合删除")
     public JiebaoResponse deleteByLists(@PathVariable String[] lists) {
-        return new JiebaoResponse().message(yearService.removeByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
+        return new JiebaoResponse().message(yearService.deleteByIds(Arrays.asList(lists)) ? "删除成功" : "删除失败");
     }
 
     @GetMapping("yearStringList")
@@ -65,4 +65,6 @@ public class YearController {
     public JiebaoResponse ok(String yearId) {
         return yearService.ok(yearId);
     }
+
+
 }

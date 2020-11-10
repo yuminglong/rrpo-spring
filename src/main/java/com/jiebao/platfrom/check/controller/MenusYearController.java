@@ -10,9 +10,11 @@ import com.jiebao.platfrom.common.utils.CheckExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -65,5 +67,12 @@ public class MenusYearController {
 
     }
 
+    @PostMapping("importTemplate")
+    @ApiOperation("导出模板")
+    public JiebaoResponse importTemplate(String yearId, HttpServletResponse response) {
+        boolean b = menusYearService.importTemplate(yearId, response);
+        return b ? new JiebaoResponse().okMessage("操作成功") : new JiebaoResponse().failMessage("操作失败");
+
+    }
 
 }

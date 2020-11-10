@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
-import com.jiebao.platfrom.check.service.IGradeService;
-import com.jiebao.platfrom.check.service.IMenusService;
-import com.jiebao.platfrom.check.service.IMenusYearService;
-import com.jiebao.platfrom.check.service.IYearService;
+import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -17,6 +14,7 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Menu;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.MenuService;
+import org.apache.shiro.session.mgt.DelegatingSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,22 +46,44 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     GradeMapper gradeMapper;
     @Autowired
     YearBindMenusMapper yearBindMenusMapper;
+    @Autowired
+    NumMapper numMapper;
+    @Autowired
+    IYearBindMenusService yearBindMenusService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse addOrUpdate(Year year) {
+    public JiebaoResponse addOrUpdate(Year year, String[] menusIdS) {
         QueryWrapper<Year> queryWrapper = new QueryWrapper<>();
         if (year.getYearId() != null) {
             Year year1 = getById(year.getYearId());  //还未修改的 数据
             if (year1.getYearDate().equals(year.getYearDate())) {   //本次修改并未修改名字
-                return new JiebaoResponse().message(super.saveOrUpdate(year) ? "操作成功" : "操作失败");
+                super.updateById(year);
+                return new JiebaoResponse().okMessage("操作成功");
             }
         }
         queryWrapper.eq("year_date", year.getYearDate());
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("年份重复");
         }
-        return new JiebaoResponse().message(super.saveOrUpdate(year) ? "操作成功" : "操作失败");
+        boolean save = super.save(year);
+        if (save) {
+            List<YearBindMenus> yearBindMenusList = new ArrayList<>();//储存模块
+            System.out.println(year.getYearId());
+            System.out.println(year.getYearId());
+            System.out.println(year.getYearId());
+            System.out.println(year.getYearId());
+            System.out.println(year.getYearId());
+            for (String mid : menusIdS
+            ) {
+                YearBindMenus yearBindMenus = new YearBindMenus();
+                yearBindMenus.setMenusId(mid);
+                yearBindMenus.setYearId(year.getYearId());
+                yearBindMenusList.add(yearBindMenus);
+            }
+            yearBindMenusService.saveBatch(yearBindMenusList);
+        }
+        return save ? new JiebaoResponse().okMessage("操作成功") : new JiebaoResponse().failMessage("操作失败");
     }
 
     @Override
@@ -94,11 +114,14 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     public boolean removeByIds(Collection<? extends Serializable> idList) {  //删除 年度考核的同时 也要 删除对应的试题  以及
         LambdaQueryWrapper<MenusYear> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(MenusYear::getYearId, idList);
-        List<String> menusIdList = menusYearMapper.getMenusIdList(queryWrapper);// 所有的考核分数
-        if (super.removeByIds(idList))
-            return menusYearService.deleteByListAndYearDate(menusIdList);
-        else
-            return false;
+        List<String> menusIdList = menusYearMapper.getMenusIdList(queryWrapper);// 所有的考核条目
+        if (super.removeByIds(idList)) {
+            if (menusIdList != null && menusIdList.size() > 0)
+                return menusYearService.deleteByListAndYearDate(menusIdList);
+            else
+                return true;
+        } else
+            return true;
     }
 
     @Override
@@ -129,6 +152,20 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         jiebaoResponse = gradeService.saveBatch(gradeArrayList) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
+    }
+
+    @Override
+    /**
+     * 首先删除   此年的相关考核条目  ，然后得删掉  考核生成的分数对象 一并删除
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteByIds(Collection<? extends Serializable> list) {
+        if (removeByIds(list)) {
+            LambdaQueryWrapper<Num> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.in(Num::getYearId, list);
+            return numMapper.deleteByYearId(queryWrapper);
+        } else
+            return true;
     }
 
     @Override
