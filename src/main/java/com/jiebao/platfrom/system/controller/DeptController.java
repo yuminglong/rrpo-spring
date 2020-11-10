@@ -197,10 +197,6 @@ public class DeptController extends BaseController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("rank", 0);
         List<Dept> depts = deptMapper.selectByMap(map);
-        HashMap<String, Object> map1 = new HashMap<>();
-        map1.put("rank", 4);
-        List<Dept> depts1 = deptMapper.selectByMap(map1);
-        depts.addAll(depts1);
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }
 
