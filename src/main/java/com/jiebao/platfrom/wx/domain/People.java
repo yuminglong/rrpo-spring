@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
  * @author qta
  * @since 2020-10-16
  */
-@ExcelName(name = "护路队员导出")   //必写    要不然会有问题
+@ExcelName(name = "护路队员导出")   //必写
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)

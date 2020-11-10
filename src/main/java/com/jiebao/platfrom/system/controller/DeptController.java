@@ -200,5 +200,9 @@ public class DeptController extends BaseController {
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }
 
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID());
+    }
+
 
 }

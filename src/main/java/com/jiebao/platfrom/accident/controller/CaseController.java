@@ -67,8 +67,8 @@ public class CaseController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String lineId, String nature, String startDate, String endDate) {
-        return caseService.list(queryRequest, policeId, cityLevelId, lineId, nature, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId,String quDeptId, String lineId, String nature, String startDate, String endDate) {
+        return caseService.list(queryRequest, policeId, cityLevelId,quDeptId, lineId, nature, startDate, endDate);
     }
 
     @GetMapping("map")

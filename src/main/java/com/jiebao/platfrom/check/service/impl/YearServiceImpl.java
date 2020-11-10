@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.dao.*;
@@ -20,10 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * <p>
@@ -41,7 +40,8 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     DeptService deptService;
     @Autowired
     IMenusService menusService;
-
+    @Autowired
+    IMenusYearService menusYearService;
     @Autowired
     IGradeService gradeService;
     @Autowired
@@ -86,6 +86,19 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
             year.setList(list2);
         }
         return list;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(Collection<? extends Serializable> idList) {  //删除 年度考核的同时 也要 删除对应的试题  以及
+        LambdaQueryWrapper<MenusYear> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(MenusYear::getYearId, idList);
+        List<String> menusIdList = menusYearMapper.getMenusIdList(queryWrapper);// 所有的考核分数
+        if (super.removeByIds(idList))
+            return menusYearService.deleteByListAndYearDate(menusIdList);
+        else
+            return false;
     }
 
     @Override
@@ -133,6 +146,5 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
     public JiebaoResponse yearStringList() {
         return new JiebaoResponse().data(this.baseMapper.yearStringList()).message("查询成功");
     }
-
 
 }

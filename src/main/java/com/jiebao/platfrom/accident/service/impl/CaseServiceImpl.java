@@ -37,12 +37,14 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
     DeptSMapper deptSMapper;
 
     @Override
-    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String lineId, String nature, String startDate, String endDate) {
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String quDeptId, String lineId, String nature, String startDate, String endDate) {
         QueryWrapper<Case> queryWrapper = new QueryWrapper<>();
-        if (cityLevelId != null) {
-            queryWrapper.eq("city_cs_id", deptSMapper.selectDeptId(cityLevelId));
+        if (quDeptId != null) {
+            queryWrapper.eq("city_qx_id", quDeptId);
+        } else if (cityLevelId != null) {
+            queryWrapper.eq("city_cs_id", cityLevelId);
         } else if (policeId != null) {
-            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
+            queryWrapper.in("city_cs_id",  deptSMapper.selectDeptIds(policeId));
         } else {
             Dept dept = deptService.getDept();  //当前登陆人部门
             if (!dept.getDeptId().equals("0"))
@@ -93,6 +95,14 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         return jiebaoResponse;
     }
 
+    /**
+     * 视图
+     * @param deptList
+     * @param startDate
+     * @param endDate
+     * @param status
+     * @return
+     */
 
     private Map fz(List<Dept> deptList, String startDate, String endDate, Integer status) {  //事故性质  数据
         HashMap<String, List<String>> map = new HashMap<>();

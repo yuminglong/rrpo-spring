@@ -2,12 +2,14 @@ package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
 import com.jiebao.platfrom.check.domain.Menus;
 import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.domain.MenusYear;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.check.service.IMenusYearService;
+import com.jiebao.platfrom.check.service.IYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Menu;
@@ -29,6 +31,10 @@ import java.util.List;
  */
 @Service
 public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements IMenusService {
+    @Autowired
+    YearBindMenusMapper yearBindMenusMapper;
+    @Autowired
+    IYearService yearService;
 
     @Override
     public JiebaoResponse addOrUpdate(Menus menus) {
@@ -52,9 +58,29 @@ public class MenusServiceImpl extends ServiceImpl<MenusMapper, Menus> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse deleteById(String menusId) {
-        Menus menus = getById(menusId);
-        return new JiebaoResponse().message(removeById(menusId) ? "删除成功" : "删除成功");
+    public JiebaoResponse deleteById(String menusId, Integer status) {
+        JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        boolean flag = false;
+        String message = "";
+        if (status==null||status == 0) {//当不确定 本模块是否有绑定时
+            if (yearBindMenusMapper.existByMenusId(menusId) == null) {
+                flag = removeById(menusId);
+                message = flag ? "操作成功" : "操作失败";
+            } else {
+                flag = false;
+                message = "此模块有绑定对象，确定要删除吗？";
+            }
+        } else { //执意删除
+            List<String> list = this.yearBindMenusMapper.existByMenusIdToYearId(menusId);
+            if (list == null) {  //未绑定对象
+                flag = removeById(menusId);
+                message = flag ? "操作成功" : "操作失败";
+            } else {   //需要删掉对应的考核内容  以及相关内容
+                flag = yearService.removeByIds(list);
+                message = "强制删除成功";
+            }
+        }
+        return flag ? jiebaoResponse.okMessage(message) : jiebaoResponse.failMessage(message);
     }
 
     @Override

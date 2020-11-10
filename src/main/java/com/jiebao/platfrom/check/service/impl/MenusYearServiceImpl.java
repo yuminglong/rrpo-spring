@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -95,6 +96,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse List(String yearId) {  //通过 年份考核 查询 对应的年内考核项
         List<String> menusId = yearBindMenusMapper.listMenusId(yearId);
         List<YearZu> list = new ArrayList<>();
@@ -120,16 +122,15 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse deleteByListAndYearDate(String[] list) {
-        if (list == null) {
-            return new JiebaoResponse().message("空");
-        }
+    public boolean deleteByListAndYearDate(Collection<? extends Serializable> list) {
         QueryWrapper<Grade> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("check_id", Arrays.asList(list));
-        boolean b = removeByIds(Arrays.asList(list));
-        if (b)
+        boolean b = removeByIds(list);
+        if (b) {
             gradeMapper.deleteByCheckId(queryWrapper);
-        return new JiebaoResponse().message(b ? "删除成功" : "删除失败");
+            return true;
+        } else
+            return false;
     }
 
     @Override
@@ -142,7 +143,6 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             QueryWrapper<MenusYear> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("year_id", year_id);
             queryWrapper.in("parent_id", yearMapper.listYB(year_id));  //现存的绑定项
-            List<MenusYear> menusYearList = menusYearMapper.selectList(queryWrapper); //当年所有的试题
             List<Dept> childrenList = deptService.getChildrenList("0");
             for (Dept dept : childrenList
             ) {

@@ -64,15 +64,15 @@ public class AccidentController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String startDate, String endDate) {
-        return accidentService.list(queryRequest, policeId, cityLevelId, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId,String quDeptId, String startDate, String endDate) {
+        return accidentService.list(queryRequest, policeId, cityLevelId,quDeptId, startDate, endDate);
     }
 
     @GetMapping("map")
     @ApiOperation("获取地图展示数据")
     @Log("获取地图展示数据")
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate) {
-        return accidentService.map(policeId, cityLevelId, startDate, endDate);
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {
+        return accidentService.map(policeId, cityLevelId, startDate, endDate,quDeptId);
     }
 
 

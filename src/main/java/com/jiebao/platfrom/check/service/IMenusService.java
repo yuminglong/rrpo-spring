@@ -16,11 +16,12 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 public interface IMenusService extends IService<Menus> {
     JiebaoResponse addOrUpdate(Menus menus);
 
-    JiebaoResponse deleteById(String menusId);
+    JiebaoResponse deleteById(String menusId,Integer status);
 
     JiebaoResponse lists();   //树形列表
 
     JiebaoResponse fatherList();
 
     String selectByName(String name);
+
 }
