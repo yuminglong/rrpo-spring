@@ -176,14 +176,22 @@ public class DictController extends BaseController {
     @ApiOperation(value = "获取推送栏目", notes = "获取推送栏目", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getTargets() throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet("http://114.116.174.5:888/push/targets");
+        HttpGet httpGet = new HttpGet("http://114.116.174.5:888/jws/push/targets");
         CloseableHttpResponse response = null;
         response = httpClient.execute(httpGet);
         HttpEntity httpEntity  = response.getEntity();
         String result = EntityUtils.toString(httpEntity, "UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(result);
-        System.out.println(jsonObject);
-        return new JiebaoResponse().data(jsonObject).okMessage("查询成功");
+        String code = jsonObject.getString("code");
+        System.out.println(code+"---------------");
+        if ( "0".equals(code)){
+            return new JiebaoResponse().data(jsonObject).okMessage("查询成功");
+        }
+        else {
+            return  new JiebaoResponse().failMessage("查询失败");
+        }
+
+
     }
 
 

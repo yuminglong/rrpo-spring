@@ -33,5 +33,4 @@ public class JiebaoResponse extends HashMap<String, Object> {
         super.put(key, value);
         return this;
     }
-
 }

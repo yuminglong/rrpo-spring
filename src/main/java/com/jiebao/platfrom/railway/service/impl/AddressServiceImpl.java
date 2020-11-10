@@ -65,8 +65,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     UserService userService;
 
 
-
-
     @Override
     public IPage<Address> getAddressList(QueryRequest request) {
 
@@ -237,18 +235,18 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 String position = row.getCell(5).getStringCellValue();
                 String unit = row.getCell(6).getStringCellValue();
 
-                if (StringUtils.isNotBlank(deptId) && !"".equals(userName) && !"".equals(position) && !"".equals(unit) && !"".equals(weiXin) && !"".equals(telPhone) && !"".equals(email) && !"".equals(phone)) {
-                    address.setUserName(userName);
-                    address.setPhone(phone);
-                    address.setTelPhone(telPhone);
-                    address.setWeiXin(weiXin);
-                    address.setEmail(email);
-                    address.setUnit(unit);
-                    address.setPosition(position);
-                    address.setDeptId(deptId);
-                    address.setStatus(2);
-                    addressList.add(address);
-                }
+                // if (StringUtils.isNotBlank(deptId) && !"".equals(userName) && !"".equals(position) && !"".equals(unit) && !"".equals(weiXin) && !"".equals(telPhone) && !"".equals(email) && !"".equals(phone)) {
+                address.setUserName(userName);
+                address.setPhone(phone);
+                address.setTelPhone(telPhone);
+                address.setWeiXin(weiXin);
+                address.setEmail(email);
+                address.setUnit(unit);
+                address.setPosition(position);
+                address.setDeptId(deptId);
+                address.setStatus(2);
+                addressList.add(address);
+                //  }
             }
             for (Address address : addressList) {
                 save = addressService.save(address);
@@ -272,16 +270,13 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone) {
-
-        System.out.println("--------------------------------");
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         if (StringUtils.isNotBlank(address.getDeptId())) {
             lambdaQueryWrapper.eq(Address::getDeptId, address.getDeptId());
-        }
-        else {
+        } else {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
-            lambdaQueryWrapper.eq(Address::getDeptId,byName.getDeptId());
+            lambdaQueryWrapper.eq(Address::getDeptId, byName.getDeptId());
         }
         if (StringUtils.isNotBlank(userName)) {
             lambdaQueryWrapper.like(Address::getUserName, userName);
@@ -290,7 +285,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
             lambdaQueryWrapper.like(Address::getTelPhone, telPhone);
         }
         Page<Address> page = new Page<>(request.getPageNum(), request.getPageSize());
-        lambdaQueryWrapper.orderByDesc(Address::getId);
+        lambdaQueryWrapper.orderByDesc(Address::getCreatTime);
+
         return this.baseMapper.selectPage(page, lambdaQueryWrapper);
     }
 

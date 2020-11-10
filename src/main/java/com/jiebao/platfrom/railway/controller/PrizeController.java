@@ -1027,7 +1027,7 @@ public class PrizeController extends BaseController {
         Prize byId = prizeService.getById(prizeId);
         if (byId.getSynchronizeWeb() == 0) {
             //HttpPost请求实体
-            HttpPost httpPost = new HttpPost("http://114.116.174.5:888/push");
+            HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
             //使用工具类创建 httpClient
             CloseableHttpClient client = HttpClients.createDefault();
             CloseableHttpResponse resp = null;

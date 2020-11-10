@@ -215,7 +215,7 @@ public class NoticeController extends BaseController {
                     Notice byId = noticeService.getById(noticeId);
                     if (byId.getSynchronizeWeb() == 1) {
                         //HttpPost请求实体
-                        HttpPost httpPost = new HttpPost("http://114.116.174.5:888/push");
+                        HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
                         //使用工具类创建 httpClient
                         CloseableHttpClient client = HttpClients.createDefault();
                         CloseableHttpResponse resp = null;

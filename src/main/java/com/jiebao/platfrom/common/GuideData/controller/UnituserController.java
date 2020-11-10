@@ -292,7 +292,6 @@ public class UnituserController extends BaseController {
     @GetMapping("/addAddress")
     @ApiOperation(value = "人员导入通讯录", notes = "人员导入通讯录", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse addAddress() {
-        //查找所有长铁用户
         List<User> list = userService.list();
         for (User u : list
         ) {
