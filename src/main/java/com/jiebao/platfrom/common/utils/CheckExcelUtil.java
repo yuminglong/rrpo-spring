@@ -16,6 +16,8 @@ import com.jiebao.platfrom.system.service.UserService;
 import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.domain.QunExcel;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -40,9 +42,15 @@ public class CheckExcelUtil {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = false;
         try {
-            InputStream inputStream = file.getInputStream();
+
             Workbook workbook = null;
-            workbook = new XSSFWorkbook(inputStream);//2007
+            try {
+                InputStream inputStream = file.getInputStream();
+                workbook = new HSSFWorkbook(inputStream);//2007
+            } catch (OfficeXmlFileException e) {
+                InputStream inputStream = file.getInputStream();
+                workbook = new XSSFWorkbook(inputStream);//2007
+            }
             Sheet sheetAt = workbook.getSheetAt(0);
             Row row = sheetAt.getRow(0);
             String[] arr = new String[row.getPhysicalNumberOfCells() * 2];
@@ -71,10 +79,6 @@ public class CheckExcelUtil {
                         continue;
                     }
                     Cell cell1 = row1.getCell(j + 1); //摘要
-                    if (cell == null) {
-                        cell1 = row1.createCell(j + 1);
-                    }
-
                     MenusYear menusYear = new MenusYear();
                     menusYear.setYearId(yearId);
                     if (cell1 != null) {//不等于null 就赋值

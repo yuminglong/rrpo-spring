@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2020-08-05
  */
 public interface MenusYearMapper extends BaseMapper<MenusYear> {
-    @Select("select menus_id from check_menus_year ${ew.customSqlSegment} ")
+    @Select("select menus_year_id from check_menus_year ${ew.customSqlSegment} ")
     List<String> getMenusIdList(@Param("ew") LambdaQueryWrapper<MenusYear> queryWrapper);
 
 
@@ -35,5 +35,7 @@ public interface MenusYearMapper extends BaseMapper<MenusYear> {
 
     @Select("select 1 from check_menus_year where content=#{content} and year_id=#{yearId} limit 1")
     Integer exSit(String content, String yearId);
+
+
 
 }

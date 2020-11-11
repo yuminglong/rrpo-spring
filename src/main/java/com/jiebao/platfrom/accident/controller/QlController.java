@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 /**
  * <p>
@@ -42,16 +45,16 @@ public class QlController {
 
     @PostMapping("excel")
     @ApiOperation("导出")
-    public JiebaoResponse importExcel(HttpServletResponse response,String deptName, String policeName, String gwdName) {
-        return new JiebaoResponse().data(qlService.importExcel(response,deptName,policeName,gwdName));
+    public JiebaoResponse importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName) {
+        return new JiebaoResponse().data(qlService.importExcel(response, deptName, policeName, gwdName));
     }
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增或者修改")
     public JiebaoResponse saveOrUpdate(Ql ql) {
 //        try {
-            qlService.addOrUpdate(ql);
-            return new JiebaoResponse().data(ql).okMessage("操作成功");
+        qlService.addOrUpdate(ql);
+        return new JiebaoResponse().data(ql).okMessage("操作成功");
 //        } catch (Exception e) {
 //            return new JiebaoResponse().failMessage("操作失败");
 //        }
@@ -67,4 +70,6 @@ public class QlController {
             return new JiebaoResponse().failMessage("操作失败");
         }
     }
+
+
 }
