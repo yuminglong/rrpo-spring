@@ -1,14 +1,20 @@
 package com.jiebao.platfrom.accident.daomain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.jiebao.platfrom.common.utils.ExcelName;
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.File;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -66,7 +72,11 @@ public class Ql implements Serializable {
     @ExcelName(name = "陆地已开展工作")
     private String kzqk;
 
-    private String tp;
+//    private String tp;
+
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private List<File> tpFile;
 
     private String delflag;
 

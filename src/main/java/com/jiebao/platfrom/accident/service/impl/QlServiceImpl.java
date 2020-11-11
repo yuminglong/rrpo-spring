@@ -12,7 +12,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.ExportExcel;
+import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.FileService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,18 +38,19 @@ import java.util.Arrays;
  */
 @Service
 public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlService {
-
+    @Autowired
+    FileService fileService;
 
     @Override
     public IPage<Ql> listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName) {
         Page<Ql> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return page(page, queryWrapper(deptName, policeName, gwdName));
+        return this.baseMapper.pageList(page, queryWrapper(deptName, policeName, gwdName));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName) {
-        return ExportExcel.exportExcelList(list(queryWrapper(deptName, policeName, gwdName)),Ql.class,response);
+        return ExportExcel.exportExcelList(list(queryWrapper(deptName, policeName, gwdName)), Ql.class, response);
     }
 
     private LambdaQueryWrapper<Ql> queryWrapper(String deptName, String policeName, String gwdName) {
@@ -62,10 +67,19 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean addOrUpdate(Ql ql) {
-        if(ql.getId()==null)
+    public boolean addOrUpdate(Ql ql, String tp) {
+        boolean flag = false;  //记录是新增 还是  删除
+        if (ql.getId() == null) {
             ql.setCreatTime(LocalDateTime.now());
-        return saveOrUpdate(ql);
+            flag = true;
+        }
+        boolean b = saveOrUpdate(ql);
+        if (tp != null && flag) {  //绑定文件
+            File file = fileService.getById(tp);
+            file.setRefId(ql.getId());
+            fileService.updateById(file);
+        }
+        return b;
     }
 
     @Override

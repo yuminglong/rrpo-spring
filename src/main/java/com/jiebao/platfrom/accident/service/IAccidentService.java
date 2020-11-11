@@ -21,4 +21,6 @@ public interface IAccidentService extends IService<Accident> {
     JiebaoResponse map(String policeId, String cityLevelId,String startDate, String endDate,String quDeptId);//地图视角
 
     JiebaoResponse lock(String[] accidentId,String month,Integer status);
+
+    String func(Accident accident);
 }

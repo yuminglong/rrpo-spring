@@ -57,7 +57,6 @@ public class DeptController extends BaseController {
     private DeptMapper deptMapper;
 
 
-
     @GetMapping("/queryDeptChileNotshiro")
     @ApiOperation("查找本级以及本级一下")
     public JiebaoResponse queryDeptChileNotshiro(String prentId) {

@@ -46,8 +46,12 @@ public interface PeopleMapper extends BaseMapper<People> {
             "police,km from wx_people w ${ew.customSqlSegment}")
     IPage<People> listPage(Page<People> page, @Param("ew") QueryWrapper<People> queryWrapper);
 
-    @Select("select hl_id as hlId,shi as shi,qu_xian as quXian,xiang as xiang,(select dept_name from sys_dept where dept_id=w.shi) as shiName, (select dept_name from sys_dept where dept_id=w.qu_xian) " +
-            "  as  quXianName,(select dept_name from sys_dept where dept_id=w.xiang)   as xiangName,proper ,line,(select field_name from sys_dict_new where dict_id=w.line) as lineName," +
+    @Select("select hl_id as hlId,shi as shi,qu_xian as quXian,xiang as xiang," +
+            "(select dept_name from sys_dept where dept_id=w.shi) as shiName," +
+            " (select dept_name from sys_dept where dept_id=w.qu_xian) " +
+            "  as  quXianName,(select dept_name from sys_dept where dept_id=w.xiang)   as xiangName," +
+            "proper ,line," +
+            "(select field_name from sys_dict_new where dict_id=w.line) as lineName," +
             "(select revenue from sys_dict_new where dict_id=w.line) as lineRevenue," +
             "(select nature from sys_dict_new where dict_id=w.line) as lineNature," +
             "name,sex,age,face,address,id_card as idCard,lu_duan as" +

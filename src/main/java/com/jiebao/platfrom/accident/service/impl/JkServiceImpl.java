@@ -33,7 +33,7 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
     @Override
     public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs) {
         Page<Jk> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return page(page, queryWrapper(gac, dzs));
+        return this.baseMapper.pageList(page, queryWrapper(gac, dzs));
     }
 
     @Override
@@ -47,6 +47,7 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
             queryWrapper.eq(Jk::getGac, gac);
         if (dzs != null)
             queryWrapper.eq(Jk::getDzs, dzs);
+        queryWrapper.orderByDesc(Jk::getCreatTime);
         return queryWrapper;
     }
 

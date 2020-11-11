@@ -49,7 +49,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "发生城市", example = "哈哈")
     private String cityCsId;
 
-
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private Dept deptCs;
 
@@ -59,6 +59,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "发生区县", example = "哈哈")
     private String cityQxId;
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dept deptQx;
     /**
      * 派出所
@@ -67,6 +68,7 @@ public class Accident implements Serializable {
     private String policeId;
 
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dept deptPolice;
     /**
      * 线路
@@ -74,6 +76,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "线路 字典", example = "哈哈")
     private String lineId;
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dict dictXl;
     /**
      * 地点
@@ -88,13 +91,14 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "车务段", example = "哈哈")
     private String trainId;
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dict dictCwd;
     /**
      * 公务段
      */
     @ApiModelProperty(value = "公务段", example = "哈哈")
     private String trackId;
-
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private Dict dictGwd;
     /**
@@ -102,7 +106,7 @@ public class Accident implements Serializable {
      */
     @ApiModelProperty(value = "事故性质", example = "哈哈")
     private String nature;
-
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private Dict dictNature;
 
@@ -111,7 +115,7 @@ public class Accident implements Serializable {
      */
     @ApiModelProperty(value = "站内性质", example = "哈哈")
     private String instationSection;
-
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private Dict dictInstationSection;
     /**
@@ -127,6 +131,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "年龄段", example = "哈哈")
     private String age;
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dict dictAge;
     /**
      * 封闭程度
@@ -134,6 +139,7 @@ public class Accident implements Serializable {
     @ApiModelProperty(value = "封闭程度", example = "哈哈")
     private String closed;
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dict dictClosed;
     /**
      * 居住地
@@ -154,6 +160,7 @@ public class Accident implements Serializable {
     private String sex;
 
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Dict sexDict;
 
     /**

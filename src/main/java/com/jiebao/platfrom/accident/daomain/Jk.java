@@ -4,19 +4,23 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.jiebao.platfrom.common.utils.ExcelName;
+import com.jiebao.platfrom.system.domain.File;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author qta
@@ -31,7 +35,7 @@ public class Jk implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ID",type = IdType.UUID)
+    @TableId(value = "ID", type = IdType.UUID)
     private String id;
 
     @TableField("PK")
@@ -76,7 +80,7 @@ public class Jk implements Serializable {
     private String lwdw;
     @ExcelName(name = "建设单位")
     private String jsdw;
-//    @ExcelName(name = "安装时间")
+    //    @ExcelName(name = "安装时间")
     private String azsjn;
     @ExcelName(name = "安装时间")
     private String azsj;
@@ -88,11 +92,14 @@ public class Jk implements Serializable {
     private String pcs;
     @ExcelName(name = "属地派出所")
     private String sdpcs;
-//    @ExcelName(name = "道路里程")
+    //    @ExcelName(name = "道路里程")
     private String bz;
 
-    private String tp;
 
+    //    private String tp;
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private List<File> tpFile;
     private String delflag;
 
     private String username;

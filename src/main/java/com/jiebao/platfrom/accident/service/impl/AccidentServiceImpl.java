@@ -55,12 +55,13 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("date", endDate);//不能大于此时间
         }
+        queryWrapper.orderByDesc("date");
         Page<Accident> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {  //视图接口
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate, String quDeptId) {  //视图接口
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (quDeptId != null) {
@@ -68,8 +69,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         if (cityLevelId != null) {
             queryWrapper.eq("city_cs_id", cityLevelId);
-        } else if (policeId != null){
-                queryWrapper.in("city_cs_id",deptSMapper.selectDeptIds(policeId));
+        } else if (policeId != null) {
+            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间
@@ -111,6 +112,21 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         jiebaoResponse = update(qw) ? jiebaoResponse.okMessage("操作成功") : jiebaoResponse.failMessage("操作失败");
         return jiebaoResponse;
+    }
+
+    @Override
+    public String func(Accident accident) {
+        String dnFxXs = "";//电脑分析系数
+        if (!accident.getNature().equals("A"))
+            dnFxXs = "B";
+        else {
+            if (accident.getNature().equals("A") && accident.getInstationSection().equals("A"))
+                dnFxXs = "B";
+            else {
+
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {
