@@ -87,9 +87,11 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         String parentId = dict.getParentId();
         Map<String, Object> map = new HashMap<>();
         map.put("table_name",dict.getTableName());
+        map.put("parent_id",parentId);
         List<Dict> dicts = dictMapper.selectByMap(map);
         Map<String, Object> map2 = new HashMap<>();
         map2.put("field_name",dict.getFieldName());
+        map2.put("parent_id",parentId);
         List<Dict> dictes = dictMapper.selectByMap(map2);
         if (dicts.size()>0 || dictes.size()>0){
            return new JiebaoResponse().failMessage("字段名重复");

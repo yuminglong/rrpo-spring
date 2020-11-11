@@ -80,5 +80,11 @@ public interface PrizeMapper extends BaseMapper<Prize> {
      * @return
      */
      Map<String, Object> countTypes(String startTime, String endTime);
+
+    /**
+     * 统计事故类型
+     * @return
+     */
+     List<Map<String,Object>> countType(String startTime, String endTime);
 }
 

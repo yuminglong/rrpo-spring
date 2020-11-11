@@ -163,7 +163,7 @@ public class AddressController extends BaseController {
 
     @PostMapping(value = "/importAddress")
     @ApiOperation(value = "导入通讯录", notes = "导入通讯录", httpMethod = "POST")
-    public String excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
+    public JiebaoResponse excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
         boolean result = false;
         try {
             result = addressService.addAddressList(file, deptId);
@@ -171,9 +171,9 @@ public class AddressController extends BaseController {
             e.printStackTrace();
         }
         if (result == true) {
-            return "excel文件数据导入成功！";
+            return new JiebaoResponse().okMessage("导入成功");
         } else {
-            return "excel数据导入失败！";
+            return new JiebaoResponse().failMessage("导入失败");
         }
     }
 
