@@ -51,34 +51,29 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
 
 
     @Override
-    public boolean saveOrUpdate(MenusYear entity) {
-
-
-        return super.saveOrUpdate(entity);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse addOrUpdate(MenusYear menusYear) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        if (menusYear.getMenusYearId() == null) {
+        boolean flag = false;
+        if (menusYear.getMenusYearId() == null) {//新增
             Integer integer = this.baseMapper.exSit(menusYear.getContent(), menusYear.getYearId());
             if (integer != null) {
-                jiebaoResponse.failMessage("内容重复");
+                return jiebaoResponse.failMessage("内容重复");
             }
             menusYear.setDate(new Date());
             menusYear.setSorts(1000);
-        } else {
+            flag = true;
+        } else {  //删除
             MenusYear menusYear1 = getById(menusYear.getMenusYearId()); //数据库已存在的
             if (!menusYear1.getContent().equals(menusYear.getContent())) {  //如果内容发生了变化
                 Integer integer = this.baseMapper.exSit(menusYear.getContent(), menusYear.getYearId());
                 if (integer != null) {
-                    jiebaoResponse.failMessage("内容重复");
+                    return jiebaoResponse.failMessage("内容重复");
                 }
             }
         }
-        boolean b = saveOrUpdate(menusYear);
-        if (b) {
+        boolean b = super.saveOrUpdate(menusYear);
+        if (b && flag) {
             List<Dept> childrenList = deptService.getChildrenList("0");
             for (Dept dept : childrenList
             ) {
