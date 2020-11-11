@@ -18,14 +18,8 @@ import com.jiebao.platfrom.demo.test.WorderToNewWordUtils;
 import com.jiebao.platfrom.railway.dao.*;
 import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.*;
-import com.jiebao.platfrom.system.dao.DeptMapper;
-import com.jiebao.platfrom.system.dao.FileMapper;
-import com.jiebao.platfrom.system.dao.UserMapper;
-import com.jiebao.platfrom.system.dao.UserRoleMapper;
-import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.Role;
-import com.jiebao.platfrom.system.domain.User;
-import com.jiebao.platfrom.system.domain.UserRole;
+import com.jiebao.platfrom.system.dao.*;
+import com.jiebao.platfrom.system.domain.*;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.RoleService;
 import com.jiebao.platfrom.system.service.UserRoleService;
@@ -64,10 +58,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -119,9 +115,6 @@ public class PrizeController extends BaseController {
 
     @Autowired
     private DeptService deptService;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private DeptMapper deptMapper;
@@ -865,7 +858,7 @@ public class PrizeController extends BaseController {
 
         List<Map<String, Object>> list = prizeService.countMoney(startTime, endTime);
 
-        if (list.size() > 0) {
+      /*  if (list.size() > 0) {
             for (Map<String, Object> item : list) {
                 changsha.add(NullOrZero(item.get("changsha")));
                 changde.add(NullOrZero(item.get("changde")));
@@ -977,7 +970,8 @@ public class PrizeController extends BaseController {
             return new JiebaoResponse().data(result);
         } else {
             return new JiebaoResponse().data(null);
-        }
+        }*/
+      return  new JiebaoResponse().data(list).okMessage("成功");
     }
 
 
@@ -1142,4 +1136,16 @@ public class PrizeController extends BaseController {
         }
         return new JiebaoResponse().okMessage("同步成功");
     }
+
+    @ApiOperation("统计事件类型")
+    @GetMapping("/countType")
+    public JiebaoResponse countType(String startTime, String endTime) {
+        List<Map<String, Object>> map = prizeMapper.countType(startTime, endTime);
+        return new JiebaoResponse().data(map).okMessage("查询成功");
+    }
+
+
+
+
+
 }

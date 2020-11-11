@@ -238,6 +238,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 // if (StringUtils.isNotBlank(deptId) && !"".equals(userName) && !"".equals(position) && !"".equals(unit) && !"".equals(weiXin) && !"".equals(telPhone) && !"".equals(email) && !"".equals(phone)) {
                 address.setUserName(userName);
                 address.setPhone(phone);
+                Map<String, Object> map = new HashMap<>();
+                map.put("tel_phone",telPhone);
+                List<Address> addresses = addressMapper.selectByMap(map);
                 address.setTelPhone(telPhone);
                 address.setWeiXin(weiXin);
                 address.setEmail(email);
@@ -245,8 +248,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setPosition(position);
                 address.setDeptId(deptId);
                 address.setStatus(2);
-                addressList.add(address);
-                //  }
+                if(addresses.isEmpty()){
+                    addressList.add(address);
+                }
             }
             for (Address address : addressList) {
                 save = addressService.save(address);

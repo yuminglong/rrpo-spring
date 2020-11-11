@@ -458,17 +458,23 @@ public class ExchangeController extends BaseController {
     public JiebaoResponse deleteExchange(@PathVariable String[] exchangeIds) throws JiebaoException {
         try {
             Arrays.stream(exchangeIds).forEach(exchangeId -> {
-                List<ExchangeFile> exchangeFiles = exchangeFileService.getByExchangeId(exchangeId);
+                Map<String, Object> map = new HashMap<>();
+                map.put("ref_type",1);
+                map.put("ref_id",exchangeId);
+                List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                 Exchange byId = exchangeService.getById(exchangeId);
                 //未发送状态，删掉文件，删除接收人，删除该信息本体
                 if ("1".equals(byId.getStatus())) {
-                    for (ExchangeFile exchangeFile : exchangeFiles
-                    ) {
-                        File file = new File(exchangeFile.getUrl());
-                        if (file.exists()) {
-                            file.delete();
+                    if (files.size()>0){
+                        for (com.jiebao.platfrom.system.domain.File file : files
+                        ) {
+                            File fil = new File((file.getFileUrl()+file.getOldName()));
+                            if (fil.exists()) {
+                                fil.delete();
+                            }
                         }
                     }
+                    fileMapper.deleteByMap(map);
                     exchangeUserService.deleteByExchangeId(exchangeId);
                     exchangeService.removeById(exchangeId);
                     //已发布状态，只把状态改为4即可，没有2撤回

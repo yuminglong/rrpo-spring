@@ -86,6 +86,13 @@ public class DeptController extends BaseController {
         return depts;
     }
 
+
+    @GetMapping("/ListGA")
+    public List<Dept> ListGA(QueryRequest request, Dept dept) {
+        List<Dept> depts = deptService.findDepts(dept, request);
+        return depts;
+    }
+
     @Log("新增组织机构")
     @PostMapping
     @RequiresPermissions("dept:add")
