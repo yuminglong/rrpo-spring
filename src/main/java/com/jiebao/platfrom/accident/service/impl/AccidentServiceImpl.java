@@ -116,22 +116,29 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
 
     @Override
     public String func(Accident accident) {
-        String dnFxXs = "";//电脑分析系数
-        if (!accident.getNature().equals("A"))
-            dnFxXs = "B";
+        String sql = "";
+        if (accident.getNature() != null && !accident.getNature().equals("A"))
+            return "B";
         else {
-            if (accident.getNature().equals("A") && accident.getInstationSection().equals("A"))
-                dnFxXs = "B";
+            if (accident.getNature() != null && accident.getInstationSection() != null && accident.getNature().equals("A") && accident.getInstationSection().equals("A"))
+                return "B";
             else {
-
+                if (accident.getRoad() == null || accident.getAge() == null || accident.getClosed() == null ||
+                        accident.getJzd() == null || accident.getDistance() == null || accident.getIdentity() == null ||
+                        accident.getConditions() == null)
+                    return "";
+                sql = "select dnfxxs from zd_dnfxxs where 1=1";
+                sql += " and instr(zd3,'" + accident.getRoad() + "')>0 ";
+                sql += " and instr(zd4,'" + accident.getAge() + "')>0 ";
+                sql += " and instr(zd5,'" + accident.getClosed() + "')>0 ";
+                sql += " and instr(zd6,'" + accident.getJzd() + "')>0 ";
+                sql += " and instr(zd7,'" + accident.getDistance() + "')>0 ";
+                sql += " and instr(zd8,'" + accident.getIdentity() + "')>0 ";
+                sql += " and instr(zd9,'" + accident.getConditions() + "')>0 ";
+                sql+=" limit 1";
             }
         }
-        return null;
+        return this.baseMapper.getXs(sql);
     }
-
-    public static void main(String[] args) {
-        System.out.println(0.1 + 2);
-    }
-
 
 }

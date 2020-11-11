@@ -104,7 +104,7 @@ public class Accident implements Serializable {
     /**
      * 事故性质
      */
-    @ApiModelProperty(value = "事故性质", example = "哈哈")
+    @ApiModelProperty(value = "事故性质", example = "B")
     private String nature;
     @ApiModelProperty(hidden = true)
     @TableField(exist = false)
@@ -113,7 +113,7 @@ public class Accident implements Serializable {
     /**
      * 站内性质
      */
-    @ApiModelProperty(value = "站内性质", example = "哈哈")
+    @ApiModelProperty(value = "站内性质", example = "A")
     private String instationSection;
     @ApiModelProperty(hidden = true)
     @TableField(exist = false)
@@ -121,14 +121,14 @@ public class Accident implements Serializable {
     /**
      * 护路模式
      */
-    @ApiModelProperty(value = "护路模式", example = "哈哈")
+    @ApiModelProperty(value = "护路模式", example = "A")
     private String road;
     @TableField(exist = false)
     private Dict dictRoad;
     /**
      * 年龄段
      */
-    @ApiModelProperty(value = "年龄段", example = "哈哈")
+    @ApiModelProperty(value = "年龄段", example = "A")
     private String age;
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
@@ -136,7 +136,7 @@ public class Accident implements Serializable {
     /**
      * 封闭程度
      */
-    @ApiModelProperty(value = "封闭程度", example = "哈哈")
+    @ApiModelProperty(value = "封闭程度", example = "A")
     private String closed;
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
@@ -144,19 +144,19 @@ public class Accident implements Serializable {
     /**
      * 居住地
      */
-    @ApiModelProperty(value = "居住地", example = "哈哈")
+    @ApiModelProperty(value = "居住地", example = "A")
     private String jzd;
 
     /**
      * 离铁路远近
      */
-    @ApiModelProperty(value = "离铁路远近", example = "哈哈")
+    @ApiModelProperty(value = "离铁路远近", example = "A")
     private String distance;
 
     /**
      * 性别
      */
-    @ApiModelProperty(value = "性别", example = "哈哈")
+    @ApiModelProperty(value = "性别", example = "A")
     private String sex;
 
     @TableField(exist = false)
@@ -166,19 +166,19 @@ public class Accident implements Serializable {
     /**
      * 身份判断
      */
-    @ApiModelProperty(value = "身份判断", example = "哈哈")
+    @ApiModelProperty(value = "身份判断", example = "A")
     private String identity;
 
     /**
      * 事故情形
      */
-    @ApiModelProperty(value = "事故情形", example = "哈哈")
+    @ApiModelProperty(value = "事故情形", example = "A")
     private String conditions;
 
     /**
      * 电脑分析系数
      */
-    @ApiModelProperty(value = "电脑分析系数", example = "哈哈")
+    @ApiModelProperty(value = "电脑分析系数", example = "A")
     private String dnxs;
 
     /**

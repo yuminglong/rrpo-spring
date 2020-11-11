@@ -62,6 +62,11 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
         if (gwdName != null)
             queryWrapper.eq(Ql::getGwd, gwdName);
         queryWrapper.orderByDesc(Ql::getCreatTime);
+        queryWrapper.orderByDesc(Ql::getDzs);
+        queryWrapper.orderByDesc(Ql::getGa);
+        queryWrapper.orderByDesc(Ql::getGwd);
+        queryWrapper.orderByDesc(Ql::getXsq);
+        queryWrapper.orderByDesc(Ql::getXz);
         return queryWrapper;
     }
 

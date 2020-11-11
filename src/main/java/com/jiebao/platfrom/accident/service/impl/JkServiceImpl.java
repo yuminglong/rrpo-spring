@@ -48,6 +48,10 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
         if (dzs != null)
             queryWrapper.eq(Jk::getDzs, dzs);
         queryWrapper.orderByDesc(Jk::getCreatTime);
+        queryWrapper.orderByDesc(Jk::getGac);
+        queryWrapper.orderByDesc(Jk::getXsq);
+        queryWrapper.orderByDesc(Jk::getDzs);
+        queryWrapper.orderByDesc(Jk::getXzjd);
         return queryWrapper;
     }
 

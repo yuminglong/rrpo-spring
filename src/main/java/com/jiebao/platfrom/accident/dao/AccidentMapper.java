@@ -42,4 +42,7 @@ public interface AccidentMapper extends BaseMapper<Accident> {
 
     @Select("select ${name} as subscript,count(1) as number from accident_accident a ${ew.customSqlSegment}")
     List<ANumber> listCg(@Param("ew") QueryWrapper<Accident> queryWrapper, @Param("name") String name);
+
+    @Select("${sql}")
+    String getXs(@Param("sql") String sql);
 }

@@ -85,6 +85,6 @@ public class AccidentController {
     @PostMapping("func")
     @ApiOperation("系数求出")
     public JiebaoResponse func(Accident accident) {
-        return null;
+        return new JiebaoResponse().data(accidentService.func(accident)).okMessage("操作成功");
     }
 }
