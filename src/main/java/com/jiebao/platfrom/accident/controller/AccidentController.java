@@ -92,4 +92,10 @@ public class AccidentController {
     public JiebaoResponse func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions) {
         return new JiebaoResponse().data(accidentService.func(nature, instationSection, road, age, closed, jzd, distance, identity, conditions)).okMessage("操作成功");
     }
+
+    @GetMapping("compareTable")
+    @ApiOperation("同期比较")
+    public JiebaoResponse compareTable(Integer startYear,Integer startMonth,Integer endYear, Integer endMonth) {
+        return new JiebaoResponse().okMessage("操作成功").data(accidentService.compareTable(startYear,startMonth,endYear,endMonth));
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -143,8 +144,28 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public List<compareTable> compareTable() {
+    public List<compareTable> compareTable(Integer startYear, Integer startMonth, Integer endYear, Integer endMonth) {
+        endMonth+=1;
+        List<compareTable> compareTables = this.baseMapper.shiTable(startYear + "-" + startMonth, endYear + "-" + endMonth);
+        compareTables.addAll(this.baseMapper.gzTable(startYear + "-" + startMonth, endYear + "-" + endMonth));
+        String startDate = startYear + "-" + startMonth;
+        String endDate = endYear + "-" + endMonth;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        try {
+            Date parse = simpleDateFormat.parse(startDate);//本期开始
+            Date parse1 = simpleDateFormat.parse(endDate);//本期结束
+            long l = parse1.getTime() - parse.getTime();
+            System.out.println(simpleDateFormat.format(parse));
+            System.out.println(simpleDateFormat.format(parse1));
+            System.out.println(l);
+            Date parse2=new Date(parse.getTime()-l); //上期  开始
+            Date parse3=new Date(parse1.getTime()-l);//上期  结束
+            System.out.println(simpleDateFormat.format(parse2));
+            System.out.println(simpleDateFormat.format(parse3));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        return null;
+        return compareTables;
     }
 }
