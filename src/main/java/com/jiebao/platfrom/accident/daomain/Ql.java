@@ -77,9 +77,9 @@ public class Ql implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
     private List<File> tpFile;
-
+    @ApiModelProperty(hidden = true)
     private String delflag;
-
+    @ApiModelProperty(hidden = true)
     private LocalDateTime creatTime;
 
 

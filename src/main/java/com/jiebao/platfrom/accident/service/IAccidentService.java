@@ -2,10 +2,12 @@ package com.jiebao.platfrom.accident.service;
 
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.accident.daomain.compareTable;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -22,5 +24,7 @@ public interface IAccidentService extends IService<Accident> {
 
     JiebaoResponse lock(String[] accidentId,String month,Integer status);
 
-    String func(Accident accident);
+    String func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions);
+
+    List<compareTable>  compareTable();
 }

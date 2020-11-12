@@ -178,20 +178,20 @@ public class Accident implements Serializable {
     /**
      * 电脑分析系数
      */
-    @ApiModelProperty(value = "电脑分析系数", example = "A")
-    private String dnxs;
+    @ApiModelProperty(value = "电脑分析系数", example = "12.5")
+    private Double dnxs;
 
     /**
      * 电脑调节系数
      */
-    @ApiModelProperty(value = "电脑调节系数", example = "哈哈")
-    private String dntjxs;
+    @ApiModelProperty(value = "电脑调节系数", example = "12.5")
+    private Double dntjxs;
 
     /**
      * 公安分析系数
      */
-    @ApiModelProperty(value = "公安分析系数", example = "哈哈")
-    private String gaxs;
+    @ApiModelProperty(value = "公安分析系数", example = "12.2")
+    private Double gaxs;
 
     /**
      * 属地管理责任死亡人数
@@ -202,5 +202,8 @@ public class Accident implements Serializable {
     private Integer statu;
 
     private String month;
+
+    @ApiModelProperty(hidden = true)
+    private String policeFather;
 
 }

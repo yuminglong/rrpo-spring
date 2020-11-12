@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * <p>
@@ -21,7 +23,7 @@ public interface IQlService extends IService<Ql> {
 
     boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName);
 
-    boolean addOrUpdate(Ql ql, String tp);
+    boolean addOrUpdate(Ql ql, Collection<? extends Serializable> tp);
 
     boolean delete(String[] idList);
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.accident.daomain.compareTable;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -45,4 +46,10 @@ public interface AccidentMapper extends BaseMapper<Accident> {
 
     @Select("${sql}")
     String getXs(@Param("sql") String sql);
+
+    /**
+     *
+     * @return  所有ss     */
+    @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) from accident_accident a GROUP BY  a.city_cs_id")
+    List<compareTable> shiTable();
 }

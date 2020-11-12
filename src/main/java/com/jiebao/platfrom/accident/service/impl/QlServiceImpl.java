@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * <p>
@@ -61,6 +63,7 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
             queryWrapper.eq(Ql::getGa, policeName);
         if (gwdName != null)
             queryWrapper.eq(Ql::getGwd, gwdName);
+        queryWrapper.eq(Ql::getDelflag, "0");
         queryWrapper.orderByDesc(Ql::getCreatTime);
         queryWrapper.orderByDesc(Ql::getDzs);
         queryWrapper.orderByDesc(Ql::getGa);
@@ -72,17 +75,19 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean addOrUpdate(Ql ql, String tp) {
+    public boolean addOrUpdate(Ql ql, Collection<? extends Serializable> tp) {
         boolean flag = false;  //记录是新增 还是  删除
         if (ql.getId() == null) {
             ql.setCreatTime(LocalDateTime.now());
+            ql.setDelflag("0");
             flag = true;
         }
         boolean b = saveOrUpdate(ql);
         if (tp != null && flag) {  //绑定文件
-            File file = fileService.getById(tp);
-            file.setRefId(ql.getId());
-            fileService.updateById(file);
+            LambdaUpdateWrapper<File> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.set(File::getRefId, ql.getId());
+            updateWrapper.in(File::getFileId, tp);
+            fileService.update(updateWrapper);
         }
         return b;
     }

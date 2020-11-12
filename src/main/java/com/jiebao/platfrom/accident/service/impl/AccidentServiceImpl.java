@@ -7,6 +7,7 @@ import com.jiebao.platfrom.accident.dao.DeptSMapper;
 import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
+import com.jiebao.platfrom.accident.daomain.compareTable;
 import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -115,30 +116,35 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     @Override
-    public String func(Accident accident) {
+    public String func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions) {
         String sql = "";
-        if (accident.getNature() != null && !accident.getNature().equals("A"))
+        if (nature != null && !nature.equals("A"))
             return "B";
         else {
-            if (accident.getNature() != null && accident.getInstationSection() != null && accident.getNature().equals("A") && accident.getInstationSection().equals("A"))
+            if (nature != null && instationSection != null && nature.equals("A") && instationSection.equals("A"))
                 return "B";
             else {
-                if (accident.getRoad() == null || accident.getAge() == null || accident.getClosed() == null ||
-                        accident.getJzd() == null || accident.getDistance() == null || accident.getIdentity() == null ||
-                        accident.getConditions() == null)
+                if (road == null || age == null || closed == null ||
+                        jzd == null || distance == null || identity == null ||
+                        conditions == null)
                     return "";
                 sql = "select dnfxxs from zd_dnfxxs where 1=1";
-                sql += " and instr(zd3,'" + accident.getRoad() + "')>0 ";
-                sql += " and instr(zd4,'" + accident.getAge() + "')>0 ";
-                sql += " and instr(zd5,'" + accident.getClosed() + "')>0 ";
-                sql += " and instr(zd6,'" + accident.getJzd() + "')>0 ";
-                sql += " and instr(zd7,'" + accident.getDistance() + "')>0 ";
-                sql += " and instr(zd8,'" + accident.getIdentity() + "')>0 ";
-                sql += " and instr(zd9,'" + accident.getConditions() + "')>0 ";
-                sql+=" limit 1";
+                sql += " and instr(zd3,'" + road + "')>0 ";
+                sql += " and instr(zd4,'" + age + "')>0 ";
+                sql += " and instr(zd5,'" + closed + "')>0 ";
+                sql += " and instr(zd6,'" + jzd + "')>0 ";
+                sql += " and instr(zd7,'" + distance + "')>0 ";
+                sql += " and instr(zd8,'" + identity + "')>0 ";
+                sql += " and instr(zd9,'" + conditions + "')>0 ";
+                sql += " limit 1";
             }
         }
         return this.baseMapper.getXs(sql);
     }
 
+    @Override
+    public List<compareTable> compareTable() {
+
+        return null;
+    }
 }

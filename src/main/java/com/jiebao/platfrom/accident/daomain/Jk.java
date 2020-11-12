@@ -100,12 +100,13 @@ public class Jk implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
     private List<File> tpFile;
+    @ApiModelProperty(hidden = true)
     private String delflag;
 
     private String username;
 
     private String datalock;
-
+    @ApiModelProperty(hidden = true)
     private LocalDateTime creatTime;
 
 

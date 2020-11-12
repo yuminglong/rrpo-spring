@@ -3,6 +3,7 @@ package com.jiebao.platfrom.accident.controller;
 
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.service.IAccidentService;
+import com.jiebao.platfrom.accident.service.IDeptService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -30,12 +31,16 @@ import java.util.List;
 public class AccidentController {
     @Autowired
     IAccidentService accidentService;
+    @Autowired
+    IDeptService deptService;
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改 事故信息")
     @Log("添加修改 事故信息")
     public JiebaoResponse saveOrUpdate(Accident accident) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (accident.getPoliceId() != null)
+            accident.setPoliceFather(deptService.getById(accident.getPoliceId()).getParentId());
         if (accident.getAccidentId() != null) {
             Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
             if (accident1.getStatu() != null && accident1.getStatu() == 1)
@@ -84,7 +89,7 @@ public class AccidentController {
 
     @PostMapping("func")
     @ApiOperation("系数求出")
-    public JiebaoResponse func(Accident accident) {
-        return new JiebaoResponse().data(accidentService.func(accident)).okMessage("操作成功");
+    public JiebaoResponse func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions) {
+        return new JiebaoResponse().data(accidentService.func(nature, instationSection, road, age, closed, jzd, distance, identity, conditions)).okMessage("操作成功");
     }
 }

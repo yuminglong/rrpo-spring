@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -51,9 +52,9 @@ public class QlController {
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增或者修改")
-    public JiebaoResponse saveOrUpdate(Ql ql,String tp) { //tp   文件的id
+    public JiebaoResponse saveOrUpdate(Ql ql,String[] tp) { //tp   文件的id
         try {
-        qlService.addOrUpdate(ql,tp);
+        qlService.addOrUpdate(ql, Arrays.asList(tp));
         return new JiebaoResponse().data(ql).okMessage("操作成功");
         } catch (Exception e) {
             return new JiebaoResponse().failMessage("操作失败");
