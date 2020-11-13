@@ -118,6 +118,9 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Briefing::getReleaseTime, startTime).le(Briefing::getReleaseTime, endTime);
         }
+        if (StringUtils.isNotBlank(briefing.getId())) {
+            queryWrapper.lambda().eq(Briefing::getId,briefing.getId());
+        }
         Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

@@ -45,4 +45,6 @@ public class AsYear {
     private String deptId;
    @TableField(exist = false)
     private File file;
+   @ApiModelProperty(value = "yearId")
+    private String yearId;
 }
