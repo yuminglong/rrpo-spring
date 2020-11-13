@@ -364,7 +364,7 @@ public class CheckExcelUtil {
         panMonth(dateMonth);
         response.setContentType("application/ms-excel;charset=utf-8");
 //设置导出Excel的名称
-        response.setHeader("Content-disposition", "attachment;filename=" + "ssd.xls");
+        response.addHeader("Content-Disposition", "attachment;filename=导出.xls");
         //刷新缓冲
         try {
             response.flushBuffer();
