@@ -226,34 +226,8 @@ public class NoticeController extends BaseController {
                             httpPost.setConfig(requestConfig);*/
                             //附件参数需要用到的请求参数实体构造器
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-
-                          /*
-                            //获取文件url
-                            String fileUrl ="D:\\tempDoc.docx";
-                            String fileu = "D:\\newDoc.docx";
-                            File is = new File(fileUrl);
-                            File fil =new File(fileu);
-                           *//* Map<String, File> files = new HashMap<>();
-                             files.put("file",is);
-                            files.put("file",fil);*//*
-                            ArrayList<File> filess =new ArrayList<>();
-                            filess.add(is);
-                            filess.add(fil);*/
-
                             //获取附件
                             ArrayList<File> filess =new ArrayList<>();
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("ref_type",8);
-                            map.put("file_type",2);
-                            List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
-                            if (files.size()>0){
-                                for (com.jiebao.platfrom.system.domain.File f: files
-                                ) {
-                                    String url = f.getFileUrl() + f.getOldName();
-                                    File is = new File(url);
-                                    filess.add(is);
-                                }
-                            }
                             if (!CollectionUtils.isEmpty(filess)) {
                                 for (File file:filess) {
                                     multipartEntityBuilder.addBinaryBody("file",file);
@@ -266,13 +240,13 @@ public class NoticeController extends BaseController {
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
                             Map<String, Object> mapF = new HashMap<>();
-                            map.put("ref_type",8);
-                            map.put("file_type",1);
+                            mapF.put("ref_type",8);
+                            mapF.put("file_type",1);
                             List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
                             if (filesF.size()>0){
                                 Element doc = Jsoup.parseBodyFragment(byId.getContent()).body();
                                 Elements jpg = doc.select("img[src]");
-                                for (com.jiebao.platfrom.system.domain.File f: files
+                                for (com.jiebao.platfrom.system.domain.File f: filesF
                                 ) {
                                     String url = f.getFileUrl() + f.getOldName();
                                     //转换为base64
@@ -281,7 +255,6 @@ public class NoticeController extends BaseController {
                                     byte[] data = new byte[in.available()];
                                     String encode = encoder.encode(data);
                                 }
-
                             }else {
                                 params.put("html", byId.getContent());
                             }
@@ -295,13 +268,12 @@ public class NoticeController extends BaseController {
                             }
                             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                             params.put("user", username);
-
                             ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
                             if (!CollectionUtils.isEmpty(params)) {
                                 params.forEach((key, value) -> {
                                     //此处的字符串参数会被设置到请求体Query String Parameters中
-
                                     multipartEntityBuilder.addTextBody(key, value,strContent);
+                                    System.out.println(key+"++++++++"+value+"参数+++++++++++");
                                 });
                             }
                             HttpEntity httpEntity = multipartEntityBuilder.build();

@@ -48,6 +48,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.internal.util.privilegedactions.GetResource;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -840,137 +841,7 @@ public class PrizeController extends BaseController {
     @ApiOperation("统计十四市州金额")
     @GetMapping("/countMoney")
     public JiebaoResponse countMoney(String startTime, String endTime) {
-        List changsha = new ArrayList();
-        List changde = new ArrayList();
-        List hengyang = new ArrayList();
-        List shaoyang = new ArrayList();
-        List zhuzhou = new ArrayList();
-        List xiangtan = new ArrayList();
-        List yueyang = new ArrayList();
-        List zhangjiajie = new ArrayList();
-        List yiyang = new ArrayList();
-        List chenzhou = new ArrayList();
-        List yongzhou = new ArrayList();
-        List huaihua = new ArrayList();
-        List loudi = new ArrayList();
-        List xiangxi = new ArrayList();
-
-
         List<Map<String, Object>> list = prizeService.countMoney(startTime, endTime);
-
-      /*  if (list.size() > 0) {
-            for (Map<String, Object> item : list) {
-                changsha.add(NullOrZero(item.get("changsha")));
-                changde.add(NullOrZero(item.get("changde")));
-                hengyang.add(NullOrZero(item.get("hengyang")));
-                shaoyang.add(NullOrZero(item.get("shaoyang")));
-                zhuzhou.add(NullOrZero(item.get("zhuzhou")));
-                xiangtan.add(NullOrZero(item.get("xiangtan")));
-                yueyang.add(NullOrZero(item.get("yueyang")));
-                zhangjiajie.add(NullOrZero(item.get("zhangjiajie")));
-                yiyang.add(NullOrZero(item.get("yiyang")));
-                chenzhou.add(NullOrZero(item.get("chenzhou")));
-                yongzhou.add(NullOrZero(item.get("yongzhou")));
-                huaihua.add(NullOrZero(item.get("huaihua")));
-                loudi.add(NullOrZero(item.get("loudi")));
-                xiangxi.add(NullOrZero(item.get("xiangxi")));
-            }
-
-
-            String changshaData = JSON.toJSONString(changsha);
-            String changdeData = JSON.toJSONString(changde);
-            String hengyangData = JSON.toJSONString(hengyang);
-            String shaoyangData = JSON.toJSONString(shaoyang);
-            String zhuzhouData = JSON.toJSONString(zhuzhou);
-            String xiangtanData = JSON.toJSONString(xiangtan);
-            String yueyangData = JSON.toJSONString(yueyang);
-            String zhangjiajieData = JSON.toJSONString(zhangjiajie);
-            String yiyangData = JSON.toJSONString(yiyang);
-            String chenzhouData = JSON.toJSONString(chenzhou);
-            String yongzhouData = JSON.toJSONString(yongzhou);
-            String huaihuaData = JSON.toJSONString(huaihua);
-            String loudiData = JSON.toJSONString(loudi);
-            String xiangxiData = JSON.toJSONString(xiangxi);
-
-
-            JSONObject jsonObject = new JSONObject();
-            JSONObject changshaObject = new JSONObject();
-            changshaObject.put("name", "长沙市");
-            changshaObject.put("Date", changshaData);
-            jsonObject.put("changsha", changshaObject);
-
-            JSONObject changdeObject = new JSONObject();
-            changdeObject.put("name", "常德市");
-            changdeObject.put("Date", changdeData);
-            jsonObject.put("changde", changdeObject);
-
-            JSONObject hengyangObject = new JSONObject();
-            hengyangObject.put("name", "衡阳市");
-            hengyangObject.put("Date", hengyangData);
-            jsonObject.put("hengyang", hengyangObject);
-
-            JSONObject shaoyangObject = new JSONObject();
-            shaoyangObject.put("name", "邵阳市");
-            shaoyangObject.put("Date", shaoyangData);
-            jsonObject.put("shaoyang", shaoyangObject);
-
-
-            JSONObject zhuzhouObject = new JSONObject();
-            zhuzhouObject.put("name", "株洲市");
-            zhuzhouObject.put("Date", zhuzhouData);
-            jsonObject.put("zhuzhou", zhuzhouObject);
-
-            JSONObject xiangtanObject = new JSONObject();
-            xiangtanObject.put("name", "湘潭市");
-            xiangtanObject.put("Date", xiangtanData);
-            jsonObject.put("xiangtan", xiangtanObject);
-
-            JSONObject yueyangObject = new JSONObject();
-            yueyangObject.put("name", "岳阳市");
-            yueyangObject.put("Date", yueyangData);
-            jsonObject.put("yueyang", yueyangObject);
-
-            JSONObject zhangjiajieObject = new JSONObject();
-            zhangjiajieObject.put("name", "张家界市");
-            zhangjiajieObject.put("Date", zhangjiajieData);
-            jsonObject.put("zhangjiajie", zhangjiajieObject);
-
-            JSONObject yiyangObject = new JSONObject();
-            yiyangObject.put("name", "益阳市");
-            yiyangObject.put("Date", yiyangData);
-            jsonObject.put("yiyang", yiyangObject);
-
-            JSONObject chenzhouObject = new JSONObject();
-            chenzhouObject.put("name", "郴州市");
-            chenzhouObject.put("Date", chenzhouData);
-            jsonObject.put("chenzhou", chenzhouObject);
-
-            JSONObject yongzhouObject = new JSONObject();
-            yongzhouObject.put("name", "永州市");
-            yongzhouObject.put("Date", yongzhouData);
-            jsonObject.put("yongzhou", yongzhouObject);
-
-            JSONObject huaihuaObject = new JSONObject();
-            huaihuaObject.put("name", "怀化市");
-            huaihuaObject.put("Date", huaihuaData);
-            jsonObject.put("huaihua", huaihuaObject);
-
-            JSONObject loudiObject = new JSONObject();
-            loudiObject.put("name", "娄底市");
-            loudiObject.put("Date", loudiData);
-            jsonObject.put("loudi", loudiObject);
-
-            JSONObject xiangxiObject = new JSONObject();
-            xiangxiObject.put("name", "湘西州");
-            xiangxiObject.put("Date", xiangxiData);
-            jsonObject.put("xiangxi", xiangxiObject);
-
-            String result = JSON.toJSONString(jsonObject);
-
-            return new JiebaoResponse().data(result);
-        } else {
-            return new JiebaoResponse().data(null);
-        }*/
       return  new JiebaoResponse().data(list).okMessage("成功");
     }
 
@@ -1018,6 +889,7 @@ public class PrizeController extends BaseController {
     @ApiOperation("同步到门户网")
     @PostMapping("/menHu")
     public JiebaoResponse menHu(String prizeId, String source, Date time,String targetsId) {
+
         Prize byId = prizeService.getById(prizeId);
         if (byId.getSynchronizeWeb() == 0) {
             //HttpPost请求实体
@@ -1032,19 +904,6 @@ public class PrizeController extends BaseController {
                             httpPost.setConfig(requestConfig);*/
                 //附件参数需要用到的请求参数实体构造器
                 MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-
-                          /*
-                            //获取文件url
-                            String fileUrl ="D:\\tempDoc.docx";
-                            String fileu = "D:\\newDoc.docx";
-                            File is = new File(fileUrl);
-                            File fil =new File(fileu);
-                           *//* Map<String, File> files = new HashMap<>();
-                             files.put("file",is);
-                            files.put("file",fil);*//*
-                            ArrayList<File> filess =new ArrayList<>();
-                            filess.add(is);
-                            filess.add(fil);*/
 
                 //获取附件
                 ArrayList<File> filess =new ArrayList<>();
@@ -1078,7 +937,8 @@ public class PrizeController extends BaseController {
                 if (filesF.size()>0){
                     Element doc = Jsoup.parseBodyFragment(byId.getContent()).body();
                     Elements jpg = doc.select("img[src]");
-                    for (com.jiebao.platfrom.system.domain.File f: files
+
+                    for (com.jiebao.platfrom.system.domain.File f: filesF
                     ) {
                         String url = f.getFileUrl() + f.getOldName();
                         //转换为base64
@@ -1086,6 +946,9 @@ public class PrizeController extends BaseController {
                         InputStream   in = new FileInputStream(url);
                         byte[] data = new byte[in.available()];
                         String encode = encoder.encode(data);
+                        ListIterator<Element> item = jpg.listIterator();
+                     //   item..toString().replace(next.toString(),encode);
+
                     }
 
                 }else {
@@ -1095,6 +958,7 @@ public class PrizeController extends BaseController {
                     String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(time);
                     params.put("time", relTime);
                 }
+
                 else {
                     String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                     params.put("time", relTime);
@@ -1106,7 +970,6 @@ public class PrizeController extends BaseController {
                 if (!CollectionUtils.isEmpty(params)) {
                     params.forEach((key, value) -> {
                         //此处的字符串参数会被设置到请求体Query String Parameters中
-
                         multipartEntityBuilder.addTextBody(key, value,strContent);
                     });
                 }
@@ -1121,7 +984,6 @@ public class PrizeController extends BaseController {
                 System.out.println("++++++++++++++"+respondBody);
             } catch (IOException e) {
                 //日志信息及异常处理
-
             } finally {
                 if (resp != null) {
                     try {
@@ -1145,7 +1007,33 @@ public class PrizeController extends BaseController {
     }
 
 
+    public static void main(String[] args) {
+        String newsBody= "<img alt=\"\" src=\"/xiaoxiao1/uploads/artImage/image/20130711/20130711182603_176.png\" > 452112<img alt=\"\" src=\"/xiaoxiao2/uploads/artImage/image/20130711/20130711182603_176.png\" >";
+         String HTTPHOST="http://58.192.23.75:8080";
+        Document doc = Jsoup.parse(newsBody);
+        Elements pngs = doc.select("img[src]");
+        System.out.println(pngs);
+        ListIterator<Element> elementListIterator = pngs.listIterator();
+        while (elementListIterator.hasNext()){
+            Element next = elementListIterator.next();
+            System.out.println(next+"--------");
+        }
 
+
+        String replace = pngs.toString().replace(pngs.toString(), HTTPHOST);
+        System.out.println(replace);
+
+      /*  for (Element element : pngs) {
+            String imgUrl = element.attr("src");
+            if (imgUrl.trim().startsWith("/")) {
+                imgUrl =HTTPHOST + imgUrl;
+                element.attr("src", imgUrl);
+            }
+        }*/
+
+        newsBody = doc.toString();
+       // System.out.println(newsBody);
+    }
 
 
 }

@@ -156,8 +156,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public boolean addAddressList(MultipartFile file, String deptId) throws Exception {
-
-        boolean save = true;
+        boolean index =true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
         String sub = filename.substring(filename.lastIndexOf(".") + 1);
@@ -175,6 +174,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Sheet sheet = wb.getSheetAt(0);
         if (sheet != null) {
             //getLastRowNum()返回最后一行的索引，即比行总数小1
+
             for (int line = 1; line <= sheet.getLastRowNum(); line++) {
                 Address address = new Address();
                 Row row = sheet.getRow(line);
@@ -246,17 +246,26 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setEmail(email);
                 address.setUnit(unit);
                 address.setPosition(position);
-                address.setDeptId(deptId);
+                if (deptId == null){
+                    Dept dept = this.deptService.getDept();
+                    address.setDeptId(dept.getDeptId());
+                }
+                else {
+                    address.setDeptId(deptId);
+                }
                 address.setStatus(2);
                 if(addresses.isEmpty()){
                     addressList.add(address);
                 }
+                else {
+                    index =false;
+                }
             }
             for (Address address : addressList) {
-                save = addressService.save(address);
+                addressService.save(address);
             }
         }
-        return save;
+        return index;
     }
 
 
@@ -277,10 +286,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         if (StringUtils.isNotBlank(address.getDeptId())) {
             lambdaQueryWrapper.eq(Address::getDeptId, address.getDeptId());
-        } else {
-            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            User byName = userService.findByName(username);
-            lambdaQueryWrapper.eq(Address::getDeptId, byName.getDeptId());
         }
         if (StringUtils.isNotBlank(userName)) {
             lambdaQueryWrapper.like(Address::getUserName, userName);

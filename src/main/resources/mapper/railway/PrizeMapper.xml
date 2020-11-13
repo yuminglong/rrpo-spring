@@ -179,28 +179,33 @@
 
 
     <select id="countMoney" resultType="Map">
-        SELECT SUM(o.money) AS money ,SUBSTRING_INDEX(r.place,',',1) AS place  FROM `rail_prize` r,rail_prize_opinion o WHERE r.id=o.prize_id  and o.rank=4
+       select A.city,ifnull(NUMB,0) AS money
+    from (SELECT DISTINCT c.city  FROM sys_city c ) A
+    LEFT JOIN
+    (select SUBSTRING_INDEX(r.place,',',1) AS TT ,SUM(o.money) as NUMB FROM `rail_prize`  r ,rail_prize_opinion o
+    WHERE r.id=o.prize_id  and o.rank = 0
         <if test="startTime != null">
-            and date_format(release_time ,'%Y-%m-%d' ) >= #{startTime}
+            and  r.happen_time >= #{startTime}
         </if>
         <if test="endTime !=null">
-            and #{endTime} >= date_format(release_time ,'%Y-%m-%d' )
+            and #{endTime} >= r.happen_time
         </if>
-        GROUP BY r.place
+    group by SUBSTRING_INDEX(r.place,',',1)) B
+    on A.city = B.TT
     </select>
 
 
     <select id="countType" resultType="Map">
-      SELECT  COUNT(1) as count,a.types as types  FROM rail_prize a
+        SELECT COUNT(1) as count,a.types as types FROM rail_prize a
         <if test="startTime != null">
-            WHERE a.creat_time  >= #{startTime}
+            WHERE a.release_time >= #{startTime}
         </if>
         <if test="endTime !=null">
-            and #{endTime} >= a.creat_time
+            and #{endTime} >= a.release_time
         </if>
+        and a.status = 7
         GROUP BY a.types
     </select>
-
 
 
 </mapper>

@@ -710,4 +710,23 @@ public class ExchangeController extends BaseController {
     }
 
 
+    @GetMapping("/getNotReceive")
+    @ApiOperation(value = "查看要求回复却未回复信息互递", notes = "查看要求回复却未回复信息互递", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse getNotReceive() {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        List<Exchange> notReceive = exchangeMapper.getNotReceive(byName.getUserId());
+        if (notReceive.size() > 0) {
+            return new JiebaoResponse().data(notReceive).okMessage("查询成功");
+        }
+        else {
+            return new JiebaoResponse().failMessage("无数据");
+        }
+    }
+
+
+
+
+
 }

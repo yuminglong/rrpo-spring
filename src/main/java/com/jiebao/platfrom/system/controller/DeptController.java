@@ -199,17 +199,30 @@ public class DeptController extends BaseController {
     }
 
     @GetMapping("/findProvince")
-    @ApiOperation(value = "查询所有省级和公安处", notes = "查询所有省级和公安处", response = JiebaoResponse.class, httpMethod = "GET")
+    @ApiOperation(value = "查询所有省级", notes = "查询所有省级", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findProvince() {
+        List<Dept> depts = deptMapper.selectRankZero();
+        Dept dept = deptService.getDept();
+        if (dept.getRank() ==0){
+            return new JiebaoResponse().data(depts).okMessage("查询成功");
+        }
+        else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("dept_id","0");
+            List<Dept> list = deptMapper.selectByMap(map);
+            return new JiebaoResponse().data(list).okMessage("查询成功");
+        }
+    }
+
+
+    @GetMapping("/findSameDept")
+    @ApiOperation(value = "查询同父级下所有组织机构", notes = "查询同父级下所有组织机构", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findSameDept(String deptId) {
+        Dept byId = deptService.getById(deptId);
         HashMap<String, Object> map = new HashMap<>();
-        map.put("rank", 0);
+        map.put("parent_id", byId.getParentId());
         List<Dept> depts = deptMapper.selectByMap(map);
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }
-
-    public static void main(String[] args) {
-        System.out.println(UUID.randomUUID());
-    }
-
 
 }

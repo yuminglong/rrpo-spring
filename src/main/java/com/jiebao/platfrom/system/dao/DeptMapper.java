@@ -34,4 +34,7 @@ public interface DeptMapper extends BaseMapper<Dept> {
 //
 //	@Select("select dept_id from sys_dept where dept_name=#{name} and parent_id=#{id}")
 //	String queryIdByName1(String name,String id);
+
+	@Select("SELECT * FROM `sys_dept`  where rank = 0 order by order_num ")
+	List<Dept> selectRankZero();
 }
