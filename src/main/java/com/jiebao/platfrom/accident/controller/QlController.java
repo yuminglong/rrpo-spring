@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -34,12 +35,12 @@ public class QlController {
     @GetMapping("list")
     @ApiOperation("查询")
     public JiebaoResponse listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName) {
-        try {
+   //     try {
             return new JiebaoResponse().data(qlService.listPage(queryRequest, deptName, policeName, gwdName)).okMessage("查询成功");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new JiebaoResponse().failMessage("查询失败");
-        }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//            return new JiebaoResponse().failMessage("查询失败");
+//        }
 
     }
 
@@ -51,13 +52,13 @@ public class QlController {
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增或者修改")
-    public JiebaoResponse saveOrUpdate(Ql ql) {
-//        try {
-        qlService.addOrUpdate(ql);
+    public JiebaoResponse saveOrUpdate(Ql ql,String[] tp) { //tp   文件的id
+        try {
+        qlService.addOrUpdate(ql, Arrays.asList(tp));
         return new JiebaoResponse().data(ql).okMessage("操作成功");
-//        } catch (Exception e) {
-//            return new JiebaoResponse().failMessage("操作失败");
-//        }
+        } catch (Exception e) {
+            return new JiebaoResponse().failMessage("操作失败");
+        }
     }
 
     @DeleteMapping("delete")

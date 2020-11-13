@@ -3,6 +3,7 @@ package com.jiebao.platfrom.accident.controller;
 
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.service.IAccidentService;
+import com.jiebao.platfrom.accident.service.IDeptService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -30,12 +31,16 @@ import java.util.List;
 public class AccidentController {
     @Autowired
     IAccidentService accidentService;
+    @Autowired
+    IDeptService deptService;
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改 事故信息")
     @Log("添加修改 事故信息")
     public JiebaoResponse saveOrUpdate(Accident accident) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (accident.getPoliceId() != null)
+            accident.setPoliceFather(deptService.getById(accident.getPoliceId()).getParentId());
         if (accident.getAccidentId() != null) {
             Accident accident1 = accidentService.getById(accident.getAccidentId()); //数据库已存在德
             if (accident1.getStatu() != null && accident1.getStatu() == 1)
@@ -64,15 +69,15 @@ public class AccidentController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId,String quDeptId, String startDate, String endDate) {
-        return accidentService.list(queryRequest, policeId, cityLevelId,quDeptId, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String quDeptId, String startDate, String endDate) {
+        return accidentService.list(queryRequest, policeId, cityLevelId, quDeptId, startDate, endDate);
     }
 
     @GetMapping("map")
     @ApiOperation("获取地图展示数据")
     @Log("获取地图展示数据")
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {
-        return accidentService.map(policeId, cityLevelId, startDate, endDate,quDeptId);
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate, String quDeptId) {
+        return accidentService.map(policeId, cityLevelId, startDate, endDate, quDeptId);
     }
 
 
@@ -82,4 +87,15 @@ public class AccidentController {
         return accidentService.lock(accidentId, month, status);
     }
 
+    @PostMapping("func")
+    @ApiOperation("系数求出")
+    public JiebaoResponse func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions) {
+        return new JiebaoResponse().data(accidentService.func(nature, instationSection, road, age, closed, jzd, distance, identity, conditions)).okMessage("操作成功");
+    }
+
+    @GetMapping("compareTable")
+    @ApiOperation("同期比较")
+    public JiebaoResponse compareTable(Integer startYear,Integer startMonth,Integer endYear, Integer endMonth) {
+        return new JiebaoResponse().okMessage("操作成功").data(accidentService.compareTable(startYear,startMonth,endYear,endMonth));
+    }
 }

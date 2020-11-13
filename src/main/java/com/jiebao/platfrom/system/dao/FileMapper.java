@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.system.domain.File;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 public interface FileMapper extends BaseMapper<File> {
 
@@ -23,4 +26,7 @@ public interface FileMapper extends BaseMapper<File> {
 
     @Update("UPDATE sys_files SET ref_id = #{noticeId} WHERE file_id =#{fileId}")
     boolean updateNoticeByFileId(String fileId, String noticeId);
+
+    @Select("select * from sys_files where ref_id=#{refId}")
+    List<File> fileList(String refId);
 }

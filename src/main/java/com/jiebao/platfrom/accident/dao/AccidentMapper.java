@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.accident.daomain.compareTable;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -42,4 +43,18 @@ public interface AccidentMapper extends BaseMapper<Accident> {
 
     @Select("select ${name} as subscript,count(1) as number from accident_accident a ${ew.customSqlSegment}")
     List<ANumber> listCg(@Param("ew") QueryWrapper<Accident> queryWrapper, @Param("name") String name);
+
+    @Select("${sql}")
+    String getXs(@Param("sql") String sql);
+
+    /**
+     * @return 所有ss
+     */
+    @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
+            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  GROUP BY  a.city_cs_id")
+    List<compareTable> shiTable(String startDate, String endDate);
+
+    @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
+            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} GROUP BY  a.police_father")
+    List<compareTable> gzTable(String startDate, String endDate);
 }

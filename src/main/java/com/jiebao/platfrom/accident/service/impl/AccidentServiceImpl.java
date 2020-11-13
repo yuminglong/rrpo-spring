@@ -7,6 +7,7 @@ import com.jiebao.platfrom.accident.dao.DeptSMapper;
 import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
+import com.jiebao.platfrom.accident.daomain.compareTable;
 import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,12 +57,13 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("date", endDate);//不能大于此时间
         }
+        queryWrapper.orderByDesc("date");
         Page<Accident> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate,String quDeptId) {  //视图接口
+    public JiebaoResponse map(String policeId, String cityLevelId, String startDate, String endDate, String quDeptId) {  //视图接口
         QueryWrapper<Accident> queryWrapper = new QueryWrapper<>();
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (quDeptId != null) {
@@ -68,8 +71,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
         if (cityLevelId != null) {
             queryWrapper.eq("city_cs_id", cityLevelId);
-        } else if (policeId != null){
-                queryWrapper.in("city_cs_id",deptSMapper.selectDeptIds(policeId));
+        } else if (policeId != null) {
+            queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
         }
         if (startDate != null) {
             queryWrapper.ge("date", startDate);    //不能小于此时间
@@ -113,9 +116,56 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         return jiebaoResponse;
     }
 
-    public static void main(String[] args) {
-        System.out.println(0.1 + 2);
+    @Override
+    public String func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions) {
+        String sql = "";
+        if (nature != null && !nature.equals("A"))
+            return "B";
+        else {
+            if (nature != null && instationSection != null && nature.equals("A") && instationSection.equals("A"))
+                return "B";
+            else {
+                if (road == null || age == null || closed == null ||
+                        jzd == null || distance == null || identity == null ||
+                        conditions == null)
+                    return "";
+                sql = "select dnfxxs from zd_dnfxxs where 1=1";
+                sql += " and instr(zd3,'" + road + "')>0 ";
+                sql += " and instr(zd4,'" + age + "')>0 ";
+                sql += " and instr(zd5,'" + closed + "')>0 ";
+                sql += " and instr(zd6,'" + jzd + "')>0 ";
+                sql += " and instr(zd7,'" + distance + "')>0 ";
+                sql += " and instr(zd8,'" + identity + "')>0 ";
+                sql += " and instr(zd9,'" + conditions + "')>0 ";
+                sql += " limit 1";
+            }
+        }
+        return this.baseMapper.getXs(sql);
     }
 
+    @Override
+    public List<compareTable> compareTable(Integer startYear, Integer startMonth, Integer endYear, Integer endMonth) {
+        endMonth+=1;
+        List<compareTable> compareTables = this.baseMapper.shiTable(startYear + "-" + startMonth, endYear + "-" + endMonth);
+        compareTables.addAll(this.baseMapper.gzTable(startYear + "-" + startMonth, endYear + "-" + endMonth));
+        String startDate = startYear + "-" + startMonth;
+        String endDate = endYear + "-" + endMonth;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        try {
+            Date parse = simpleDateFormat.parse(startDate);//本期开始
+            Date parse1 = simpleDateFormat.parse(endDate);//本期结束
+            long l = parse1.getTime() - parse.getTime();
+            System.out.println(simpleDateFormat.format(parse));
+            System.out.println(simpleDateFormat.format(parse1));
+            System.out.println(l);
+            Date parse2=new Date(parse.getTime()-l); //上期  开始
+            Date parse3=new Date(parse1.getTime()-l);//上期  结束
+            System.out.println(simpleDateFormat.format(parse2));
+            System.out.println(simpleDateFormat.format(parse3));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+        return compareTables;
+    }
 }

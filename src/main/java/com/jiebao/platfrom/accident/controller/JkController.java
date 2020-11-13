@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -48,9 +49,9 @@ public class JkController {
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增或者修改")
-    public JiebaoResponse saveOrUpdate(Jk jk) {
+    public JiebaoResponse saveOrUpdate(Jk jk,String[] tp) {
         try {
-            jkService.addOrUpdate(jk);
+            jkService.addOrUpdate(jk, Arrays.asList(tp));
             return new JiebaoResponse().data(jk).okMessage("操作成功");
         } catch (Exception e) {
             return new JiebaoResponse().failMessage("操作失败");
@@ -67,4 +68,16 @@ public class JkController {
             return new JiebaoResponse().failMessage("操作失败");
         }
     }
+
+    @GetMapping("countTable")
+    @ApiOperation("查看统计图")
+    public JiebaoResponse countTable(String deptName) {
+        try {
+            return new JiebaoResponse().okMessage("删除").data(jkService.countTable(deptName));
+        } catch (Exception e) {
+            return new JiebaoResponse().failMessage("操作失败");
+        }
+   }
+
+
 }

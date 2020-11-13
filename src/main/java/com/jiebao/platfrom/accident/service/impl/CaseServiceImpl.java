@@ -62,6 +62,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
         if (endDate != null) {
             queryWrapper.le("date", endDate);//不能大于此时间
         }
+        queryWrapper.orderByDesc("date");
         Page<Case> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
     }
