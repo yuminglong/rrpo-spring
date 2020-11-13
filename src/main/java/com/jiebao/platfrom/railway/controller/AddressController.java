@@ -48,8 +48,6 @@ public class AddressController extends BaseController {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private DeptMapper deptMapper;
     @Autowired
     private DeptService deptService;
@@ -163,18 +161,13 @@ public class AddressController extends BaseController {
 
     @PostMapping(value = "/importAddress")
     @ApiOperation(value = "导入通讯录", notes = "导入通讯录", httpMethod = "POST")
-    public JiebaoResponse excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) {
-        boolean result = false;
-        try {
-            result = addressService.addAddressList(file, deptId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (result == true) {
-            return new JiebaoResponse().okMessage("导入成功");
-        } else {
-            return new JiebaoResponse().failMessage("导入失败");
-        }
+    public JiebaoResponse excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) throws Exception {
+         boolean  result = addressService.addAddressList(file, deptId);
+            if (result) {
+                return new JiebaoResponse().okMessage("导入成功");
+            } else {
+                return new JiebaoResponse().failMessage("筛选出重复号码导入成功");
+            }
     }
 
 
@@ -215,7 +208,9 @@ public class AddressController extends BaseController {
         for (Address a:records
              ) {
             Dept byId = deptService.getById(a.getDeptId());
-            a.setDeptName(byId.getDeptName());
+            if (byId !=null){
+                a.setDeptName(byId.getDeptName());
+            }
         }
         return new JiebaoResponse().data(this.getDataTable(deptList));
     }

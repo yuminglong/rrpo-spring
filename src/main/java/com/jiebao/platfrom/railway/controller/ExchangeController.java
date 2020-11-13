@@ -4,6 +4,7 @@ package com.jiebao.platfrom.railway.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.jiebao.platfrom.check.dao.YearMapper;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -49,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
@@ -77,19 +79,16 @@ public class ExchangeController extends BaseController {
     @Autowired
     private ExchangeUserService exchangeUserService;
 
-    @Autowired
-    private ExchangeFileService exchangeFileService;
-
-    @Autowired
+    @Resource
     private ExchangeMapper exchangeMapper;
 
     @Autowired
     private UserService userService;
 
-    @Autowired
+    @Resource
     private ExchangeUserMapper exchangeUserMapper;
 
-    @Autowired
+    @Resource
     private FileMapper fileMapper;
 
     @Autowired
@@ -98,6 +97,8 @@ public class ExchangeController extends BaseController {
     @Autowired
     private AsYearService asYearService;
 
+    @Resource
+    private YearMapper yearMapper;
 
     /**
      * 创建一条信息互递
@@ -112,6 +113,16 @@ public class ExchangeController extends BaseController {
             }
             User byName = userService.findByName(username);
             Dept deptOwn = deptService.getById(byName.getDeptId());
+
+            Calendar instance = Calendar.getInstance();
+            int i = instance.get(Calendar.YEAR);
+            if (instance.get(Calendar.MONTH) >= 10){
+                //到达新的一年  进1
+                i++;
+            }
+            String yearId = yearMapper.selectYearId("" + i);
+
+
             //修改时间
             if (exchange.getClaimTime() != null) {
                 Calendar cal = Calendar.getInstance();
@@ -126,7 +137,7 @@ public class ExchangeController extends BaseController {
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
-                    if(menusYearIds !=null){
+                    if (menusYearIds != null) {
                         //关联年度考核项
                         Arrays.stream(menusYearIds).forEach(menusYearId -> {
                             AsYear asYear = new AsYear();
@@ -134,6 +145,9 @@ public class ExchangeController extends BaseController {
                             asYear.setGradeId(menusYearId);
                             asYear.setType(2);
                             asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                            if (yearId != null) {
+                                asYear.setYearId(yearId);
+                            }
                             asYearService.save(asYear);
                         });
                     }
@@ -149,13 +163,13 @@ public class ExchangeController extends BaseController {
                 }
                 return new JiebaoResponse().message("创建一条信息互递成功");
             } else if ("3".equals(exchange.getStatus())) {
-                if (exchange.getTime()==null){
+                if (exchange.getTime() == null) {
                     exchange.setTime(new Date());
                 }
                 boolean save = exchangeService.saveOrUpdate(exchange);
                 Arrays.stream(fileIds).forEach(fileId -> {
                     fileMapper.updateByFileId(fileId, exchange.getId());
-                    if (menusYearIds!=null){
+                    if (menusYearIds != null) {
                         //关联年度考核项
                         Arrays.stream(menusYearIds).forEach(menusYearId -> {
                             AsYear asYear = new AsYear();
@@ -163,6 +177,7 @@ public class ExchangeController extends BaseController {
                             asYear.setGradeId(menusYearId);
                             asYear.setType(2);
                             asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
+                            asYear.setYearId(yearId);
                             asYearService.save(asYear);
                         });
                     }
@@ -176,19 +191,19 @@ public class ExchangeController extends BaseController {
                 }
                 exchangeMapper.releaseSave(exchange.getId());
                 exchangeUserMapper.setCreatTime(exchange.getId());
-               if (exchange.getSynchronizeWeb() == 1){
-                   //HttpPost请求实体
-                   HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
-                   //使用工具类创建 httpClient
-                   CloseableHttpClient client = HttpClients.createDefault();
-                   CloseableHttpResponse resp = null;
-                   String respondBody = null;
-                   try {
-                       //设置请求超时时间和 sockect 超时时间
+                if (exchange.getSynchronizeWeb() == 1) {
+                    //HttpPost请求实体
+                    HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
+                    //使用工具类创建 httpClient
+                    CloseableHttpClient client = HttpClients.createDefault();
+                    CloseableHttpResponse resp = null;
+                    String respondBody = null;
+                    try {
+                        //设置请求超时时间和 sockect 超时时间
                            /* RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(20000).setSocketTimeout(20000000).build();
                             httpPost.setConfig(requestConfig);*/
-                       //附件参数需要用到的请求参数实体构造器
-                       MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                        //附件参数需要用到的请求参数实体构造器
+                        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
                           /*
                             //获取文件url
@@ -203,92 +218,91 @@ public class ExchangeController extends BaseController {
                             filess.add(is);
                             filess.add(fil);*/
 
-                       //获取附件
-                       ArrayList<File> filess =new ArrayList<>();
-                       Map<String, Object> map = new HashMap<>();
-                       map.put("ref_type",8);
-                       map.put("file_type",2);
-                       List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
-                       if (files.size()>0){
-                           for (com.jiebao.platfrom.system.domain.File f: files
-                           ) {
-                               String url = f.getFileUrl() + f.getOldName();
-                               File is = new File(url);
-                               filess.add(is);
-                           }
-                       }
-                       if (!CollectionUtils.isEmpty(filess)) {
-                           for (File file:filess) {
-                               multipartEntityBuilder.addBinaryBody("file",file);
-                           }
-                       }
-                       System.out.println(exchange.getTargetsId()+"----------------");
-                       Map<String, String> params = new HashMap<>();
-                       params.put("id", exchange.getTargetsId());
-                       params.put("source", exchange.getSource());
-                       params.put("title", exchange.getTitle());
-                       //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                       Map<String, Object> mapF = new HashMap<>();
-                       map.put("ref_type",8);
-                       map.put("file_type",1);
-                       List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
-                       if (filesF.size()>0){
-                           Element doc = Jsoup.parseBodyFragment(exchange.getContent()).body();
-                           Elements jpg = doc.select("img[src]");
-                           for (com.jiebao.platfrom.system.domain.File f: files
-                           ) {
-                               String url = f.getFileUrl() + f.getOldName();
-                               //转换为base64
-                               BASE64Encoder encoder = new BASE64Encoder();
-                               InputStream   in = new FileInputStream(url);
-                               byte[] data = new byte[in.available()];
-                               String encode = encoder.encode(data);
-                           }
+                        //获取附件
+                        ArrayList<File> filess = new ArrayList<>();
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("ref_type", 8);
+                        map.put("file_type", 2);
+                        List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
+                        if (files.size() > 0) {
+                            for (com.jiebao.platfrom.system.domain.File f : files
+                            ) {
+                                String url = f.getFileUrl() + f.getOldName();
+                                File is = new File(url);
+                                filess.add(is);
+                            }
+                        }
+                        if (!CollectionUtils.isEmpty(filess)) {
+                            for (File file : filess) {
+                                multipartEntityBuilder.addBinaryBody("file", file);
+                            }
+                        }
+                        System.out.println(exchange.getTargetsId() + "----------------");
+                        Map<String, String> params = new HashMap<>();
+                        params.put("id", exchange.getTargetsId());
+                        params.put("source", exchange.getSource());
+                        params.put("title", exchange.getTitle());
+                        //如果富编辑器里有图片，转换成base64替换img标签所有内容
+                        Map<String, Object> mapF = new HashMap<>();
+                        map.put("ref_type", 8);
+                        map.put("file_type", 1);
+                        List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
+                        if (filesF.size() > 0) {
+                            Element doc = Jsoup.parseBodyFragment(exchange.getContent()).body();
+                            Elements jpg = doc.select("img[src]");
+                            for (com.jiebao.platfrom.system.domain.File f : files
+                            ) {
+                                String url = f.getFileUrl() + f.getOldName();
+                                //转换为base64
+                                BASE64Encoder encoder = new BASE64Encoder();
+                                InputStream in = new FileInputStream(url);
+                                byte[] data = new byte[in.available()];
+                                String encode = encoder.encode(data);
+                            }
 
-                       }else {
-                           params.put("html", exchange.getContent());
-                       }
-                       if (exchange.getTime()!=null){
-                           String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(exchange.getTime());
-                           params.put("time", relTime);
-                       }
-                       else {
-                           String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
-                           params.put("time", relTime);
-                       }
-                       params.put("user", username);
+                        } else {
+                            params.put("html", exchange.getContent());
+                        }
+                        if (exchange.getTime() != null) {
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(exchange.getTime());
+                            params.put("time", relTime);
+                        } else {
+                            String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+                            params.put("time", relTime);
+                        }
+                        params.put("user", username);
 
-                       ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
-                       if (!CollectionUtils.isEmpty(params)) {
-                           params.forEach((key, value) -> {
-                               //此处的字符串参数会被设置到请求体Query String Parameters中
+                        ContentType strContent = ContentType.create("text/plain", Charset.forName("UTF-8"));
+                        if (!CollectionUtils.isEmpty(params)) {
+                            params.forEach((key, value) -> {
+                                //此处的字符串参数会被设置到请求体Query String Parameters中
 
-                               multipartEntityBuilder.addTextBody(key, value,strContent);
-                           });
-                       }
-                       HttpEntity httpEntity = multipartEntityBuilder.build();
-                       //将请求参数放入 HttpPost 请求体中
-                       //使用 httpEntity 后 Content-Type会自动被设置成 multipart/form-data
-                       httpPost.setEntity(httpEntity);
-                       //执行发送post请求
-                       resp = client.execute(httpPost);
-                       //将返回结果转成String
-                       respondBody = EntityUtils.toString(resp.getEntity());
-                       System.out.println("++++++++++++++"+respondBody);
-                   } catch (IOException e) {
-                       //日志信息及异常处理
+                                multipartEntityBuilder.addTextBody(key, value, strContent);
+                            });
+                        }
+                        HttpEntity httpEntity = multipartEntityBuilder.build();
+                        //将请求参数放入 HttpPost 请求体中
+                        //使用 httpEntity 后 Content-Type会自动被设置成 multipart/form-data
+                        httpPost.setEntity(httpEntity);
+                        //执行发送post请求
+                        resp = client.execute(httpPost);
+                        //将返回结果转成String
+                        respondBody = EntityUtils.toString(resp.getEntity());
+                        System.out.println("++++++++++++++" + respondBody);
+                    } catch (IOException e) {
+                        //日志信息及异常处理
 
-                   } finally {
-                       if (resp != null) {
-                           try {
-                               //关闭请求
-                               resp.close();
-                           } catch (IOException e) {
+                    } finally {
+                        if (resp != null) {
+                            try {
+                                //关闭请求
+                                resp.close();
+                            } catch (IOException e) {
 
-                           }
-                       }
-                   }
-               }
+                            }
+                        }
+                    }
+                }
                 return new JiebaoResponse().message("创建并发布一条信息互递成功");
             }
             return new JiebaoResponse().message("系统错误");
@@ -301,7 +315,7 @@ public class ExchangeController extends BaseController {
     }
 
     //查询父级，直到rank==1，为市级
-    public List<Dept> depts(){
+    public List<Dept> depts() {
         return deptService.list();
     }
 
@@ -326,7 +340,7 @@ public class ExchangeController extends BaseController {
                     exchangeMapper.release(exchangeId);
                     exchangeUserMapper.setCreatTime(exchangeId);
                     Exchange byId = exchangeService.getById(exchangeId);
-                    if (byId.getSynchronizeWeb() == 1){
+                    if (byId.getSynchronizeWeb() == 1) {
                         //HttpPost请求实体
                         HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
                         //使用工具类创建 httpClient
@@ -340,27 +354,15 @@ public class ExchangeController extends BaseController {
                             //附件参数需要用到的请求参数实体构造器
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-                          /*
-                            //获取文件url
-                            String fileUrl ="D:\\tempDoc.docx";
-                            String fileu = "D:\\newDoc.docx";
-                            File is = new File(fileUrl);
-                            File fil =new File(fileu);
-                           *//* Map<String, File> files = new HashMap<>();
-                             files.put("file",is);
-                            files.put("file",fil);*//*
-                            ArrayList<File> filess =new ArrayList<>();
-                            filess.add(is);
-                            filess.add(fil);*/
 
                             //获取附件
-                            ArrayList<File> filess =new ArrayList<>();
+                            ArrayList<File> filess = new ArrayList<>();
                             Map<String, Object> map = new HashMap<>();
-                            map.put("ref_type",8);
-                            map.put("file_type",2);
+                            map.put("ref_type", 8);
+                            map.put("file_type", 2);
                             List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
-                            if (files.size()>0){
-                                for (com.jiebao.platfrom.system.domain.File f: files
+                            if (files.size() > 0) {
+                                for (com.jiebao.platfrom.system.domain.File f : files
                                 ) {
                                     String url = f.getFileUrl() + f.getOldName();
                                     File is = new File(url);
@@ -368,53 +370,52 @@ public class ExchangeController extends BaseController {
                                 }
                             }
                             if (!CollectionUtils.isEmpty(filess)) {
-                                for (File file:filess) {
-                                    multipartEntityBuilder.addBinaryBody("file",file);
+                                for (File file : filess) {
+                                    multipartEntityBuilder.addBinaryBody("file", file);
                                 }
                             }
-                            System.out.println(byId.getTargetsId()+"----------------");
+                            System.out.println(byId.getTargetsId() + "----------------");
                             Map<String, String> params = new HashMap<>();
                             params.put("id", byId.getTargetsId());
                             params.put("source", byId.getSource());
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
                             Map<String, Object> mapF = new HashMap<>();
-                            map.put("ref_type",8);
-                            map.put("file_type",1);
+                            map.put("ref_type", 8);
+                            map.put("file_type", 1);
                             List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
-                            if (filesF.size()>0){
+                            if (filesF.size() > 0) {
                                 Element doc = Jsoup.parseBodyFragment(byId.getContent()).body();
                                 Elements jpg = doc.select("img[src]");
-                                for (com.jiebao.platfrom.system.domain.File f: files
+                                for (com.jiebao.platfrom.system.domain.File f : files
                                 ) {
                                     String url = f.getFileUrl() + f.getOldName();
                                     //转换为base64
                                     BASE64Encoder encoder = new BASE64Encoder();
-                                    InputStream   in = new FileInputStream(url);
+                                    InputStream in = new FileInputStream(url);
                                     byte[] data = new byte[in.available()];
                                     String encode = encoder.encode(data);
                                 }
 
-                            }else {
+                            } else {
                                 params.put("html", byId.getContent());
                             }
-                            if (byId.getTime()!=null){
+                            if (byId.getTime() != null) {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
                                 params.put("time", relTime);
-                            }
-                            else {
+                            } else {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                                 params.put("time", relTime);
                             }
                             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                             params.put("user", username);
 
-                            ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
+                            ContentType strContent = ContentType.create("text/plain", Charset.forName("UTF-8"));
                             if (!CollectionUtils.isEmpty(params)) {
                                 params.forEach((key, value) -> {
                                     //此处的字符串参数会被设置到请求体Query String Parameters中
 
-                                    multipartEntityBuilder.addTextBody(key, value,strContent);
+                                    multipartEntityBuilder.addTextBody(key, value, strContent);
                                 });
                             }
                             HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -425,7 +426,7 @@ public class ExchangeController extends BaseController {
                             resp = client.execute(httpPost);
                             //将返回结果转成String
                             respondBody = EntityUtils.toString(resp.getEntity());
-                            System.out.println("++++++++++++++"+respondBody);
+                            System.out.println("++++++++++++++" + respondBody);
                         } catch (IOException e) {
                             //日志信息及异常处理
 
@@ -459,16 +460,16 @@ public class ExchangeController extends BaseController {
         try {
             Arrays.stream(exchangeIds).forEach(exchangeId -> {
                 Map<String, Object> map = new HashMap<>();
-                map.put("ref_type",1);
-                map.put("ref_id",exchangeId);
+                map.put("ref_type", 1);
+                map.put("ref_id", exchangeId);
                 List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                 Exchange byId = exchangeService.getById(exchangeId);
                 //未发送状态，删掉文件，删除接收人，删除该信息本体
                 if ("1".equals(byId.getStatus())) {
-                    if (files.size()>0){
+                    if (files.size() > 0) {
                         for (com.jiebao.platfrom.system.domain.File file : files
                         ) {
-                            File fil = new File((file.getFileUrl()+file.getOldName()));
+                            File fil = new File((file.getFileUrl() + file.getOldName()));
                             if (fil.exists()) {
                                 fil.delete();
                             }
@@ -710,4 +711,17 @@ public class ExchangeController extends BaseController {
     }
 
 
+    @GetMapping("/getNotReceive")
+    @ApiOperation(value = "查看要求回复却未回复信息互递", notes = "查看要求回复却未回复信息互递", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse getNotReceive() {
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findByName(username);
+        List<Exchange> notReceive = exchangeMapper.getNotReceive(byName.getUserId());
+        if (notReceive.size() > 0) {
+            return new JiebaoResponse().data(notReceive).okMessage("查询成功");
+        } else {
+            return new JiebaoResponse().failMessage("无数据");
+        }
+    }
 }

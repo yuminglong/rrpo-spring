@@ -120,6 +120,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Exchange::getReleaseTime, startTime).le(Exchange::getReleaseTime, endTime);
         }
+        if (StringUtils.isNotBlank(exchange.getId())){
+            queryWrapper.lambda().eq(Exchange::getId,exchange.getId());
+        }
         Page<Exchange> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

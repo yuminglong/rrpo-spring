@@ -303,25 +303,8 @@ public class BriefingController extends BaseController {
                         CloseableHttpResponse resp = null;
                         String respondBody = null;
                         try {
-                            //设置请求超时时间和 sockect 超时时间
-                           /* RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(20000).setSocketTimeout(20000000).build();
-                            httpPost.setConfig(requestConfig);*/
                             //附件参数需要用到的请求参数实体构造器
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-
-                          /*
-                            //获取文件url
-                            String fileUrl ="D:\\tempDoc.docx";
-                            String fileu = "D:\\newDoc.docx";
-                            File is = new File(fileUrl);
-                            File fil =new File(fileu);
-                           *//* Map<String, File> files = new HashMap<>();
-                             files.put("file",is);
-                            files.put("file",fil);*//*
-                            ArrayList<File> filess =new ArrayList<>();
-                            filess.add(is);
-                            filess.add(fil);*/
-
                             //获取附件
                             ArrayList<File> filess =new ArrayList<>();
                             Map<String, Object> map = new HashMap<>();
@@ -382,7 +365,6 @@ public class BriefingController extends BaseController {
                             if (!CollectionUtils.isEmpty(params)) {
                                 params.forEach((key, value) -> {
                                     //此处的字符串参数会被设置到请求体Query String Parameters中
-
                                     multipartEntityBuilder.addTextBody(key, value,strContent);
                                 });
                             }
@@ -397,19 +379,16 @@ public class BriefingController extends BaseController {
                             System.out.println("++++++++++++++"+respondBody);
                         } catch (IOException e) {
                             //日志信息及异常处理
-
                         } finally {
                             if (resp != null) {
                                 try {
                                     //关闭请求
                                     resp.close();
                                 } catch (IOException e) {
-
                                 }
                             }
                         }
                     }
-
                 });
                 return new JiebaoResponse().okMessage("发布护路简报成功");
             }
@@ -589,21 +568,7 @@ public class BriefingController extends BaseController {
     }
 
 
-/*
-    @PostMapping("/countBriefing")
-    @ApiOperation(value = "统计", notes = "统计", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse countBriefing(@Valid List<BriefingCount> briefingCounts) throws JiebaoException {
-        try {
-            for (BriefingCount b:briefingCounts
-                 ) {
-                briefingCountService.save(b);
-            }
-            return new JiebaoResponse().okMessage("添加成功");
-        } catch (Exception e) {
-            throw  new JiebaoException("添加失败");
-        }
 
-    }*/
 
     @GetMapping("/getView")
     @ApiOperation(value = "查看(收件箱)", notes = "查看(收件箱)", httpMethod = "GET")

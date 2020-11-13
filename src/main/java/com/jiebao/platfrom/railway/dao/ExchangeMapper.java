@@ -25,5 +25,8 @@ public interface ExchangeMapper extends BaseMapper<Exchange> {
     boolean releaseSave(String exchangeId);
 
     @Select("SELECT * FROM `rail_exchange` where  title= #{title}   and info_seq =#{infoSeq}")
-    List<Exchange> selectId(String infoSeq,String title);
+    List<Exchange> selectId(String infoSeq, String title);
+
+    @Select("SELECT * FROM  rail_exchange e ,`rail_exchange_user` u WHERE e.id =u.exchange_id AND u.send_user_id = #{userId} AND e.claim_time is not null and e.`status`=3 AND u.opinion is null")
+    List<Exchange> getNotReceive(String userId);
 }

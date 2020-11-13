@@ -129,5 +129,12 @@ public class Prize {
     @ApiModelProperty(value = "是否同步到门户网站",example = "1")
     private Integer synchronizeWeb;
 
+    @ApiModelProperty(value = "事发地点市区ID")
+    private String placeIds;
 
+    @ApiModelProperty(value = "事发地点区县ID")
+    private String placeIdq;
+
+    @ApiModelProperty(value = "事发地点街道ID")
+    private String placeIdj;
 }
