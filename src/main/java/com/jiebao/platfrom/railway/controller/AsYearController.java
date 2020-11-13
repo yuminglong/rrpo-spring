@@ -7,10 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
@@ -32,5 +29,18 @@ public class AsYearController {
     @GetMapping("list")
     public JiebaoResponse list(QueryRequest queryRequest, String gradeId) {
         return asYearService.pagelist(queryRequest, gradeId);
+    }
+
+
+    @GetMapping("fileList")
+    @ApiOperation("年度文件池子")
+    public JiebaoResponse fileList(QueryRequest queryRequest, String yearId, String deptId) {
+//        try {
+//
+//        } catch (Exception e) {
+//
+//        }
+        return new JiebaoResponse().data(asYearService.fileList(queryRequest, yearId, deptId)).okMessage("操作成功");
+
     }
 }

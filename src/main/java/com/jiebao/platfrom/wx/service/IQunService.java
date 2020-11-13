@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2020-08-20
  */
 public interface IQunService extends IService<Qun> {
-    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status);
+    JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status,String deptId);
 
 //    JiebaoResponse updateStatus(String qunId);
 //

@@ -64,4 +64,10 @@ public class AsYearServiceImpl extends ServiceImpl<AsYearMapper, AsYear> impleme
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         return jiebaoResponse.okMessage("查询成功").data(this.baseMapper.getFiles(gradeId));
     }
+
+    @Override
+    public List<File> fileList(QueryRequest queryRequest, String yearId, String deptId) {
+        List<String> fileIds = this.baseMapper.getFileSByYear(yearId, deptId);//
+        return fileService.getBaseMapper().selectBatchIds(fileIds);
+    }
 }

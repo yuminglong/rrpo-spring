@@ -213,14 +213,16 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {//status  //分状态展示
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status, String deptId) {//status  //分状态展示
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
         QueryWrapper<Qun> queryWrapper = new QueryWrapper<>();
         List<String> list = new ArrayList<>();  //储存id
         List<String> listPrentId = new ArrayList<>();  //储存id
-        listPrentId.add(dept.getDeptId());
-        list.add(dept.getDeptId());
+        if (deptId == null)
+            deptId = dept.getDeptId();
+        listPrentId.add(deptId);
+        list.add(deptId);
         deptService.getAllIds(listPrentId, list);
         queryWrapper.in("cj_dept_id", list);
         if (name != null) {

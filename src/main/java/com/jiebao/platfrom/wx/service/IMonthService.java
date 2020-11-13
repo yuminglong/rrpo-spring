@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2020-08-22
  */
 public interface IMonthService extends IService<Month> {
-    JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year);  //月份 分页查询
+    JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year,String deptId);  //月份 分页查询
 
     JiebaoResponse appear(String monthId, Integer status);  //上报
 

@@ -70,14 +70,17 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
     }
 
     @Override
-    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year) {  //status 2需要自己操作的   1正在走流程的   3  已经成功的
+    public JiebaoResponse pageList(QueryRequest queryRequest, String month, Integer look, Integer status, String dptId, String year, String deptId) {  //status 2需要自己操作的   1正在走流程的   3  已经成功的
         QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
         Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
+
         List<String> list = new ArrayList<>();  //储存id
         List<String> listPrentId = new ArrayList<>();  //储存id
-        listPrentId.add(dept.getDeptId());
-        list.add(dept.getDeptId());
+        if (deptId == null)
+            deptId = dept.getDeptId();
+        listPrentId.add(deptId);
+        list.add(deptId);
         deptService.getAllIds(listPrentId, list);
         queryWrapper.in("jc_dept_id", list);
         if (month != null) {

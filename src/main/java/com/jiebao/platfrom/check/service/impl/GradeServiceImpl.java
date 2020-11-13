@@ -90,8 +90,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 grade.setNum(number);
             if (type == 2)
                 grade.setNum2(number);
-            if (type == 3)
+            if (type == 3){
                 grade.setFpNum(number);
+                grade.setNum2(number);
+            }
+
         }
         if (!(message == null)) {
             if (type == 1)
@@ -230,12 +233,17 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
                 i++;
             yearId = yearMapper.selectYearId("" + i);
         }
+        if (yearId == null)
+            return new JiebaoResponse().failMessage("无对应考核").data(null);
         if (DeptId == null) {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());  //当前登陆人名字
             Dept dept = deptService.getById(userMapper.getDeptID(username));  //当前登陆人的部门
             DeptId = dept.getDeptId();
         }
         List<String> menusId = yearBindMenusMapper.listMenusId(yearId); //
+        System.out.println(menusId.size());
+        if (menusId.size()==0||menusId == null)
+            return new JiebaoResponse().failMessage("无对应考核").data(null);
         List<Menus> list = (List<Menus>) menusService.listByIds(menusId);  //所绑定的模块
         for (Menus menus : list
         ) {
