@@ -39,8 +39,8 @@ public class QunController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation("群查询")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status) {
-        return qunService.pageList(queryRequest, name, userName, status);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status,String deptId) {
+        return qunService.pageList(queryRequest, name, userName, status,deptId);
     }
 
     @GetMapping("ListByDeptId")
