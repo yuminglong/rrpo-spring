@@ -3,11 +3,9 @@ package com.jiebao.platfrom.railway.dao;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.railway.domain.AsYear;
-import com.jiebao.platfrom.railway.domain.PrizeLimit;
 import com.jiebao.platfrom.system.domain.File;
 import org.apache.ibatis.annotations.*;
 
-import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 
 /**
@@ -27,7 +25,7 @@ public interface AsYearMapper extends BaseMapper<AsYear> {
     )
     List<AsYear> getFiles(@Param("gradeId") String gradeId);
 
-    @Select("select file_id from rail_as_year where dept_id=#{yearId} and year_id=#{deptId}")
+    @Select("select file_id from rail_as_year where dept_id=#{deptId} and year_id=#{yearId}")
     List<String> getFileSByYear(String yearId, String deptId);
 
 }

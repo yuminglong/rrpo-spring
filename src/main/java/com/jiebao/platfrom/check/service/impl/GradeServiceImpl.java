@@ -1,30 +1,30 @@
 package com.jiebao.platfrom.check.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.jiebao.platfrom.check.dao.*;
-import com.jiebao.platfrom.check.domain.*;
-import com.jiebao.platfrom.check.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.dao.*;
+import com.jiebao.platfrom.check.domain.Grade;
+import com.jiebao.platfrom.check.domain.Menus;
+import com.jiebao.platfrom.check.domain.Num;
+import com.jiebao.platfrom.check.domain.YearZu;
+import com.jiebao.platfrom.check.service.*;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.railway.service.AsYearService;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
-import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
-import io.swagger.models.auth.In;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.SimpleFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * <p>
@@ -187,7 +187,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         fpJcKf = fpJcKf >= 0 ? 0 : fpJcKf;  //扣分  20为限
         JCJF = JCJF <= 0 ? 0 : JCJF;
         if (JCJF > 40) {
-            double dx = (JCJF - 40) / 15;  //溢出部分抵消扣分
+            int dx = new Double( (JCJF - 40) / 15).intValue();  //溢出部分抵消扣分
             JCKF = JCKF + dx;  //抵消后的分数
             if (JCKF > 0) {
                 JCKF = 0;
@@ -196,7 +196,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         }
         fpJcJf = fpJcJf <= 0 ? 0 : fpJcJf;
         if (fpJcJf > 40) {
-            double dx = (fpJcJf - 40) / 15;  //溢出部分抵消扣分
+            int dx =new Double( (fpJcJf - 40) / 15).intValue();  //溢出部分抵消扣分
             fpJcKf = JCKF + dx;  //抵消后的分数
             if (fpJcKf > 0) {
                 fpJcKf = 0;

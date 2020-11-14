@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>
@@ -95,7 +94,7 @@ public class AccidentController {
 
     @GetMapping("compareTable")
     @ApiOperation("同期比较")
-    public JiebaoResponse compareTable(Integer startYear,Integer startMonth,Integer endYear, Integer endMonth) {
-        return new JiebaoResponse().okMessage("操作成功").data(accidentService.compareTable(startYear,startMonth,endYear,endMonth));
+    public JiebaoResponse compareTable(String startYear, String endYear) {
+        return new JiebaoResponse().okMessage("操作成功").data(accidentService.compareTable( startYear,  endYear));
     }
 }

@@ -74,7 +74,7 @@ public class CheckExcelUtil {
                         menusYear.setSummary(cell1.getStringCellValue());
                     }
                     Cell cell2 = row1.getCell(j + 2);
-                    String saveOrDelete = "减分";
+                    String saveOrDelete = "减分项";
                     if (cell2 != null) {
                         cell2.setCellType(CellType.STRING);
                         saveOrDelete = cell2.getStringCellValue();

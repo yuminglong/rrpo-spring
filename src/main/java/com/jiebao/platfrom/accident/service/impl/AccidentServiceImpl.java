@@ -3,13 +3,12 @@ package com.jiebao.platfrom.accident.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.accident.dao.DeptSMapper;
-import com.jiebao.platfrom.accident.daomain.ANumber;
-import com.jiebao.platfrom.accident.daomain.Accident;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
+import com.jiebao.platfrom.accident.dao.DeptSMapper;
+import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.daomain.compareTable;
 import com.jiebao.platfrom.accident.service.IAccidentService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -143,33 +143,82 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         return this.baseMapper.getXs(sql);
     }
 
+    /**
+     *  //返回  本期  上期表
+     * @param startYear  开始年月
+     * @param endYear  结束年月
+     * @return
+     */
     @Override
-    public List<compareTable> compareTable(Integer startYear, Integer startMonth, Integer endYear, Integer endMonth) {
-        endMonth += 1;
-        List<compareTable> compareTables = this.baseMapper.shiTable(startYear + "-" + startMonth, endYear + "-" + endMonth);
-        compareTables.addAll(this.baseMapper.gzTable(startYear + "-" + startMonth, endYear + "-" + endMonth));
-        String startDate = startYear + "-" + startMonth;
-        String endDate = endYear + "-" + endMonth;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+    public List<compareTable> compareTable(String startYear, String endYear) {
+        List<compareTable> compareTables = this.baseMapper.shiTable(startYear, endYear);  //获得 市州 本期
+        compareTables.addAll(this.baseMapper.gzTable(startYear, endYear));//公安处本期
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-00");
+        Map<String, compareTable> map = new HashMap<>();
+        for (compareTable compareTable : compareTables) {
+            map.put(compareTable.getDeptName(), compareTable);
+        }
         try {
-            Date parse = simpleDateFormat.parse(startDate);//本期开始
-            Date parse1 = simpleDateFormat.parse(endDate);//本期结束
+            Date parse = simpleDateFormat.parse(startYear);//本期开始
+            Date parse1 = simpleDateFormat.parse(endYear);//本期结束
             long l = parse1.getTime() - parse.getTime();
             Date parse2 = new Date(parse.getTime() - l); //上期  开始
             Date parse3 = new Date(parse1.getTime() - l);//上期  结束
             String upStartDate = simpleDateFormat.format(parse2);
             String upendDate = simpleDateFormat.format(parse3);
-            compareTables.addAll(this.baseMapper.shiTableUP(upStartDate, upendDate));
-            compareTables.addAll(this.baseMapper.gzTableUP(upStartDate, upendDate));
+            List<compareTable> list = new ArrayList<>();
+            list.addAll(this.baseMapper.shiTableUP(upStartDate, upendDate)); //市州上期
+            list.addAll(this.baseMapper.gzTableUP(upStartDate, upendDate));//公安处上期
+            compareTable compareTableCount = new compareTable("全省合计", 0,
+                    0, 0.00,
+                    0.00, 0.00,
+                    0.00, 0.00,
+                    0.00, 0.00,
+                    0.00, 0.00,
+                    0.00); //计算总的
+            DecimalFormat decimalFormat = new DecimalFormat("0.0000");
+            for (compareTable compareTable : list) {
+                compareTable compareTable1 = map.get(compareTable.getDeptName());//已经保存的数值
+                if (compareTable1 == null) {
+                    continue;
+                }
+                compareTable1.setUpNumber(compareTable.getUpNumber() == null ? 0 : compareTable.getUpNumber());
+                compareTable1.setUpDnxs(compareTable.getUpDnxs() == null ? 0 : compareTable.getUpDnxs());
+                compareTable1.setUpDnTjxs(compareTable.getUpDnTjxs() == null ? 0 : compareTable.getUpDnTjxs());
+                compareTable1.setUpDeathToll(compareTable.getUpDeathToll() == null ? 0 : compareTable.getUpDeathToll());
+                double i = (double) (compareTable1.getUpNumber() - compareTable1.getNumber()) / compareTable1.getUpNumber();
+                compareTable1.setBj1(Math.abs(i));
+                compareTable1.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs()))));
+                compareTable1.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs()))));
+                compareTable1.setBj4(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll()))));
+                if (compareTable1.getDeptName().contains("公安处")) {  //公安处级别
+                    compareTableCount.setNumber(compareTableCount.getNumber() + compareTable1.getNumber());
+                    compareTableCount.setUpNumber(compareTableCount.getUpNumber() + compareTable1.getUpNumber());
+                    compareTableCount.setBj1(Double.parseDouble(decimalFormat.format(Math.abs((double) (compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber()))));
 
+                    compareTableCount.setDnxs(compareTableCount.getDnxs() + compareTable1.getDnxs());
+                    compareTableCount.setUpDnxs(compareTableCount.getUpDnxs() + compareTable1.getUpDnxs());
+                    compareTableCount.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs()))));
+
+                    compareTableCount.setDntjxs(compareTableCount.getDntjxs() + compareTable1.getDntjxs());
+                    compareTableCount.setUpDnTjxs(compareTableCount.getUpDnTjxs() + compareTable1.getDntjxs());
+                    compareTableCount.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnxs()))));
+
+                    compareTableCount.setDeathToll(compareTableCount.getDeathToll() + compareTable1.getDeathToll());
+                    compareTableCount.setUpDeathToll(compareTableCount.getUpDeathToll() + compareTable1.getUpDeathToll());
+                    compareTableCount.setBj4(Double.parseDouble(decimalFormat.format(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll())))));
+                }
+            }
+            compareTables.add(compareTableCount);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        for (compareTable c : compareTables
-        ) {
-            System.out.println(c);
+        for (compareTable compareTable : compareTables) {
+            System.out.println(compareTable);
         }
 
         return compareTables;
     }
+
+
 }

@@ -92,7 +92,7 @@ public class ExportExcel {
             HSSFCell cell1 = row.createCell(i++);
             cell1.setCellValue("摘要");
             HSSFCell cell2 = row.createCell(i++);
-            cell2.setCellValue("加分/减分");
+            cell2.setCellValue("加分项/减分项");
         }
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
