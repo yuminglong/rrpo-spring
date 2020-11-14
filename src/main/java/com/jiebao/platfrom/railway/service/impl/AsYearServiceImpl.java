@@ -68,6 +68,8 @@ public class AsYearServiceImpl extends ServiceImpl<AsYearMapper, AsYear> impleme
     @Override
     public List<File> fileList(QueryRequest queryRequest, String yearId, String deptId) {
         List<String> fileIds = this.baseMapper.getFileSByYear(yearId, deptId);//
+        if (fileIds.size() == 0)
+            return null;
         return fileService.getBaseMapper().selectBatchIds(fileIds);
     }
 }

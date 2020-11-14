@@ -2,21 +2,18 @@ package com.jiebao.platfrom.wx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.CheckExcelUtil;
-import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.system.service.UserService;
-import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.dao.QunMapper;
+import com.jiebao.platfrom.wx.domain.Qun;
 import com.jiebao.platfrom.wx.domain.QunExcel;
 import com.jiebao.platfrom.wx.service.IQunService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-
-import static io.lettuce.core.ScanArgs.Builder.matches;
 
 /**
  * <p>
@@ -247,8 +242,13 @@ public class QunServiceImpl extends ServiceImpl<QunMapper, Qun> implements IQunS
             }
         }
         queryWrapper.orderByDesc("date");
+        QueryWrapper<Qun> qunQueryWrapper = new QueryWrapper<>(); //计数用的
+        qunQueryWrapper.in("cj_dept_id", list);
+        QueryWrapper<Qun> clone = qunQueryWrapper.clone();
+        qunQueryWrapper.eq("sh_status", 3);//成功的
+        clone.ne("sh_status", 3);
         Page<Qun> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功");
+        return new JiebaoResponse().data(this.baseMapper.list(page, queryWrapper)).okMessage("查询成功").put("yes", this.baseMapper.number(qunQueryWrapper)).put("no",this.baseMapper.number(clone));
     }
 
 }

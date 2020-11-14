@@ -1,34 +1,19 @@
 package com.jiebao.platfrom.check.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.check.domain.Grade;
-import com.jiebao.platfrom.check.domain.GradeZz;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.check.dao.GradeZzMapper;
+import com.jiebao.platfrom.check.domain.GradeZz;
 import com.jiebao.platfrom.check.service.IGradeService;
 import com.jiebao.platfrom.check.service.IGradeZzService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jiebao.platfrom.common.authentication.JWTUtil;
-import com.jiebao.platfrom.common.domain.JiebaoResponse;
-import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.railway.domain.Exchange;
-import com.jiebao.platfrom.railway.domain.Inform;
-import com.jiebao.platfrom.railway.domain.Prize;
-import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.InformService;
 import com.jiebao.platfrom.railway.service.PrizeService;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.UserMapper;
-import com.jiebao.platfrom.system.domain.File;
-import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * <p>
