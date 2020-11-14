@@ -77,7 +77,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             List<Dept> childrenList = deptService.getChildrenList("0");
             for (Dept dept : childrenList
             ) {
-                if (!dept.getDeptName().contains("公安处")) {
+                if (!dept.getDeptName().contains("公安处")&&!dept.getDeptName().contains("段")) {
                     Grade grade = new Grade();
                     grade.setYearId(menusYear.getYearId());
                     grade.setDeptId(dept.getDeptId());
@@ -143,7 +143,7 @@ public class MenusYearServiceImpl extends ServiceImpl<MenusYearMapper, MenusYear
             List<Dept> childrenList = deptService.getChildrenList("0");
             for (Dept dept : childrenList
             ) {
-                if (!dept.getDeptName().contains("公安处")) {
+                if (!dept.getDeptName().contains("公安处")&&!dept.getDeptName().contains("段")) {
                     for (MenusYear m : list
                     ) {
                         Grade grade = new Grade();
