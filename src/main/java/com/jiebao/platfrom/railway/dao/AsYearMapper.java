@@ -7,6 +7,7 @@ import com.jiebao.platfrom.railway.domain.PrizeLimit;
 import com.jiebao.platfrom.system.domain.File;
 import org.apache.ibatis.annotations.*;
 
+import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 
 /**
@@ -22,7 +23,11 @@ public interface AsYearMapper extends BaseMapper<AsYear> {
 
     @Select("select id,file_id from rail_as_year where grade_id=#{gradeId}")
     @Results(
-            @Result(property = "file",column = "file_id",one = @One(select="com.jiebao.platfrom.system.dao.FileMapper.selectById" ))
+            @Result(property = "file", column = "file_id", one = @One(select = "com.jiebao.platfrom.system.dao.FileMapper.selectById"))
     )
     List<AsYear> getFiles(@Param("gradeId") String gradeId);
+
+    @Select("select file_id from rail_as_year where dept_id=#{yearId} and year_id=#{deptId}")
+    List<String> getFileSByYear(String yearId, String deptId);
+
 }

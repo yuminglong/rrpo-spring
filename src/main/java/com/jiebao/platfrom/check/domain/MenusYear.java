@@ -47,5 +47,7 @@ public class MenusYear implements Serializable {
 
     private Date date;
 
+    private String saveOrDelete;//加分或者减分
+
     private Integer sorts;
 }

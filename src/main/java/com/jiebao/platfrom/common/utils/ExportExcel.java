@@ -1,8 +1,6 @@
 package com.jiebao.platfrom.common.utils;
 
 import com.jiebao.platfrom.check.domain.Menus;
-import com.jiebao.platfrom.check.domain.YearBindMenus;
-import org.apache.http.HttpResponse;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -85,12 +83,16 @@ public class ExportExcel {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("模板");
         HSSFRow row = sheet.createRow(0);
+
         int i = 0;
         for (Menus menus : list
         ) {
             HSSFCell cell = row.createCell(i++);
             cell.setCellValue(menus.getName());
-            i++;
+            HSSFCell cell1 = row.createCell(i++);
+            cell1.setCellValue("摘要");
+            HSSFCell cell2 = row.createCell(i++);
+            cell2.setCellValue("加分/减分");
         }
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

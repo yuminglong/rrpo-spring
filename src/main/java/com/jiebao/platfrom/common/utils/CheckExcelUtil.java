@@ -1,36 +1,24 @@
 package com.jiebao.platfrom.common.utils;
 
-import com.baomidou.mybatisplus.extension.api.R;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiebao.platfrom.attendance.daomain.Record;
-import com.jiebao.platfrom.check.dao.MenusMapper;
 import com.jiebao.platfrom.check.dao.MenusYearMapper;
 import com.jiebao.platfrom.check.dao.YearBindMenusMapper;
 import com.jiebao.platfrom.check.domain.MenusYear;
-import com.jiebao.platfrom.check.domain.YearBindMenus;
 import com.jiebao.platfrom.check.service.IMenusService;
 import com.jiebao.platfrom.check.service.IMenusYearService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.UserService;
-import com.jiebao.platfrom.wx.domain.Qun;
-import com.jiebao.platfrom.wx.domain.QunExcel;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -53,8 +41,8 @@ public class CheckExcelUtil {
             }
             Sheet sheetAt = workbook.getSheetAt(0);
             Row row = sheetAt.getRow(0);
-            String[] arr = new String[row.getPhysicalNumberOfCells() * 2];
-            for (int i = 0; i < row.getPhysicalNumberOfCells() * 2; i += 2) {
+            String[] arr = new String[row.getPhysicalNumberOfCells() * 3];
+            for (int i = 0; i < row.getPhysicalNumberOfCells() * 3; i += 3) {
                 Cell cell = row.getCell(i);
                 if (cell == null) {
                     cell = row.createCell(i);
@@ -69,7 +57,7 @@ public class CheckExcelUtil {
             int sort = 0;   //排序用的
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 Row row1 = sheetAt.getRow(i); //对应行
-                for (int j = 0; j < row.getPhysicalNumberOfCells() * 2; j += 2) {
+                for (int j = 0; j < row.getPhysicalNumberOfCells() * 3; j += 3) {
                     Cell cell = row1.getCell(j);
                     if (cell == null) {  //空返回
                         continue;
@@ -85,6 +73,13 @@ public class CheckExcelUtil {
                         cell1.setCellType(CellType.STRING);
                         menusYear.setSummary(cell1.getStringCellValue());
                     }
+                    Cell cell2 = row1.getCell(j + 2);
+                    String saveOrDelete = "减分";
+                    if (cell2 != null) {
+                        cell2.setCellType(CellType.STRING);
+                        saveOrDelete = cell2.getStringCellValue();
+                    }
+                    menusYear.setSaveOrDelete(saveOrDelete);
                     menusYear.setParentId(arr[j]);
                     menusYear.setContent(cell.getStringCellValue());
                     menusYear.setDate(new Date());
@@ -364,7 +359,7 @@ public class CheckExcelUtil {
         panMonth(dateMonth);
         response.setContentType("application/ms-excel;charset=utf-8");
 //设置导出Excel的名称
-        response.setHeader("Content-disposition", "attachment;filename=" + "ssd.xls");
+        response.addHeader("Content-Disposition", "attachment;filename=导出.xls");
         //刷新缓冲
         try {
             response.flushBuffer();
@@ -509,7 +504,7 @@ public class CheckExcelUtil {
     }
 
     private static void applyColor(HttpServletResponse response, HSSFWorkbook workbook) {// 响应到前端
-        response.setContentType("application/ms-excel;charset=utf-8");
+        response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment;filename=" + UUID.randomUUID() + ".xls");
         try {
             response.flushBuffer();  //刷新缓冲

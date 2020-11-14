@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class compareTable {
-
+    /**
+     * bj   代表 比较    up 代表 上期指数
+     */
     private String deptName;
 
     private Double upNumber;

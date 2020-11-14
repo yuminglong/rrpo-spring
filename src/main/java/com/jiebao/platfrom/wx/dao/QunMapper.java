@@ -1,11 +1,10 @@
 package com.jiebao.platfrom.wx.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.wx.domain.Qun;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.wx.domain.QunExcel;
 import org.apache.ibatis.annotations.*;
 
@@ -26,6 +25,9 @@ public interface QunMapper extends BaseMapper<Qun> {
             @Result(property = "deptSh", column = "sh_dept_id", one = @One(select = "com.jiebao.platfrom.system.dao.DeptMapper.selectById"))
     })
     IPage<Qun> list(Page<Qun> page, @Param("ew") QueryWrapper<Qun> ew);
+
+    @Select("select count(1) from wx_qun ${ew.customSqlSegment} ")
+    Integer number(@Param("ew") QueryWrapper<Qun> ew);
 
 
     @Select("select 1 from wx_qun where cj_dept_id=#{deptId} limit 1")
