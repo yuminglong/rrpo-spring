@@ -261,7 +261,12 @@ public class UserController extends BaseController {
     public JiebaoResponse getDeptAndUser(String[] deptIds) {
         List<User> users = new ArrayList();
         List<Dept> depts = new ArrayList<>();
-        Arrays.stream(deptIds).forEach(deptId -> {
+        List<String> deptIdes = Arrays.asList(deptIds);
+        Collection<User> users1 = userService.listByIds(deptIdes);
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", deptIds);
+        Collection<Dept> depts1 = deptService.listByMap(map);
+       /* Arrays.stream(deptIds).forEach(deptId -> {
             List<User> byDept = userService.getByDepts(deptId);
             users.addAll(byDept);
 
@@ -269,11 +274,11 @@ public class UserController extends BaseController {
             map.put("parent_id", deptId);
             List<Dept> dept = deptMapper.selectByMap(map);
             depts.addAll(dept);
-        });
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("dept", depts);
-        map.put("user", users);
-        return new JiebaoResponse().data(map).okMessage("查询成功");
+        });*/
+        HashMap<String, Object> map1 = new HashMap<>();
+        map1.put("dept", users1);
+        map1.put("user", depts1);
+        return new JiebaoResponse().data(map1).okMessage("查询成功");
     }
 
 

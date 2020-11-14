@@ -137,6 +137,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (prize.getStatus() !=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
+        if (StringUtils.isNotBlank(prize.getId())){
+            queryWrapper.lambda().eq(Prize::getId,prize.getId());
+        }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

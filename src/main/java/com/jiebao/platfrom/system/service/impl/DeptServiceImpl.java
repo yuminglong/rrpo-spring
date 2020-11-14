@@ -63,8 +63,53 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return result;
     }
 
+
+
     @Override
     public List<Dept> findDepts(Dept dept, QueryRequest request) {
+        QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
+
+        if (StringUtils.isNotBlank(dept.getDeptId())) {
+            queryWrapper.lambda().eq(Dept::getParentId, dept.getDeptId());
+        }
+        if (StringUtils.isNotBlank(dept.getDeptName())) {
+            queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
+        }
+        if (dept.getRank() !=null ){
+            queryWrapper.lambda().eq(Dept::getRank, dept.getRank());
+        }
+
+        if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo()))
+            queryWrapper.lambda()
+                    .ge(Dept::getCreateTime, dept.getCreateTimeFrom())
+                    .le(Dept::getCreateTime, dept.getCreateTimeTo());
+        SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+
+    @Override
+    public Map<String, Object> findCityDepts(QueryRequest request, Dept dept) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<Dept> depts = findCityDepts(dept, request);
+            List<Tree<Dept>> trees = new ArrayList<>();
+            buildTrees(trees, depts);
+            Tree<Dept> deptTree = TreeUtil.build(trees);
+
+            result.put("rows", deptTree);
+            result.put("total", depts.size());
+        } catch (Exception e) {
+            log.error("获取组织机构列表失败", e);
+            result.put("rows", null);
+            result.put("total", 0);
+        }
+        return result;
+    }
+
+
+
+    public List<Dept> findCityDepts(Dept dept, QueryRequest request) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dept::getStatus, 1);
         if (StringUtils.isNotBlank(dept.getDeptId())) {
@@ -84,6 +129,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
         return this.baseMapper.selectList(queryWrapper);
     }
+
+
+
+
 
     @Override
     public List<Dept> findDeptForDept(Dept dept, QueryRequest request) {
