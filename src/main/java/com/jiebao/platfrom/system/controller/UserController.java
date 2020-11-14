@@ -276,8 +276,8 @@ public class UserController extends BaseController {
             depts.addAll(dept);
         });
         HashMap<String, Object> map1 = new HashMap<>();
-        map1.put("dept", users);
-        map1.put("user", depts);
+        map1.put("dept", depts);
+        map1.put("user", users);
         return new JiebaoResponse().data(map1).okMessage("查询成功");
     }
 
