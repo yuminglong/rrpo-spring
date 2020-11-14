@@ -74,6 +74,9 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Notice::getReleaseTime, startTime).le(Notice::getReleaseTime, endTime);
         }
+        if (StringUtils.isNotBlank(notice.getId())){
+            queryWrapper.lambda().eq(Notice::getId,notice.getId());
+        }
         Page<Notice> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

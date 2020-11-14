@@ -74,6 +74,13 @@ public class DeptController extends BaseController {
         return this.deptService.findDepts(request, dept);
     }
 
+    @GetMapping("/findAllCity")
+    public Map<String, Object> findAllCity(QueryRequest request, Dept dept) {
+       return this.deptService.findCityDepts(request, dept);
+
+    }
+
+
     @GetMapping("/list")
     public List<Dept> List(QueryRequest request, Dept dept) {
         List<Dept> depts = deptService.findDepts(dept, request);

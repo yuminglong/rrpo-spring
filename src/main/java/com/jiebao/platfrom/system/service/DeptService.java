@@ -14,6 +14,8 @@ public interface DeptService extends IService<Dept> {
 
     Map<String, Object> findDepts(QueryRequest request, Dept dept);
 
+    Map<String, Object> findCityDepts(QueryRequest request, Dept dept);
+
     List<Dept> findDeptForDept(Dept dept, QueryRequest request);
 
     List<Dept> findDepts(Dept dept, QueryRequest request);
