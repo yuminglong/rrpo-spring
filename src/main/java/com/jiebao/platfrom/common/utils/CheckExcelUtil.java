@@ -41,8 +41,8 @@ public class CheckExcelUtil {
             }
             Sheet sheetAt = workbook.getSheetAt(0);
             Row row = sheetAt.getRow(0);
-            String[] arr = new String[row.getPhysicalNumberOfCells() * 3];
-            for (int i = 0; i < row.getPhysicalNumberOfCells() * 3; i += 3) {
+            String[] arr = new String[row.getPhysicalNumberOfCells() ];
+            for (int i = 0; i < row.getPhysicalNumberOfCells() ; i +=3) {
                 Cell cell = row.getCell(i);
                 if (cell == null) {
                     cell = row.createCell(i);
@@ -57,7 +57,7 @@ public class CheckExcelUtil {
             int sort = 0;   //排序用的
             for (int i = 1; i < sheetAt.getPhysicalNumberOfRows(); i++) {
                 Row row1 = sheetAt.getRow(i); //对应行
-                for (int j = 0; j < row.getPhysicalNumberOfCells() * 3; j += 3) {
+                for (int j = 0; j < row.getPhysicalNumberOfCells(); j += 3) {
                     Cell cell = row1.getCell(j);
                     if (cell == null) {  //空返回
                         continue;
@@ -77,6 +77,8 @@ public class CheckExcelUtil {
                     String saveOrDelete = "减分项";
                     if (cell2 != null) {
                         cell2.setCellType(CellType.STRING);
+                        if (!cell2.getStringCellValue().equals("加分项") && !cell2.getStringCellValue().equals("减分项"))
+                            return jiebaoResponse.failMessage("减分项加分项汉字不明确");
                         saveOrDelete = cell2.getStringCellValue();
                     }
                     menusYear.setSaveOrDelete(saveOrDelete);
