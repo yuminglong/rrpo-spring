@@ -26,8 +26,24 @@ public class compareTable {
     private Double deathToll;
     private Double bj4;
 
-    public compareTable() {
+    public compareTable setName(String name) {
+        this.deptName = name;
+        return this;
+    }
 
+    public compareTable() {
+        this.upNumber = 0;
+        this.number = 0;
+        this.bj1 = 0.00;
+        this.upDnxs = 0.00;
+        this.dnxs = 0.00;
+        this.bj2 = 0.00;
+        this.upDnTjxs = 0.00;
+        this.dntjxs = 0.00;
+        this.bj3 = 0.00;
+        this.upDeathToll = 0.00;
+        this.deathToll = 0.00;
+        this.bj4 = 0.00;
     }
 
     public compareTable(String deptName, Integer upNumber, Integer number, Double bj1, Double upDnxs, Double dnxs, Double bj2, Double upDnTjxs, Double dntjxs, Double bj3, Double upDeathToll, Double deathToll, Double bj4) {

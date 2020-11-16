@@ -31,5 +31,5 @@ public interface IJkService extends IService<Jk> {
 
     boolean delete(String[] idList);
 
-    List<CountTable> countTable(String deptName);  //统计  安装监控数据
+    List<CountTable> countTable(String year);  //统计  安装监控数据
 }
