@@ -12,8 +12,10 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.wx.domain.People;
 import com.jiebao.platfrom.wx.dao.PeopleMapper;
+import com.jiebao.platfrom.wx.domain.UserI;
 import com.jiebao.platfrom.wx.service.IPeopleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.wx.service.IUserIService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -47,24 +49,26 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     DeptMapper deptMapper;
     @Autowired
     DeptService deptService;
-//    private static int lock = 1;//默认上锁
+    //    private static int lock = 1;//默认上锁
+    @Autowired
+    IUserIService userIService;
 
     @Override
-    public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status,String km) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String deptId, String LineId, Integer status, String km) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         Page<People> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return jiebaoResponse.data(this.baseMapper.listPage(page, packQueryWra(deptId, LineId, status,km))).message("查询成功");
+        return jiebaoResponse.data(this.baseMapper.listPage(page, packQueryWra(deptId, LineId, status, km))).message("查询成功");
     }
 
     @Override
-    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title,String km) {
+    public JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId, Integer status, String title, String km) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status,km));
+        List<People> lists = this.baseMapper.lists(packQueryWra(deptId, lineId, status, km));
         CheckExcelUtil.exportList(response, lists, People.class, null, title);
         return jiebaoResponse.message("查询成功");
     }
 
-    private QueryWrapper<People> packQueryWra(String deptId, String lineId, Integer status,String km) {
+    private QueryWrapper<People> packQueryWra(String deptId, String lineId, Integer status, String km) {
         QueryWrapper<People> queryWrapper = new QueryWrapper<>();
         Dept dept = null;
         if (deptId == null) {
@@ -85,8 +89,8 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             queryWrapper.eq(column, deptId);
         if (StringUtils.isNotBlank(lineId))
             queryWrapper.eq("line", lineId);
-        if(StringUtils.isNoneBlank(km))
-            queryWrapper.eq("km",km);
+        if (StringUtils.isNoneBlank(km))
+            queryWrapper.eq("km", km);
         queryWrapper.eq("status", status);
         queryWrapper.orderByAsc("lu_number");
         return queryWrapper;
@@ -94,8 +98,15 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JiebaoResponse saveOrUpdateChile(People people) {
+    public JiebaoResponse saveOrUpdateChile(People people, String qunId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (qunId != null) {
+            return jiebaoResponse.failMessage("未建立群");
+        } else {
+            UserI userI = new UserI(people.getName(), people.getIdCard(), people.getPhone(), people.getProper(), qunId, people.getShi(), people.getQuXian(), people.getXiang());
+            userI.setDate(new Date());
+            userIService.save(userI);
+        }
         if (deptService.getById(people.getDeptId()).getRank() != 3)  //必须精确到乡镇
             return jiebaoResponse.failMessage("请选择到乡镇街道");
         if (people.getHlId() == null) {

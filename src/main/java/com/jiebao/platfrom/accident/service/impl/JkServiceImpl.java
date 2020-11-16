@@ -41,22 +41,31 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
     FileService fileService;
 
     @Override
-    public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs) {
+    public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs,String xsq,String lineName,String year) {
         Page<Jk> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return this.baseMapper.pageList(page, queryWrapper(gac, dzs));
+        return this.baseMapper.pageList(page, queryWrapper(gac, dzs,xsq,lineName,year));
     }
 
     @Override
-    public boolean importExcel(HttpServletResponse response, String gac, String dzs) {
-        return ExportExcel.exportExcelList(list(queryWrapper(gac, dzs)), Jk.class, response);
+    public boolean importExcel(HttpServletResponse response, String gac, String dzs,String xsq,String lineName,String year) {
+        return ExportExcel.exportExcelList(list(queryWrapper(gac, dzs,xsq,lineName,year)), Jk.class, response);
     }
 
-    private LambdaQueryWrapper<Jk> queryWrapper(String gac, String dzs) {
+    private LambdaQueryWrapper<Jk> queryWrapper(String gac, String dzs,String xsq,String lineName,String year) {
         LambdaQueryWrapper<Jk> queryWrapper = new LambdaQueryWrapper<>();
         if (gac != null)
             queryWrapper.eq(Jk::getGac, gac);
         if (dzs != null)
             queryWrapper.eq(Jk::getDzs, dzs);
+        if (xsq != null) {
+            queryWrapper.eq(Jk::getXsq, xsq);
+        }
+        if (lineName != null) {
+            queryWrapper.eq(Jk::getXlmc,lineName);
+        }
+        if (year != null) {
+            queryWrapper.eq(Jk::getAzsjn,year);
+        }
         queryWrapper.eq(Jk::getDelflag, "0");
         queryWrapper.orderByDesc(Jk::getCreatTime);
         queryWrapper.orderByDesc(Jk::getGac);

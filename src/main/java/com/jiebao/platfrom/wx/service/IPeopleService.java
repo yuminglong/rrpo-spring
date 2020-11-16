@@ -23,7 +23,7 @@ public interface IPeopleService extends IService<People> {
 
     JiebaoResponse listExcel(HttpServletResponse response, String deptId, String lineId,Integer status,String title,String km);//导出
 
-    JiebaoResponse saveOrUpdateChile(People people);
+    JiebaoResponse saveOrUpdateChile(People people,String qunId);
 
 //    JiebaoResponse lock(Integer status);  //上锁 解锁
 

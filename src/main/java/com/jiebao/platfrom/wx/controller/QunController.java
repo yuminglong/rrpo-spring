@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.wx.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.wx.domain.Qun;
@@ -39,14 +40,14 @@ public class QunController {
     @GetMapping("list")
     @ResponseBody
     @ApiOperation("群查询")
-    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status,String deptId) {
-        return qunService.pageList(queryRequest, name, userName, status,deptId);
+    public JiebaoResponse pageList(QueryRequest queryRequest, String name, String userName, Integer status, String deptId) {
+        return qunService.pageList(queryRequest, name, userName, status, deptId);
     }
 
     @GetMapping("ListByDeptId")
     @ResponseBody
     @ApiOperation("通过部门查询")
-    public JiebaoResponse ListByDeptId(String deptId){
+    public JiebaoResponse ListByDeptId(String deptId) {
         return qunService.ListByDeptId(deptId);
     }
 
@@ -63,5 +64,13 @@ public class QunController {
     @ApiOperation("合格群导出  deptId 不传查出全部市级  反之 特定 市级")
     public void exPort(HttpServletResponse response, String[] deptId, String workName) {
         qunService.exPort(response, deptId, workName);
+    }
+
+    @GetMapping("getQunByDept")
+    @ApiOperation("通过组织机构查群")
+    public JiebaoResponse getByDeptId(String deptId) {
+        LambdaQueryWrapper<Qun> qunLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        qunLambdaQueryWrapper.eq(Qun::getCjDeptId, deptId);
+        return new JiebaoResponse().data(qunService.getOne(qunLambdaQueryWrapper)).okMessage("查询成功");
     }
 }

@@ -44,18 +44,18 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
     FileService fileService;
 
     @Override
-    public IPage<Ql> listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName) {
+    public IPage<Ql> listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName,String qxDeptName) {
         Page<Ql> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return this.baseMapper.pageList(page, queryWrapper(deptName, policeName, gwdName));
+        return this.baseMapper.pageList(page, queryWrapper(deptName, policeName, gwdName,qxDeptName));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName) {
-        return ExportExcel.exportExcelList(list(queryWrapper(deptName, policeName, gwdName)), Ql.class, response);
+    public boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName,String qxDeptName) {
+        return ExportExcel.exportExcelList(list(queryWrapper(deptName, policeName, gwdName,qxDeptName)), Ql.class, response);
     }
 
-    private LambdaQueryWrapper<Ql> queryWrapper(String deptName, String policeName, String gwdName) {
+    private LambdaQueryWrapper<Ql> queryWrapper(String deptName, String policeName, String gwdName,String qxDeptName) {
         LambdaQueryWrapper<Ql> queryWrapper = new LambdaQueryWrapper<>();
         if (deptName != null)
             queryWrapper.eq(Ql::getDzs, deptName);
@@ -63,6 +63,9 @@ public class QlServiceImpl extends ServiceImpl<QlMapper, Ql> implements IQlServi
             queryWrapper.eq(Ql::getGa, policeName);
         if (gwdName != null)
             queryWrapper.eq(Ql::getGwd, gwdName);
+        if (qxDeptName != null) {
+            queryWrapper.eq(Ql::getXsq, qxDeptName);
+        }
         queryWrapper.eq(Ql::getDelflag, "0");
         queryWrapper.orderByDesc(Ql::getCreatTime);
         queryWrapper.orderByDesc(Ql::getDzs);

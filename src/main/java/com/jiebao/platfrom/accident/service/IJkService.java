@@ -22,9 +22,9 @@ import java.util.Map;
  * @since 2020-11-07
  */
 public interface IJkService extends IService<Jk> {
-    IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs);
+    IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs,String xsq,String lineName,String year);
 
-    boolean importExcel(HttpServletResponse response, String gac, String dzs);
+    boolean importExcel(HttpServletResponse response, String gac, String dzs,String xsq,String lineName,String year);
 
     boolean addOrUpdate(Jk jk, Collection<? extends Serializable> tp);
 

@@ -32,6 +32,4 @@ public interface IYearService extends IService<Year> {
 
     boolean deleteByIds(Collection<? extends Serializable> list);
 
-
-
 }

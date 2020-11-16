@@ -31,10 +31,10 @@ public class JkController {
     IJkService jkService;
 
     @GetMapping("list")
-    @ApiOperation("查询")
-    public JiebaoResponse listPage(QueryRequest queryRequest, String gac, String dzs) {
+    @ApiOperation(" ")
+    public JiebaoResponse listPage(QueryRequest queryRequest, String gac, String dzs,String xsq,String lineName,String year) {
         try {
-            return new JiebaoResponse().data(jkService.listPage(queryRequest, gac, dzs)).okMessage("查询成功");
+            return new JiebaoResponse().data(jkService.listPage(queryRequest, gac, dzs,xsq,lineName,year)).okMessage("查询成功");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new JiebaoResponse().failMessage("查询失败");
@@ -43,8 +43,8 @@ public class JkController {
 
     @PostMapping("excel")
     @ApiOperation("导出")
-    public JiebaoResponse importExcel(HttpServletResponse response, String gac, String dzs) {
-        return new JiebaoResponse().data(jkService.importExcel(response, gac, dzs));
+    public JiebaoResponse importExcel(HttpServletResponse response, String gac, String dzs,String xsq,String lineName,String year) {
+        return new JiebaoResponse().data(jkService.importExcel(response, gac, dzs,xsq,lineName,year));
     }
 
     @PostMapping("saveOrUpdate")
