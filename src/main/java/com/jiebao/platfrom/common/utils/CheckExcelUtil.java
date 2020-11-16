@@ -14,6 +14,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CheckExcelUtil {
-
+   @Transactional(rollbackFor = Exception.class)
     public static JiebaoResponse excel(String yearId, MultipartFile file, IMenusService menusService, IMenusYearService menusYearService, MenusYearMapper menusYearMapper, YearBindMenusMapper yearBindMenus, List<MenusYear> list) {  //年考核 题库导入
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         boolean b = false;
