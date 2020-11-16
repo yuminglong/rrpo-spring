@@ -2,7 +2,6 @@ package com.jiebao.platfrom.accident.controller;
 
 
 import com.jiebao.platfrom.accident.daomain.Jk;
-import com.jiebao.platfrom.accident.daomain.Ql;
 import com.jiebao.platfrom.accident.service.IJkService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ public class JkController {
 
     @GetMapping("list")
     @ApiOperation("查询")
-    public JiebaoResponse listPage(QueryRequest queryRequest,String gac,String dzs) {
+    public JiebaoResponse listPage(QueryRequest queryRequest, String gac, String dzs) {
         try {
             return new JiebaoResponse().data(jkService.listPage(queryRequest, gac, dzs)).okMessage("查询成功");
         } catch (Exception e) {
@@ -43,16 +43,20 @@ public class JkController {
 
     @PostMapping("excel")
     @ApiOperation("导出")
-    public JiebaoResponse importExcel(HttpServletResponse response,String gac,String dzs) {
-        return new JiebaoResponse().data(jkService.importExcel(response, gac, dzs)) ;
+    public JiebaoResponse importExcel(HttpServletResponse response, String gac, String dzs) {
+        return new JiebaoResponse().data(jkService.importExcel(response, gac, dzs));
     }
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增或者修改")
-    public JiebaoResponse saveOrUpdate(Jk jk,String[] tp) {
-        try {
-            jkService.addOrUpdate(jk, Arrays.asList(tp));
-            return new JiebaoResponse().data(jk).okMessage("操作成功");
+    public JiebaoResponse saveOrUpdate(Jk jk, String[] tp) {
+            try {
+        List<String> list = null;
+        if (tp != null) {
+            list = Arrays.asList(tp);
+        }
+        jkService.addOrUpdate(jk, list);
+        return new JiebaoResponse().data(jk).okMessage("操作成功");
         } catch (Exception e) {
             return new JiebaoResponse().failMessage("操作失败");
         }
@@ -77,7 +81,7 @@ public class JkController {
         } catch (Exception e) {
             return new JiebaoResponse().failMessage("操作失败");
         }
-   }
+    }
 
 
 }
