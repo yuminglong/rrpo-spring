@@ -2,7 +2,7 @@ package com.jiebao.platfrom.accident.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.accident.daomain.Accident;
-import com.jiebao.platfrom.accident.daomain.compareTable;
+import com.jiebao.platfrom.accident.daomain.CompareTable;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
@@ -25,5 +25,5 @@ public interface IAccidentService extends IService<Accident> {
 
     String func(String nature, String instationSection, String road, String age, String closed, String jzd, String distance, String identity, String conditions);
 
-    List<compareTable> compareTable(String startYear, String endYear);
+    List<CompareTable> compareTable(String startYear, String endYear);
 }

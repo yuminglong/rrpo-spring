@@ -3,12 +3,11 @@ package com.jiebao.platfrom.accident.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.accident.dao.DeptSMapper;
-import com.jiebao.platfrom.accident.daomain.Accident;
-import com.jiebao.platfrom.accident.daomain.Case;
-import com.jiebao.platfrom.accident.dao.CaseMapper;
-import com.jiebao.platfrom.accident.service.ICaseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.accident.dao.CaseMapper;
+import com.jiebao.platfrom.accident.dao.DeptSMapper;
+import com.jiebao.platfrom.accident.daomain.Case;
+import com.jiebao.platfrom.accident.service.ICaseService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Dept;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -104,7 +102,6 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Case> implements IC
      * @param status
      * @return
      */
-
     private Map fz(List<Dept> deptList, String startDate, String endDate, Integer status) {  //事故性质  数据
         HashMap<String, List<String>> map = new HashMap<>();
         List<String> city = new ArrayList<>();

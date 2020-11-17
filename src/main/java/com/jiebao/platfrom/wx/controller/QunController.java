@@ -67,6 +67,7 @@ public class QunController {
     }
 
     @GetMapping("getQunByDept")
+    @ResponseBody
     @ApiOperation("通过组织机构查群")
     public JiebaoResponse getByDeptId(String deptId) {
         LambdaQueryWrapper<Qun> qunLambdaQueryWrapper = new LambdaQueryWrapper<>();

@@ -3,6 +3,7 @@ package com.jiebao.platfrom.wx.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.CheckExcelUtil;
@@ -10,11 +11,10 @@ import com.jiebao.platfrom.common.utils.IDCard;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.wx.domain.People;
 import com.jiebao.platfrom.wx.dao.PeopleMapper;
+import com.jiebao.platfrom.wx.domain.People;
 import com.jiebao.platfrom.wx.domain.UserI;
 import com.jiebao.platfrom.wx.service.IPeopleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.wx.service.IUserIService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CellType;
@@ -28,10 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -100,7 +98,7 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse saveOrUpdateChile(People people, String qunId) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
-        if (qunId != null) {
+        if (qunId == null) {
             return jiebaoResponse.failMessage("未建立群");
         } else {
             UserI userI = new UserI(people.getName(), people.getIdCard(), people.getPhone(), people.getProper(), qunId, people.getShi(), people.getQuXian(), people.getXiang());
