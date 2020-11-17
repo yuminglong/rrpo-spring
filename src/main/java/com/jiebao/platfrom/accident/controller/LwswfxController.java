@@ -2,6 +2,7 @@ package com.jiebao.platfrom.accident.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.daomain.Lwswfx;
 import com.jiebao.platfrom.accident.service.ILwswfxService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
@@ -12,7 +13,6 @@ import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -48,22 +48,22 @@ public class LwswfxController {
         List<String> cheList = new ArrayList<>();
         List<String> gongList = new ArrayList<>();
         QueryWrapper<Lwswfx> queryWrapper = new QueryWrapper<>();
-        queryWrapper.groupBy("xl");
+        queryWrapper.groupBy("fsxsdq");
         for (Lwswfx lwswfx : lwswfxService.list(queryWrapper)) {
             //    System.out.println(lwswfx);
 //            if(lwswfx.getFsdsz()!=null)
 //            if (deptMapper.getByNewName(lwswfx.getFsdsz()) == null) {
 //                shiList.add(lwswfx.getFsdsz());
 //            }
-//            try {
-//                if (lwswfx.getFsxsdq() != null)
-//                    if (deptMapper.getByNewName(lwswfx.getFsxsdq()) == null) {
-//                        xianList.add(lwswfx.getFsxsdq());
-//                    }
-//            } catch (MyBatisSystemException e) {
-//                shiList.add(lwswfx.getFsdsz());
-//                xianList.add(lwswfx.getFsxsdq());
-//            }
+            try {
+                if (lwswfx.getFsxsdq() != null)
+                    if (deptMapper.getByNewName(lwswfx.getFsxsdq()) == null) {
+                        xianList.add(lwswfx.getFsxsdq());
+                    }
+            } catch (MyBatisSystemException e) {
+                shiList.add(lwswfx.getFsdsz());
+                xianList.add(lwswfx.getFsxsdq());
+            }
 
 //            if(lwswfx.getPcs()!=null)
 //            if (deptMapper.getByNewName(lwswfx.getPcs()) == null) {
@@ -77,11 +77,11 @@ public class LwswfxController {
 //            if (deptMapper.getByNewName(lwswfx.getGwd()) == null) {
 //                gongList.add(lwswfx.getGwd());
 //            }
-
-            if(lwswfx.getXl()!=null)
-                if (dictMapper.getByNewNames(lwswfx.getXl()) == null) {
-                    gongList.add(lwswfx.getXl());
-                }
+//
+//            if(lwswfx.getXl()!=null)
+//                if (dictMapper.getByNewNames(lwswfx.getXl()) == null) {
+//                    gongList.add(lwswfx.getXl());
+//                }
         }
 
         for (String o : shiList) {
@@ -109,6 +109,19 @@ public class LwswfxController {
         }
         System.out.println("-----------");
         System.out.println("--------------");
+    }
+
+    @GetMapping("addList")
+    @ApiOperation("导入数据")
+    public void ad() {
+        List<Accident> list = new ArrayList<>();
+        for (Lwswfx lwswfx : lwswfxService.list()) {
+            if (lwswfx.getSbgac() != null) {
+                continue;
+            }
+            Accident accident = new Accident();
+            accident.setMonth(lwswfx.getTjyf());
+        }
     }
 
 }
