@@ -51,18 +51,18 @@ public interface AccidentMapper extends BaseMapper<Accident> {
      * @return 所有ss
      */
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  GROUP BY  a.city_cs_id")
-    List<compareTable> shiTable(String startDate, String endDate);
+            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  and a.city_cs_id =#{deptName}")
+    compareTable shiTable(String startDate, String endDate,String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  GROUP BY  a.city_cs_id")
-    List<compareTable> shiTableUP(String startDate, String endDate);
+            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  and  a.city_cs_id=#{deptName}")
+    compareTable shiTableUP(String startDate, String endDate,String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} GROUP BY  a.police_father")
-    List<compareTable> gzTable(String startDate, String endDate);
+            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} and  a.police_father=#{deptName}")
+    compareTable gzTable(String startDate, String endDate,String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} GROUP BY  a.police_father")
-    List<compareTable> gzTableUP(String startDate, String endDate);
+            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} and  a.police_father=#{deptName}")
+    compareTable gzTableUP(String startDate, String endDate,String deptName);
 }

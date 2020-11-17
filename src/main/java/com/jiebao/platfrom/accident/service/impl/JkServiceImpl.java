@@ -12,6 +12,8 @@ import com.jiebao.platfrom.accident.service.IJkService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.ExportExcel;
+import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -39,24 +38,35 @@ import java.util.Map;
 public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkService {
     @Autowired
     FileService fileService;
+    @Autowired
+    DeptMapper deptMapper;
 
     @Override
-    public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs) {
+    public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs, String xsq, String lineName, String year) {
         Page<Jk> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
-        return this.baseMapper.pageList(page, queryWrapper(gac, dzs));
+        return this.baseMapper.pageList(page, queryWrapper(gac, dzs, xsq, lineName, year));
     }
 
     @Override
-    public boolean importExcel(HttpServletResponse response, String gac, String dzs) {
-        return ExportExcel.exportExcelList(list(queryWrapper(gac, dzs)), Jk.class, response);
+    public boolean importExcel(HttpServletResponse response, String gac, String dzs, String xsq, String lineName, String year) {
+        return ExportExcel.exportExcelList(list(queryWrapper(gac, dzs, xsq, lineName, year)), Jk.class, response);
     }
 
-    private LambdaQueryWrapper<Jk> queryWrapper(String gac, String dzs) {
+    private LambdaQueryWrapper<Jk> queryWrapper(String gac, String dzs, String xsq, String lineName, String year) {
         LambdaQueryWrapper<Jk> queryWrapper = new LambdaQueryWrapper<>();
         if (gac != null)
             queryWrapper.eq(Jk::getGac, gac);
         if (dzs != null)
             queryWrapper.eq(Jk::getDzs, dzs);
+        if (xsq != null) {
+            queryWrapper.eq(Jk::getXsq, xsq);
+        }
+        if (lineName != null) {
+            queryWrapper.eq(Jk::getXlmc, lineName);
+        }
+        if (year != null) {
+            queryWrapper.eq(Jk::getAzsjn, year);
+        }
         queryWrapper.eq(Jk::getDelflag, "0");
         queryWrapper.orderByDesc(Jk::getCreatTime);
         queryWrapper.orderByDesc(Jk::getGac);
@@ -95,13 +105,20 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
     }
 
     @Override
-    public List<CountTable> countTable(String deptName) {
-        String columnName = "";
-        if (deptName != null)
-            columnName = "dzs";
-        else
-            columnName = "gac";
-        System.out.println(deptName);
-        return this.baseMapper.countTable(columnName, deptName);
+    public List<CountTable> countTable(String year) {
+        List<CountTable> list = new ArrayList<>();
+        List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
+        for (Dept dept: deptNameByAsc) {
+            CountTable countTable = this.baseMapper.ByDeptNameDzs(dept.getDeptName(), year);
+          countTable.setName(dept.getDeptName());
+            list.add(countTable);
+        }
+        List<Dept> deptNameByAscGz = deptMapper.getDeptNameByAscGz();
+        for (Dept dept : deptNameByAscGz) {
+            CountTable countTable = this.baseMapper.ByDeptNameGa(dept.getDeptName(), year);
+            countTable.setName(dept.getDeptName());
+            list.add(countTable);
+        }
+        return list;
     }
 }

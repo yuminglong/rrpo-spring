@@ -42,8 +42,8 @@ public class PeopleController {
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("新增")
-    public JiebaoResponse saveOrUpdate(People people) {
-        return peopleService.saveOrUpdateChile(people);
+    public JiebaoResponse saveOrUpdate(People people,String qunId) {
+        return peopleService.saveOrUpdateChile(people,qunId);
     }
 
     @DeleteMapping("delete")

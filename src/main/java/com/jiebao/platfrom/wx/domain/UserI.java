@@ -78,6 +78,17 @@ public class UserI implements Serializable {
     @ApiModelProperty(hidden = true)
     private Dept deptXzO;
 
+    public UserI(String name, String idCar, String phone, String sf, String qunId, String deptXz, String deptQx, String deptSz) {
+        this.name = name;
+        this.idCar = idCar;
+        this.phone = phone;
+        this.sf = sf;
+        this.qunId = qunId;
+        this.deptXz = deptXz;
+        this.deptQx = deptQx;
+        this.deptSz = deptSz;
+    }
+
     //曲线 组织
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
@@ -87,6 +98,11 @@ public class UserI implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
     private Dept deptSzO;
+
+    public UserI() {
+
+    }
+
 
 
 }

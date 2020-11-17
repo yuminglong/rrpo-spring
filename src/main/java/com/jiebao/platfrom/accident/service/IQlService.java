@@ -19,9 +19,9 @@ import java.util.Collection;
  * @since 2020-11-07
  */
 public interface IQlService extends IService<Ql> {
-    IPage<Ql> listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName);
+    IPage<Ql> listPage(QueryRequest queryRequest, String deptName, String policeName, String gwdName,String qxDeptName);
 
-    boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName);
+    boolean importExcel(HttpServletResponse response, String deptName, String policeName, String gwdName,String qxDeptName);
 
     boolean addOrUpdate(Ql ql, Collection<? extends Serializable> tp);
 
