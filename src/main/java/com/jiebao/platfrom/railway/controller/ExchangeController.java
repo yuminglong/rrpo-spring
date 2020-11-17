@@ -105,7 +105,7 @@ public class ExchangeController extends BaseController {
      */
     @PostMapping("/creat")
     @ApiOperation(value = "创建一条信息互递或创建并发送(修改)", notes = "创建一条信息互递或创建并发送(修改)", response = JiebaoResponse.class, httpMethod = "POST")
-    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds, String[] fileIds, String[] menusYearIds) throws JiebaoException {
+    public JiebaoResponse creatExchange(@Valid Exchange exchange, String[] sendUserIds, String[] fileIds, String[] menusYearIds,String yearTime) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             if (username != null) {
@@ -113,14 +113,6 @@ public class ExchangeController extends BaseController {
             }
             User byName = userService.findByName(username);
             Dept deptOwn = deptService.getById(byName.getDeptId());
-
-            Calendar instance = Calendar.getInstance();
-            int i = instance.get(Calendar.YEAR);
-            if (instance.get(Calendar.MONTH) >= 10){
-                //到达新的一年  进1
-                i++;
-            }
-            String yearId = yearMapper.selectYearId("" + i);
 
 
             //修改时间
@@ -145,9 +137,7 @@ public class ExchangeController extends BaseController {
                             asYear.setGradeId(menusYearId);
                             asYear.setType(2);
                             asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
-                            if (yearId != null) {
-                                asYear.setYearId(yearId);
-                            }
+                            asYear.setYearId(yearTime);
                             asYearService.save(asYear);
                         });
                     }
@@ -177,7 +167,7 @@ public class ExchangeController extends BaseController {
                             asYear.setGradeId(menusYearId);
                             asYear.setType(2);
                             asYear.setDeptId(this.getParentDept(deptOwn).getDeptId());
-                            asYear.setYearId(yearId);
+                            asYear.setYearId(yearTime);
                             asYearService.save(asYear);
                         });
                     }
@@ -223,7 +213,7 @@ public class ExchangeController extends BaseController {
                         Map<String, Object> map = new HashMap<>();
                         map.put("ref_type", 8);
                         map.put("file_type", 2);
-                        map.put("ref_id",exchange.getId());
+                        map.put("ref_id", exchange.getId());
                         List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                         if (files.size() > 0) {
                             for (com.jiebao.platfrom.system.domain.File f : files
@@ -242,7 +232,7 @@ public class ExchangeController extends BaseController {
                         Map<String, String> params = new HashMap<>();
                         params.put("id", exchange.getTargetsId());
                         Dept dept = deptService.getDept();
-                        params.put("source", (dept.getDeptName()+"-"+username));
+                        params.put("source", (dept.getDeptName() + "-" + username));
                         params.put("title", exchange.getTitle());
                         //如果富编辑器里有图片，转换成base64替换img标签所有内容
                        /* Map<String, Object> mapF = new HashMap<>();
@@ -364,7 +354,7 @@ public class ExchangeController extends BaseController {
                             Map<String, Object> map = new HashMap<>();
                             map.put("ref_type", 8);
                             map.put("file_type", 2);
-                            map.put("ref_id",exchangeId);
+                            map.put("ref_id", exchangeId);
                             List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                             if (files.size() > 0) {
                                 for (com.jiebao.platfrom.system.domain.File f : files
@@ -384,7 +374,7 @@ public class ExchangeController extends BaseController {
                             params.put("id", byId.getTargetsId());
                             Dept dept = deptService.getDept();
                             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-                            params.put("source", (dept.getDeptName()+"-"+username));
+                            params.put("source", (dept.getDeptName() + "-" + username));
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
                          /*   Map<String, Object> mapF = new HashMap<>();
