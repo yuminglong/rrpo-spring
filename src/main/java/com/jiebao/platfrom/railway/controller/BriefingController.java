@@ -12,6 +12,7 @@ import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.railway.dao.BriefingCountMapper;
 import com.jiebao.platfrom.railway.dao.BriefingMapper;
 import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.domain.Briefing;
@@ -82,16 +83,16 @@ public class BriefingController extends BaseController {
     private BriefingUserService briefingUserService;
 
 
-    @Autowired
+    @Resource
     private BriefingMapper briefingMapper;
 
     @Autowired
     private UserService userService;
 
-    @Autowired
+    @Resource
     private BriefingUserMapper briefingUserMapper;
 
-    @Autowired
+    @Resource
     private FileMapper fileMapper;
 
     @Autowired
@@ -99,6 +100,9 @@ public class BriefingController extends BaseController {
 
     @Autowired
     private BriefingCountService briefingCountService;
+
+    @Resource
+    private BriefingCountMapper briefingCountMapper;
 
 
 
@@ -172,29 +176,17 @@ public class BriefingController extends BaseController {
                         //附件参数需要用到的请求参数实体构造器
                         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-                          /*
-                            //获取文件url
-                            String fileUrl ="D:\\tempDoc.docx";
-                            String fileu = "D:\\newDoc.docx";
-                            File is = new File(fileUrl);
-                            File fil =new File(fileu);
-                           *//* Map<String, File> files = new HashMap<>();
-                             files.put("file",is);
-                            files.put("file",fil);*//*
-                            ArrayList<File> filess =new ArrayList<>();
-                            filess.add(is);
-                            filess.add(fil);*/
-
                         //获取附件
                         ArrayList<File> filess =new ArrayList<>();
                         Map<String, Object> map = new HashMap<>();
                         map.put("ref_type",8);
                         map.put("file_type",2);
+                        map.put("ref_id",briefing.getId());
                         List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                         if (files.size()>0){
                             for (com.jiebao.platfrom.system.domain.File f: files
                             ) {
-                                String url = f.getFileUrl() + f.getOldName();
+                                String url = f.getFileUrl() + f.getNewName();
                                 File is = new File(url);
                                 filess.add(is);
                             }
@@ -207,10 +199,11 @@ public class BriefingController extends BaseController {
                         System.out.println(briefing.getTargetsId()+"----------------");
                         Map<String, String> params = new HashMap<>();
                         params.put("id", briefing.getTargetsId());
-                        params.put("source", briefing.getSource());
+                        Dept dept = deptService.getDept();
+                        params.put("source", dept.getDeptName()+"-"+username);
                         params.put("title", briefing.getTitle());
                         //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                        Map<String, Object> mapF = new HashMap<>();
+                     /*   Map<String, Object> mapF = new HashMap<>();
                         map.put("ref_type",8);
                         map.put("file_type",1);
                         List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
@@ -219,7 +212,7 @@ public class BriefingController extends BaseController {
                             Elements jpg = doc.select("img[src]");
                             for (com.jiebao.platfrom.system.domain.File f: files
                             ) {
-                                String url = f.getFileUrl() + f.getOldName();
+                                String url = f.getFileUrl() + f.getNewName();
                                 //转换为base64
                                 BASE64Encoder encoder = new BASE64Encoder();
                                 InputStream   in = new FileInputStream(url);
@@ -229,7 +222,8 @@ public class BriefingController extends BaseController {
 
                         }else {
                             params.put("html", briefing.getContent());
-                        }
+                        }*/
+                        params.put("html", briefing.getContent());
                         if (briefing.getTime()!=null){
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(briefing.getTime());
                             params.put("time", relTime);
@@ -310,11 +304,12 @@ public class BriefingController extends BaseController {
                             Map<String, Object> map = new HashMap<>();
                             map.put("ref_type",8);
                             map.put("file_type",2);
+                            map.put("ref_id",briefingId);
                             List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                             if (files.size()>0){
                                 for (com.jiebao.platfrom.system.domain.File f: files
                                 ) {
-                                    String url = f.getFileUrl() + f.getOldName();
+                                    String url = f.getFileUrl() + f.getNewName();
                                     File is = new File(url);
                                     filess.add(is);
                                 }
@@ -327,19 +322,22 @@ public class BriefingController extends BaseController {
                             System.out.println(byId.getTargetsId()+"----------------");
                             Map<String, String> params = new HashMap<>();
                             params.put("id", byId.getTargetsId());
-                            params.put("source", byId.getSource());
+                            Dept dept = deptService.getDept();
+                            String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+                            params.put("source", (dept.getDeptName()+"-"+username));
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                            Map<String, Object> mapF = new HashMap<>();
+                           /* Map<String, Object> mapF = new HashMap<>();
                             map.put("ref_type",8);
                             map.put("file_type",1);
+                            map.put("ref_id",briefingId);
                             List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
                             if (filesF.size()>0){
                                 Element doc = Jsoup.parseBodyFragment(byId.getContent()).body();
                                 Elements jpg = doc.select("img[src]");
                                 for (com.jiebao.platfrom.system.domain.File f: files
                                 ) {
-                                    String url = f.getFileUrl() + f.getOldName();
+                                    String url = f.getFileUrl() + f.getNewName();
                                     //转换为base64
                                     BASE64Encoder encoder = new BASE64Encoder();
                                     InputStream   in = new FileInputStream(url);
@@ -349,7 +347,8 @@ public class BriefingController extends BaseController {
 
                             }else {
                                 params.put("html", byId.getContent());
-                            }
+                            }*/
+                            params.put("html", byId.getContent());
                             if (byId.getTime()!=null){
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
                                 params.put("time", relTime);
@@ -358,7 +357,6 @@ public class BriefingController extends BaseController {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                                 params.put("time", relTime);
                             }
-                            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                             params.put("user", username);
 
                             ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
@@ -582,5 +580,32 @@ public class BriefingController extends BaseController {
         }
         return new JiebaoResponse().data(byNameAndId).message("查看成功").put("status", "200");
     }
+
+
+    @GetMapping("/countCity")
+    @ApiOperation(value = "统计每个市州被填报的数量", notes = "统计每个市州被填报的数量", httpMethod = "GET")
+    @Transactional(rollbackFor = Exception.class)
+    public List<Map<String, Object>> countCity(String startTime ,String endTime) {
+        return briefingCountMapper.countCity(startTime,endTime);
+    }
+
+
+
+    @GetMapping("/countList")
+    @ApiOperation(value = "分页查询统计", notes = "查询分页数据统计", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse countList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
+        IPage<Briefing> briefingList = briefingService.countList(request, briefing, startTime, endTime);
+        return new JiebaoResponse().data(this.getDataTable(briefingList));
+    }
+
+
+    @GetMapping("/countCityById")
+    @ApiOperation(value = "根据ID查询十四个市州条数", notes = "根据ID查询十四个市州条数", response = JiebaoResponse.class, httpMethod = "GET")
+    public List<Map<String, Object>> countCityById( String briefingId) {
+        List<Map<String, Object>> maps = briefingMapper.countCityById(briefingId);
+        return maps;
+    }
+
+
 
 }

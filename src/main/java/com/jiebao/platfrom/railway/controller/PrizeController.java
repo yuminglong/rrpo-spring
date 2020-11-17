@@ -87,8 +87,8 @@ import java.util.*;
 public class PrizeController extends BaseController {
 
 
-    //private final String HOST = "http://192.168.10.104:9527";
-    private final String HOST = "http://114.115.147.159:9527";
+    //private final String HOST = "http://192.168.10.104:19527";
+    private final String HOST = "http://114.115.147.159:19527";
 
 
     private String message;
@@ -134,6 +134,7 @@ public class PrizeController extends BaseController {
 
     @Autowired
     private PrizeRejectOpinionMapper prizeRejectOpinionMapper;
+
 
     /**
      * 创建一条一事一奖
@@ -232,7 +233,7 @@ public class PrizeController extends BaseController {
      */
     @GetMapping("/{prizeIds}")
     @ApiOperation(value = "批量发布一事一奖", notes = "批量发布一事一奖", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse creatPrize(@PathVariable String[] prizeIds, String source) throws JiebaoException {
+    public JiebaoResponse creatPrize(@PathVariable String[] prizeIds) throws JiebaoException {
         try {
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
@@ -888,7 +889,7 @@ public class PrizeController extends BaseController {
      */
     @ApiOperation("同步到门户网")
     @PostMapping("/menHu")
-    public JiebaoResponse menHu(String prizeId, String source, Date time,String targetsId) {
+    public JiebaoResponse menHu(String prizeId, Date time,String targetsId) {
 
         Prize byId = prizeService.getById(prizeId);
         if (byId.getSynchronizeWeb() == 0) {
@@ -910,11 +911,12 @@ public class PrizeController extends BaseController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("ref_type",8);
                 map.put("file_type",2);
+                map.put("ref_id",prizeId);
                 List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                 if (files.size()>0){
                     for (com.jiebao.platfrom.system.domain.File f: files
                     ) {
-                        String url = f.getFileUrl() + f.getOldName();
+                        String url = f.getFileUrl() + f.getNewName();
                         File is = new File(url);
                         filess.add(is);
                     }
@@ -927,10 +929,12 @@ public class PrizeController extends BaseController {
                 System.out.println(targetsId);
                 Map<String, String> params = new HashMap<>();
                 params.put("id", targetsId);
-                params.put("source",source);
+                Dept dept = deptService.getDept();
+                String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+                params.put("source",(dept.getDeptName()+"-"+username));
                 params.put("title", byId.getTitle());
                 //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                Map<String, Object> mapF = new HashMap<>();
+               /* Map<String, Object> mapF = new HashMap<>();
                 map.put("ref_type",8);
                 map.put("file_type",1);
                 List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
@@ -940,7 +944,7 @@ public class PrizeController extends BaseController {
 
                     for (com.jiebao.platfrom.system.domain.File f: filesF
                     ) {
-                        String url = f.getFileUrl() + f.getOldName();
+                        String url = f.getFileUrl() + f.getNewName();
                         //转换为base64
                         BASE64Encoder encoder = new BASE64Encoder();
                         InputStream   in = new FileInputStream(url);
@@ -953,7 +957,8 @@ public class PrizeController extends BaseController {
 
                 }else {
                     params.put("html", byId.getContent());
-                }
+                }*/
+                params.put("html", byId.getContent());
                 if (time!=null){
                     String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(time);
                     params.put("time", relTime);
@@ -963,7 +968,6 @@ public class PrizeController extends BaseController {
                     String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                     params.put("time", relTime);
                 }
-                String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                 params.put("user", username);
 
                 ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));

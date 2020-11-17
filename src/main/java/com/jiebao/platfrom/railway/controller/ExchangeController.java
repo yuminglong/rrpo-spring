@@ -223,11 +223,12 @@ public class ExchangeController extends BaseController {
                         Map<String, Object> map = new HashMap<>();
                         map.put("ref_type", 8);
                         map.put("file_type", 2);
+                        map.put("ref_id",exchange.getId());
                         List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                         if (files.size() > 0) {
                             for (com.jiebao.platfrom.system.domain.File f : files
                             ) {
-                                String url = f.getFileUrl() + f.getOldName();
+                                String url = f.getFileUrl() + f.getNewName();
                                 File is = new File(url);
                                 filess.add(is);
                             }
@@ -240,19 +241,21 @@ public class ExchangeController extends BaseController {
                         System.out.println(exchange.getTargetsId() + "----------------");
                         Map<String, String> params = new HashMap<>();
                         params.put("id", exchange.getTargetsId());
-                        params.put("source", exchange.getSource());
+                        Dept dept = deptService.getDept();
+                        params.put("source", (dept.getDeptName()+"-"+username));
                         params.put("title", exchange.getTitle());
                         //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                        Map<String, Object> mapF = new HashMap<>();
+                       /* Map<String, Object> mapF = new HashMap<>();
                         map.put("ref_type", 8);
                         map.put("file_type", 1);
+                        map.put("ref_id",exchange.getId());
                         List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
                         if (filesF.size() > 0) {
                             Element doc = Jsoup.parseBodyFragment(exchange.getContent()).body();
                             Elements jpg = doc.select("img[src]");
                             for (com.jiebao.platfrom.system.domain.File f : files
                             ) {
-                                String url = f.getFileUrl() + f.getOldName();
+                                String url = f.getFileUrl() + f.getNewName();
                                 //转换为base64
                                 BASE64Encoder encoder = new BASE64Encoder();
                                 InputStream in = new FileInputStream(url);
@@ -262,7 +265,8 @@ public class ExchangeController extends BaseController {
 
                         } else {
                             params.put("html", exchange.getContent());
-                        }
+                        }*/
+                        params.put("html", exchange.getContent());
                         if (exchange.getTime() != null) {
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(exchange.getTime());
                             params.put("time", relTime);
@@ -360,11 +364,12 @@ public class ExchangeController extends BaseController {
                             Map<String, Object> map = new HashMap<>();
                             map.put("ref_type", 8);
                             map.put("file_type", 2);
+                            map.put("ref_id",exchangeId);
                             List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
                             if (files.size() > 0) {
                                 for (com.jiebao.platfrom.system.domain.File f : files
                                 ) {
-                                    String url = f.getFileUrl() + f.getOldName();
+                                    String url = f.getFileUrl() + f.getNewName();
                                     File is = new File(url);
                                     filess.add(is);
                                 }
@@ -377,10 +382,12 @@ public class ExchangeController extends BaseController {
                             System.out.println(byId.getTargetsId() + "----------------");
                             Map<String, String> params = new HashMap<>();
                             params.put("id", byId.getTargetsId());
-                            params.put("source", byId.getSource());
+                            Dept dept = deptService.getDept();
+                            String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+                            params.put("source", (dept.getDeptName()+"-"+username));
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                            Map<String, Object> mapF = new HashMap<>();
+                         /*   Map<String, Object> mapF = new HashMap<>();
                             map.put("ref_type", 8);
                             map.put("file_type", 1);
                             List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
@@ -389,7 +396,7 @@ public class ExchangeController extends BaseController {
                                 Elements jpg = doc.select("img[src]");
                                 for (com.jiebao.platfrom.system.domain.File f : files
                                 ) {
-                                    String url = f.getFileUrl() + f.getOldName();
+                                    String url = f.getFileUrl() + f.getNewName();
                                     //转换为base64
                                     BASE64Encoder encoder = new BASE64Encoder();
                                     InputStream in = new FileInputStream(url);
@@ -399,7 +406,8 @@ public class ExchangeController extends BaseController {
 
                             } else {
                                 params.put("html", byId.getContent());
-                            }
+                            }*/
+                            params.put("html", byId.getContent());
                             if (byId.getTime() != null) {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
                                 params.put("time", relTime);
@@ -407,7 +415,6 @@ public class ExchangeController extends BaseController {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                                 params.put("time", relTime);
                             }
-                            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
                             params.put("user", username);
 
                             ContentType strContent = ContentType.create("text/plain", Charset.forName("UTF-8"));

@@ -64,8 +64,8 @@ public class ExchangeUser  {
     private String sendUserName;
 
 
-
-    @ApiModelProperty(value = "意见")
+    @ExcelField(value = "回复意见")
+    @ApiModelProperty(value = "回复意见")
     private String opinion;
 
     @ApiModelProperty(value = "接收时间")
@@ -73,7 +73,7 @@ public class ExchangeUser  {
     private Date receiveTime;
 
 
-
+    @ExcelField(value = "回复时间", writeConverter = TimeConverter.class)
     @ApiModelProperty(value = "回复时间")
     private Date replyTime;
 

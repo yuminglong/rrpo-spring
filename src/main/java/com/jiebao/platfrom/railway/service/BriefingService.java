@@ -39,4 +39,14 @@ public interface BriefingService extends IService<Briefing> {
      * @return
      */
     IPage<Briefing> getBriefingListForCheck(QueryRequest request, Briefing briefing, String id, String startTime, String endTime);
+
+    /**
+     * 查看
+     * @param request
+     * @param briefing
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    IPage<Briefing> countList(QueryRequest request, Briefing briefing, String startTime, String endTime);
 }

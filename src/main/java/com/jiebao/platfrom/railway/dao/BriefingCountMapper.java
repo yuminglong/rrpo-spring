@@ -9,13 +9,16 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yf
  */
 public interface BriefingCountMapper extends BaseMapper<BriefingCount> {
 
-
-
-
+    /**
+     * 统计每个市州被填报的数量
+     * @return
+     */
+    List<Map<String, Object>> countCity(String startTime ,String endTime);
 }
