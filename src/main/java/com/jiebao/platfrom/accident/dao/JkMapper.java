@@ -38,10 +38,17 @@ public interface JkMapper extends BaseMapper<Jk> {
     @Select("<script>select ${columnName} as name,count(1) as count from accident_jk   " +
             "<where> 1=1 " +
             "<if test=\"deptName != null\"> and gac=#{deptName}</if>" +
-            "and ${columnName} is not null "+
-            "and ${columnName} != '' "+
+            "and ${columnName} is not null " +
+            "and ${columnName} != '' " +
             "</where>" +
             "GROUP BY ${columnName}" +
             "</script>")
     List<CountTable> countTable(String columnName, @Param("deptName") String deptName);
+
+    @Select("select gac as name,count(1) as count from accident_jk where gac=#{deptName} and azsjn=#{year}")
+    CountTable ByDeptNameGa(@Param("deptName")String deptName,@Param("year") String year);
+
+    @Select("select dzs as name,count(1) as count from accident_jk where dzs=#{deptName} and azsjn=#{year}")
+    CountTable ByDeptNameDzs(@Param("deptName") String deptName,@Param("year")String year);
+
 }

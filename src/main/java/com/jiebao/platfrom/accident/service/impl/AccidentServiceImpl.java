@@ -11,6 +11,7 @@ import com.jiebao.platfrom.accident.daomain.compareTable;
 import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     DeptService deptService;
     @Autowired
     DeptSMapper deptSMapper;
+    @Autowired
+    DeptMapper deptMapper;
 
     @Override
     public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String quDeptId, String startDate, String endDate) {
@@ -144,20 +147,29 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
     }
 
     /**
-     *  //返回  本期  上期表
-     * @param startYear  开始年月
-     * @param endYear  结束年月
+     * //返回  本期  上期表
+     *
+     * @param startYear 开始年月
+     * @param endYear   结束年月
      * @return
      */
     @Override
-    public List<compareTable> compareTable(String startYear, String endYear) {
-        List<compareTable> compareTables = this.baseMapper.shiTable(startYear, endYear);  //获得 市州 本期
-        compareTables.addAll(this.baseMapper.gzTable(startYear, endYear));//公安处本期
+    public List<compareTable> compareTable(String startYear, String endYear) {  // 代码过长======================>建议照着页面重写 速度更快
+        List<compareTable> compareTables = new ArrayList<>();  //获得 市州 本期
+        List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
+        for (Dept dept : deptNameByAsc) {
+            compareTables.add(this.baseMapper.shiTable(startYear, endYear, dept.getDeptId()).setName(dept.getDeptName()));
+        }
+        List<Dept> deptNameByAscGz = deptMapper.getDeptNameByAscGz();
+        for (Dept dept : deptNameByAscGz) {
+            compareTables.add(this.baseMapper.gzTable(startYear, endYear, dept.getDeptId()).setName(dept.getDeptName()));
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-00");
         Map<String, compareTable> map = new HashMap<>();
         for (compareTable compareTable : compareTables) {
             map.put(compareTable.getDeptName(), compareTable);
         }
+
         try {
             Date parse = simpleDateFormat.parse(startYear);//本期开始
             Date parse1 = simpleDateFormat.parse(endYear);//本期结束
@@ -167,8 +179,12 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             String upStartDate = simpleDateFormat.format(parse2);
             String upendDate = simpleDateFormat.format(parse3);
             List<compareTable> list = new ArrayList<>();
-            list.addAll(this.baseMapper.shiTableUP(upStartDate, upendDate)); //市州上期
-            list.addAll(this.baseMapper.gzTableUP(upStartDate, upendDate));//公安处上期
+            for (Dept dept : deptNameByAsc) {
+                list.add(this.baseMapper.shiTableUP(upStartDate, upendDate, dept.getDeptId()).setName(dept.getDeptName()));
+            }
+            for (Dept dept : deptNameByAscGz) {
+                list.add(this.baseMapper.gzTableUP(upStartDate, upendDate, dept.getDeptId()).setName(dept.getDeptName()));
+            }
             compareTable compareTableCount = new compareTable("全省合计", 0,
                     0, 0.00,
                     0.00, 0.00,
@@ -179,34 +195,66 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             DecimalFormat decimalFormat = new DecimalFormat("0.0000");
             for (compareTable compareTable : list) {
                 compareTable compareTable1 = map.get(compareTable.getDeptName());//已经保存的数值
-                if (compareTable1 == null) {
-                    continue;
-                }
                 compareTable1.setUpNumber(compareTable.getUpNumber() == null ? 0 : compareTable.getUpNumber());
                 compareTable1.setUpDnxs(compareTable.getUpDnxs() == null ? 0 : compareTable.getUpDnxs());
                 compareTable1.setUpDnTjxs(compareTable.getUpDnTjxs() == null ? 0 : compareTable.getUpDnTjxs());
                 compareTable1.setUpDeathToll(compareTable.getUpDeathToll() == null ? 0 : compareTable.getUpDeathToll());
                 double i = (double) (compareTable1.getUpNumber() - compareTable1.getNumber()) / compareTable1.getUpNumber();
-                compareTable1.setBj1(Math.abs(i));
-                compareTable1.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs()))));
-                compareTable1.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs()))));
-                compareTable1.setBj4(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll()))));
+                try {
+                    compareTable1.setBj1(Math.abs(i));
+                } catch (NumberFormatException e) {
+                    compareTable1.setBj1(0.00);
+                }
+                try {
+                    compareTable1.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs()))));
+                } catch (NumberFormatException e) {
+                    compareTable1.setBj2(0.00);
+                }
+                try {
+                    compareTable1.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs()))));
+                } catch (NumberFormatException e) {
+                    compareTable1.setBj3(0.00);
+                }
+                try {
+                    compareTable1.setBj4(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll()))));
+                } catch (NumberFormatException e) {
+                    compareTable1.setBj4(0.00);
+                }
+
                 if (compareTable1.getDeptName().contains("公安处")) {  //公安处级别
+
                     compareTableCount.setNumber(compareTableCount.getNumber() + compareTable1.getNumber());
                     compareTableCount.setUpNumber(compareTableCount.getUpNumber() + compareTable1.getUpNumber());
-                    compareTableCount.setBj1(Double.parseDouble(decimalFormat.format(Math.abs((double) (compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber()))));
 
                     compareTableCount.setDnxs(compareTableCount.getDnxs() + compareTable1.getDnxs());
                     compareTableCount.setUpDnxs(compareTableCount.getUpDnxs() + compareTable1.getUpDnxs());
-                    compareTableCount.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs()))));
+
 
                     compareTableCount.setDntjxs(compareTableCount.getDntjxs() + compareTable1.getDntjxs());
                     compareTableCount.setUpDnTjxs(compareTableCount.getUpDnTjxs() + compareTable1.getDntjxs());
-                    compareTableCount.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnxs()))));
 
                     compareTableCount.setDeathToll(compareTableCount.getDeathToll() + compareTable1.getDeathToll());
                     compareTableCount.setUpDeathToll(compareTableCount.getUpDeathToll() + compareTable1.getUpDeathToll());
-                    compareTableCount.setBj4(Double.parseDouble(decimalFormat.format(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll())))));
+                    try {
+                        compareTableCount.setBj1(Double.parseDouble(decimalFormat.format(Math.abs((double) (compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber()))));
+                    } catch (NumberFormatException e) {
+                        compareTableCount.setBj1(0.00);
+                    }
+                    try {
+                        compareTableCount.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs()))));
+                    } catch (NumberFormatException e) {
+                        compareTableCount.setBj2(0.00);
+                    }
+                    try {
+                        compareTableCount.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnxs()))));
+                    } catch (NumberFormatException e) {
+                        compareTableCount.setBj3(0.00);
+                    }
+                    try {
+                        compareTableCount.setBj4(Double.parseDouble(decimalFormat.format(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll())))));
+                    } catch (NumberFormatException e) {
+                        compareTableCount.setBj4(0.00);
+                    }
                 }
             }
             compareTables.add(compareTableCount);

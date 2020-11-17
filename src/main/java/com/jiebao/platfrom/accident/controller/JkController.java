@@ -75,12 +75,12 @@ public class JkController {
 
     @GetMapping("countTable")
     @ApiOperation("查看统计图")
-    public JiebaoResponse countTable(String deptName) {
-        try {
-            return new JiebaoResponse().okMessage("删除").data(jkService.countTable(deptName));
-        } catch (Exception e) {
-            return new JiebaoResponse().failMessage("操作失败");
-        }
+    public JiebaoResponse countTable(String year) {
+    //    try {
+            return new JiebaoResponse().okMessage("删除").data(jkService.countTable(year));
+//        } catch (Exception e) {
+//            return new JiebaoResponse().failMessage("操作失败");
+//        }
     }
 
 

@@ -8,4 +8,6 @@ public class CountTable {
     private String name;
 
     private Integer count;
+
+
 }
