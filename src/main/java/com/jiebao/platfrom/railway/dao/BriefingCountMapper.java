@@ -21,4 +21,6 @@ public interface BriefingCountMapper extends BaseMapper<BriefingCount> {
      * @return
      */
     List<Map<String, Object>> countCity(String startTime ,String endTime);
+
+    List<Map<String, Object>> countCityByI(String startTime ,String endTime,String userName);
 }

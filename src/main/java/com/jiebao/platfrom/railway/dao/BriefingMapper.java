@@ -24,4 +24,6 @@ public interface BriefingMapper extends BaseMapper<Briefing> {
     boolean releaseSave(String briefingId);
 
     List<Map<String,Object>> countCityById(String briefingId);
+
+
 }

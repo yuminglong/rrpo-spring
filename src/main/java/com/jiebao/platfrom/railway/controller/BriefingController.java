@@ -586,7 +586,15 @@ public class BriefingController extends BaseController {
     @ApiOperation(value = "统计每个市州被填报的数量", notes = "统计每个市州被填报的数量", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
     public List<Map<String, Object>> countCity(String startTime ,String endTime) {
-        return briefingCountMapper.countCity(startTime,endTime);
+        Dept dept = deptService.getDept();
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        if (dept.getRank() == 0){
+            return briefingCountMapper.countCity(startTime,endTime);
+        }
+        else {
+            return  briefingCountMapper.countCityByI(startTime,endTime,username);
+        }
+
     }
 
 
