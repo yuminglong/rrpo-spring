@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Dict;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -67,7 +66,7 @@ public class Case implements Serializable {
     /**
      * 派出所
      */
-    @ApiModelProperty(value = "创建时间", example = "哈哈")
+    @ApiModelProperty(value = "派出所", example = "哈哈")
     private String policeId;
     @TableField(exist = false)
     private Dept deptPolice;

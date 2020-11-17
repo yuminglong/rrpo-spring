@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.ANumber;
 import com.jiebao.platfrom.accident.daomain.Accident;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jiebao.platfrom.accident.daomain.compareTable;
+import com.jiebao.platfrom.accident.daomain.CompareTable;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -29,11 +29,11 @@ public interface AccidentMapper extends BaseMapper<Accident> {
             @Result(property = "dictCwd", column = "train_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "dictGwd", column = "track_id", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
             @Result(property = "sexDict", column = "sex", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictNature", column = "nature", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictInstationSection", column = "instation_section", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictRoad", column = "road", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictAge", column = "age", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
-            @Result(property = "dictClosed", column = "closed", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+//            @Result(property = "dictNature", column = "nature", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+//            @Result(property = "dictInstationSection", column = "instation_section", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+//            @Result(property = "dictRoad", column = "road", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+//            @Result(property = "dictAge", column = "age", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
+//            @Result(property = "dictClosed", column = "closed", one = @One(select = "com.jiebao.platfrom.system.dao.DictMapper.selectById")),
     })
     IPage<Accident> ListPage(Page<Accident> page, @Param("ew") QueryWrapper<Accident> queryWrapper);
 
@@ -51,18 +51,18 @@ public interface AccidentMapper extends BaseMapper<Accident> {
      * @return 所有ss
      */
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  and a.city_cs_id =#{deptName}")
-    compareTable shiTable(String startDate, String endDate,String deptName);
+            "from accident_accident a   where a.month >= #{startDate} and a.month <=#{endDate}  and a.city_cs_id =#{deptName}")
+    CompareTable shiTable(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a   where a.date >= #{startDate} and a.date <=#{endDate}  and  a.city_cs_id=#{deptName}")
-    compareTable shiTableUP(String startDate, String endDate,String deptName);
+            "from accident_accident a   where a.month >= #{startDate} and a.month <=#{endDate}  and  a.city_cs_id=#{deptName}")
+    CompareTable shiTableUP(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} and  a.police_father=#{deptName}")
-    compareTable gzTable(String startDate, String endDate,String deptName);
+            "from accident_accident a  where a.month >= #{startDate} and a.month <=#{endDate} and  a.police_father=#{deptName}")
+    CompareTable gzTable(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a  where a.date >= #{startDate} and a.date <=#{endDate} and  a.police_father=#{deptName}")
-    compareTable gzTableUP(String startDate, String endDate,String deptName);
+            "from accident_accident a  where a.month >= #{startDate} and a.month <=#{endDate} and  a.police_father=#{deptName}")
+    CompareTable gzTableUP(String startDate, String endDate, String deptName);
 }

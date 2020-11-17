@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.accident.dao.AccidentMapper;
 import com.jiebao.platfrom.accident.dao.DeptSMapper;
 import com.jiebao.platfrom.accident.daomain.Accident;
-import com.jiebao.platfrom.accident.daomain.compareTable;
+import com.jiebao.platfrom.accident.daomain.CompareTable;
 import com.jiebao.platfrom.accident.service.IAccidentService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -55,10 +55,10 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                 queryWrapper.eq("city_cs_id", dept.getDeptId());
         }
         if (startDate != null) {
-            queryWrapper.ge("date", startDate);    //不能小于此时间
+            queryWrapper.ge("month", startDate);    //不能小于此时间
         }
         if (endDate != null) {
-            queryWrapper.le("date", endDate);//不能大于此时间
+            queryWrapper.le("month", endDate);//不能大于此时间
         }
         queryWrapper.orderByDesc("date");
         Page<Accident> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
@@ -78,25 +78,19 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             queryWrapper.in("city_cs_id", deptSMapper.selectDeptIds(policeId));
         }
         if (startDate != null) {
-            queryWrapper.ge("date", startDate);    //不能小于此时间
+            queryWrapper.ge("month", startDate);    //不能小于此时间
         }
         if (endDate != null) {
-            queryWrapper.le("date", endDate);//不能大于此时间
+            queryWrapper.le("month", endDate);//不能大于此时间
         }
-        String[] stringDict = new String[]{"nature", "instation_section", "road", "age", "closed"};  //存储字典类
+        String[] stringDict = new String[]{"nature", "instation_section", "road", "age", "closed","jzd", "distance", "identity", "conditions"};  //存储字典类
         for (String column : stringDict
-        ) {
-            QueryWrapper<Accident> clone = queryWrapper.clone();
-            clone.groupBy(column);
-            jiebaoResponse.put(column, this.baseMapper.listDict(clone, column));
-        }
-        String[] stringCg = new String[]{"jzd", "distance", "identity", "conditions"};  //常规
-        for (String column : stringCg
         ) {
             QueryWrapper<Accident> clone = queryWrapper.clone();
             clone.groupBy(column);
             jiebaoResponse.put(column, this.baseMapper.listCg(clone, column));
         }
+
         return jiebaoResponse.okMessage("查询成功");
     }
 
@@ -132,8 +126,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                         jzd == null || distance == null || identity == null ||
                         conditions == null)
                     return "";
-                sql = "select dnfxxs from zd_dnfxxs where 1=1";
-                sql += " and instr(zd3,'" + road + "')>0 ";
+                sql = "select dnfxxs from zd_dnfxxs where ";
+                sql += "  instr(zd3,'" + road + "')>0 ";
                 sql += " and instr(zd4,'" + age + "')>0 ";
                 sql += " and instr(zd5,'" + closed + "')>0 ";
                 sql += " and instr(zd6,'" + jzd + "')>0 ";
@@ -154,8 +148,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
      * @return
      */
     @Override
-    public List<compareTable> compareTable(String startYear, String endYear) {  // 代码过长======================>建议照着页面重写 速度更快
-        List<compareTable> compareTables = new ArrayList<>();  //获得 市州 本期
+    public List<CompareTable> compareTable(String startYear, String endYear) {  // 代码过长======================>建议照着页面重写 速度更快
+        List<CompareTable> compareTables = new ArrayList<>();  //获得 市州 本期
         List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
         for (Dept dept : deptNameByAsc) {
             compareTables.add(this.baseMapper.shiTable(startYear, endYear, dept.getDeptId()).setName(dept.getDeptName()));
@@ -164,9 +158,9 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         for (Dept dept : deptNameByAscGz) {
             compareTables.add(this.baseMapper.gzTable(startYear, endYear, dept.getDeptId()).setName(dept.getDeptName()));
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-00");
-        Map<String, compareTable> map = new HashMap<>();
-        for (compareTable compareTable : compareTables) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        Map<String, CompareTable> map = new HashMap<>();
+        for (CompareTable compareTable : compareTables) {
             map.put(compareTable.getDeptName(), compareTable);
         }
 
@@ -178,14 +172,14 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             Date parse3 = new Date(parse1.getTime() - l);//上期  结束
             String upStartDate = simpleDateFormat.format(parse2);
             String upendDate = simpleDateFormat.format(parse3);
-            List<compareTable> list = new ArrayList<>();
+            List<CompareTable> list = new ArrayList<>();
             for (Dept dept : deptNameByAsc) {
                 list.add(this.baseMapper.shiTableUP(upStartDate, upendDate, dept.getDeptId()).setName(dept.getDeptName()));
             }
             for (Dept dept : deptNameByAscGz) {
                 list.add(this.baseMapper.gzTableUP(upStartDate, upendDate, dept.getDeptId()).setName(dept.getDeptName()));
             }
-            compareTable compareTableCount = new compareTable("全省合计", 0,
+            CompareTable compareTableCount = new CompareTable("全省合计", 0,
                     0, 0.00,
                     0.00, 0.00,
                     0.00, 0.00,
@@ -193,8 +187,8 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                     0.00, 0.00,
                     0.00); //计算总的
             DecimalFormat decimalFormat = new DecimalFormat("0.0000");
-            for (compareTable compareTable : list) {
-                compareTable compareTable1 = map.get(compareTable.getDeptName());//已经保存的数值
+            for (CompareTable compareTable : list) {
+                CompareTable compareTable1 = map.get(compareTable.getDeptName());//已经保存的数值
                 compareTable1.setUpNumber(compareTable.getUpNumber() == null ? 0 : compareTable.getUpNumber());
                 compareTable1.setUpDnxs(compareTable.getUpDnxs() == null ? 0 : compareTable.getUpDnxs());
                 compareTable1.setUpDnTjxs(compareTable.getUpDnTjxs() == null ? 0 : compareTable.getUpDnTjxs());
@@ -261,7 +255,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        for (compareTable compareTable : compareTables) {
+        for (CompareTable compareTable : compareTables) {
             System.out.println(compareTable);
         }
 

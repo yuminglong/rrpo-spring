@@ -1,11 +1,9 @@
 package com.jiebao.platfrom.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.domain.Dept;
 import org.apache.ibatis.annotations.Select;
 
-import java.io.Serializable;
 import java.util.List;
 
 public interface DeptMapper extends BaseMapper<Dept> {
@@ -21,6 +19,9 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	Dept getById(String deptId);
 	@Select("SELECT dept_id FROM `sys_dept` d where d.dept_id = #{deptId}")
 	String getIdById(String deptId);
+
+	@Select("SELECT dept_id FROM `sys_dept` d where d.dept_name = #{deptName}")
+	String getIdByName(String deptName);
 
 
 	@Select("SELECT dept_name FROM `sys_dept` d where d.dept_id = #{deptId}")
