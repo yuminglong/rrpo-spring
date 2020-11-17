@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiebao.platfrom.railway.dao.BriefingMapper">
+
+
+    <select id="countCityById" resultType="Map">
+
+    select A.city,ifnull(NUMB,0) AS count
+    from (SELECT DISTINCT c.city ,c.id  FROM sys_city_two c  ) A LEFT JOIN
+    (SELECT d.dept_name as city,d.dept_id as dept ,c.count as NUMB FROM sys_dept d ,rail_briefing b,rail_briefing_count c
+    WHERE c.dept_id = d.dept_id
+    and c.briefing_id = b.id
+    and b.`status` = 3
+    and c.briefing_id =#{briefingId}
+    GROUP BY c.dept_id) B
+	ON B.city = A.city ORDER BY A.id
+    </select>
+
+
+</mapper>

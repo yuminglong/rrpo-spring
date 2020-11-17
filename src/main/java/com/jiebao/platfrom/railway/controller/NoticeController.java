@@ -71,11 +71,12 @@ public class NoticeController extends BaseController {
     @Autowired
     private NoticeService noticeService;
 
-
     @Autowired
     private FileMapper fileMapper;
     @Autowired
     DeptService deptService;
+    @Autowired
+    UserService userService;
 
 
     /**
@@ -228,18 +229,32 @@ public class NoticeController extends BaseController {
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                             //获取附件
                             ArrayList<File> filess =new ArrayList<>();
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("ref_type", 3);
+                            map.put("file_type", 2);
+                            map.put("ref_id",noticeId);
+                            List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
+                            if (files.size() > 0) {
+                                for (com.jiebao.platfrom.system.domain.File f : files
+                                ) {
+                                    String url = f.getFileUrl() + f.getNewName();
+                                    File is = new File(url);
+                                    filess.add(is);
+                                }
+                            }
                             if (!CollectionUtils.isEmpty(filess)) {
                                 for (File file:filess) {
                                     multipartEntityBuilder.addBinaryBody("file",file);
                                 }
                             }
-                            System.out.println(byId.getTargetsId()+"----------------");
                             Map<String, String> params = new HashMap<>();
                             params.put("id", byId.getTargetsId());
-                            params.put("source", byId.getSource());
+                            Dept dept = deptService.getDept();
+                            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+                            params.put("source", (dept.getDeptName()+"-"+username));
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
-                            Map<String, Object> mapF = new HashMap<>();
+                           /* Map<String, Object> mapF = new HashMap<>();
                             mapF.put("ref_type",8);
                             mapF.put("file_type",1);
                             List<com.jiebao.platfrom.system.domain.File> filesF = fileMapper.selectByMap(mapF);
@@ -257,7 +272,8 @@ public class NoticeController extends BaseController {
                                 }
                             }else {
                                 params.put("html", byId.getContent());
-                            }
+                            }*/
+                            params.put("html", byId.getContent());
                             if (byId.getTime()!=null){
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
                                 params.put("time", relTime);
@@ -266,14 +282,13 @@ public class NoticeController extends BaseController {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                                 params.put("time", relTime);
                             }
-                            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+
                             params.put("user", username);
                             ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
                             if (!CollectionUtils.isEmpty(params)) {
                                 params.forEach((key, value) -> {
                                     //此处的字符串参数会被设置到请求体Query String Parameters中
                                     multipartEntityBuilder.addTextBody(key, value,strContent);
-                                    System.out.println(key+"++++++++"+value+"参数+++++++++++");
                                 });
                             }
                             HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -284,7 +299,6 @@ public class NoticeController extends BaseController {
                             resp = client.execute(httpPost);
                             //将返回结果转成String
                             respondBody = EntityUtils.toString(resp.getEntity());
-                            System.out.println("++++++++++++++"+respondBody);
                         } catch (IOException e) {
                             //日志信息及异常处理
 
@@ -316,5 +330,24 @@ public class NoticeController extends BaseController {
         return noticeService.getNoticeLists(notice, request);
     }
 
+
+   /* @DeleteMapping("/inbox/{ids}")
+    @Log("删除通知公告(收件箱)")
+    @ApiOperation(value = "批量删除(收件箱)", notes = "批量删除(收件箱)", response = JiebaoResponse.class, httpMethod = "DELETE")
+    @Transactional(rollbackFor = Exception.class)
+    public JiebaoResponse deleteInbox(@PathVariable String[] ids) throws JiebaoException {
+        try {
+            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byName = userService.findByName(username);
+            Arrays.stream(ids).forEach(id -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("")
+                noticeService.removeByMap(map);
+            });
+        } catch (Exception e) {
+            throw new JiebaoException("删除失败");
+        }
+        return new JiebaoResponse().message("删除成功");
+    }*/
 
 }

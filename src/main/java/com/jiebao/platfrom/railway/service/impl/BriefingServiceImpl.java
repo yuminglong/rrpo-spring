@@ -17,7 +17,9 @@ import com.jiebao.platfrom.railway.domain.BriefingUser;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.jiebao.platfrom.railway.service.BriefingService;
 import com.jiebao.platfrom.railway.service.BriefingService;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +39,12 @@ import java.util.List;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> implements BriefingService {
 
-    @Autowired
+    @Resource
     BriefingUserMapper briefingUserMapper;
     @Autowired
     UserService userService;
+    @Autowired
+    DeptService deptService;
 
     @Override
     public IPage<Briefing> getBriefingList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
@@ -91,6 +96,7 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
 
 
 
+
     @Override
     public IPage<Briefing> getBriefingInboxList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
         QueryWrapper<Briefing> queryWrapper = new QueryWrapper();
@@ -124,5 +130,36 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
         Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+
+
+
+    @Override
+    public IPage<Briefing> countList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
+        QueryWrapper<Briefing> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Briefing::getStatus, 3);
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        Dept dept = deptService.getDept();
+        if (dept.getRank() != 0) {
+            queryWrapper.lambda().eq(Briefing::getCreatUser, username);
+        }
+        if (StringUtils.isNotBlank(briefing.getTitle())) {
+            queryWrapper.lambda().like(Briefing::getTitle, briefing.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Briefing::getReleaseTime, startTime).le(Briefing::getReleaseTime, endTime);
+        }
+        if (briefing.getStatus() !=null) {
+            queryWrapper.lambda().eq(Briefing::getStatus, briefing.getStatus());
+        }
+        if (StringUtils.isNotBlank(briefing.getIsCheck())){
+            queryWrapper.lambda().eq(Briefing::getIsCheck, briefing.getIsCheck());
+        }
+        Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
+        SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectPage(page, queryWrapper);
+
+       
     }
 }

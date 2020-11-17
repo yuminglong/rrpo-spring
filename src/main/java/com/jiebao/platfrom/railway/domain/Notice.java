@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jiebao.platfrom.common.converter.TimeConverter;
+import com.jiebao.platfrom.system.domain.File;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
 import io.swagger.annotations.ApiModelProperty;
@@ -89,5 +90,8 @@ public class Notice {
      * 门户网栏目ID
      */
     private String targetsId;
+
+    @TableField(exist = false)
+    private File files;
 
 }

@@ -180,7 +180,7 @@
 
     <select id="countMoney" resultType="Map">
        select A.city,ifnull(NUMB,0) AS money
-    from (SELECT DISTINCT c.city  FROM sys_city c ) A
+    from (SELECT DISTINCT c.city ,c.id  FROM sys_city c ) A
     LEFT JOIN
     (select SUBSTRING_INDEX(r.place,',',1) AS TT ,SUM(o.money) as NUMB FROM `rail_prize`  r ,rail_prize_opinion o
     WHERE r.id=o.prize_id  and o.rank = 0
@@ -191,7 +191,7 @@
             and #{endTime} >= r.happen_time
         </if>
     group by SUBSTRING_INDEX(r.place,',',1)) B
-    on A.city = B.TT
+    on A.city = B.TT ORDER BY A.id
     </select>
 
 
