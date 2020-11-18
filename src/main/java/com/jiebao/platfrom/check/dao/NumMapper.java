@@ -2,14 +2,11 @@ package com.jiebao.platfrom.check.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.check.domain.Num;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jiebao.platfrom.system.domain.User;
 import org.apache.ibatis.annotations.*;
-
-import java.sql.Wrapper;
 
 /**
  * <p>
@@ -41,5 +38,7 @@ public interface NumMapper extends BaseMapper<Num> {
 
     @Delete("delete from check_num ${ew.customSqlSegment}")
     boolean deleteByYearId(@Param("ew") LambdaQueryWrapper<Num> ew);
+
+
 
 }

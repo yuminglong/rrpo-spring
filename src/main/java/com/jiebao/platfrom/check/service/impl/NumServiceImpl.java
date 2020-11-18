@@ -2,16 +2,16 @@ package com.jiebao.platfrom.check.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiebao.platfrom.check.domain.Num;
-import com.jiebao.platfrom.check.dao.NumMapper;
-import com.jiebao.platfrom.check.service.INumService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.check.dao.NumMapper;
+import com.jiebao.platfrom.check.domain.Num;
+import com.jiebao.platfrom.check.service.INumService;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +39,8 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
     UserMapper userMapper;
     @Autowired
     DeptService deptService;
+    @Autowired
+    DeptMapper deptMapper;
 
     @Override
     public JiebaoResponse pageList(QueryRequest queryRequest, String deptId, String yearId, Integer status) {
@@ -66,7 +66,7 @@ public class NumServiceImpl extends ServiceImpl<NumMapper, Num> implements INumS
 
     @Override
     public JiebaoResponse map(String yearId) {
-        List<Dept> childrenList = deptService.getChildrenList("0");
+        List<Dept> childrenList = deptMapper.getDeptNameByAsc();
         HashMap<String, String[]> map = new HashMap<>();
         String[] dept = new String[childrenList.size()];
         String[] jcGz = new String[childrenList.size()]; //基础工作得分
