@@ -5,9 +5,11 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.service.AsYearService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
@@ -35,12 +37,12 @@ public class AsYearController {
     @GetMapping("fileList")
     @ApiOperation("年度文件池子")
     public JiebaoResponse fileList(QueryRequest queryRequest, String yearId, String deptId) {
-//        try {
-//
-//        } catch (Exception e) {
-//
-//        }
-        return new JiebaoResponse().data(asYearService.fileList(queryRequest, yearId, deptId)).okMessage("操作成功");
+        try {
+            return new JiebaoResponse().data(asYearService.fileList(queryRequest, yearId, deptId)).okMessage("操作成功");
+        } catch (Exception e) {
+            return new JiebaoResponse().failMessage("操作失败");
+        }
+
 
     }
 }
