@@ -302,9 +302,15 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     @Override
     public List<Address> getBookList(String deptRoot) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Address::getDeptRoot, deptRoot);
+        lambdaQueryWrapper.eq(Address::getDeptId, deptRoot);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
 
+    @Override
+    public List<Address> getList( List<String> deptIdList) {
+        LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Address::getDeptId, deptIdList);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
 
 }

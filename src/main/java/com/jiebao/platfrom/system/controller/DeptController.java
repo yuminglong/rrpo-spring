@@ -231,4 +231,14 @@ public class DeptController extends BaseController {
         return new JiebaoResponse().data(depts).okMessage("查询成功");
     }
 
+
+
+
+    @GetMapping("/findChildrenDept")
+    @ApiOperation(value = "查询所有子节点", notes = "查询所有子节点", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findChildrenDept(String deptId) {
+        List<Dept> allId = deptService.getDepts(deptId);
+        return new JiebaoResponse().data(allId).okMessage("查询成功");
+    }
+
 }

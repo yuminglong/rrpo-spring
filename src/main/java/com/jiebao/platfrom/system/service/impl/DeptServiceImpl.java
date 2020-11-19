@@ -400,10 +400,40 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
 
-    private List getDeptIds(String id) {
+    public List getDeptIds(String id) {
         List list = new ArrayList();
         list.add(id); // 加上本身
         list = getAllId(id, list);
+        return list;
+    }
+
+
+
+
+    public List<Dept> getChildren(String id, List<Dept> list) {
+        //根据父ID查底下的子节点
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", id);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        if (null != depts) {
+            //如果底下有子节点-将子节点的ID加入list中
+            for (int i = 0; i < depts.size(); i++) {
+                list.add(depts.get(i));
+                //重新调用自身  -根据子节点的id和list
+                list = getChildren(depts.get(i).getDeptId(), list);
+            }
+        }
+        //返回list
+        return list;
+    }
+
+
+    @Override
+    public List<Dept> getDepts(String deptId) {
+        List<Dept> list = new ArrayList();
+        Dept byId = deptMapper.getById(deptId);
+        list.add(byId); // 加上本身
+        list = getChildren(deptId, list);
         return list;
     }
 

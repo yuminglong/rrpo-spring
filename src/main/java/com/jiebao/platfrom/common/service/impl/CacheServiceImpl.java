@@ -6,6 +6,7 @@ import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.service.CacheService;
 import com.jiebao.platfrom.common.service.RedisService;
+import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.domain.*;
 import com.jiebao.platfrom.system.service.*;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,9 @@ public class CacheServiceImpl implements CacheService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private DeptMapper deptMapper;
 
     @Autowired
     private ObjectMapper mapper;
@@ -161,6 +166,7 @@ public class CacheServiceImpl implements CacheService {
         redisService.set(JiebaoConstant.DEPT_CACHE, mapper.writeValueAsString(map));
     }
 
+
     @Override
     public Map<String, Object> getDept() throws Exception {
         String deptString = this.redisService.get(JiebaoConstant.DEPT_CACHE);
@@ -169,6 +175,31 @@ public class CacheServiceImpl implements CacheService {
         } else {
             JavaType type = mapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
             return this.mapper.readValue(deptString, type);
+        }
+    }
+
+
+    @Override
+    public void saveAllChildrenDept() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id", 0);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        for (Dept dept : depts
+        ) {
+            List<Dept> deptList = deptService.getDepts(dept.getDeptId());
+            redisService.set(JiebaoConstant.DEPT_CACHE + dept.getDeptId(), mapper.writeValueAsString(deptList));
+        }
+    }
+
+
+    @Override
+    public List<Dept> getAllChildrenDept(String deptId) throws Exception {
+        String ChildrenDept = this.redisService.get(JiebaoConstant.DEPT_CACHE + deptId);
+        if (StringUtils.isBlank(ChildrenDept)) {
+            return  null;
+        } else {
+            JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Dept.class);
+            return this.mapper.readValue(ChildrenDept,type);
         }
     }
 }
