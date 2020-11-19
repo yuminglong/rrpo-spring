@@ -83,7 +83,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("month", endDate);//不能大于此时间
         }
-        String[] stringDict = new String[]{"nature", "instation_section", "road", "age", "closed","jzd", "distance", "identity", "conditions"};  //存储字典类
+        String[] stringDict = new String[]{"nature", "instation_section", "road", "age", "closed", "jzd", "distance", "identity", "conditions"};  //存储字典类
         for (String column : stringDict
         ) {
             QueryWrapper<Accident> clone = queryWrapper.clone();
@@ -195,22 +195,22 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                 compareTable1.setUpDeathToll(compareTable.getUpDeathToll() == null ? 0 : compareTable.getUpDeathToll());
                 double i = (double) (compareTable1.getUpNumber() - compareTable1.getNumber()) / compareTable1.getUpNumber();
                 try {
-                    compareTable1.setBj1(Math.abs(i));
+                    compareTable1.setBj1(getDouble(Math.abs(i)));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj1(0.00);
                 }
                 try {
-                    compareTable1.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs()))));
+                    compareTable1.setBj2(getDouble(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs())));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj2(0.00);
                 }
                 try {
-                    compareTable1.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs()))));
+                    compareTable1.setBj3(getDouble(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs())));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj3(0.00);
                 }
                 try {
-                    compareTable1.setBj4(Double.parseDouble(decimalFormat.format(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll()))));
+                    compareTable1.setBj4(getDouble(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll())));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj4(0.00);
                 }
@@ -230,22 +230,26 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                     compareTableCount.setDeathToll(compareTableCount.getDeathToll() + compareTable1.getDeathToll());
                     compareTableCount.setUpDeathToll(compareTableCount.getUpDeathToll() + compareTable1.getUpDeathToll());
                     try {
-                        compareTableCount.setBj1(Double.parseDouble(decimalFormat.format(Math.abs((double) (compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber()))));
+                        if (compareTableCount.getUpNumber() != 0)
+                            compareTableCount.setBj1(getDouble((double) Math.abs((compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber())));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj1(0.00);
                     }
                     try {
-                        compareTableCount.setBj2(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs()))));
+                        if (compareTableCount.getUpDnxs() != 0)
+                            compareTableCount.setBj2(getDouble(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs())));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj2(0.00);
                     }
                     try {
-                        compareTableCount.setBj3(Double.parseDouble(decimalFormat.format(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnxs()))));
+                        if (compareTableCount.getUpDnTjxs() != 0)
+                            compareTableCount.setBj3(getDouble(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnTjxs())));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj3(0.00);
                     }
                     try {
-                        compareTableCount.setBj4(Double.parseDouble(decimalFormat.format(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll())))));
+                        if (compareTableCount.getUpDeathToll() != 0)
+                            compareTableCount.setBj4(getDouble(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll()))));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj4(0.00);
                     }
@@ -260,6 +264,19 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         }
 
         return compareTables;
+    }
+
+    private Double getDouble(Double math) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.0000");
+        try {
+            return Double.valueOf(decimalFormat.parse(decimalFormat.format(math)).toString());
+        } catch (NumberFormatException e) {
+            return 0.00;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0.00;
+        }
+
     }
 
 

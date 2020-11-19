@@ -48,7 +48,7 @@ public class AccidentController {
 
         if (accident.getPoliceId() != null) {
             if (deptServices.getById(accident.getPoliceId()).getRank() == 4) {
-              return   jiebaoResponse.failMessage("请选中对应的派出所");
+                return jiebaoResponse.failMessage("请选中对应的派出所");
             }
             accident.setPoliceFather(deptServices.getById(accident.getPoliceId()).getParentId());
         }

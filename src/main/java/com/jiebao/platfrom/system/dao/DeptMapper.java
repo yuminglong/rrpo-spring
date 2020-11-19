@@ -45,6 +45,7 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	@Select("select * from sys_dept s where s.rank=1 and (dept_name like '%市%' or dept_name like '%州%')  order by s.order_num asc")
 	List<Dept> getDeptNameByAsc();//市州
 
+
 	@Select("select * from sys_dept s where s.rank=4   order by s.order_num asc ")
 	List<Dept> getDeptNameByAscGz();//升序去查 公安处
 }
