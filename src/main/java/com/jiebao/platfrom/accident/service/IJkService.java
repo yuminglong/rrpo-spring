@@ -1,17 +1,15 @@
 package com.jiebao.platfrom.accident.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.accident.daomain.CountTable;
 import com.jiebao.platfrom.accident.daomain.Jk;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.jiebao.platfrom.accident.daomain.Ql;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -31,5 +29,5 @@ public interface IJkService extends IService<Jk> {
 
     boolean delete(String[] idList);
 
-    List<CountTable> countTable(String year);  //统计  安装监控数据
+    List<CountTable> countTable(String year,String xlmc);  //统计  安装监控数据
 }

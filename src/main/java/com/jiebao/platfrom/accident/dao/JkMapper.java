@@ -1,16 +1,14 @@
 package com.jiebao.platfrom.accident.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.accident.daomain.CountTable;
 import com.jiebao.platfrom.accident.daomain.Jk;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jiebao.platfrom.accident.daomain.Ql;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -45,10 +43,14 @@ public interface JkMapper extends BaseMapper<Jk> {
             "</script>")
     List<CountTable> countTable(String columnName, @Param("deptName") String deptName);
 
-    @Select("select gac as name,count(1) as count from accident_jk where gac=#{deptName} and azsjn=#{year}")
-    CountTable ByDeptNameGa(@Param("deptName")String deptName,@Param("year") String year);
+    @Select("<script>select gac as name,count(1) as count from accident_jk where gac=#{deptName} <if test='year!=null'> and azsjn=#{year} </if>  <if test='xlmc!=null'> and xlmc=#{xlmc}</if></script>")
+    CountTable ByDeptNameGa(@Param("deptName")String deptName,@Param("year") String year,String xlmc);
 
-    @Select("select dzs as name,count(1) as count from accident_jk where dzs=#{deptName} and azsjn=#{year}")
-    CountTable ByDeptNameDzs(@Param("deptName") String deptName,@Param("year")String year);
+    @Select("<script>select dzs as name,count(1) as count from accident_jk where dzs=#{deptName}  <if test='year!=null'> and azsjn=#{year} </if>  <if test='xlmc!=null'> and xlmc=#{xlmc}</if></script>")
+    CountTable ByDeptNameDzs(@Param("deptName") String deptName,@Param("year")String year,String xlmc);
+
+
+    @Select("<script>select xsq as name,count(1) as count from accident_jk where xsq=#{deptName}  <if test='year!=null'> and azsjn=#{year} </if>  <if test='xlmc!=null'> and xlmc=#{xlmc}</if></script>")
+    CountTable ByDeptNameXq(@Param("deptName") String deptName,@Param("year")String year,String xlmc);
 
 }

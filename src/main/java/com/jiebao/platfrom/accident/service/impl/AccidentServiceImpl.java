@@ -168,8 +168,24 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
             Date parse = simpleDateFormat.parse(startYear);//本期开始
             Date parse1 = simpleDateFormat.parse(endYear);//本期结束
             long l = parse1.getTime() - parse.getTime();
-            Date parse2 = new Date(parse.getTime() - l); //上期  开始
-            Date parse3 = new Date(parse1.getTime() - l);//上期  结束
+            Calendar start = Calendar.getInstance();
+            Calendar end = Calendar.getInstance();
+            start.setTime(parse);
+            end.setTime(parse1);
+            int i1 = start.get(Calendar.MONTH) - end.get(Calendar.MONTH);
+            int i2 = (start.get(Calendar.YEAR) - end.get(Calendar.YEAR)) * 12;
+            int sum = Math.abs(i1 + i2);
+            Date parse2 = null;
+            Date parse3 = null;
+            if (sum < 12) {   //相差 小于 12个小时 就是同比
+                start.add(Calendar.YEAR, -1);
+                end.add(Calendar.YEAR, -1);
+                parse2 = start.getTime();
+                parse3 = end.getTime();
+            } else {  //达到一年 环比
+                parse2 = new Date(parse.getTime() - l); //上期  开始
+                parse3 = new Date(parse1.getTime() - l);//上期  结束
+            }
             String upStartDate = simpleDateFormat.format(parse2);
             String upendDate = simpleDateFormat.format(parse3);
             List<CompareTable> list = new ArrayList<>();
@@ -200,17 +216,17 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                     compareTable1.setBj1(0.00);
                 }
                 try {
-                    compareTable1.setBj2(getDouble(Math.abs((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs())));
+                    compareTable1.setBj2(getDouble((compareTable1.getUpDnxs() - compareTable1.getDnxs()) / compareTable1.getUpDnxs()));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj2(0.00);
                 }
                 try {
-                    compareTable1.setBj3(getDouble(Math.abs((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs())));
+                    compareTable1.setBj3(getDouble((compareTable1.getUpDnTjxs() - compareTable1.getDntjxs()) / compareTable1.getUpDnTjxs()));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj3(0.00);
                 }
                 try {
-                    compareTable1.setBj4(getDouble(Math.abs((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll())));
+                    compareTable1.setBj4(getDouble((compareTable1.getUpDeathToll() - compareTable1.getDeathToll()) / compareTable1.getUpDeathToll()));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj4(0.00);
                 }
@@ -225,31 +241,31 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
 
 
                     compareTableCount.setDntjxs(compareTableCount.getDntjxs() + compareTable1.getDntjxs());
-                    compareTableCount.setUpDnTjxs(compareTableCount.getUpDnTjxs() + compareTable1.getDntjxs());
+                    compareTableCount.setUpDnTjxs(compareTableCount.getUpDnTjxs() + compareTable1.getUpDnTjxs());
 
-                    compareTableCount.setDeathToll(compareTableCount.getDeathToll() + compareTable1.getDeathToll());
-                    compareTableCount.setUpDeathToll(compareTableCount.getUpDeathToll() + compareTable1.getUpDeathToll());
+                    compareTableCount.setDeathToll(getDouble(compareTableCount.getDeathToll() + compareTable1.getDeathToll()));
+                    compareTableCount.setUpDeathToll(getDouble(compareTableCount.getUpDeathToll() + compareTable1.getUpDeathToll()));
                     try {
                         if (compareTableCount.getUpNumber() != 0)
-                            compareTableCount.setBj1(getDouble((double) Math.abs((compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber())));
+                            compareTableCount.setBj1(getDouble((double) (compareTableCount.getUpNumber() - compareTableCount.getNumber()) / compareTableCount.getUpNumber()));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj1(0.00);
                     }
                     try {
                         if (compareTableCount.getUpDnxs() != 0)
-                            compareTableCount.setBj2(getDouble(Math.abs((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs())));
+                            compareTableCount.setBj2(getDouble((compareTableCount.getUpDnxs() - compareTableCount.getDnxs()) / compareTableCount.getUpDnxs()));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj2(0.00);
                     }
                     try {
                         if (compareTableCount.getUpDnTjxs() != 0)
-                            compareTableCount.setBj3(getDouble(Math.abs((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnTjxs())));
+                            compareTableCount.setBj3(getDouble((compareTableCount.getUpDnTjxs() - compareTableCount.getDntjxs()) / compareTableCount.getUpDnTjxs()));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj3(0.00);
                     }
                     try {
                         if (compareTableCount.getUpDeathToll() != 0)
-                            compareTableCount.setBj4(getDouble(Math.abs(((compareTableCount.getUpDeathToll() + compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll()))));
+                            compareTableCount.setBj4(getDouble(((compareTableCount.getUpDeathToll() - compareTable1.getDeathToll()) / compareTableCount.getUpDeathToll())));
                     } catch (NumberFormatException e) {
                         compareTableCount.setBj4(0.00);
                     }

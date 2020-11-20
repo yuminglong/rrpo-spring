@@ -51,18 +51,18 @@ public interface AccidentMapper extends BaseMapper<Accident> {
      * @return 所有ss
      */
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a   where a.month >= #{startDate} and a.month <=#{endDate}  and a.city_cs_id =#{deptName}")
+            "from accident_accident a   where a.month >= #{startDate} and a.month <#{endDate}  and a.city_cs_id =#{deptName}")
     CompareTable shiTable(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.city_cs_id) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a   where a.month >= #{startDate} and a.month <=#{endDate}  and  a.city_cs_id=#{deptName}")
+            "from accident_accident a   where a.month >= #{startDate} and a.month <#{endDate}  and  a.city_cs_id=#{deptName}")
     CompareTable shiTableUP(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as number,sum(a.dnxs) as dnxs,sum(a.dntjxs) as dntjxs,sum(a.death_toll)  as deathToll " +
-            "from accident_accident a  where a.month >= #{startDate} and a.month <=#{endDate} and  a.police_father=#{deptName}")
+            "from accident_accident a  where a.month >= #{startDate} and a.month <#{endDate} and  a.police_father=#{deptName}")
     CompareTable gzTable(String startDate, String endDate, String deptName);
 
     @Select("select (select dept_name from sys_dept where dept_id=a.police_father) as deptName,count(1) as upNumber,sum(a.dnxs) as upDnxs,sum(a.dntjxs) as upDntjxs,sum(a.death_toll)  as upDeathToll " +
-            "from accident_accident a  where a.month >= #{startDate} and a.month <=#{endDate} and  a.police_father=#{deptName}")
+            "from accident_accident a  where a.month >= #{startDate} and a.month <#{endDate} and  a.police_father=#{deptName}")
     CompareTable gzTableUP(String startDate, String endDate, String deptName);
 }

@@ -4,17 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.accident.dao.DeptSMapper;
+import com.jiebao.platfrom.accident.dao.JkMapper;
 import com.jiebao.platfrom.accident.daomain.CountTable;
 import com.jiebao.platfrom.accident.daomain.Jk;
-import com.jiebao.platfrom.accident.dao.JkMapper;
-import com.jiebao.platfrom.accident.daomain.Ql;
 import com.jiebao.platfrom.accident.service.IJkService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.ExportExcel;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -40,6 +43,11 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
     FileService fileService;
     @Autowired
     DeptMapper deptMapper;
+    @Autowired
+    DeptService deptService;
+
+    @Autowired
+    DeptSMapper deptSMapper;
 
     @Override
     public IPage<Jk> listPage(QueryRequest queryRequest, String gac, String dzs, String xsq, String lineName, String year) {
@@ -105,19 +113,36 @@ public class JkServiceImpl extends ServiceImpl<JkMapper, Jk> implements IJkServi
     }
 
     @Override
-    public List<CountTable> countTable(String year) {
+    public List<CountTable> countTable(String year, String xlmc) {
         List<CountTable> list = new ArrayList<>();
-        List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
-        for (Dept dept: deptNameByAsc) {
-            CountTable countTable = this.baseMapper.ByDeptNameDzs(dept.getDeptName(), year);
-          countTable.setName(dept.getDeptName());
-            list.add(countTable);
-        }
-        List<Dept> deptNameByAscGz = deptMapper.getDeptNameByAscGz();
-        for (Dept dept : deptNameByAscGz) {
-            CountTable countTable = this.baseMapper.ByDeptNameGa(dept.getDeptName(), year);
-            countTable.setName(dept.getDeptName());
-            list.add(countTable);
+        Dept deptUser = deptService.getDept(); //登陆人所属部门
+        if (deptUser.getRank()==0) {//市级  rank 混乱
+            List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
+            for (Dept dept : deptNameByAsc) {
+                CountTable countTable = this.baseMapper.ByDeptNameDzs(dept.getDeptName(), year, xlmc);
+                countTable.setName(dept.getDeptName());
+                list.add(countTable);
+            }
+            List<Dept> deptNameByAscGz = deptMapper.getDeptNameByAscGz();
+            for (Dept dept : deptNameByAscGz) {
+                CountTable countTable = this.baseMapper.ByDeptNameGa(dept.getDeptName(), year, xlmc);
+                countTable.setName(dept.getDeptName());
+                list.add(countTable);
+            }
+        } else if (deptUser.getRank()==1) {
+            List<Dept> childrenList = deptService.getChildrenList(deptUser.getDeptId());
+            for (Dept dept : childrenList) {
+                CountTable countTable = this.baseMapper.ByDeptNameXq(dept.getDeptName(), year, xlmc);
+                countTable.setName(dept.getDeptName());
+                list.add(countTable);
+            }
+        } else if (deptUser.getRank()==4) {
+            Collection<Dept> childrenList = deptService.listByIds( deptSMapper.selectDeptIds(deptSMapper.selectIdByDeptId(deptUser.getDeptId())));
+            for (Dept dept : childrenList) {
+                CountTable countTable = this.baseMapper.ByDeptNameDzs(dept.getDeptName(), year, xlmc);
+                countTable.setName(dept.getDeptName());
+                list.add(countTable);
+            }
         }
         return list;
     }

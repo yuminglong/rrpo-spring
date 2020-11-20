@@ -75,9 +75,9 @@ public class JkController {
 
     @GetMapping("countTable")
     @ApiOperation("查看统计图")
-    public JiebaoResponse countTable(String year) {
+    public JiebaoResponse countTable(String year,String xlmc) {
     //    try {
-            return new JiebaoResponse().okMessage("删除").data(jkService.countTable(year));
+            return new JiebaoResponse().okMessage("删除").data(jkService.countTable(year,xlmc));
 //        } catch (Exception e) {
 //            return new JiebaoResponse().failMessage("操作失败");
 //        }

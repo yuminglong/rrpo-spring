@@ -29,4 +29,7 @@ public interface DeptSMapper extends BaseMapper<Dept> {
 
     @Select("select dept_id from accident_dept where parent_id=#{parentId}")
     List<String> selectDeptIds(String parentId);  //通过父类获得
+
+    @Select(" select id from accident_dept where dept_id=#{deptId} limit 1")
+    String selectIdByDeptId(String deptID);
 }

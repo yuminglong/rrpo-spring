@@ -97,11 +97,12 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
     @Override
     @Transactional(rollbackFor = Exception.class)
     public JiebaoResponse saveOrUpdateChile(People people, String qunId) {
+        packEntity(people);
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
         if (qunId == null) {
             return jiebaoResponse.failMessage("未建立群");
         } else {
-            UserI userI = new UserI(people.getName(), people.getIdCard(), people.getPhone(), people.getProper(), qunId, people.getShi(), people.getQuXian(), people.getXiang());
+            UserI userI = new UserI(people.getName(), people.getIdCard(), people.getPhone(), people.getProper(), qunId, people.getXiang(), people.getQuXian(), people.getShi());
             userI.setDate(new Date());
             userIService.save(userI);
         }
@@ -121,7 +122,6 @@ public class PeopleServiceImpl extends ServiceImpl<PeopleMapper, People> impleme
             } else
                 updateById(people.setStatus(2));//定义为 修改的
         }
-        packEntity(people);
         jiebaoResponse = super.saveOrUpdate(people) ? jiebaoResponse.okMessage("操作成功").data(people) : jiebaoResponse.failMessage("操作失败").data(people);
         return jiebaoResponse;
     }
