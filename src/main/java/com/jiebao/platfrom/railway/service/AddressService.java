@@ -64,4 +64,7 @@ public interface AddressService extends IService<Address> {
      * @return
      */
     List<Address> getBookList(String deptRoot);
+
+
+    List<Address> getList(List<String> deptIdList);
 }

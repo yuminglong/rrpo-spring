@@ -2,6 +2,7 @@ package com.jiebao.platfrom.mini.controller;
 
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
+import com.jiebao.platfrom.common.service.CacheService;
 import com.jiebao.platfrom.mini.entity.BookEntity;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.service.AddressService;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/mini/book")
@@ -27,10 +27,19 @@ public class MiniBookController {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    CacheService cacheService;
+
     @GetMapping(value = "/getBookList")
-    public JiebaoResponse getBookList () {
-        List<Dept> deptList = deptService.getList("0");
+    public JiebaoResponse getBookList (String deptId) throws Exception {
+        List<Dept> deptList = cacheService.getAllChildrenDept(deptId);
         List<BookEntity> list = new ArrayList<>();
+      /*  List<String> deptIdList=new ArrayList<>();
+        for (Dept dept:deptList
+             ) {
+            deptIdList.add(dept.getDeptId());
+        }
+        List<Address> bookList = addressService.getList(deptIdList);*/
         deptList.forEach(dept -> {
             BookEntity bookEntity = new BookEntity();
             bookEntity.setId(dept.getDeptId());

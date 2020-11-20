@@ -1,9 +1,6 @@
 package com.jiebao.platfrom.common.service;
 
-import com.jiebao.platfrom.system.domain.Menu;
-import com.jiebao.platfrom.system.domain.Role;
-import com.jiebao.platfrom.system.domain.User;
-import com.jiebao.platfrom.system.domain.UserConfig;
+import com.jiebao.platfrom.system.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -113,15 +110,31 @@ public interface CacheService {
 
     /**
      * 缓存组织机构信息
+     *
      * @throws Exception
      */
     void saveDept() throws Exception;
 
     /**
      * 读取组织机构缓存信息
+     *
      * @return
      * @throws Exception
      */
     Map<String, Object> getDept() throws Exception;
+
+    /**
+     * 缓存十四个市州等的作为主节点的所有子节点用户信息
+     */
+    void saveAllChildrenDept() throws Exception;
+
+    /**
+     * 读取十四个市州等的作为主节点的所有子节点用户信息
+     *
+     * @param deptId
+     * @return
+     * @throws Exception
+     */
+    List<Dept> getAllChildrenDept(String deptId) throws Exception;
 
 }

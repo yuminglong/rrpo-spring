@@ -61,4 +61,7 @@ public interface DeptService extends IService<Dept> {
 
     List<Dept> queryDeptChileNotshiro(String prentId); //无权限
 
+     List<Dept> getDepts(String deptId);
+
+
 }
