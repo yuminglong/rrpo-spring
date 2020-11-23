@@ -3,6 +3,7 @@ package com.jiebao.platfrom.railway.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
@@ -13,8 +14,11 @@ import com.jiebao.platfrom.railway.domain.PublicFile;
 import com.jiebao.platfrom.railway.service.PublicFileService;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,6 +41,9 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
 
     @Autowired
     PublicFileService publicFileService;
+
+    @Autowired
+    UserService userService;
 
 
     @Autowired
@@ -94,6 +101,8 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
         if (parentId == null) {
             publicFile.setParentId("0");
         }
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        publicFile.setUserName(username);
         this.save(publicFile);
     }
 
@@ -122,7 +131,11 @@ public class PublicFileServiceImpl extends ServiceImpl<PublicFileMapper, PublicF
             }
         }
         List<File> files = publicFileMapper.selectFiles(publicFileId);
-
+        for (File f:files
+        ) {
+            User byId = userService.getById(f.getUserId());
+            f.setUserName(byId.getUsername());
+        }
         List list = new ArrayList<>();
         list.addAll(publicFiles);
         list.addAll(files);

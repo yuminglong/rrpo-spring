@@ -49,5 +49,7 @@ public class ManageFile {
     @TableField(exist = false)
     private boolean hasChildren = false;
 
+    private String userName;
+
 
 }

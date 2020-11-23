@@ -338,8 +338,44 @@ public class UnituserController extends BaseController {
     }
 
 
-    public static void main(String[] args) {
+    @GetMapping("/ImportStreetUser")
+    public JiebaoResponse ImportStreetUser() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("parent_id","3000");
+        List<Dept> depts = deptMapper.selectByMap(map);
 
+        for (Dept dept : depts
+        ) {
+            User user = new User();
+            user.setUsername(dept.getDeptName() + "护路办");
+            //user.setMobile(oldUser.getMobileTelephone());
+            user.setStatus("1");
+            user.setCreateTime(new Date());
+            user.setModifyTime(new Date());
+           // user.setDescription(oldUser.getHeadship());
+            user.setAvatar("default.jpg");
+            user.setType(0);
+            user.setSsex("2");
+            user.setPassword(MD5Util.encrypt(dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
+            user.setDeptId(dept.getDeptId());
+           /* List<Dept> depts = deptService.list();
+            for (Dept dept : depts) {
+                if (oldUser.getUnit().equals(dept.getDeptName())) {
+                    user.setDeptId(dept.getDeptId());
+                }
+            }*/
+            userService.save(user);
+            //派出所单位用户角色ID
+            String roleId = "143c099eae460cc53e5be4a65245116c";
+            // 保存用户角色
+            String[] roles = roleId.split(StringPool.COMMA);
+            setUserRoles(user, roles);
+
+            // 创建用户默认的个性化配置
+            userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+
+        }
+        return new JiebaoResponse().data(depts);
     }
 
 }

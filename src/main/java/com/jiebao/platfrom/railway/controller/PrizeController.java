@@ -548,7 +548,7 @@ public class PrizeController extends BaseController {
             System.out.println("-------------" + inputUrl + "---------------------");
             Date date = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-不带金额" + "(" + df.format(date) + ")" + ".docx";
+            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期" + "(" + df.format(date) + ")" + ".docx";
             //新生产的模板文件
             String newName = UUID.randomUUID().toString();
 
@@ -559,7 +559,7 @@ public class PrizeController extends BaseController {
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
-            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true);
+            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true,"0");
             //附带金额
         } else if (moneyType == 1) {
             for (Prize p :
@@ -593,14 +593,14 @@ public class PrizeController extends BaseController {
             WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
             String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byName = userService.findByName(username);
-            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true);
+            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true ,"1");
         }
 
 
     }
 
 
-    private JiebaoResponse saveFile(String fileType, String refType, String userId, String oldName, String newName, boolean status) {
+    private JiebaoResponse saveFile(String fileType, String refType, String userId, String oldName, String newName, boolean status,String ifHaveMoney) {
         String path = "";   //上传地址
         String accessPath = ""; //文件访问虚拟地址
 
@@ -623,7 +623,7 @@ public class PrizeController extends BaseController {
         file.setStatus(status);
         file.setTime(new Date());
         file.setUserId(userId);
-
+        file.setIfHaveMoney(ifHaveMoney);
         if (file.insert()) {
             return new JiebaoResponse().put("status", true).put("file", file);
         } else {

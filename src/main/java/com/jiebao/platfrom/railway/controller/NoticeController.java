@@ -119,13 +119,26 @@ public class NoticeController extends BaseController {
     @GetMapping("/inbox")
     @ApiOperation(value = "分页查询(收件箱)", notes = "查询分页数据（收件箱）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getNoticeInboxList(QueryRequest request, Notice notice, String startTime, String endTime) {
-        IPage<Notice> noticeList = noticeService.getNoticeInboxList(request, notice, startTime, endTime);
-        List<Notice> records = noticeList.getRecords();
-        for (Notice i : records
-        ) {
-            i.setKey(i.getId());
+        Dept dept = deptService.getDept();
+        if (dept.getRank() == 0){
+            IPage<Notice> noticeList = noticeService.getNoticeInboxList(request, notice, startTime, endTime);
+            List<Notice> records = noticeList.getRecords();
+            for (Notice i : records
+            ) {
+                i.setKey(i.getId());
+            }
+            return new JiebaoResponse().data(this.getDataTable(noticeList));
         }
-        return new JiebaoResponse().data(this.getDataTable(noticeList));
+        else {
+            IPage<Notice> noticeList = noticeService.getNoticeInboxListByParent(request, notice, startTime, endTime);
+            List<Notice> records = noticeList.getRecords();
+            for (Notice i : records
+            ) {
+                i.setKey(i.getId());
+            }
+            return new JiebaoResponse().data(this.getDataTable(noticeList));
+        }
+
     }
 
     @DeleteMapping("/{ids}")
@@ -156,6 +169,9 @@ public class NoticeController extends BaseController {
         notice.setStatus("1");
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         notice.setCreateUser(username);
+        User byName = userService.findByName(username);
+        notice.setUserId(byName.getUserId());
+        notice.setDeptId(byName.getDeptId());
         noticeService.save(notice);
         if (fileIds != null) {
             Arrays.stream(fileIds).forEach(fileId -> {

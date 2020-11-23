@@ -42,5 +42,4 @@ public class PrivateFile {
     @TableField(exist = false)
     private boolean hasChildren = false;
 
-
 }

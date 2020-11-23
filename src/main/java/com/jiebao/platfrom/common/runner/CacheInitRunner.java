@@ -46,7 +46,7 @@ public class CacheInitRunner implements ApplicationRunner {
 //            }
 //            log.info("缓存组织机构 ······");
 //            cacheService.saveDept();
-            cacheService.saveAllChildrenDept();
+           // cacheService.saveAllChildrenDept();
             log.info("缓存加载完成 ······");
         } catch (Exception e) {
             log.error("缓存初始化失败，{}", e.getMessage());

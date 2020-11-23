@@ -12,9 +12,12 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.railway.domain.Prize;
 import com.jiebao.platfrom.system.dao.FileMapper;
+import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,9 @@ import java.util.List;
 @Service("fileService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
+
+    @Autowired
+    private DeptService deptService;
 
     @Override
     public List<File> getAppendixList(String refId) {
@@ -62,16 +68,33 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     public IPage<File> getFileList(QueryRequest request, File file, String startTime, String endTime) {
         QueryWrapper<File> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(File::getRefType, "10");
-        if (StringUtils.isNotBlank(file.getOldName())) {
-            queryWrapper.lambda().like(File::getOldName, file.getOldName());
+        Dept dept = deptService.getDept();
+        if (dept.getDeptId() == "0"){
+            queryWrapper.lambda().eq(File::getRefType, "10");
+            if (StringUtils.isNotBlank(file.getOldName())) {
+                queryWrapper.lambda().like(File::getOldName, file.getOldName());
+            }
+            if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+                queryWrapper.lambda().ge(File::getTime, startTime).le(File::getTime, endTime);
+            }
+            Page<File> page = new Page<>(request.getPageNum(), request.getPageSize());
+            SortUtil.handleWrapperSort(request, queryWrapper, "time", JiebaoConstant.ORDER_DESC, true);
+            return this.baseMapper.selectPage(page, queryWrapper);
         }
-        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
-            queryWrapper.lambda().ge(File::getTime, startTime).le(File::getTime, endTime);
+        else {
+            queryWrapper.lambda().eq(File::getRefType, "10");
+            queryWrapper.lambda().eq(File::getIfHaveMoney,"0");
+            if (StringUtils.isNotBlank(file.getOldName())) {
+                queryWrapper.lambda().like(File::getOldName, file.getOldName());
+            }
+            if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+                queryWrapper.lambda().ge(File::getTime, startTime).le(File::getTime, endTime);
+            }
+            Page<File> page = new Page<>(request.getPageNum(), request.getPageSize());
+            SortUtil.handleWrapperSort(request, queryWrapper, "time", JiebaoConstant.ORDER_DESC, true);
+            return this.baseMapper.selectPage(page, queryWrapper);
         }
-        Page<File> page = new Page<>(request.getPageNum(), request.getPageSize());
-        SortUtil.handleWrapperSort(request, queryWrapper, "time", JiebaoConstant.ORDER_DESC, true);
-        return this.baseMapper.selectPage(page, queryWrapper);
+
     }
 
     @Override

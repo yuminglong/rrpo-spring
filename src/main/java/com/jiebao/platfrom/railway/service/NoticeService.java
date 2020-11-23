@@ -33,6 +33,17 @@ public interface NoticeService extends IService<Notice> {
      */
     IPage<Notice> getNoticeInboxList(QueryRequest request, Notice notice, String startTime, String endTime);
 
+
+    /**
+     * 只看父级发的通知公告
+     * @param request
+     * @param notice
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    IPage<Notice> getNoticeInboxListByParent(QueryRequest request, Notice notice, String startTime, String endTime);
+
     void updateByKey(Notice notice);
 
     List<Notice> getNoticeLists(Notice notice, QueryRequest request);

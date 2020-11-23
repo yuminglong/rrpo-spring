@@ -53,5 +53,9 @@ public class File extends Model<File> implements Serializable {
     @TableField(exist = false)
     private String userName;
 
+    /**
+     * 报表是否附带金额（一事一奖）0、不带金额 1、带金额
+     */
+    private String ifHaveMoney;
 
 }

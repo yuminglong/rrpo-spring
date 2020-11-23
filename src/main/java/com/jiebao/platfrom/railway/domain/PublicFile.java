@@ -50,5 +50,6 @@ public class PublicFile {
     @TableField(exist = false)
     private boolean hasChildren = false;
 
+    private String userName;
 
 }

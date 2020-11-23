@@ -3,6 +3,7 @@ package com.jiebao.platfrom.railway.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
@@ -14,8 +15,11 @@ import com.jiebao.platfrom.railway.domain.ManageFile;
 import com.jiebao.platfrom.railway.service.ManageFileService;
 import com.jiebao.platfrom.system.dao.FileMapper;
 import com.jiebao.platfrom.system.domain.File;
+import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,6 +46,8 @@ public class ManageFileServiceImpl extends ServiceImpl<ManageFileMapper, ManageF
     @Autowired
     ManageFileService manageFileService;
 
+    @Autowired
+    UserService userService;
 
     @Autowired
     private FileMapper fileMapper;
@@ -98,6 +104,8 @@ public class ManageFileServiceImpl extends ServiceImpl<ManageFileMapper, ManageF
         if (parentId == null) {
             manageFile.setParentId("0");
         }
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        manageFile.setUserName(username);
         this.save(manageFile);
     }
 
@@ -114,6 +122,7 @@ public class ManageFileServiceImpl extends ServiceImpl<ManageFileMapper, ManageF
         for (ManageFile p : manageFiles
         ) {
             List<ManageFile> manageFileP = manageFileMapper.selectByParentId(p.getId());
+
             HashMap<String, Object> map = new HashMap<>();
             map.put("ref_id", p.getId());
             List<File> files = fileMapper.selectByMap(map);
@@ -122,6 +131,11 @@ public class ManageFileServiceImpl extends ServiceImpl<ManageFileMapper, ManageF
             }
         }
         List<File> files = manageFileMapper.selectFiles(manageFileId);
+        for (File f:files
+        ) {
+            User byId = userService.getById(f.getUserId());
+            f.setUserName(byId.getUsername());
+        }
         List list = new ArrayList<>();
         list.addAll(manageFiles);
         list.addAll(files);

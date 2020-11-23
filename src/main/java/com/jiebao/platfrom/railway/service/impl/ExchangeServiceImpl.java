@@ -117,6 +117,9 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
         if (StringUtils.isNotBlank(exchange.getTitle())) {
             queryWrapper.lambda().like(Exchange::getTitle, exchange.getTitle());
         }
+        if (StringUtils.isNotBlank(exchange.getCreatUser())){
+            queryWrapper.lambda().like(Exchange::getCreatUser,exchange.getCreatUser());
+        }
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Exchange::getReleaseTime, startTime).le(Exchange::getReleaseTime, endTime);
         }

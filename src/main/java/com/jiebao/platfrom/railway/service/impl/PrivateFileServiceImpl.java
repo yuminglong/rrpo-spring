@@ -130,11 +130,15 @@ public class PrivateFileServiceImpl extends ServiceImpl<PrivateFileMapper, Priva
             map.put("ref_id", p.getId());
             List<File> files = fileMapper.selectByMap(map);
             if (privateFilesP.size() > 0 || files.size() > 0) {
-                ;
                 p.setHasChildren(true);
             }
         }
-        List<File> files = privateFileMapper.selectFiles(privateFileId);
+        List<File> files = privateFileMapper.selectFiles(privateFileId,byName.getUserId());
+        for (File f:files
+             ) {
+            User byId = userService.getById(f.getUserId());
+            f.setUserName(byId.getUsername());
+        }
         List list = new ArrayList<>();
         list.addAll(privateFiles);
         list.addAll(files);

@@ -67,4 +67,5 @@ public interface AddressService extends IService<Address> {
 
 
     List<Address> getList(List<String> deptIdList);
+
 }

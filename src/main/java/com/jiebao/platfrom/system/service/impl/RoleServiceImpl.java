@@ -46,7 +46,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
 
             if (StringUtils.isNotBlank(role.getRoleName())) {
-                queryWrapper.eq(Role::getRoleName, role.getRoleName());
+                queryWrapper.like(Role::getRoleName, role.getRoleName());
             }
             if (StringUtils.isNotBlank(role.getCreateTimeFrom()) && StringUtils.isNotBlank(role.getCreateTimeTo())) {
                 queryWrapper

@@ -12,6 +12,7 @@ import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
 import com.jiebao.platfrom.railway.domain.BriefingUser;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
+import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
@@ -64,6 +65,7 @@ public class UserController extends BaseController {
     private DeptService deptService;
     @Autowired
     private UserRoleMapper userRoleMapper;
+
 
     @GetMapping("check/{username}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {

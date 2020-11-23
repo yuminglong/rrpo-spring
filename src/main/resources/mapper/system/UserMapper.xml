@@ -41,7 +41,7 @@
         LEFT JOIN sys_role r ON r.role_id = ur.role_id
         WHERE 1 = 1
         <if test="user.username != null and user.username != ''">
-            AND u.username = #{user.username}
+            AND u.username like #{user.username}
         </if>
         <if test="user.deptId != null and user.deptId != ''">
             AND d.dept_id = #{user.deptId}

@@ -94,4 +94,8 @@ public class Notice {
     @TableField(exist = false)
     private File files;
 
+    private String userId;
+
+    private String deptId;
+
 }
