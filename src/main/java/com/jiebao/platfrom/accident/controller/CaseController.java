@@ -1,15 +1,13 @@
 package com.jiebao.platfrom.accident.controller;
 
 
-import com.jiebao.platfrom.accident.daomain.Accident;
 import com.jiebao.platfrom.accident.daomain.Case;
 import com.jiebao.platfrom.accident.service.ICaseService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
+import com.jiebao.platfrom.system.service.DeptService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>
@@ -33,12 +30,20 @@ import java.util.List;
 public class CaseController {
     @Autowired
     ICaseService caseService;
+    @Autowired
+    DeptService deptServices;
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改 事故信息")
     @Log("添加修改 事故信息")
     public JiebaoResponse saveOrUpdate(Case ca) {
         JiebaoResponse jiebaoResponse = new JiebaoResponse();
+        if (ca.getPoliceId() != null) {
+            if (deptServices.getById(ca.getPoliceId()).getRank() == 4) {
+                return jiebaoResponse.failMessage("请选中对应的派出所");
+            }
+         //   accident.setPoliceFather(deptServices.getById(accident.getPoliceId()).getParentId());
+        }
         if (ca.getCaseId() != null) {
             Case aCase = caseService.getById(ca.getCaseId());
             if (aCase.getStatu() != null && aCase.getStatu() == 1)
@@ -67,8 +72,8 @@ public class CaseController {
     @GetMapping("listPage")
     @ApiOperation("条件查询分页  事故信息")
     @Log("条件查询分页  事故信息")
-    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId,String quDeptId, String lineId, String nature, String startDate, String endDate) {
-        return caseService.list(queryRequest, policeId, cityLevelId,quDeptId, lineId, nature, startDate, endDate);
+    public JiebaoResponse list(QueryRequest queryRequest, String policeId, String cityLevelId, String quDeptId, String lineId, String nature, String startDate, String endDate) {
+        return caseService.list(queryRequest, policeId, cityLevelId, quDeptId, lineId, nature, startDate, endDate);
     }
 
     @GetMapping("map")
