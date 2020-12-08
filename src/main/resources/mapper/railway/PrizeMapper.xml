@@ -179,7 +179,7 @@
 
 
     <select id="countMoney" resultType="Map">
-       select A.city,ifnull(NUMB,0) AS money
+       select A.city as dept_name,ifnull(NUMB,0) AS money
     from (SELECT DISTINCT c.city ,c.id  FROM sys_city c ) A
     LEFT JOIN
     (select SUBSTRING_INDEX(r.place,',',1) AS TT ,SUM(o.money) as NUMB FROM `rail_prize`  r ,rail_prize_opinion o
@@ -203,9 +203,149 @@
         <if test="endTime !=null">
             and #{endTime} >= a.release_time
         </if>
-        and a.status = 7
+        and a.status = 8
         GROUP BY a.types
     </select>
+
+
+
+
+    <select id="countPrizeForCity" resultType="Map">
+
+
+        select A.dept_name,ifnull(NUMB,0) AS count
+        from (SELECT DISTINCT c.dept_name,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId}   ) A
+        LEFT JOIN
+        (select substring_index(substring_index(r.place,',',-2),',',1) AS TT ,count(1) as NUMB FROM `rail_prize`  r
+        <if test="startTime != null">
+            where  r.happen_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.happen_time
+        </if>
+        group by substring_index(substring_index(r.place,',',-2),',',1)) B
+        on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+    <select id="countPrizeForCityDone" resultType="Map">
+
+
+        select A.dept_name,ifnull(NUMB,0) AS count
+        from (SELECT DISTINCT c.dept_name,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId}   ) A
+        LEFT JOIN
+        (select substring_index(substring_index(r.place,',',-2),',',1) AS TT ,count(1) as NUMB FROM `rail_prize`  r
+        <if test="startTime != null">
+            where  r.happen_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.happen_time
+        </if>
+        and r.status = 8
+        group by substring_index(substring_index(r.place,',',-2),',',1)) B
+        on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+
+    <select id="countPrizeForArea" resultType="Map">
+		  select A.dept_name,ifnull(NUMB,0) AS count
+    from (SELECT DISTINCT c.dept_name,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId} ) A
+    LEFT JOIN
+    (select substring_index(substring_index(r.place,',',-1),',',3) AS TT ,count(1) as NUMB FROM `rail_prize`  r
+
+        <if test="startTime != null">
+            where  r.happen_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.happen_time
+        </if>
+    group by substring_index(substring_index(r.place,',',-1),',',3)) B
+
+    on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+    <select id="countPrizeForAreaDone" resultType="Map">
+        select A.dept_name,ifnull(NUMB,0) AS count
+        from (SELECT DISTINCT c.dept_name,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId} ) A
+        LEFT JOIN
+        (select substring_index(substring_index(r.place,',',-1),',',3) AS TT ,count(1) as NUMB FROM `rail_prize`  r
+
+        <if test="startTime != null">
+            where  r.happen_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.happen_time
+        </if>
+        and r.status = 8
+        group by substring_index(substring_index(r.place,',',-1),',',3)) B
+        on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+
+    <select id="countMoneyForCity" resultType="Map">
+
+        select A.dept_name,ifnull(NUMB,0) AS money
+        from (SELECT DISTINCT c.dept_name ,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId} ) A
+        LEFT JOIN
+        (select substring_index(substring_index(r.place,',',-2),',',1) AS TT ,SUM(o.money) as NUMB FROM `rail_prize`  r ,rail_prize_opinion o
+        WHERE r.id=o.prize_id  and o.rank = 0
+        <if test="startTime != null">
+            and r.release_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.release_time
+        </if>
+        group by substring_index(substring_index(r.place,',',-2),',',1) ) B
+        on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+    <select id="countMoneyForArea" resultType="Map">
+        select A.dept_name,ifnull(NUMB,0) AS money
+        from (SELECT DISTINCT c.dept_name ,c.dept_id  FROM sys_dept c WHERE parent_id = #{deptId} ) A
+        LEFT JOIN
+        (select substring_index(substring_index(r.place,',',-1),',',3) AS TT ,SUM(o.money) as NUMB FROM `rail_prize`  r ,rail_prize_opinion o
+        WHERE r.id=o.prize_id  and o.rank = 0
+        <if test="startTime != null">
+            and r.release_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= r.release_time
+        </if>
+        group by substring_index(substring_index(r.place,',',-1),',',3) ) B
+        on A.dept_name = B.TT ORDER BY A.dept_id
+    </select>
+
+
+
+    <select id="countTypeForCity" resultType="Map">
+        SELECT COUNT(1) as count,a.types as types FROM rail_prize a
+        <if test="startTime != null">
+            WHERE a.release_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= a.release_time
+        </if>
+        and a.status = 8 and a.place_ids = #{deptId}
+        GROUP BY a.types
+    </select>
+
+
+    <select id="countTypeForArea" resultType="Map">
+        SELECT COUNT(1) as count,a.types as types FROM rail_prize a
+        <if test="startTime != null">
+            WHERE a.release_time >= #{startTime}
+        </if>
+        <if test="endTime !=null">
+            and #{endTime} >= a.release_time
+        </if>
+        and a.status = 8 and a.place_idq = #{deptId}
+        GROUP BY a.types
+    </select>
+
 
 
 </mapper>

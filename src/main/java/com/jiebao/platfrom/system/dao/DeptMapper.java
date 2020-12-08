@@ -48,5 +48,8 @@ public interface DeptMapper extends BaseMapper<Dept> {
 
 	@Select("select * from sys_dept s where s.rank=4   order by s.order_num asc ")
 	List<Dept> getDeptNameByAscGz();//升序去查 公安处
+
+	@Select("SELECT * FROM `sys_dept` WHERE parent_id = #{deptId} ORDER BY order_num ")
+	List<Dept> findChildDept(String deptId);
 }
 

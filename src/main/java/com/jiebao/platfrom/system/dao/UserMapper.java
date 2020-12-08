@@ -91,4 +91,8 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Update("UPDATE sys_user set dept_id = #{deptId} WHERE user_id = #{userId}")
      boolean updateByUserId(String userId ,String deptId);
+
+
+    @Select("SELECT * FROM `sys_user` WHERE user_id =#{userId}")
+    User getByUserId(String userId);
 }

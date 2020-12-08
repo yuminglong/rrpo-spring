@@ -69,7 +69,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public IPage<File> getFileList(QueryRequest request, File file, String startTime, String endTime) {
         QueryWrapper<File> queryWrapper = new QueryWrapper<>();
         Dept dept = deptService.getDept();
-        if (dept.getDeptId() == "0"){
+        if ("0".equals(dept.getDeptId())){
             queryWrapper.lambda().eq(File::getRefType, "10");
             if (StringUtils.isNotBlank(file.getOldName())) {
                 queryWrapper.lambda().like(File::getOldName, file.getOldName());

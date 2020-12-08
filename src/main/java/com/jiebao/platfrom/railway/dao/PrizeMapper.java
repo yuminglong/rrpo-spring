@@ -39,17 +39,19 @@ public interface PrizeMapper extends BaseMapper<Prize> {
     boolean reject(String prizeId);
 
 
-    @Update("UPDATE rail_prize SET status = 7 WHERE id =#{prizeId}")
+    @Update("UPDATE rail_prize SET status = 8 WHERE id =#{prizeId}")
     boolean updateStatusForPro(String prizeId);
 
-    @Update("UPDATE rail_prize SET status = 6 WHERE id =#{prizeId}")
+    @Update("UPDATE rail_prize SET status = 7 WHERE id =#{prizeId}")
     boolean updateStatusForIron(String prizeId);
 
-    @Update("UPDATE rail_prize SET status = 5 WHERE id =#{prizeId}")
+    @Update("UPDATE rail_prize SET status = 6 WHERE id =#{prizeId}")
     boolean updateStatusForCity(String prizeId);
 
+    @Update("UPDATE rail_prize SET status = 5 WHERE id =#{prizeId}")
+    boolean updateStatusForQu(String prizeId);
 
-    @Select("SELECT * FROM rail_prize WHERE `status`=7 AND #{startTime} <= release_time  and release_time <= #{endTime}")
+    @Select("SELECT * FROM rail_prize WHERE `status`=8 AND #{startTime} <= release_time  and release_time <= #{endTime}")
     List<Prize> selectByBriefing(String startTime, String endTime);
 
 
@@ -86,5 +88,89 @@ public interface PrizeMapper extends BaseMapper<Prize> {
      * @return
      */
      List<Map<String,Object>> countType(String startTime, String endTime);
+
+    /**
+     * 统计市下发生条数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countPrizeForCity(String startTime, String endTime,String deptId);
+
+    /**
+     * 统计市下发生完结条数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countPrizeForCityDone(String startTime, String endTime,String deptId);
+
+    /**
+     * 统计区下发生条数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countPrizeForArea(String startTime, String endTime,String deptId);
+
+    /**
+     * 统计区下完结条数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countPrizeForAreaDone(String startTime, String endTime,String deptId);
+
+    /**
+     * 统计市下发生金额
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countMoneyForCity(String startTime, String endTime,String deptId);
+
+
+
+    /**
+     * 统计区下发生金额
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countMoneyForArea(String startTime, String endTime,String deptId);
+
+
+
+    /**
+     * 统计市下事件类型
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countTypeForCity(String startTime, String endTime,String deptId);
+
+
+    /**
+     * 统计区下事件类型
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Map<String,Object>> countTypeForArea(String startTime, String endTime,String deptId);
+
+
+
+    /**
+     *
+     * @param prizeId
+     * @param value
+     * @return
+     */
+
+       @Update("UPDATE rail_prize SET city_status = #{value} WHERE id =#{prizeId}")
+       boolean updateCityStatus(String prizeId , String value);
+
+    @Update("UPDATE rail_prize SET gong_status = #{value} WHERE id =#{prizeId}")
+    boolean updateGongStatus(String prizeId , String value);
 }
 

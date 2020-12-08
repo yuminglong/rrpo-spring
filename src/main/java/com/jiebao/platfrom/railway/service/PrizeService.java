@@ -36,7 +36,7 @@ public interface PrizeService extends IService<Prize> {
      * @param endTime
      * @return
      */
-    IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize , String startTime, String endTime);
+    IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize , String startTime, String endTime,String [] statuses);
 
 
     /**

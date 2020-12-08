@@ -53,4 +53,5 @@ public class PrizeOpinion {
 
     @ApiModelProperty(value = "组织机构等级",example = "1")
     private Integer rank;
+
 }

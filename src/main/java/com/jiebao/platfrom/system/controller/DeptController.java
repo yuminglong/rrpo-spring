@@ -69,6 +69,28 @@ public class DeptController extends BaseController {
         return new JiebaoResponse().data(deptService.queryDeptChile(prentId)).message("查询成功");
     }
 
+    @GetMapping("/queryDeptChileByPrize")
+    @ApiOperation("查找本级以及本级一下(一事一奖)")
+    public JiebaoResponse queryDeptChileByPrize(String prentId) {
+        Dept dept = deptService.getDept();
+        Dept parentDept = deptService.getById(dept.getParentId());
+        List<Dept> list = new ArrayList<>();
+        if (dept.getRank() == 4 || parentDept.getRank() == 4) {
+            if (prentId != null) {
+                List<Dept> depts = deptService.queryDeptChileNotshiro(prentId);
+                list = depts;
+            } else {
+                List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
+                list = deptNameByAsc;
+            }
+        } else {
+            List<Dept> depts = deptService.queryDeptChileNotshiro(prentId);
+            list = depts;
+        }
+        return new JiebaoResponse().data(list).message("查询成功");
+    }
+
+
     @GetMapping
     public Map<String, Object> deptList(QueryRequest request, Dept dept) {
         return this.deptService.findDepts(request, dept);
@@ -76,7 +98,7 @@ public class DeptController extends BaseController {
 
     @GetMapping("/findAllCity")
     public Map<String, Object> findAllCity(QueryRequest request, Dept dept) {
-       return this.deptService.findCityDepts(request, dept);
+        return this.deptService.findCityDepts(request, dept);
 
     }
 
@@ -209,12 +231,11 @@ public class DeptController extends BaseController {
     public JiebaoResponse findProvince() {
         List<Dept> depts = deptMapper.selectRankZero();
         Dept dept = deptService.getDept();
-        if (dept.getRank() ==0){
+        if (dept.getRank() == 0) {
             return new JiebaoResponse().data(depts).okMessage("查询成功");
-        }
-        else {
+        } else {
             Map<String, Object> map = new HashMap<>();
-            map.put("dept_id","0");
+            map.put("dept_id", "0");
             List<Dept> list = deptMapper.selectByMap(map);
             return new JiebaoResponse().data(list).okMessage("查询成功");
         }
@@ -232,8 +253,6 @@ public class DeptController extends BaseController {
     }
 
 
-
-
     @GetMapping("/findChildrenDept")
     @ApiOperation(value = "查询所有子节点", notes = "查询所有子节点", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse findChildrenDept(String deptId) {
@@ -241,4 +260,32 @@ public class DeptController extends BaseController {
         return new JiebaoResponse().data(allId).okMessage("查询成功");
     }
 
+
+    @GetMapping("/findRankIfFour")
+    @ApiOperation(value = "查询父级是否为公安处", notes = "查询父级是否为公安处", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse findRankIfFour() {
+        Dept dept = deptService.getDept();
+        Dept byId = deptService.getById(dept.getParentId());
+        if (byId != null) {
+            return new JiebaoResponse().data(byId.getRank()).okMessage("查询成功");
+        } else {
+            return new JiebaoResponse().failMessage("省级无上级机构");
+        }
+    }
+
+
+    @GetMapping("/findRankOne")
+    @ApiOperation(value = "查询所属市级", notes = "查询所属市级", response = JiebaoResponse.class, httpMethod = "GET")
+    public Dept findRankOne(Dept dept) {
+        if (dept.getRank() == 1 ) {
+            return dept;
+        }
+        Dept tdept = depts().stream().filter(
+                x -> Objects.equals(x.getDeptId(), dept.getParentId())
+        ).findFirst().get();
+        return findRankOne(tdept);
+    }
+    private List<Dept> depts() {
+        return deptService.list();
+    }
 }
