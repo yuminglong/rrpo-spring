@@ -1013,7 +1013,7 @@ public class PrizeController extends BaseController {
      */
     @ApiOperation("同步到门户网")
     @PostMapping("/menHu")
-    public JiebaoResponse menHu(String prizeId, Date time, String targetsId) {
+    public JiebaoResponse menHu(String prizeId, Date time, String targetsId,String title) {
 
         Prize byId = prizeService.getById(prizeId);
         if (byId.getSynchronizeWeb() == 0) {
@@ -1056,7 +1056,7 @@ public class PrizeController extends BaseController {
                 Dept dept = deptService.getDept();
                 String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
                 params.put("source", (dept.getDeptName() + "-" + username));
-                params.put("title", byId.getTitle());
+                params.put("title", title);
                 //如果富编辑器里有图片，转换成base64替换img标签所有内容
                /* Map<String, Object> mapF = new HashMap<>();
                 map.put("ref_type",8);
