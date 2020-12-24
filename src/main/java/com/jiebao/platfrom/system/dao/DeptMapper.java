@@ -2,6 +2,7 @@ package com.jiebao.platfrom.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -51,5 +52,17 @@ public interface DeptMapper extends BaseMapper<Dept> {
 
 	@Select("SELECT * FROM `sys_dept` WHERE parent_id = #{deptId} ORDER BY order_num ")
 	List<Dept> findChildDept(String deptId);
+
+	@Select("SELECT dept_id FROM `sys_dept` WHERE dept_name like '${name}%' and rank=1  limit 1 ")
+	String s1(@Param("name") String name);
+
+	@Select("SELECT dept_id FROM `sys_dept` WHERE dept_name like '${name}%' and rank=2  limit 1 ")
+	String s2(@Param("name")String name);
+
+	@Select("SELECT dept_id FROM `sys_dept` WHERE dept_name like '${name}%' and rank=3  limit 1 ")
+	String s3(@Param("name")String name);
+
+	@Select("SELECT dept_id FROM `sys_dept` WHERE dept_name like '${name}%' and rank=2  limit 1 ")
+	String s4(@Param("name")String name);
 }
 
