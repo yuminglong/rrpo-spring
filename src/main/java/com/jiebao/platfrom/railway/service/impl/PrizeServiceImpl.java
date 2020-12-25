@@ -28,10 +28,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -93,10 +90,10 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     }
 
     @Override
-    public IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize, String startTime, String endTime) {
+    public IPage<Prize> getPrizeInboxList(QueryRequest request, Prize prize, String startTime, String endTime,String [] statuses) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7).or().eq(Prize::getStatus, 2));
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Prize::getStatus, 3).or().eq(Prize::getStatus, 4).or().eq(Prize::getStatus, 5).or().eq(Prize::getStatus, 6).or().eq(Prize::getStatus, 7).or().eq(Prize::getStatus, 8).or().eq(Prize::getStatus, 2));
         if (StringUtils.isNotBlank(username)) {
             User byName = userService.findByName(username);
             Dept dept = deptService.getById(byName.getDeptId());
@@ -140,6 +137,24 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(prize.getId())){
             queryWrapper.lambda().eq(Prize::getId,prize.getId());
         }
+        if (prize.getCityStatus() != null){
+            queryWrapper.lambda().eq(Prize::getCityStatus,prize.getCityStatus());
+        }
+        if (prize.getGongStatus() != null){
+            queryWrapper.lambda().eq(Prize::getGongStatus,prize.getGongStatus());
+        }
+
+        if (prize.getType() != null){
+            if (prize.getType() == 0){
+                queryWrapper.lambda().eq(Prize::getType,0);
+            }
+            if (prize.getType() == 1){
+                queryWrapper.lambda().eq(Prize::getType,1);
+            }
+        }
+        if (statuses != null){
+            queryWrapper.lambda().in(Prize::getStatus,statuses);
+        }
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
@@ -148,11 +163,10 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     @Override
     public IPage<Prize> getBriefing(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Prize::getStatus, 7);
+        queryWrapper.lambda().eq(Prize::getStatus, 8);
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
         }
-
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "place", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);

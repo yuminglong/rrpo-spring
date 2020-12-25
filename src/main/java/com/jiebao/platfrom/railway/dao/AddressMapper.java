@@ -35,4 +35,7 @@ public interface AddressMapper extends BaseMapper<Address> {
 
     List<Address> getAddressByCondition(String userName, String phone, String deptId);
 
+    @Select("SELECT * FROM `rail_address` WHERE dept_id = #{deptId} ORDER BY position DESC")
+     List<Address>  findUserOwn(String deptId);
+
 }

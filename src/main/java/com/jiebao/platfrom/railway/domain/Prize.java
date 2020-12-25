@@ -93,7 +93,7 @@ public class Prize {
     /**
      * 状态3，已发送   4已删除
      */
-    @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除",example = "1")
+    @ApiModelProperty(value = "状态：1、未发送 2、撤回 3、已发送  4、已删除 5、区县已通过 6、市级已通过 7、公安处已通过 8、省级已通过" ,example = "1")
     private Integer status;
 
     @ApiModelProperty(value = "限制天数id")
@@ -137,4 +137,15 @@ public class Prize {
 
     @ApiModelProperty(value = "事发地点街道ID")
     private String placeIdj;
+
+    private String userId;
+
+    @ApiModelProperty(value = "由公安处派出所创建或者县市区 0、公安处  1、县市区",example = "1")
+    private Integer type;
+
+    @ApiModelProperty(value = "自己控制",example = "1")
+    private Integer cityStatus;
+
+    @ApiModelProperty(value = "自己控制公安处",example = "1")
+    private Integer gongStatus;
 }
