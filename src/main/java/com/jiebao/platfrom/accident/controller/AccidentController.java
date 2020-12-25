@@ -41,8 +41,8 @@ public class AccidentController {
     IDeptService deptService;
     @Autowired
     DeptService deptServices;
-    @Autowired
-    IZaajqkService zaajqkService;
+//    @Autowired
+//    IZaajqkService zaajqkService;
     @Autowired
     DeptMapper deptMapper;
     @Autowired
@@ -127,102 +127,102 @@ public class AccidentController {
     }
 
 
-    @GetMapping("sort")
-    @ApiOperation("涉铁案导入")
-    public void sort() {
-        List<Zaajqk> list = zaajqkService.list();
-        List<Case> arrayList = new ArrayList<>();
-        for (Zaajqk lwswfx : list) {
-            Case aCase = new Case();
-            try {
-                aCase.setCityCsId(deptMapper.s1(lwswfx.getFsdsz().substring(0,2)));
-                aCase.setCityQxId(deptMapper.s2(lwswfx.getFsxsdq().substring(0,2)));
-                aCase.setCityXc(deptMapper.s3(lwswfx.getFsxsdq().substring(0,2)));
-                aCase.setPoliceId(deptMapper.s4(lwswfx.getFsxsdq().substring(0,2)));
-                aCase.setLineId(dictMapper.s1(lwswfx.getXl().substring(0,2)));
-            }catch (Exception e){
-
-            }
-            aCase.setMonth(lwswfx.getTjyf().replace(".","-"));
-            try {
-                aCase.setDate((lwswfx.getTjyf()+lwswfx.getFssj().substring(2,11)+":00").replace(".","-"));
-            }catch (Exception e){
-
-            }
-            aCase.setAddress(lwswfx.getFsdd());
-            aCase.setStatu(1);
-            String na = null;
-            String ajmc = lwswfx.getAjmc();
-            if (ajmc != null) {
-                if (ajmc.equals("击打列车")) {
-                    na = "0";
-                } else if (ajmc.equals("摆放障碍")) {
-                    na = "1";
-                } else if (ajmc.equals("提车钩")) {
-                    na = "2";
-                } else if (ajmc.equals("关塞门")) {
-                    na = "3";
-                } else if (ajmc.equals("拆盗掀盗")) {
-                    na = "4";
-                } else if (ajmc.equals("耕牛肇事")) {
-                    na = "5";
-                } else if (ajmc.equals("拦车断刀")) {
-                    na = "6";
-                } else if (ajmc.equals("爆炸破坏")) {
-                    na = "7";
-                } else if (ajmc.equals("机动车肇事")) {
-                    na = "8";
-                } else if (ajmc.equals("高铁护网进入")) {
-                    na = "9";
-                } else if (ajmc.equals("高铁非正常停车")) {
-                    na = "10";
-                } else {
-                    na = "11";
-                }
-            }
-            aCase.setNature(na);
-            if(lwswfx.getTcsj()!=null){
-                try {
-                    aCase.setDateLength(Double.valueOf(lwswfx.getTcsj()));
-                }catch (Exception e){
-
-                }
-            }
-
-            String stata = null;
-            String ajzt = lwswfx.getAjzt();
-            if (ajzt != null) {
-                if (ajzt.equals("未破案")) {
-                    stata = "0";
-                }
-                if (ajzt.equals("已破案")) {
-                    stata = "1";
-                }
-            }
-            aCase.setStatus(stata);
-            String fb = null;
-            String fbzt = lwswfx.getFbzt();
-            if (fbzt != null) {
-                if (fbzt.equals("全封闭")) {
-                    fb = "0";
-                }
-                if (fbzt.equals("因社会管理原因造栅栏开口")) {
-                    fb = "1";
-                }
-                if (fbzt.equals("因铁路原因造成栅栏开口")) {
-                    fb = "2";
-                }
-                if (fbzt.equals("未封闭")) {
-                    fb = "3";
-                }
-            }
-            aCase.setFbStatus(fb);
-            aCase.setMs(lwswfx.getAjqk());
-         arrayList.add(aCase);
-        }
-        for (Object s : arrayList) {
-            System.out.println(s);
-        }
-        caseService.saveBatch(arrayList);
-    }
+//    @GetMapping("sort")
+//    @ApiOperation("涉铁案导入")
+//    public void sort() {
+//        List<Zaajqk> list = zaajqkService.list();
+//        List<Case> arrayList = new ArrayList<>();
+//        for (Zaajqk lwswfx : list) {
+//            Case aCase = new Case();
+//            try {
+//                aCase.setCityCsId(deptMapper.s1(lwswfx.getFsdsz().substring(0,2)));
+//                aCase.setCityQxId(deptMapper.s2(lwswfx.getFsxsdq().substring(0,2)));
+//                aCase.setCityXc(deptMapper.s3(lwswfx.getFsxsdq().substring(0,2)));
+//                aCase.setPoliceId(deptMapper.s4(lwswfx.getFsxsdq().substring(0,2)));
+//                aCase.setLineId(dictMapper.s1(lwswfx.getXl().substring(0,2)));
+//            }catch (Exception e){
+//
+//            }
+//            aCase.setMonth(lwswfx.getTjyf().replace(".","-"));
+//            try {
+//                aCase.setDate((lwswfx.getTjyf()+lwswfx.getFssj().substring(2,11)+":00").replace(".","-"));
+//            }catch (Exception e){
+//
+//            }
+//            aCase.setAddress(lwswfx.getFsdd());
+//            aCase.setStatu(1);
+//            String na = null;
+//            String ajmc = lwswfx.getAjmc();
+//            if (ajmc != null) {
+//                if (ajmc.equals("击打列车")) {
+//                    na = "0";
+//                } else if (ajmc.equals("摆放障碍")) {
+//                    na = "1";
+//                } else if (ajmc.equals("提车钩")) {
+//                    na = "2";
+//                } else if (ajmc.equals("关塞门")) {
+//                    na = "3";
+//                } else if (ajmc.equals("拆盗掀盗")) {
+//                    na = "4";
+//                } else if (ajmc.equals("耕牛肇事")) {
+//                    na = "5";
+//                } else if (ajmc.equals("拦车断刀")) {
+//                    na = "6";
+//                } else if (ajmc.equals("爆炸破坏")) {
+//                    na = "7";
+//                } else if (ajmc.equals("机动车肇事")) {
+//                    na = "8";
+//                } else if (ajmc.equals("高铁护网进入")) {
+//                    na = "9";
+//                } else if (ajmc.equals("高铁非正常停车")) {
+//                    na = "10";
+//                } else {
+//                    na = "11";
+//                }
+//            }
+//            aCase.setNature(na);
+//            if(lwswfx.getTcsj()!=null){
+//                try {
+//                    aCase.setDateLength(Double.valueOf(lwswfx.getTcsj()));
+//                }catch (Exception e){
+//
+//                }
+//            }
+//
+//            String stata = null;
+//            String ajzt = lwswfx.getAjzt();
+//            if (ajzt != null) {
+//                if (ajzt.equals("未破案")) {
+//                    stata = "0";
+//                }
+//                if (ajzt.equals("已破案")) {
+//                    stata = "1";
+//                }
+//            }
+//            aCase.setStatus(stata);
+//            String fb = null;
+//            String fbzt = lwswfx.getFbzt();
+//            if (fbzt != null) {
+//                if (fbzt.equals("全封闭")) {
+//                    fb = "0";
+//                }
+//                if (fbzt.equals("因社会管理原因造栅栏开口")) {
+//                    fb = "1";
+//                }
+//                if (fbzt.equals("因铁路原因造成栅栏开口")) {
+//                    fb = "2";
+//                }
+//                if (fbzt.equals("未封闭")) {
+//                    fb = "3";
+//                }
+//            }
+//            aCase.setFbStatus(fb);
+//            aCase.setMs(lwswfx.getAjqk());
+//         arrayList.add(aCase);
+//        }
+//        for (Object s : arrayList) {
+//            System.out.println(s);
+//        }
+//        caseService.saveBatch(arrayList);
+//    }
 }

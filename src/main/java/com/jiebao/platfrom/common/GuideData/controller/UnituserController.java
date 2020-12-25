@@ -1,11 +1,17 @@
 package com.jiebao.platfrom.common.GuideData.controller;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.jiebao.platfrom.common.GuideData.dao.HlbInfoMapper;
+import com.jiebao.platfrom.common.GuideData.dao.InfoCommentMapper;
 import com.jiebao.platfrom.common.GuideData.dao.UnituserMapper;
+import com.jiebao.platfrom.common.GuideData.domain.HlbInfo;
 import com.jiebao.platfrom.common.GuideData.domain.InfoComment;
 import com.jiebao.platfrom.common.GuideData.domain.Unituser;
+import com.jiebao.platfrom.common.GuideData.service.HlbInfoService;
 import com.jiebao.platfrom.common.GuideData.service.InfoCommentService;
 import com.jiebao.platfrom.common.GuideData.service.UnitUserService;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -18,14 +24,17 @@ import com.jiebao.platfrom.railway.dao.ExchangeMapper;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Exchange;
 import com.jiebao.platfrom.railway.domain.ExchangeUser;
+import com.jiebao.platfrom.railway.domain.PrizeLimit;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.railway.service.ExchangeService;
 import com.jiebao.platfrom.railway.service.ExchangeUserService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.dao.UserConfigMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
+import com.jiebao.platfrom.system.domain.UserConfig;
 import com.jiebao.platfrom.system.domain.UserRole;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserConfigService;
@@ -73,6 +82,12 @@ public class UnituserController extends BaseController {
     private InfoCommentService infoCommentService;
 
     @Autowired
+    private HlbInfoMapper hlbInfoMapper;
+
+    @Autowired
+    private HlbInfoService hlbInfoService;
+
+    @Autowired
     private ExchangeUserService exchangeUserService;
 
     @Resource
@@ -93,6 +108,8 @@ public class UnituserController extends BaseController {
     private AddressService addressService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private UserConfigMapper userConfigMapper;
 
     @GetMapping
     public JiebaoResponse getList() {
@@ -191,7 +208,7 @@ public class UnituserController extends BaseController {
                 } else {
                     exchangeUser.setIsRead(0);
                 }
-                if (info.getViewTime() !=null){
+                if (info.getViewTime() != null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date date = sdf.parse(info.getViewTime());
                     exchangeUser.setReceiveTime(date);
@@ -249,17 +266,14 @@ public class UnituserController extends BaseController {
         for (User u : users
         ) {
             Unituser unituser = unituserService.selectName(u.getUsername());
-            if (unituser.getUnit().contains("中央护路办")) {
-                String roleId = "c587617e33ea164323cca19975286867";
-                // 保存用户角色
-                String[] roles = roleId.split(StringPool.COMMA);
-                setUserRoles(u, roles);
-            }
-            if (unituser.getUnit().contains("路口铺")) {
-                String roleId = "a72d53a97f6ad3dcaada94280a9142c8";
-                // 保存用户角色
-                String[] roles = roleId.split(StringPool.COMMA);
-                setUserRoles(u, roles);
+            if (unituser !=null){
+                if (unituser.getUnit().contains("冷水滩")
+                ) {
+                    String roleId = "7c8f277c3adb22397b8c38f15ca03ea8";
+                    // 保存用户角色
+                    String[] roles = roleId.split(StringPool.COMMA);
+                    setUserRoles(u, roles);
+                }
             }
         }
         return new JiebaoResponse().okMessage("ok");
@@ -312,19 +326,18 @@ public class UnituserController extends BaseController {
     }
 
 
-
     @GetMapping("/updateDeptOne")
     @ApiOperation(value = "公安处人员重新更改组织机构和角色", notes = "公安处人员重新更改组织机构和角色", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse updateDeptOne() {
         //查找所有长铁用户
         List<Unituser> list = unituserService.list();
         List<User> users = userService.list();
-        for (Unituser u:list
-             ) {
-            if (u.getUnit().contains("省政府办公厅")){
-                for (User user:users
-                     ) {
-                    if (u.getUnitUser().equals(user.getUsername())){
+        for (Unituser u : list
+        ) {
+            if (u.getUnit().contains("省政府办公厅")) {
+                for (User user : users
+                ) {
+                    if (u.getUnitUser().equals(user.getUsername())) {
                         User user1 = new User();
                         user1.setUserId(user.getUserId());
                         user1.setDeptId("dd6b6b562884d4590c9c2a4b176a5580");
@@ -339,43 +352,118 @@ public class UnituserController extends BaseController {
 
 
     @GetMapping("/ImportStreetUser")
+    @ApiOperation(value = "新增单位用户", notes = "新增单位用户", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse ImportStreetUser() {
         Map<String, Object> map = new HashMap<>();
-        map.put("parent_id","3000");
+        map.put("rank", 3);
         List<Dept> depts = deptMapper.selectByMap(map);
 
         for (Dept dept : depts
         ) {
-            User user = new User();
-            user.setUsername(dept.getDeptName() + "护路办");
-            //user.setMobile(oldUser.getMobileTelephone());
-            user.setStatus("1");
-            user.setCreateTime(new Date());
-            user.setModifyTime(new Date());
-           // user.setDescription(oldUser.getHeadship());
-            user.setAvatar("default.jpg");
-            user.setType(0);
-            user.setSsex("2");
-            user.setPassword(MD5Util.encrypt(dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
-            user.setDeptId(dept.getDeptId());
+            List<Dept> deptByName = deptService.getDeptByName(dept.getDeptName());
+            if (deptByName.size()>1){
+                User user = new User();
+                Dept byId = deptService.getById(dept.getParentId());
+                user.setUsername(byId.getDeptName()+dept.getDeptName()+"护路办");
+                //user.setMobile(oldUser.getMobileTelephone());
+                user.setStatus("1");
+                user.setCreateTime(new Date());
+                user.setModifyTime(new Date());
+                // user.setDescription(oldUser.getHeadship());
+                user.setAvatar("default.jpg");
+                user.setType(0);
+                user.setSsex("2");
+                user.setPassword(MD5Util.encrypt(byId.getDeptName()+dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
+                user.setDeptId(dept.getDeptId());
            /* List<Dept> depts = deptService.list();
             for (Dept dept : depts) {
                 if (oldUser.getUnit().equals(dept.getDeptName())) {
                     user.setDeptId(dept.getDeptId());
                 }
             }*/
-            userService.save(user);
-            //派出所单位用户角色ID
-            String roleId = "143c099eae460cc53e5be4a65245116c";
-            // 保存用户角色
-            String[] roles = roleId.split(StringPool.COMMA);
-            setUserRoles(user, roles);
+                userService.save(user);
+                //派出所单位用户角色ID
+                String roleId = "148d0cf3fedff6ef1ad018863e01fe45";
+                // 保存用户角色
+                String[] roles = roleId.split(StringPool.COMMA);
+                setUserRoles(user, roles);
 
-            // 创建用户默认的个性化配置
-            userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+                // 创建用户默认的个性化配置
+                userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+            }else {
+                User user = new User();
+                user.setUsername(dept.getDeptName()+"护路办");
+                //user.setMobile(oldUser.getMobileTelephone());
+                user.setStatus("1");
+                user.setCreateTime(new Date());
+                user.setModifyTime(new Date());
+                // user.setDescription(oldUser.getHeadship());
+                user.setAvatar("default.jpg");
+                user.setType(0);
+                user.setSsex("2");
+                user.setPassword(MD5Util.encrypt(dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
+                user.setDeptId(dept.getDeptId());
+           /* List<Dept> depts = deptService.list();
+            for (Dept dept : depts) {
+                if (oldUser.getUnit().equals(dept.getDeptName())) {
+                    user.setDeptId(dept.getDeptId());
+                }
+            }*/
+                userService.save(user);
+                //派出所单位用户角色ID
+                String roleId = "148d0cf3fedff6ef1ad018863e01fe45";
+                // 保存用户角色
+                String[] roles = roleId.split(StringPool.COMMA);
+                setUserRoles(user, roles);
 
+                // 创建用户默认的个性化配置
+                userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
+            }
         }
         return new JiebaoResponse().data(depts);
     }
 
+
+    @GetMapping("/deleteUser")
+    @ApiOperation(value = "删除单位用户", notes = "删除单位用户", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse deleteUser() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("rank", 3);
+        List<Dept> depts = deptMapper.selectByMap(map);
+        for (Dept dept : depts
+        ) {
+            User byName = userService.findByName(dept.getDeptName());
+            if (byName!=null){
+                userConfigMapper.delete(new UpdateWrapper<UserConfig>().eq("user_id",byName.getUserId()));
+                userRoleMapper.delete(new QueryWrapper<UserRole>().eq("user_id",byName.getUserId()));
+                userMapper.delete(new QueryWrapper<User>().eq("user_id",byName.getUserId()));
+            }
+        }
+        return new JiebaoResponse().data(depts);
+    }
+
+
+
+
+    @GetMapping("/addTime")
+    @ApiOperation(value = "信息互递增加时间", notes = "信息互递增加时间", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse addTime() throws ParseException {
+        List<Exchange> list = exchangeService.list();
+        for (Exchange e : list
+        ) {
+            if (e.getInfoSeq() != null) {
+                List<HlbInfo> hlbInfo = hlbInfoService.selectOnes(e.getInfoSeq());
+                /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String format = simpleDateFormat.format(hlbInfo.get(0).getUpTime());
+                Date parse = simpleDateFormat.parse(format);
+                System.out.println(parse);*/
+                e.setReleaseTime(hlbInfo.get(0).getUpTime());
+                exchangeService.updateById(e);
+            }
+
+        }
+        return new JiebaoResponse().okMessage("ok");
+    }
+
 }
+
