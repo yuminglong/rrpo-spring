@@ -36,4 +36,6 @@ public interface CaseMapper extends BaseMapper<Case> {
     Integer count(@Param("ew") QueryWrapper<Case> ew);  //数量
 
 
+
+
 }

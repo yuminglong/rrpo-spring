@@ -1,9 +1,7 @@
 package com.jiebao.platfrom.common.generator;
 
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -13,7 +11,6 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class myGenerator {
 
@@ -112,11 +109,11 @@ public class myGenerator {
         // 写于父类中的公共字段
         strategy.setSuperEntityColumns("id");
         //"room_file","room_lead","room_record","room_record_file","room_record_sevice","room_room","room_service","room_user","room_way",
-        String[] str = new String[]{"lwswfx"};
+        String[] str = new String[]{"zaajqk"};
         strategy.setInclude(str);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
-        mpg.setStrategy(strategy);
+       mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();
     }

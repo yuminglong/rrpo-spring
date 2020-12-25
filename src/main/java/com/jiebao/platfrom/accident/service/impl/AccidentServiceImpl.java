@@ -230,7 +230,6 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                 } catch (NumberFormatException e) {
                     compareTable1.setBj4(0.00);
                 }
-
                 if (compareTable1.getDeptName().contains("公安处")) {  //公安处级别
 
                     compareTableCount.setNumber(compareTableCount.getNumber() + compareTable1.getNumber());

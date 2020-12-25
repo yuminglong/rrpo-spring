@@ -2,7 +2,9 @@ package com.jiebao.platfrom.accident.controller;
 
 
 import com.jiebao.platfrom.accident.daomain.Case;
+import com.jiebao.platfrom.accident.daomain.Lwswfx;
 import com.jiebao.platfrom.accident.service.ICaseService;
+import com.jiebao.platfrom.accident.service.ILwswfxService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -32,6 +36,8 @@ public class CaseController {
     ICaseService caseService;
     @Autowired
     DeptService deptServices;
+    @Autowired
+    ILwswfxService lwswfxService;
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改 事故信息")
@@ -42,7 +48,7 @@ public class CaseController {
             if (deptServices.getById(ca.getPoliceId()).getRank() == 4) {
                 return jiebaoResponse.failMessage("请选中对应的派出所");
             }
-         //   accident.setPoliceFather(deptServices.getById(accident.getPoliceId()).getParentId());
+            //   accident.setPoliceFather(deptServices.getById(accident.getPoliceId()).getParentId());
         }
         if (ca.getCaseId() != null) {
             Case aCase = caseService.getById(ca.getCaseId());
@@ -87,5 +93,90 @@ public class CaseController {
     @ApiOperation("是否锁定")
     public JiebaoResponse lock(String[] caseId, String month, Integer status) {
         return caseService.lock(caseId, month, status);
+    }
+
+    @PostMapping("sort")
+    @ApiOperation("是否锁定")
+    public JiebaoResponse sort(String[] caseId, String month, Integer status) {
+        List<Case> list = new ArrayList<>();
+        for (int i = 0; i < 168; i++) {
+            Case aCase = new Case();
+            if (i / 2 == 0) {
+           aCase.setDate("2017-09-15 16:27:54");
+           aCase.setCityCsId("1");
+           aCase.setCityQxId("17");
+           aCase.setCityXc("18");
+           aCase.setLineId("e25de73dc523affa40b2723a80533a90");
+           aCase.setNature("5");
+           aCase.setDateLength(78.0);
+           aCase.setStatu(1);
+           aCase.setFbStatus("2");
+           aCase.setContent("2");
+           aCase.setRemark("2");
+           aCase.setMs("2");
+           aCase.setStatu(0);
+           aCase.setMonth("2019-11");
+            } else if (i / 3 == 0) {
+                aCase.setDate("2017-09-15 16:27:54");
+                aCase.setCityCsId("182");
+                aCase.setCityQxId("205");
+                aCase.setCityXc("207");
+                aCase.setLineId("727273572a87fd89df80f377a15f6761");
+                aCase.setNature("5");
+                aCase.setDateLength(78.0);
+                aCase.setStatu(1);
+                aCase.setFbStatus("2");
+                aCase.setContent("2");
+                aCase.setRemark("2");
+                aCase.setMs("2");
+                aCase.setStatu(0);
+                aCase.setMonth("2019-11");
+            } else if (i/5==0){
+                aCase.setDate("2017-09-15 16:27:54");
+                aCase.setCityCsId("380");
+                aCase.setCityQxId("402");
+                aCase.setCityXc("404");
+                aCase.setLineId("bbdaa864906c8c0ac0b18d502f559e7e");
+                aCase.setNature("5");
+                aCase.setDateLength(78.0);
+                aCase.setStatu(1);
+                aCase.setFbStatus("2");
+                aCase.setContent("2");
+                aCase.setRemark("2");
+                aCase.setMs("2");
+                aCase.setStatu(0);
+                aCase.setMonth("2019-11");
+            }else {
+                aCase.setDate("2017-09-15 16:27:54");
+                aCase.setCityCsId("1712");
+                aCase.setCityQxId("1784");
+                aCase.setCityXc("1791");
+                aCase.setLineId("727273572a87fd89df80f377a15f6761");
+                aCase.setNature("5");
+                aCase.setDateLength(78.0);
+                aCase.setStatu(1);
+                aCase.setFbStatus("2");
+                aCase.setContent("2");
+                aCase.setRemark("2");
+                aCase.setMs("2");
+                aCase.setStatu(0);
+                aCase.setMonth("2019-11");
+            }
+            list.add(aCase);
+        }
+        caseService.saveBatch(list);
+        return null;
+    }
+
+    @GetMapping("sorts")
+    @ApiOperation("监控")
+    public JiebaoResponse sorts(){
+        List<Lwswfx> list = lwswfxService.list();
+       List<Case> caseArrayList = new ArrayList<>();
+        for (Lwswfx lwswfx : list) {
+            Case aCase = new Case();
+            
+        }
+        return null;
     }
 }
