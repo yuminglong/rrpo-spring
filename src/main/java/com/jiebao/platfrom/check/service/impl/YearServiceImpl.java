@@ -1,27 +1,24 @@
 package com.jiebao.platfrom.check.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.check.dao.*;
 import com.jiebao.platfrom.check.domain.*;
 import com.jiebao.platfrom.check.service.*;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.File;
-import com.jiebao.platfrom.system.domain.Menu;
 import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.system.service.MenuService;
-import org.apache.shiro.session.mgt.DelegatingSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -67,7 +64,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         if (getOne(queryWrapper) != null) {
             return new JiebaoResponse().message("年份重复");
         }
-        boolean save = super.save(year);
+        boolean save = super.saveOrUpdate(year);
         if (save) {
             List<YearBindMenus> yearBindMenusList = new ArrayList<>();//储存模块
             System.out.println(year.getYearId());

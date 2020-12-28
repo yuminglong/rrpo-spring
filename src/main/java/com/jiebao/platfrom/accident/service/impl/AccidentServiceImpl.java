@@ -148,7 +148,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
      * @return
      */
     @Override
-    public List<CompareTable> compareTable(String startYear, String endYear) {  // 代码过长======================>建议照着页面重写 速度更快
+    public List<CompareTable> compareTable(String startYear, String endYear) {  // 代码过长======================>建议照着页面重写 速度更快  主要公式===?  (上期-下期)/上期  得到系数
         List<CompareTable> compareTables = new ArrayList<>();  //获得 市州 本期
         List<Dept> deptNameByAsc = deptMapper.getDeptNameByAsc();
         for (Dept dept : deptNameByAsc) {
@@ -211,7 +211,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
                 compareTable1.setUpDeathToll(compareTable.getUpDeathToll() == null ? 0 : compareTable.getUpDeathToll());
                 double i = (double) (compareTable1.getUpNumber() - compareTable1.getNumber()) / compareTable1.getUpNumber();
                 try {
-                    compareTable1.setBj1(getDouble(Math.abs(i)));
+                    compareTable1.setBj1(getDouble(i));
                 } catch (NumberFormatException e) {
                     compareTable1.setBj1(0.00);
                 }
