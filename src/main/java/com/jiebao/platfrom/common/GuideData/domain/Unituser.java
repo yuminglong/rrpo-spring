@@ -8,6 +8,7 @@ import com.wuwenze.poi.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @TableName("unituser")
@@ -59,5 +60,7 @@ public class Unituser implements Serializable {
     private String usertype;
 
     private String usercode;
+
+
 
 }
