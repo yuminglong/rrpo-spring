@@ -615,5 +615,22 @@ public class BriefingController extends BaseController {
     }
 
 
+    @GetMapping("/countListByCity")
+    @ApiOperation(value = "根据十四个市州查询对应简报", notes = "根据十四个市州查询对应简报", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse countListByCity( String startTime, String endTime,String deptName,String title) {
+
+        List<Dept> deptByName = deptService.getDeptByName(deptName);
+        if (deptByName.size()>1 ){
+            return new JiebaoResponse().failMessage("查询失败");
+        }
+        else {
+            if (deptByName.size() ==0){
+                List<Briefing> briefings = briefingMapper.countListByCity(startTime, endTime, null, title);
+                return new JiebaoResponse().data(briefings).okMessage("查询成功");
+            }
+            List<Briefing> briefings = briefingMapper.countListByCity(startTime, endTime, deptByName.get(0).getDeptId(), title);
+            return new JiebaoResponse().data(briefings).okMessage("查询成功");
+        }
+    }
 
 }

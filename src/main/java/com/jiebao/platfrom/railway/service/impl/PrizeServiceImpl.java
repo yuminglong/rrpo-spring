@@ -164,6 +164,7 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
     public IPage<Prize> getBriefing(QueryRequest request, Prize prize, String startTime, String endTime) {
         QueryWrapper<Prize> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Prize::getStatus, 8);
+        queryWrapper.lambda().eq(Prize::getIfImport, 0);
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Prize::getReleaseTime, startTime).le(Prize::getReleaseTime, endTime);
         }

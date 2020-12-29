@@ -441,8 +441,10 @@ public class PrizeController extends BaseController {
                     String finalDept = null;
                     if (byId.getRank() == 1 && dept.getRank() != 4 && byIdFather.getRank() != 4) {
                         finalDept = sendDeptId;
+                        prizeUserService.saveByDept(prizeId, byId.getParentId());
                     } else if (byId.getRank() == 4 && dept.getRank() == 4) {
-                        finalDept = sendCityId;
+                        finalDept = null;
+
                     } else if (byId.getRank() == 4 && byIdFather.getRank() == 4) {
                         finalDept = sendCityId;
                     } else {
@@ -480,17 +482,17 @@ public class PrizeController extends BaseController {
                     prizeOpinionService.saveOrUpdate(prizeOpinion);
                 }
             });
-            //解析json数组
-            JSONArray jsonArray = JSON.parseArray(moneys);
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                String prizeId = jsonObject.getString("prizeId");
-                String opinionMoney = jsonObject.getString("opinionMoney");
-                System.out.println(jsonObject.getString("prizeId") + ":" + jsonObject.getInteger("opinionMoney"));
-                prizeOpinionService.saveByPrizeId(prizeId, opinionMoney, byId.getRank());
+            if(byId.getRank() != 4 ){
+                //解析json数组
+                JSONArray jsonArray = JSON.parseArray(moneys);
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                    String prizeId = jsonObject.getString("prizeId");
+                    String opinionMoney = jsonObject.getString("opinionMoney");
+                    System.out.println(jsonObject.getString("prizeId") + ":" + jsonObject.getInteger("opinionMoney"));
+                    prizeOpinionService.saveByPrizeId(prizeId, opinionMoney, byId.getRank());
+                }
             }
-
-
             return new JiebaoResponse().message("审批或上报成功").put("status", "200");
         } catch (Exception e) {
             message = "审批或上报失败";
@@ -593,7 +595,6 @@ public class PrizeController extends BaseController {
     @ApiOperation(value = "生成简报（不带金额和带金额）", notes = "生成简报（不带金额和带金额）", response = JiebaoResponse.class, httpMethod = "POST")
     public void briefingWord(Integer moneyType, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
 
-        System.out.println(moneyType + "---------------------");
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
 
@@ -606,7 +607,7 @@ public class PrizeController extends BaseController {
 
 
         List<String[]> testList = new ArrayList<>();
-        if (moneyType == 0) {
+
             for (Prize p :
                     records) {
                 String[] split = p.getPlace().split(",");
@@ -634,7 +635,7 @@ public class PrizeController extends BaseController {
             User byName = userService.findByName(username);
             this.saveFile("2", "10", byName.getUserId(), oldName, newName, true, "0");
             //附带金额
-        } else if (moneyType == 1) {
+
             for (Prize p :
                     records) {
                 PrizeOpinion prizeOpinion = prizeOpinionMapper.selectOne(new LambdaQueryWrapper<PrizeOpinion>().eq(PrizeOpinion::getPrizeId, p.getId()).eq(PrizeOpinion::getRank, 0));
@@ -649,25 +650,27 @@ public class PrizeController extends BaseController {
             }
             //模板文件地址
             //String inputUrl = GetResource.class.getClassLoader().getResource("tempDoc_amount.docx").getPath();
-            String inputUrl = "/usr/local/rrpo/word/tempDoc_amount.docx";
+            String inputUrlTwo = "/usr/local/rrpo/word/tempDoc_amount.docx";
 
 
-            System.out.println("-------------" + inputUrl + "---------------------");
-            Date date = new Date();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            String oldName = "湖南铁路护路联防简报" + year + "年第" + period + "期-附带金额" + "(" + df.format(date) + ")" + ".docx";
+            System.out.println("-------------" + inputUrlTwo + "---------------------");
+            Date dateTwo = new Date();
+            SimpleDateFormat dfTwo = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            String oldNameTwo = "湖南铁路护路联防简报" + year + "年第" + period + "期-附带金额" + "(" + dfTwo.format(dateTwo) + ")" + ".docx";
             //新生产的模板文件
-            String newName = UUID.randomUUID().toString();
+            String newNameTwo = UUID.randomUUID().toString();
 
 
             //String outputUrl = "D:/upload/words/" + newName;
-            String outputUrl = "/usr/local/rrpo/upload/" + newName;
-            String outPath = outputUrl + ".docx";
-            WorderToNewWordUtils.changWord(inputUrl, outPath, map, testList);
-            String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-            User byName = userService.findByName(username);
-            this.saveFile("2", "10", byName.getUserId(), oldName, newName, true, "1");
-        }
+            String outputUrlTwo = "/usr/local/rrpo/upload/" + newNameTwo;
+            String outPathTwo = outputUrlTwo + ".docx";
+            WorderToNewWordUtils.changWord(inputUrl, outPathTwo, map, testList);
+            String usernameTwo = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+            User byNameTwo = userService.findByName(usernameTwo);
+            this.saveFile("2", "10", byNameTwo.getUserId(), oldNameTwo, newName, true, "1");
+            prize.setIfImport(1);
+            prizeService.updateById(prize);
+
 
 
     }
@@ -1146,7 +1149,6 @@ public class PrizeController extends BaseController {
         else {
             return new JiebaoResponse().failMessage("无权查看");
         }
-
     }
 
 
@@ -1176,10 +1178,7 @@ public class PrizeController extends BaseController {
                 element.attr("src", imgUrl);
             }
         }*/
-
         newsBody = doc.toString();
         // System.out.println(newsBody);
     }
-
-
 }

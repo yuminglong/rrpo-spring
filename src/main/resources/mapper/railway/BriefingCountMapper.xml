@@ -4,7 +4,7 @@
 
 
     <select id="countCity" resultType="Map">
-        select A.city,ifnull(NUMB,0) AS count
+        select A.city,ifnull(NUMB,0) AS count,B.dept as cityId
         from (SELECT DISTINCT c.city ,c.id  FROM sys_city_two c  ) A LEFT JOIN
         (SELECT  d.dept_name as city,d.dept_id as dept ,SUM(count) as NUMB FROM
         rail_briefing_count c ,sys_dept d ,rail_briefing  b

@@ -5,7 +5,7 @@
 
     <select id="countCityById" resultType="Map">
 
-    select A.city,ifnull(NUMB,0) AS count
+    select A.city,ifnull(NUMB,0) AS count,B.dept as cityId
     from (SELECT DISTINCT c.city ,c.id  FROM sys_city_two c  ) A LEFT JOIN
     (SELECT d.dept_name as city,d.dept_id as dept ,c.count as NUMB FROM sys_dept d ,rail_briefing b,rail_briefing_count c
     WHERE c.dept_id = d.dept_id
@@ -15,6 +15,26 @@
     GROUP BY c.dept_id) B
 	ON B.city = A.city ORDER BY A.id
     </select>
+
+    <select id="countListByCity" resultType="Briefing">
+
+    SELECT distinct r.* FROM `rail_briefing_count` d,rail_briefing  r
+        where d.briefing_id =r.id and r.`status`=3
+            <if test="startTime != null">
+                and r.release_time >= #{startTime}
+            </if>
+            <if test="endTime !=null">
+                and #{endTime} >= r.release_time
+            </if>
+        <if test="title !=null and title != '' ">
+            and r.title like  "%"#{title}"%"
+        </if>
+        <if test="deptId !=null and deptId != '' ">
+            and  d.dept_id = #{deptId}
+        </if>
+
+    </select>
+
 
 
 </mapper>
