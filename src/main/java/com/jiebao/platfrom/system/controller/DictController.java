@@ -172,6 +172,17 @@ public class DictController extends BaseController {
         return new JiebaoResponse().data(listTable).okMessage("查询成功");
     }
 
+
+    @GetMapping("getListTableTwo")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "查询", notes = "查询", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getListTableTwo(QueryRequest queryRequest, Dict dict){
+        IPage<Dict> listTable = this.dictService.getListTableTwo(queryRequest, dict);
+        return new JiebaoResponse().data(listTable).okMessage("查询成功");
+    }
+
+
+
     @GetMapping("getTargets")
     @ApiOperation(value = "获取推送栏目", notes = "获取推送栏目", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getTargets() throws IOException {

@@ -19,6 +19,8 @@ public interface DictService extends IService<Dict> {
 
     IPage<Dict> getListTable(QueryRequest queryRequest, Dict dict);
 
+    IPage<Dict> getListTableTwo(QueryRequest queryRequest, Dict dict);
+
   /*  IPage<Dict> findDicts(QueryRequest request, Dict dict);
 
     void createDict(Dict dict);

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
@@ -617,7 +618,7 @@ public class BriefingController extends BaseController {
 
     @GetMapping("/countListByCity")
     @ApiOperation(value = "根据十四个市州查询对应简报", notes = "根据十四个市州查询对应简报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse countListByCity( String startTime, String endTime,String deptName,String title) {
+    public JiebaoResponse countListByCity( QueryRequest request,String startTime, String endTime,String deptName,String title) {
 
         List<Dept> deptByName = deptService.getDeptByName(deptName);
         if (deptByName.size()>1 ){
@@ -625,12 +626,12 @@ public class BriefingController extends BaseController {
         }
         else {
             if (deptByName.size() ==0){
-                List<Briefing> briefings = briefingMapper.countListByCity(startTime, endTime, null, title);
+                List<Briefing> briefings = briefingMapper.countListByCity(request,startTime, endTime, null, title);
                 return new JiebaoResponse().data(briefings).okMessage("查询成功");
             }
-            List<Briefing> briefings = briefingMapper.countListByCity(startTime, endTime, deptByName.get(0).getDeptId(), title);
+            Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
+            List<Briefing> briefings = briefingMapper.countListByCity(request,startTime, endTime, deptByName.get(0).getDeptId(), title);
             return new JiebaoResponse().data(briefings).okMessage("查询成功");
         }
     }
-
 }

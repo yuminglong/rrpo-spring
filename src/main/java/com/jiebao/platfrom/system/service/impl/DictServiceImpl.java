@@ -140,4 +140,26 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
+
+
+
+    @Override
+    public IPage<Dict> getListTableTwo(QueryRequest request, Dict dict) {
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(dict.getTableName())){
+            queryWrapper.lambda().like(Dict::getTableName,dict.getTableName());
+        }
+        if (StringUtils.isNotBlank(dict.getFieldName())){
+            queryWrapper.lambda().like(Dict::getFieldName,dict.getFieldName());
+        }
+        if (StringUtils.isNotBlank(dict.getParentId())){
+            queryWrapper.lambda().eq(Dict::getParentId,dict.getParentId());
+        }
+        if (StringUtils.isNotBlank(dict.getDictId())){
+            queryWrapper.lambda().eq(Dict::getDictId,dict.getDictId());
+        }
+        Page<Dict> page = new Page<>(request.getPageNum(), request.getPageSize());
+        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
 }

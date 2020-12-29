@@ -1,6 +1,7 @@
 package com.jiebao.platfrom.railway.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Briefing;
 import org.apache.ibatis.annotations.Update;
 
@@ -25,5 +26,5 @@ public interface BriefingMapper extends BaseMapper<Briefing> {
 
     List<Map<String,Object>> countCityById(String briefingId);
 
-    List<Briefing> countListByCity(String startTime, String endTime,String deptId,String title);
+    List<Briefing> countListByCity(QueryRequest request,String startTime, String endTime, String deptId, String title);
 }

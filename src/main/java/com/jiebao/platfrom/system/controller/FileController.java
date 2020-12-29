@@ -174,7 +174,7 @@ public class FileController extends BaseController {
      * @param fileId 文件ID
      */
     @ApiOperation("文件下载接口")
-    @GetMapping("/downloadFile")
+    @RequestMapping("/downloadFile")
     public void downloadFile(String fileId, HttpServletResponse response) {
 
         File file = fileService.getById(fileId);
