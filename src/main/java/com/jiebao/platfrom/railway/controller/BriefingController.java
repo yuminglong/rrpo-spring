@@ -10,9 +10,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.controller.BaseController;
+import com.jiebao.platfrom.common.domain.JiebaoConstant;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.common.utils.SortUtil;
 import com.jiebao.platfrom.railway.dao.BriefingCountMapper;
 import com.jiebao.platfrom.railway.dao.BriefingMapper;
 import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
@@ -106,8 +108,6 @@ public class BriefingController extends BaseController {
     private BriefingCountMapper briefingCountMapper;
 
 
-
-
     /**
      * 创建一条护路简报
      */
@@ -134,18 +134,18 @@ public class BriefingController extends BaseController {
                 }
                 //解析json数组
 
-                if(briefingCounts != null && !"".equals(briefingCounts)){
+                if (briefingCounts != null && !"".equals(briefingCounts)) {
                     JSONArray jsonArray = JSON.parseArray(briefingCounts);
                     for (int i = 0; i < jsonArray.size(); i++) {
-                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                    System.out.println(jsonObject.getString("deptId") + ":" + jsonObject.getInteger("count"));
-                    BriefingCount briefingCount = new BriefingCount();
-                    briefingCount.setBriefingId(briefing.getId());
-                    briefingCount.setDeptId(jsonObject.getString("deptId"));
-                    briefingCount.setCount(jsonObject.getInteger("count"));
-                    briefingCountService.save(briefingCount);
-                }}
-
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        System.out.println(jsonObject.getString("deptId") + ":" + jsonObject.getInteger("count"));
+                        BriefingCount briefingCount = new BriefingCount();
+                        briefingCount.setBriefingId(briefing.getId());
+                        briefingCount.setDeptId(jsonObject.getString("deptId"));
+                        briefingCount.setCount(jsonObject.getInteger("count"));
+                        briefingCountService.save(briefingCount);
+                    }
+                }
 
 
                 return new JiebaoResponse().message("创建一条护路简报成功");
@@ -163,7 +163,7 @@ public class BriefingController extends BaseController {
                 }
                 briefingMapper.releaseSave(briefing.getId());
                 briefingUserMapper.setCreatTime(briefing.getId());
-                if (briefing.getSynchronizeWeb() == 1){
+                if (briefing.getSynchronizeWeb() == 1) {
                     //HttpPost请求实体
                     HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
                     //使用工具类创建 httpClient
@@ -178,14 +178,14 @@ public class BriefingController extends BaseController {
                         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
                         //获取附件
-                        ArrayList<File> filess =new ArrayList<>();
+                        ArrayList<File> filess = new ArrayList<>();
                         Map<String, Object> map = new HashMap<>();
-                        map.put("ref_type",8);
-                        map.put("file_type",2);
-                        map.put("ref_id",briefing.getId());
+                        map.put("ref_type", 8);
+                        map.put("file_type", 2);
+                        map.put("ref_id", briefing.getId());
                         List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
-                        if (files.size()>0){
-                            for (com.jiebao.platfrom.system.domain.File f: files
+                        if (files.size() > 0) {
+                            for (com.jiebao.platfrom.system.domain.File f : files
                             ) {
                                 String url = f.getFileUrl() + f.getNewName();
                                 File is = new File(url);
@@ -193,15 +193,15 @@ public class BriefingController extends BaseController {
                             }
                         }
                         if (!CollectionUtils.isEmpty(filess)) {
-                            for (File file:filess) {
-                                multipartEntityBuilder.addBinaryBody("file",file);
+                            for (File file : filess) {
+                                multipartEntityBuilder.addBinaryBody("file", file);
                             }
                         }
-                        System.out.println(briefing.getTargetsId()+"----------------");
+                        System.out.println(briefing.getTargetsId() + "----------------");
                         Map<String, String> params = new HashMap<>();
                         params.put("id", briefing.getTargetsId());
                         Dept dept = deptService.getDept();
-                        params.put("source", dept.getDeptName()+"-"+username);
+                        params.put("source", dept.getDeptName() + "-" + username);
                         params.put("title", briefing.getTitle());
                         //如果富编辑器里有图片，转换成base64替换img标签所有内容
                      /*   Map<String, Object> mapF = new HashMap<>();
@@ -225,23 +225,22 @@ public class BriefingController extends BaseController {
                             params.put("html", briefing.getContent());
                         }*/
                         params.put("html", briefing.getContent());
-                        if (briefing.getTime()!=null){
+                        if (briefing.getTime() != null) {
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(briefing.getTime());
                             params.put("time", relTime);
-                        }
-                        else {
+                        } else {
                             String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                             params.put("time", relTime);
                         }
 
                         params.put("user", username);
 
-                        ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
+                        ContentType strContent = ContentType.create("text/plain", Charset.forName("UTF-8"));
                         if (!CollectionUtils.isEmpty(params)) {
                             params.forEach((key, value) -> {
                                 //此处的字符串参数会被设置到请求体Query String Parameters中
 
-                                multipartEntityBuilder.addTextBody(key, value,strContent);
+                                multipartEntityBuilder.addTextBody(key, value, strContent);
                             });
                         }
                         HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -252,7 +251,7 @@ public class BriefingController extends BaseController {
                         resp = client.execute(httpPost);
                         //将返回结果转成String
                         respondBody = EntityUtils.toString(resp.getEntity());
-                        System.out.println("++++++++++++++"+respondBody);
+                        System.out.println("++++++++++++++" + respondBody);
                     } catch (IOException e) {
                         //日志信息及异常处理
 
@@ -289,7 +288,7 @@ public class BriefingController extends BaseController {
                     briefingMapper.release(briefingId);
                     briefingUserMapper.setCreatTime(briefingId);
                     Briefing byId = briefingService.getById(briefingId);
-                    if (byId.getSynchronizeWeb() == 1){
+                    if (byId.getSynchronizeWeb() == 1) {
 
                         //HttpPost请求实体
                         HttpPost httpPost = new HttpPost("http://114.116.174.5:888/jws/push");
@@ -301,14 +300,14 @@ public class BriefingController extends BaseController {
                             //附件参数需要用到的请求参数实体构造器
                             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                             //获取附件
-                            ArrayList<File> filess =new ArrayList<>();
+                            ArrayList<File> filess = new ArrayList<>();
                             Map<String, Object> map = new HashMap<>();
-                            map.put("ref_type",8);
-                            map.put("file_type",2);
-                            map.put("ref_id",briefingId);
+                            map.put("ref_type", 8);
+                            map.put("file_type", 2);
+                            map.put("ref_id", briefingId);
                             List<com.jiebao.platfrom.system.domain.File> files = fileMapper.selectByMap(map);
-                            if (files.size()>0){
-                                for (com.jiebao.platfrom.system.domain.File f: files
+                            if (files.size() > 0) {
+                                for (com.jiebao.platfrom.system.domain.File f : files
                                 ) {
                                     String url = f.getFileUrl() + f.getNewName();
                                     File is = new File(url);
@@ -316,16 +315,16 @@ public class BriefingController extends BaseController {
                                 }
                             }
                             if (!CollectionUtils.isEmpty(filess)) {
-                                for (File file:filess) {
-                                    multipartEntityBuilder.addBinaryBody("file",file);
+                                for (File file : filess) {
+                                    multipartEntityBuilder.addBinaryBody("file", file);
                                 }
                             }
-                            System.out.println(byId.getTargetsId()+"----------------");
+                            System.out.println(byId.getTargetsId() + "----------------");
                             Map<String, String> params = new HashMap<>();
                             params.put("id", byId.getTargetsId());
                             Dept dept = deptService.getDept();
                             String username = JWTUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
-                            params.put("source", (dept.getDeptName()+"-"+username));
+                            params.put("source", (dept.getDeptName() + "-" + username));
                             params.put("title", byId.getTitle());
                             //如果富编辑器里有图片，转换成base64替换img标签所有内容
                            /* Map<String, Object> mapF = new HashMap<>();
@@ -350,21 +349,20 @@ public class BriefingController extends BaseController {
                                 params.put("html", byId.getContent());
                             }*/
                             params.put("html", byId.getContent());
-                            if (byId.getTime()!=null){
+                            if (byId.getTime() != null) {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(byId.getTime());
                                 params.put("time", relTime);
-                            }
-                            else {
+                            } else {
                                 String relTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
                                 params.put("time", relTime);
                             }
                             params.put("user", username);
 
-                            ContentType strContent=ContentType.create("text/plain", Charset.forName("UTF-8"));
+                            ContentType strContent = ContentType.create("text/plain", Charset.forName("UTF-8"));
                             if (!CollectionUtils.isEmpty(params)) {
                                 params.forEach((key, value) -> {
                                     //此处的字符串参数会被设置到请求体Query String Parameters中
-                                    multipartEntityBuilder.addTextBody(key, value,strContent);
+                                    multipartEntityBuilder.addTextBody(key, value, strContent);
                                 });
                             }
                             HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -375,7 +373,7 @@ public class BriefingController extends BaseController {
                             resp = client.execute(httpPost);
                             //将返回结果转成String
                             respondBody = EntityUtils.toString(resp.getEntity());
-                            System.out.println("++++++++++++++"+respondBody);
+                            System.out.println("++++++++++++++" + respondBody);
                         } catch (IOException e) {
                             //日志信息及异常处理
                         } finally {
@@ -500,7 +498,7 @@ public class BriefingController extends BaseController {
 
     @GetMapping(value = "/getInfoById")
     @ApiOperation(value = "根据ID查信息info", notes = "根据ID查信息info", response = JiebaoResponse.class, httpMethod = "GET")
-    public Briefing getInfoById( String briefingId) {
+    public Briefing getInfoById(String briefingId) {
         Briefing byId = briefingService.getById(briefingId);
         Map<String, Object> columnMap = new HashMap<>();
         //列briefing_id为数据库中的列名，不是实体类中的属性名
@@ -567,8 +565,6 @@ public class BriefingController extends BaseController {
     }
 
 
-
-
     @GetMapping("/getView")
     @ApiOperation(value = "查看(收件箱)", notes = "查看(收件箱)", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
@@ -586,18 +582,16 @@ public class BriefingController extends BaseController {
     @GetMapping("/countCity")
     @ApiOperation(value = "统计每个市州被填报的数量", notes = "统计每个市州被填报的数量", httpMethod = "GET")
     @Transactional(rollbackFor = Exception.class)
-    public List<Map<String, Object>> countCity(String startTime ,String endTime) {
+    public List<Map<String, Object>> countCity(String startTime, String endTime) {
         Dept dept = deptService.getDept();
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        if (dept.getRank() == 0){
-            return briefingCountMapper.countCity(startTime,endTime);
-        }
-        else {
-            return  briefingCountMapper.countCityByI(startTime,endTime,username);
+        if (dept.getRank() == 0) {
+            return briefingCountMapper.countCity(startTime, endTime);
+        } else {
+            return briefingCountMapper.countCityByI(startTime, endTime, username);
         }
 
     }
-
 
 
     @GetMapping("/countList")
@@ -610,7 +604,7 @@ public class BriefingController extends BaseController {
 
     @GetMapping("/countCityById")
     @ApiOperation(value = "根据ID查询十四个市州条数", notes = "根据ID查询十四个市州条数", response = JiebaoResponse.class, httpMethod = "GET")
-    public List<Map<String, Object>> countCityById( String briefingId) {
+    public List<Map<String, Object>> countCityById(String briefingId) {
         List<Map<String, Object>> maps = briefingMapper.countCityById(briefingId);
         return maps;
     }
@@ -618,20 +612,8 @@ public class BriefingController extends BaseController {
 
     @GetMapping("/countListByCity")
     @ApiOperation(value = "根据十四个市州查询对应简报", notes = "根据十四个市州查询对应简报", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse countListByCity( QueryRequest request,String startTime, String endTime,String deptName,String title) {
-
-        List<Dept> deptByName = deptService.getDeptByName(deptName);
-        if (deptByName.size()>1 ){
-            return new JiebaoResponse().failMessage("查询失败");
-        }
-        else {
-            if (deptByName.size() ==0){
-                List<Briefing> briefings = briefingMapper.countListByCity(request,startTime, endTime, null, title);
-                return new JiebaoResponse().data(briefings).okMessage("查询成功");
-            }
-            Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
-            List<Briefing> briefings = briefingMapper.countListByCity(request,startTime, endTime, deptByName.get(0).getDeptId(), title);
-            return new JiebaoResponse().data(briefings).okMessage("查询成功");
-        }
+    public JiebaoResponse countListByCity(@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "1") Integer pageSize,String startTime,String endTime,String deptName,String title) {
+        IPage<Briefing> briefingIPage = briefingService.countListByCity(pageNum, pageSize, startTime, endTime,deptName, title);
+        return new JiebaoResponse().data(briefingIPage).okMessage("查询成功");
     }
 }

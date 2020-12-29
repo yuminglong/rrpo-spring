@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -45,6 +46,8 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
     UserService userService;
     @Autowired
     DeptService deptService;
+    @Autowired
+    BriefingMapper briefingMapper;
 
     @Override
     public IPage<Briefing> getBriefingList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
@@ -60,10 +63,10 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Briefing::getCreatTime, startTime).le(Briefing::getCreatTime, endTime);
         }
-        if (briefing.getStatus() !=null) {
+        if (briefing.getStatus() != null) {
             queryWrapper.lambda().eq(Briefing::getStatus, briefing.getStatus());
         }
-        if (StringUtils.isNotBlank(briefing.getIsCheck())){
+        if (StringUtils.isNotBlank(briefing.getIsCheck())) {
             queryWrapper.lambda().eq(Briefing::getIsCheck, briefing.getIsCheck());
         }
         Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
@@ -72,9 +75,9 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
     }
 
     @Override
-    public IPage<Briefing> getBriefingListForCheck(QueryRequest request, Briefing briefing,String id, String startTime, String endTime) {
+    public IPage<Briefing> getBriefingListForCheck(QueryRequest request, Briefing briefing, String id, String startTime, String endTime) {
         QueryWrapper<Briefing> queryWrapper = new QueryWrapper();
-            queryWrapper.lambda().eq(Briefing::getId,id);
+        queryWrapper.lambda().eq(Briefing::getId, id);
         queryWrapper.lambda().ne(Briefing::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         if (StringUtils.isNotBlank(username)) {
@@ -95,8 +98,6 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
     }
 
 
-
-
     @Override
     public IPage<Briefing> getBriefingInboxList(QueryRequest request, Briefing briefing, String startTime, String endTime) {
         QueryWrapper<Briefing> queryWrapper = new QueryWrapper();
@@ -113,8 +114,7 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
             }
             if (briefingUserIds.size() > 0) {
                 queryWrapper.lambda().in(Briefing::getId, briefingUserIds);
-            }
-            else {
+            } else {
                 queryWrapper.lambda().in(Briefing::getId, "111111111111111111111111111111111");
             }
         }
@@ -125,14 +125,12 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
             queryWrapper.lambda().ge(Briefing::getReleaseTime, startTime).le(Briefing::getReleaseTime, endTime);
         }
         if (StringUtils.isNotBlank(briefing.getId())) {
-            queryWrapper.lambda().eq(Briefing::getId,briefing.getId());
+            queryWrapper.lambda().eq(Briefing::getId, briefing.getId());
         }
         Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
-
-
 
 
     @Override
@@ -150,16 +148,27 @@ public class BriefingServiceImpl extends ServiceImpl<BriefingMapper, Briefing> i
         if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
             queryWrapper.lambda().ge(Briefing::getReleaseTime, startTime).le(Briefing::getReleaseTime, endTime);
         }
-        if (briefing.getStatus() !=null) {
+        if (briefing.getStatus() != null) {
             queryWrapper.lambda().eq(Briefing::getStatus, briefing.getStatus());
         }
-        if (StringUtils.isNotBlank(briefing.getIsCheck())){
+        if (StringUtils.isNotBlank(briefing.getIsCheck())) {
             queryWrapper.lambda().eq(Briefing::getIsCheck, briefing.getIsCheck());
         }
         Page<Briefing> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
+    }
 
-       
+    @Override
+    public IPage<Briefing> countListByCity(Integer pageNum,Integer pageSize,String startTime,String endTime,String deptName,String title) {
+        List<Dept> deptId = deptService.getDeptByName(deptName);
+        Page<Briefing> page = new Page<>(pageNum, pageSize);
+        if (deptId.size() == 0) {
+            IPage<Briefing> briefingIPage = briefingMapper.countListByCity(page, startTime, endTime, null, title);
+            return briefingIPage;
+        } else {
+            IPage<Briefing> briefingIPage = briefingMapper.countListByCity(page, startTime, endTime, deptId.get(0).getDeptId(), title);
+            return briefingIPage;
+        }
     }
 }

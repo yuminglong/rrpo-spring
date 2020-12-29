@@ -593,7 +593,7 @@ public class PrizeController extends BaseController {
 
     @PostMapping("/briefingWord")
     @ApiOperation(value = "生成简报（不带金额和带金额）", notes = "生成简报（不带金额和带金额）", response = JiebaoResponse.class, httpMethod = "POST")
-    public void briefingWord(Integer moneyType, QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
+    public void briefingWord( QueryRequest request, Prize prize, String startTime, String endTime, String period, String year, String month, String day) throws FileNotFoundException {
 
         IPage<Prize> prizeList = prizeService.getBriefing(request, prize, startTime, endTime);
         List<Prize> records = prizeList.getRecords();
@@ -668,11 +668,11 @@ public class PrizeController extends BaseController {
             String usernameTwo = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
             User byNameTwo = userService.findByName(usernameTwo);
             this.saveFile("2", "10", byNameTwo.getUserId(), oldNameTwo, newName, true, "1");
-            prize.setIfImport(1);
-            prizeService.updateById(prize);
 
-
-
+            System.out.println("-------------------------");
+             Prize prize1 = new Prize();
+             prize1.setIfImport(1);
+             prizeService.updateById(prize1);
     }
 
 

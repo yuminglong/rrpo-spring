@@ -1,9 +1,12 @@
 package com.jiebao.platfrom.railway.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.railway.domain.Briefing;
+
+import java.util.Map;
 
 /**
  * @author yf
@@ -11,6 +14,7 @@ import com.jiebao.platfrom.railway.domain.Briefing;
 public interface BriefingService extends IService<Briefing> {
     /**
      * 发件箱
+     *
      * @param request
      * @param briefing
      * @param startTime
@@ -21,6 +25,7 @@ public interface BriefingService extends IService<Briefing> {
 
     /**
      * 收件箱
+     *
      * @param request
      * @param briefing
      * @param startTime
@@ -31,6 +36,7 @@ public interface BriefingService extends IService<Briefing> {
 
     /**
      * 查询当前登录人未发送和已发送的护路简报给年度考核
+     *
      * @param request
      * @param briefing
      * @param id
@@ -42,6 +48,7 @@ public interface BriefingService extends IService<Briefing> {
 
     /**
      * 查看
+     *
      * @param request
      * @param briefing
      * @param startTime
@@ -49,4 +56,11 @@ public interface BriefingService extends IService<Briefing> {
      * @return
      */
     IPage<Briefing> countList(QueryRequest request, Briefing briefing, String startTime, String endTime);
+
+    /**
+     * 根据十四个市州查询对应简报
+     * @param  : startTime, endTime, DeptId, title
+     * @return
+     */
+    IPage<Briefing> countListByCity(Integer pageNum,Integer pageSize,String startTime,String endTime,String deptName,String title);
 }
