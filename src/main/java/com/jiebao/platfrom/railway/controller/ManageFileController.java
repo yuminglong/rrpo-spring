@@ -12,6 +12,7 @@ import com.jiebao.platfrom.railway.service.ManageFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,8 @@ public class ManageFileController extends BaseController {
 
 
     @GetMapping
-    public Map<String, Object> manageFileList(QueryRequest request, ManageFile manageFile) {
-        return this.manageFileService.findManageFileList(request, manageFile);
+    public JiebaoResponse manageFileList(QueryRequest request, ManageFile manageFile) {
+        return  new JiebaoResponse().data(this.manageFileService.findManageFileList(request, manageFile)).okMessage("查询成功");
     }
 
     @Log("新增文件夹")
@@ -45,7 +46,7 @@ public class ManageFileController extends BaseController {
     public JiebaoResponse addManageFile(@Valid ManageFile manageFile) throws JiebaoException {
         try {
             this.manageFileService.createManageFile(manageFile);
-          return   new JiebaoResponse().message("新增成功").put("status", "200");
+          return   new JiebaoResponse().okMessage("新增成功");
         } catch (Exception e) {
             message = "新增文件夹失败";
             log.error(message, e);
@@ -67,7 +68,7 @@ public class ManageFileController extends BaseController {
                 }
                 manageFileService.removeById(id);
             });
-            return  new JiebaoResponse().message("删除成功").put("status", "200");
+            return  new JiebaoResponse().okMessage("删除成功");
         } catch (Exception e) {
             message = "删除文件夹失败";
             log.error(message, e);
@@ -80,7 +81,7 @@ public class ManageFileController extends BaseController {
     public JiebaoResponse updateManageFile(@Valid ManageFile manageFile) throws JiebaoException {
         try {
             this.manageFileService.updateById(manageFile);
-            return new JiebaoResponse().message("修改成功").put("status", "200");
+            return new JiebaoResponse().okMessage("修改成功");
         } catch (Exception e) {
             message = "修改文件夹失败";
             log.error(message, e);
@@ -90,8 +91,8 @@ public class ManageFileController extends BaseController {
 
     @ApiOperation(value = "根据ID查子文件夹和文件", notes = "根据ID查子文件夹和文件", httpMethod = "GET")
     @GetMapping("/getByIdList")
-    public List<ManageFile> manageFileList(String manageFileId) {
-        return this.manageFileService.getManageFileListById(manageFileId);
+    public JiebaoResponse manageFileList(String manageFileId) {
+        return new JiebaoResponse().data(this.manageFileService.getManageFileListById(manageFileId)).okMessage("查询成功");
     }
 
     @ApiOperation(value = "根据fileId查文件详情并绑定对应文件夹", notes = "根据fileId查文件详情并绑定对应文件夹", httpMethod = "GET")
@@ -99,7 +100,7 @@ public class ManageFileController extends BaseController {
     public JiebaoResponse bindFile( String fileId,String manageFileId) throws JiebaoException {
         try {
             manageFileService.bindFile(fileId,manageFileId);
-            return new JiebaoResponse().message("成功").put("status", "200");
+            return new JiebaoResponse().okMessage("绑定成功");
         } catch (Exception e) {
             message = "失败";
             log.error(message, e);

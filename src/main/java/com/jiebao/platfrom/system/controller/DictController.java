@@ -190,9 +190,26 @@ public class DictController extends BaseController {
         else {
             return  new JiebaoResponse().failMessage("查询失败");
         }
-
-
     }
 
+
+
+    @GetMapping("disable")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "禁用", notes = "禁用", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getListTable( Dict dict){
+        dict.setIfDisable(0);
+       dictService.updateById(dict);
+        return new JiebaoResponse().okMessage("禁用成功");
+    }
+
+    @GetMapping("noDisable")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "解禁", notes = "解禁", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse noDisable( Dict dict){
+        dict.setIfDisable(1);
+        dictService.updateById(dict);
+        return new JiebaoResponse().okMessage("解禁成功");
+    }
 
 }

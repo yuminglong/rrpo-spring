@@ -25,5 +25,5 @@ public interface BriefingMapper extends BaseMapper<Briefing> {
 
     List<Map<String,Object>> countCityById(String briefingId);
 
-
+    List<Briefing> countListByCity(String startTime, String endTime,String deptId,String title);
 }

@@ -123,6 +123,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Override
     public IPage<Dict> getListTable(QueryRequest request, Dict dict) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Dict::getIfDisable,1);
         if (StringUtils.isNotBlank(dict.getTableName())){
             queryWrapper.lambda().like(Dict::getTableName,dict.getTableName());
         }

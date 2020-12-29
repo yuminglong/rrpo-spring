@@ -148,4 +148,8 @@ public class Prize {
 
     @ApiModelProperty(value = "自己控制公安处",example = "1")
     private Integer gongStatus;
+
+
+    @ApiModelProperty(value = "是否已经导出1导出，0未导出",example = "1")
+    private Integer ifImport;
 }
