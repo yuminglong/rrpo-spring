@@ -45,8 +45,8 @@ public class PublicFileController extends BaseController {
 
 
     @GetMapping
-    public Map<String, Object> publicFileList(QueryRequest request, PublicFile publicFile) {
-        return this.publicFileService.findpublicFileList(request, publicFile);
+    public JiebaoResponse publicFileList(QueryRequest request, PublicFile publicFile) {
+        return new JiebaoResponse().data(this.publicFileService.findpublicFileList(request, publicFile)).okMessage("查询成功") ;
     }
 
     @Log("新增文件夹")
@@ -57,7 +57,7 @@ public class PublicFileController extends BaseController {
            /* Arrays.stream(fileIds).forEach(fileId -> {
                 fileMapper.updateInformByFileId(fileId, publicFile.getId());
             });*/
-          return   new JiebaoResponse().message("新增成功").put("status", "200");
+          return   new JiebaoResponse().okMessage("新增成功");
         } catch (Exception e) {
             message = "新增文件夹失败";
             log.error(message, e);
@@ -79,7 +79,7 @@ public class PublicFileController extends BaseController {
                 }
                 publicFileService.removeById(id);
             });
-            return  new JiebaoResponse().message("删除成功").put("status", "200");
+            return  new JiebaoResponse().okMessage("删除成功");
         } catch (Exception e) {
             message = "删除文件夹失败";
             log.error(message, e);
@@ -92,7 +92,7 @@ public class PublicFileController extends BaseController {
     public JiebaoResponse updatePublicFile(@Valid PublicFile publicFile) throws JiebaoException {
         try {
             this.publicFileService.updateById(publicFile);
-            return new JiebaoResponse().message("修改成功").put("status", "200");
+            return new JiebaoResponse().okMessage("修改成功");
         } catch (Exception e) {
             message = "修改文件夹失败";
             log.error(message, e);
@@ -102,8 +102,8 @@ public class PublicFileController extends BaseController {
 
     @ApiOperation(value = "根据ID查子文件夹和文件", notes = "根据ID查子文件夹和文件", httpMethod = "GET")
     @GetMapping("/getByIdList")
-    public List<PublicFile> publicFileList(String publicFileId) {
-        return this.publicFileService.getPublicFileListById(publicFileId);
+    public JiebaoResponse publicFileList(String publicFileId) {
+        return new JiebaoResponse().data(this.publicFileService.getPublicFileListById(publicFileId)).okMessage("查询成功");
     }
 
     @ApiOperation(value = "根据fileId查文件详情并绑定对应文件夹", notes = "根据fileId查文件详情并绑定对应文件夹", httpMethod = "GET")
@@ -111,7 +111,7 @@ public class PublicFileController extends BaseController {
     public JiebaoResponse bindFile( String fileId,String publicFileId) throws JiebaoException {
         try {
             publicFileService.bindFile(fileId,publicFileId);
-            return new JiebaoResponse().message("成功").put("status", "200");
+            return new JiebaoResponse().okMessage("绑定成功");
         } catch (Exception e) {
             message = "失败";
             log.error(message, e);

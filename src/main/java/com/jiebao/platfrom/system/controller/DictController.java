@@ -172,6 +172,17 @@ public class DictController extends BaseController {
         return new JiebaoResponse().data(listTable).okMessage("查询成功");
     }
 
+
+    @GetMapping("getListTableTwo")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "查询", notes = "查询", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getListTableTwo(QueryRequest queryRequest, Dict dict){
+        IPage<Dict> listTable = this.dictService.getListTableTwo(queryRequest, dict);
+        return new JiebaoResponse().data(listTable).okMessage("查询成功");
+    }
+
+
+
     @GetMapping("getTargets")
     @ApiOperation(value = "获取推送栏目", notes = "获取推送栏目", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getTargets() throws IOException {
@@ -190,9 +201,26 @@ public class DictController extends BaseController {
         else {
             return  new JiebaoResponse().failMessage("查询失败");
         }
-
-
     }
 
+
+
+    @GetMapping("disable")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "禁用", notes = "禁用", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse getListTable( Dict dict){
+        dict.setIfDisable(0);
+       dictService.updateById(dict);
+        return new JiebaoResponse().okMessage("禁用成功");
+    }
+
+    @GetMapping("noDisable")
+    //  @RequiresPermissions("dict:getListTable")
+    @ApiOperation(value = "解禁", notes = "解禁", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse noDisable( Dict dict){
+        dict.setIfDisable(1);
+        dictService.updateById(dict);
+        return new JiebaoResponse().okMessage("解禁成功");
+    }
 
 }

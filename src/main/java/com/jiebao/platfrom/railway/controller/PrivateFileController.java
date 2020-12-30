@@ -44,7 +44,7 @@ public class PrivateFileController extends BaseController {
 
     @GetMapping
     public Map<String, Object> privateFileList(QueryRequest request, PrivateFile privateFile) {
-        return this.privateFileService.findPrivateFileList(request, privateFile);
+        return new JiebaoResponse().data(this.privateFileService.findPrivateFileList(request, privateFile)).okMessage("查询成功") ;
     }
 
     @Log("新增文件夹")
@@ -52,7 +52,7 @@ public class PrivateFileController extends BaseController {
     public JiebaoResponse addPrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
             privateFileService.createPrivateFile(privateFile);
-            return new JiebaoResponse().message("新增成功").put("status", "200");
+            return new JiebaoResponse().okMessage("新增成功");
         } catch (Exception e) {
             message = "新增文件夹失败";
             log.error(message, e);
@@ -74,7 +74,7 @@ public class PrivateFileController extends BaseController {
                 }
                 privateFileService.removeById(id);
             });
-            return new JiebaoResponse().message("删除成功").put("status", "200");
+            return new JiebaoResponse().okMessage("删除成功");
         } catch (Exception e) {
             message = "删除文件夹失败";
             log.error(message, e);
@@ -87,7 +87,7 @@ public class PrivateFileController extends BaseController {
     public JiebaoResponse updatePrivateFile(@Valid PrivateFile privateFile) throws JiebaoException {
         try {
             this.privateFileService.updateById(privateFile);
-            return new JiebaoResponse().message("修改成功").put("status", "200");
+            return new JiebaoResponse().okMessage("修改成功");
         } catch (Exception e) {
             message = "修改文件夹失败";
             log.error(message, e);
@@ -98,8 +98,8 @@ public class PrivateFileController extends BaseController {
 
     @ApiOperation(value = "根据ID查子文件夹和文件", notes = "根据ID查子文件夹和文件", httpMethod = "GET")
     @GetMapping("/getByIdList")
-    public List<PrivateFile> privateFileList( String privateFileId) {
-        return this.privateFileService.getPrivateFileListById(privateFileId);
+    public JiebaoResponse privateFileList( String privateFileId) {
+        return new JiebaoResponse().data(this.privateFileService.getPrivateFileListById(privateFileId)).okMessage("查询成功");
     }
 
 }
