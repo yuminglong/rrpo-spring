@@ -1,11 +1,8 @@
 package com.jiebao.platfrom.wx.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
-import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.service.IMonthService;
@@ -13,13 +10,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 
 /**
  * <p>
@@ -101,6 +99,12 @@ public class MonthController {
     @ApiOperation("年度考核统计视图")
     public JiebaoResponse year(Integer year) { //传入年份 获得对应 统计数据
         return monthService.year(year);
+    }
+
+    @GetMapping("yearSN")
+    @ApiOperation("年度考核统计视图 起止")
+    public JiebaoResponse yearSN(Date startDate,Date endDate) { //传入年份 获得对应 统计数据
+        return new JiebaoResponse().data(monthService.yearSN(startDate,endDate)).okMessage("查询成功");
     }
 
 }

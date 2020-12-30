@@ -1,7 +1,6 @@
 package com.jiebao.platfrom.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,13 +23,11 @@ import com.jiebao.platfrom.system.service.UserConfigService;
 import com.jiebao.platfrom.system.service.UserRoleService;
 import com.jiebao.platfrom.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -83,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 //        }
         try {
             Page<User> page = new Page<>();
-            SortUtil.handlePageSort(request, page, "userId", JiebaoConstant.ORDER_ASC, false);
+            SortUtil.handlePageSort(request, page, "ssex", JiebaoConstant.ORDER_ASC, false);
             return this.baseMapper.findUserDetail(page, user);
         } catch (Exception e) {
             log.error("查询用户异常", e);

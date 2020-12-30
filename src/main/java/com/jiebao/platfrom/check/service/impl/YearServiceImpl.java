@@ -67,11 +67,7 @@ public class YearServiceImpl extends ServiceImpl<YearMapper, Year> implements IY
         boolean save = super.saveOrUpdate(year);
         if (save) {
             List<YearBindMenus> yearBindMenusList = new ArrayList<>();//储存模块
-            System.out.println(year.getYearId());
-            System.out.println(year.getYearId());
-            System.out.println(year.getYearId());
-            System.out.println(year.getYearId());
-            System.out.println(year.getYearId());
+            if(menusIdS!=null)
             for (String mid : menusIdS
             ) {
                 YearBindMenus yearBindMenus = new YearBindMenus();
