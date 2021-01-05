@@ -1,11 +1,14 @@
 package com.jiebao.platfrom.wx.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.wx.domain.Month;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiebao.platfrom.wx.domain.MonthMap;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -29,4 +32,6 @@ public interface IMonthService extends IService<Month> {
     JiebaoResponse downDocxGood(HttpServletResponse response, String month,String number,String content);
 
     JiebaoResponse year(Integer year);  //通过年份 查找对应数据
+
+    List<MonthMap> yearSN(Date startDate, Date endDate);  //区间查询 查找对应数据
 }

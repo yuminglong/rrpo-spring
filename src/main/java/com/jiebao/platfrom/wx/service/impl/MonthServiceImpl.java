@@ -3,6 +3,7 @@ package com.jiebao.platfrom.wx.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -12,12 +13,10 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.FileService;
-import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.dao.MonthMapper;
+import com.jiebao.platfrom.wx.domain.Month;
 import com.jiebao.platfrom.wx.domain.MonthMap;
 import com.jiebao.platfrom.wx.service.IMonthService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.SneakyThrows;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -158,6 +157,19 @@ public class MonthServiceImpl extends ServiceImpl<MonthMapper, Month> implements
         List<MonthMap> monthMaps = this.baseMapper.selectMap(queryWrapper);
         return new JiebaoResponse().data(monthMaps).okMessage("查询成功");
     }
+
+    //区间查询
+    @Override
+    public List<MonthMap> yearSN(Date startDate, Date endDate) {
+        QueryWrapper<Month> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("date", startDate);
+        queryWrapper.le("date", endDate);
+        queryWrapper.eq("status", 1);
+        queryWrapper.isNotNull("sz_dept_name");
+        queryWrapper.groupBy("sz_dept_name");
+        return this.baseMapper.selectMap(queryWrapper);
+    }
+
 
     @Override
     public JiebaoResponse monthDocx(HttpServletResponse response, String month) {

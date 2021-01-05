@@ -1,8 +1,10 @@
 package com.jiebao.platfrom.accident.controller;
 
 
-import com.jiebao.platfrom.accident.daomain.*;
-import com.jiebao.platfrom.accident.service.*;
+import com.jiebao.platfrom.accident.daomain.Accident;
+import com.jiebao.platfrom.accident.daomain.CompareTable;
+import com.jiebao.platfrom.accident.service.IAccidentService;
+import com.jiebao.platfrom.accident.service.IDeptService;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
@@ -18,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -41,14 +40,11 @@ public class AccidentController {
     IDeptService deptService;
     @Autowired
     DeptService deptServices;
-//    @Autowired
-//    IZaajqkService zaajqkService;
     @Autowired
     DeptMapper deptMapper;
     @Autowired
     DictMapper dictMapper;
-    @Autowired
-    ICaseService caseService;
+
 
     @PostMapping("saveOrUpdate")
     @ApiOperation("添加修改 事故信息")
