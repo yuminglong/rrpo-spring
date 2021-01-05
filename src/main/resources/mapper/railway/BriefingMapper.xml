@@ -18,7 +18,7 @@
 
     <select id="countListByCity" resultType="Briefing">
 
-    SELECT distinct r.* FROM `rail_briefing_count` d,rail_briefing  r
+    SELECT distinct r.*,d.count as counts FROM `rail_briefing_count` d,rail_briefing  r
         where d.briefing_id =r.id and r.`status`=3
             <if test="startTime != null">
                 and r.release_time >= #{startTime}

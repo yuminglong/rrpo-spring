@@ -13,13 +13,21 @@ public interface UserService extends IService<User> {
 
 
     /**
-     * 通过用户名查找用户
+     * 通过用户名查找后台用户
      *
      * @param username username
      * @return user
      */
     User findByName(String username);
 
+
+    /**
+     * 通过用户名查找后台用户
+     *
+     * @param username username
+     * @return user
+     */
+    User findWxByName(String username);
 
     /**
      * 查询用户详情，包括基本信息，用户角色，用户部门

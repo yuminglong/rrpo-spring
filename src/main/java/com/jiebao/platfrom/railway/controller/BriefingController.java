@@ -143,7 +143,13 @@ public class BriefingController extends BaseController {
                         briefingCount.setBriefingId(briefing.getId());
                         briefingCount.setDeptId(jsonObject.getString("deptId"));
                         briefingCount.setCount(jsonObject.getInteger("count"));
-                        briefingCountService.save(briefingCount);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("briefing_id",briefing.getId());
+                        map.put("dept_id",jsonObject.getString("deptId"));
+                        List<BriefingCount> briefingCountList = briefingCountMapper.selectByMap(map);
+                        if (briefingCountList.size() == 0){
+                            briefingCountService.save(briefingCount);
+                        }
                     }
                 }
 

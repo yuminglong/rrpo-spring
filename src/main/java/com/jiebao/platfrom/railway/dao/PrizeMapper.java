@@ -172,5 +172,8 @@ public interface PrizeMapper extends BaseMapper<Prize> {
 
     @Update("UPDATE rail_prize SET gong_status = #{value} WHERE id =#{prizeId}")
     boolean updateGongStatus(String prizeId , String value);
+
+    @Update("UPDATE rail_prize SET if_import = 1 WHERE status = 8")
+    boolean updateAll();
 }
 

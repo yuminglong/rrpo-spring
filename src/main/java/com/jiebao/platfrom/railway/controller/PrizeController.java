@@ -20,10 +20,7 @@ import com.jiebao.platfrom.railway.domain.*;
 import com.jiebao.platfrom.railway.service.*;
 import com.jiebao.platfrom.system.dao.*;
 import com.jiebao.platfrom.system.domain.*;
-import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.system.service.RoleService;
-import com.jiebao.platfrom.system.service.UserRoleService;
-import com.jiebao.platfrom.system.service.UserService;
+import com.jiebao.platfrom.system.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -137,6 +134,9 @@ public class PrizeController extends BaseController {
 
     @Autowired
     private PrizeRejectOpinionMapper prizeRejectOpinionMapper;
+
+    @Autowired
+    private DictService dictService;
 
 
     /**
@@ -384,6 +384,14 @@ public class PrizeController extends BaseController {
     @ApiOperation(value = "分页查询发件箱（未发送的和已发送的）", notes = "分页查询发件箱（未发送的和已发送的）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getPrizeList(QueryRequest request, Prize prize, String startTime, String endTime) {
         IPage<Prize> prizeList = prizeService.getPrizeList(request, prize, startTime, endTime);
+        List<Prize> records = prizeList.getRecords();
+        for (Prize r :records
+        ) {
+            Dict byId = dictService.getById(r.getTypes());
+            r.setTypeObject(byId);
+            Dict byIdTwo = dictService.getById(r.getIdentity());
+            r.setIdentityObject(byIdTwo);
+        }
         return new JiebaoResponse().data(this.getDataTable(prizeList));
     }
 
@@ -392,6 +400,14 @@ public class PrizeController extends BaseController {
     @ApiOperation(value = "分页查询收件箱", notes = "分页查询收件箱", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getPrizeInboxList(QueryRequest request, Prize prize, String startTime, String endTime,String [] statuses) {
         IPage<Prize> prizeList = prizeService.getPrizeInboxList(request, prize, startTime, endTime, statuses);
+        List<Prize> records = prizeList.getRecords();
+        for (Prize r :records
+                ) {
+            Dict byId = dictService.getById(r.getTypes());
+            r.setTypeObject(byId);
+            Dict byIdTwo = dictService.getById(r.getIdentity());
+            r.setIdentityObject(byIdTwo);
+        }
         return new JiebaoResponse().data(this.getDataTable(prizeList));
     }
 
@@ -670,9 +686,8 @@ public class PrizeController extends BaseController {
             this.saveFile("2", "10", byNameTwo.getUserId(), oldNameTwo, newName, true, "1");
 
             System.out.println("-------------------------");
-             Prize prize1 = new Prize();
-             prize1.setIfImport(1);
-             prizeService.updateById(prize1);
+            //已完成的全部修改为已导出
+           prizeMapper.updateAll();
     }
 
 

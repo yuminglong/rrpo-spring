@@ -99,7 +99,7 @@ public class ExchangeServiceImpl extends ServiceImpl<ExchangeMapper, Exchange> i
         queryWrapper.lambda().and(wrapper -> wrapper.eq(Exchange::getStatus, 3).or().eq(Exchange::getStatus, 4));
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         if (StringUtils.isNotBlank(username)) {
-            User byName = userService.findByName(username);
+            User byName = userService.findWxByName(username);
             List<ExchangeUser> bySendUserId = exchangeUserMapper.getBySendUserId(byName.getUserId());
             ArrayList<String> exchangeUserIds = new ArrayList<>();
             for (ExchangeUser exchangeUser : bySendUserId

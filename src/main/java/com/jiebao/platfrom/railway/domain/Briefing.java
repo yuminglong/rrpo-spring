@@ -87,4 +87,8 @@ public class Briefing {
      */
     private String targetsId;
 
+    @ApiModelProperty(value = "数量",example = "1")
+    @TableField(exist = false)
+    private Integer counts;
+
 }

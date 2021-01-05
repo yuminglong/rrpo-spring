@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 通讯录
@@ -30,29 +31,8 @@ public class Address {
     private String id;
 
 
-    @ExcelField(value = "名称")
-    @ApiModelProperty(value = "名称")
-    private String userName;
-
-
-    @ExcelField(value = "电话")
-    @ApiModelProperty(value = "电话")
-    private String phone;
-
-    @ExcelField(value = "手机")
-    @ApiModelProperty(value = "手机")
-    private String telPhone;
-
-    @ExcelField(value = "微信")
+    @ApiModelProperty(value = "微信")
     private String weiXin;
-
-    @ExcelField(value = "邮箱")
-    private String email;
-
-
-    @ExcelField(value = "组织机构名")
-    @TableField(exist = false)
-    private String deptName;
 
 
     // @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
@@ -71,15 +51,40 @@ public class Address {
     @ApiModelProperty(value = "和组织机构关联ID")
     private String deptId;
 
-    @ExcelField(value = "职务")
-    @ApiModelProperty(value = "职务")
-    private String position;
+    @ExcelField(value = "名称")
+    @ApiModelProperty(value = "名称")
+    private String userName;
+
 
     @ExcelField(value = "单位")
     @ApiModelProperty(value = "单位")
     private String unit;
 
+    @ApiModelProperty(value = "组织机构名")
+    @TableField(exist = false)
+    private String deptName;
+
+    @ExcelField(value = "职务")
+    @ApiModelProperty(value = "职务")
+    private String position;
+
+
+    @ExcelField(value = "电话")
+    @ApiModelProperty(value = "电话")
+    private String phone;
+
+    @ExcelField(value = "手机")
+    @ApiModelProperty(value = "手机")
+    private String telPhone;
+
+    @ExcelField(value = "邮箱")
+    private String email;
+
     @ApiModelProperty(value = "所处的市级ID")
     private String deptRoot;
+
+    @ApiModelProperty(value = "职务")
+    @TableField(exist = false)
+    private String positionId;
 
 }

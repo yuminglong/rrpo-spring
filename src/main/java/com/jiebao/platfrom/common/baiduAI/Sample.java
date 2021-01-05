@@ -4,7 +4,9 @@ import com.baidu.aip.imagesearch.AipImageSearch;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Sample {
     public static final String APP_ID = "21958040";
@@ -19,9 +21,18 @@ public class Sample {
        // Sample.ware(image,brief,url);
         Sample.sample(image);*/
 
-      String a= "12，2,3";
+     /* String a= "12，2,3";
         String[] split = a.split(",");
-        System.out.println(split[0]);
+        System.out.println(split[0]);*/
+
+        String s = ",a,b,c,";
+        String s1 = s.replaceAll("^,*|,*$", "");
+        List result = Arrays.asList(s1.split(","));
+        for (int i = 0; i < result.size(); i++) {
+            System.out.println(result.get(i));
+
+        }
+        System.out.println(result);
     }
 
     /**

@@ -112,6 +112,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateByKey(Address address) {
+        Address byId = addressService.getById(address.getId());
+        Dept addressDept = deptService.getById(byId.getDeptId());
+        address.setUnit(addressDept.getDeptName());
         this.addressMapper.updateById(address);
     }
 
@@ -156,7 +159,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public boolean addAddressList(MultipartFile file, String deptId) throws Exception {
-        boolean index =true;
+        boolean index = true;
         List<Address> addressList = new ArrayList<>();
         String filename = file.getOriginalFilename();
         String sub = filename.substring(filename.lastIndexOf(".") + 1);
@@ -239,26 +242,25 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 address.setUserName(userName);
                 address.setPhone(phone);
                 Map<String, Object> map = new HashMap<>();
-                map.put("tel_phone",telPhone);
+                map.put("tel_phone", telPhone);
                 List<Address> addresses = addressMapper.selectByMap(map);
                 address.setTelPhone(telPhone);
                 address.setWeiXin(weiXin);
                 address.setEmail(email);
                 address.setUnit(unit);
-                address.setPosition(position);
-                if (deptId == null){
+                String positionNew = "," + position + ",";
+                address.setPosition(positionNew);
+                if (deptId == null) {
                     Dept dept = this.deptService.getDept();
                     address.setDeptId(dept.getDeptId());
-                }
-                else {
+                } else {
                     address.setDeptId(deptId);
                 }
                 address.setStatus(2);
-                if(addresses.isEmpty()){
+                if (addresses.isEmpty()) {
                     addressList.add(address);
-                }
-                else {
-                    index =false;
+                } else {
+                    index = false;
                 }
             }
             for (Address address : addressList) {
@@ -280,9 +282,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return this.baseMapper.selectList(queryWrapper);
     }
 
-
     @Override
-    public IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone) {
+    public List<Address> addressListNew(QueryRequest request, Address address, String userName, String telPhone) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         if (StringUtils.isNotBlank(address.getDeptId())) {
             lambdaQueryWrapper.eq(Address::getDeptId, address.getDeptId());
@@ -292,6 +293,39 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         }
         if (StringUtils.isNotBlank(telPhone)) {
             lambdaQueryWrapper.like(Address::getTelPhone, telPhone);
+        }
+        if (StringUtils.isNotBlank(address.getPosition())) {
+            String position = "," + address.getPosition() + ",";
+            lambdaQueryWrapper.like(Address::getPosition, position);
+        }
+        lambdaQueryWrapper.orderByDesc(Address::getCreatTime);
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+
+    @Override
+    public IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone) {
+        LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
+        Dept dept = deptService.getDept();
+     //   List<Dept> allId = deptService.getDepts(dept.getDeptId());
+        if (address == null || "".equals(address)) {
+            lambdaQueryWrapper.eq(Address::getDeptId,dept.getDeptId());
+        }
+        if (StringUtils.isNotBlank(address.getDeptId())) {
+            lambdaQueryWrapper.eq(Address::getDeptId, address.getDeptId());
+        }
+        if (StringUtils.isNotBlank(userName)) {
+         //   lambdaQueryWrapper.in(Address::getDeptId,allId);
+            lambdaQueryWrapper.like(Address::getUserName, userName);
+        }
+        if (StringUtils.isNotBlank(telPhone)) {
+      //      lambdaQueryWrapper.in(Address::getDeptId,allId);
+            lambdaQueryWrapper.like(Address::getTelPhone, telPhone);
+        }
+        if (StringUtils.isNotBlank(address.getPosition())) {
+        //    lambdaQueryWrapper.in(Address::getDeptId,allId);
+            String position = "," + address.getPosition() + ",";
+            lambdaQueryWrapper.like(Address::getPosition, position);
         }
         Page<Address> page = new Page<>(request.getPageNum(), request.getPageSize());
         lambdaQueryWrapper.orderByDesc(Address::getCreatTime);
@@ -307,10 +341,14 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     }
 
     @Override
-    public List<Address> getList( List<String> deptIdList) {
+    public List<Address> getList(List<String> deptIdList) {
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(Address::getDeptId, deptIdList);
         return this.baseMapper.selectList(lambdaQueryWrapper);
     }
 
+    @Override
+    public Address findByName(String username) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<Address>().eq(Address::getUserName, username));
+    }
 }

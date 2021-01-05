@@ -47,7 +47,8 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         //查询状态不为4，4：假删除状态
         queryWrapper.lambda().ne(Notice::getStatus, 4);
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
-        User byName = userService.findByName(username);
+        User byName = userService.findWxByName(username);
+
         queryWrapper.lambda().eq(Notice::getUserId,byName.getUserId());
         if (StringUtils.isNotBlank(username)) {
             queryWrapper.lambda().eq(Notice::getCreateUser, username);

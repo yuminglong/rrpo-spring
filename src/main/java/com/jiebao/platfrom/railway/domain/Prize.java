@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.jiebao.platfrom.system.domain.Dict;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -102,7 +103,17 @@ public class Prize {
     @ApiModelProperty(value = "事件发生时间")
     private Date happenTime;
 
-    @ApiModelProperty(value = "事件类型")
+    @TableField(exist = false)
+    @ApiModelProperty(value = "事件类型对象")
+    private Dict typeObject;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "事件类型对象")
+    private Dict identityObject;
+
+
+    @ApiModelProperty(value = "事件类型对象")
     private String types;
 
     @ApiModelProperty(value = "自身意见")

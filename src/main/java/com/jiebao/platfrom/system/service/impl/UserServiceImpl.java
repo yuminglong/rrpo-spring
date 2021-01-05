@@ -51,6 +51,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserManager userManager;
     @Autowired
+    private UserService userService;
+    @Autowired
     private UserMapper userMapper;
     @Autowired
     private DeptService deptService;
@@ -63,6 +65,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return baseMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username).eq(User::getType, 0));
     }
 
+    @Override
+    public User findWxByName(String username) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+    }
 
     @Override
     public IPage<User> findUserDetail(User user, QueryRequest request) {
@@ -162,6 +168,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         cacheService.saveUser(user.getUsername());
         cacheService.saveRoles(user.getUsername());
         cacheService.savePermissions(user.getUsername());
+
+
+
+
+     /*   Address byName = addressService.findByName(user.getUsername());
+        if (byName!=null){
+            Address address = new Address();
+            address.setDeptId(user.getDeptId());
+            address.setPosition(user.getDescription());
+            address.setEmail(user.getEmail());
+            if (user.getDeptId() !=null && !"".equals(user.getDeptId())){
+                Dept byId = deptService.getById(user.getDeptId());
+                address.setUnit(byId.getDeptName());
+            }
+            address.setTelPhone(user.getMobile());
+            address.setStatus(1);
+            address.setId(byName.getId());
+            addressService.updateById(address);
+        }*/
+
     }
 
     @Override

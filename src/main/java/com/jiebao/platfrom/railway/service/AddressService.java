@@ -6,8 +6,10 @@ import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.domain.Tree;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +50,8 @@ public interface AddressService extends IService<Address> {
 
     List<Address> addressList(Address address, QueryRequest request);
 
+    List<Address> addressListNew( QueryRequest request, Address address, String userName, String telPhone);
+
     /**
      *
      * @param request
@@ -67,5 +71,7 @@ public interface AddressService extends IService<Address> {
 
 
     List<Address> getList(List<String> deptIdList);
+
+    Address findByName(String username);
 
 }

@@ -81,6 +81,9 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (StringUtils.isNotBlank(prize.getTypes())) {
             queryWrapper.lambda().eq(Prize::getTypes, prize.getTypes());
         }
+        if (prize.getTypeObject()!=null && !"".equals(prize.getTypeObject())) {
+            queryWrapper.lambda().eq(Prize::getTypes, prize.getTypeObject().getDictId());
+        }
         if (prize.getStatus()!=null){
             queryWrapper.lambda().eq(Prize::getStatus,prize.getStatus());
         }
@@ -155,10 +158,12 @@ public class PrizeServiceImpl extends ServiceImpl<PrizeMapper, Prize> implements
         if (statuses != null){
             queryWrapper.lambda().in(Prize::getStatus,statuses);
         }
+
         Page<Prize> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
+
 
     @Override
     public IPage<Prize> getBriefing(QueryRequest request, Prize prize, String startTime, String endTime) {

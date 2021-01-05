@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.railway.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
@@ -11,7 +12,9 @@ import com.jiebao.platfrom.railway.dao.AddressMapper;
 import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.dao.DictMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Dict;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
@@ -28,10 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -51,6 +52,8 @@ public class AddressController extends BaseController {
     private DeptMapper deptMapper;
     @Autowired
     private DeptService deptService;
+    @Autowired
+    private DictMapper dictMapper;
 
     /**
      * 使用Mapper操作数据库
@@ -122,6 +125,10 @@ public class AddressController extends BaseController {
                     }
                 }
             address.setStatus(1);
+            if (address.getDeptId() != null) {
+                Dept addressDept = deptService.getById(address.getDeptId());
+                address.setUnit(addressDept.getDeptName());
+            }
             this.addressService.saveOrUpdate(address);
             return new JiebaoResponse().okMessage("新增成功");
         } catch (Exception e) {
@@ -162,23 +169,24 @@ public class AddressController extends BaseController {
     @PostMapping(value = "/importAddress")
     @ApiOperation(value = "导入通讯录", notes = "导入通讯录", httpMethod = "POST")
     public JiebaoResponse excelImport(@RequestParam(value = "file") MultipartFile file, String deptId) throws Exception {
-         boolean  result = addressService.addAddressList(file, deptId);
-            if (result) {
-                return new JiebaoResponse().okMessage("导入成功");
-            } else {
-                return new JiebaoResponse().failMessage("筛选出重复号码导入成功");
-            }
+        boolean result = addressService.addAddressList(file, deptId);
+        if (result) {
+            return new JiebaoResponse().okMessage("导入成功");
+        } else {
+            return new JiebaoResponse().failMessage("筛选出重复号码导入成功");
+        }
     }
 
 
     @PostMapping(value = "/excel")
     @ApiOperation(value = "导出", notes = "导出", httpMethod = "POST")
-    public void export(HttpServletResponse response, QueryRequest request, Address address) throws JiebaoException {
+    public void export(HttpServletResponse response, QueryRequest request, Address address, String userName, String telPhone) throws JiebaoException {
         try {
-            List<Address> addresses = this.addressService.addressList(address, request);
+           // List<Address> addresses = this.addressService.addressList(address, request);
+            List<Address> addresses =  this.addressService.addressListNew(request,address,userName,telPhone);
             for (Address addr : addresses
             ) {
-                if (addr.getDeptId() == null) {
+                /*if (addr.getDeptId() == null) {
                     addr.setDeptName("");
                 } else {
                     Dept byId = deptMapper.getById(addr.getDeptId());
@@ -187,6 +195,16 @@ public class AddressController extends BaseController {
                     } else {
                         addr.setDeptName(byId.getDeptName());
                     }
+                }*/
+                if (addr.getPosition() != null) {
+                    String s = addr.getPosition().replaceAll("^,*|,*$", "");
+                    List result = Arrays.asList(s.split(","));
+                    QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.in("dict_id", result);
+                    List<Dict> userInfoList = dictMapper.selectList(queryWrapper);
+                    List<String> position = userInfoList.stream().map(p -> p.getFieldName()).collect(Collectors.toList());
+                    String join = String.join(",", position);
+                    addr.setPosition(join);
                 }
             }
             ExcelKit.$Export(Address.class, response).downXlsx(addresses, false);
@@ -205,11 +223,26 @@ public class AddressController extends BaseController {
     public JiebaoResponse findByDept(QueryRequest request, Address address, String userName, String telPhone) {
         IPage<Address> deptList = addressService.getByDept(request, address, userName, telPhone);
         List<Address> records = deptList.getRecords();
-        for (Address a:records
-             ) {
+        for (Address a : records
+        ) {
             Dept byId = deptService.getById(a.getDeptId());
-            if (byId !=null){
+            if (byId != null) {
                 a.setDeptName(byId.getDeptName());
+            }
+            if (a.getPosition() != null) {
+                //解析职位ID为name
+                String s = a.getPosition().replaceAll("^,*|,*$", "");
+                List result = Arrays.asList(s.split(","));
+                QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+                queryWrapper.in("dict_id", result);
+                List<Dict> userInfoList = dictMapper.selectList(queryWrapper);
+                List<String> position = userInfoList.stream().map(p -> p.getFieldName()).collect(Collectors.toList());
+                String join = String.join(",", position);
+                a.setPosition(join);
+
+                String positionId = String.join(",", result);
+                a.setPositionId(positionId);
+
             }
         }
         return new JiebaoResponse().data(this.getDataTable(deptList));
