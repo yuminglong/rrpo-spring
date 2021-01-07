@@ -64,9 +64,13 @@ public class Address {
     @TableField(exist = false)
     private String deptName;
 
+    @ExcelField(value = "护路职务")
+    @ApiModelProperty(value = "护路职务")
+    private String position;
+
     @ExcelField(value = "职务")
     @ApiModelProperty(value = "职务")
-    private String position;
+    private String newPosition;
 
 
     @ExcelField(value = "电话")
@@ -83,8 +87,11 @@ public class Address {
     @ApiModelProperty(value = "所处的市级ID")
     private String deptRoot;
 
-    @ApiModelProperty(value = "职务")
+    @ApiModelProperty(value = "护路职务Id")
     @TableField(exist = false)
     private String positionId;
+
+
+
 
 }

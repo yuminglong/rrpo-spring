@@ -15,8 +15,10 @@ import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.DictMapper;
 import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.Dict;
+import com.jiebao.platfrom.system.domain.File;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
+import com.jiebao.platfrom.system.service.FileService;
 import com.jiebao.platfrom.system.service.UserService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +57,8 @@ public class AddressController extends BaseController {
     private DeptService deptService;
     @Autowired
     private DictMapper dictMapper;
+    @Autowired
+    private FileService fileService;
 
     /**
      * 使用Mapper操作数据库
@@ -173,7 +178,7 @@ public class AddressController extends BaseController {
         if (result) {
             return new JiebaoResponse().okMessage("导入成功");
         } else {
-            return new JiebaoResponse().failMessage("筛选出重复号码导入成功");
+            return new JiebaoResponse().failMessage("电话号码或用户名重复，部分或未导入成功");
         }
     }
 
@@ -246,5 +251,36 @@ public class AddressController extends BaseController {
             }
         }
         return new JiebaoResponse().data(this.getDataTable(deptList));
+    }
+
+
+
+    /**
+     * 文件下载
+     *
+     * @param
+     */
+    @ApiOperation("下载模板接口")
+    @RequestMapping("/downloadFile")
+    public void downloadFile( HttpServletResponse response) {
+
+        File file = fileService.getById("f6dc2572334aee5a08ad845409c8d731");
+        java.io.File downloadFile = new java.io.File(file.getFileUrl() + file.getNewName());
+        if (downloadFile.exists()) {
+            try {
+                InputStream is = new BufferedInputStream(new FileInputStream(downloadFile));
+                byte[] buffer = new byte[is.available()];
+                is.read(buffer);
+                is.close();
+                response.addHeader("Content-Disposition", "attachment;filename=" + new String(file.getOldName().getBytes("UTF-8"), "ISO-8859-1"));
+                OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+                response.setContentType("application/octet-stream");
+                outputStream.write(buffer);
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                log.warn("File download Exception：" + e);
+            }
+        }
     }
 }

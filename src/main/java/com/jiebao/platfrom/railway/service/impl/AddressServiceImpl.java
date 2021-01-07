@@ -17,7 +17,9 @@ import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Inform;
 import com.jiebao.platfrom.railway.service.AddressService;
 import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.dao.DictMapper;
 import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.domain.Dict;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
@@ -38,10 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -63,6 +62,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DictMapper dictMapper;
 
 
     @Override
@@ -194,7 +196,6 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 String userName = row.getCell(0).getStringCellValue();
                 if (row.getCell(1) == null) {
                     row.createCell(1).setCellType(CellType.STRING);
-                    ;
                 } else {
                     row.getCell(1).setCellType(CellType.STRING);
                 }
@@ -223,20 +224,15 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                     row.getCell(5).setCellType(CellType.STRING);
                 }
 
-                if (row.getCell(6) == null) {
-                    row.createCell(6).setCellType(CellType.STRING);
-                    ;
-                } else {
-                    row.getCell(6).setCellType(CellType.STRING);
-                }
 
 
-                String phone = row.getCell(1).getStringCellValue();
-                String telPhone = row.getCell(2).getStringCellValue();
-                String weiXin = row.getCell(3).getStringCellValue();
-                String email = row.getCell(4).getStringCellValue();
-                String position = row.getCell(5).getStringCellValue();
-                String unit = row.getCell(6).getStringCellValue();
+
+                String position = row.getCell(1).getStringCellValue();
+                String newPosition = row.getCell(2).getStringCellValue();
+                String phone = row.getCell(3).getStringCellValue();
+                String telPhone = row.getCell(4).getStringCellValue();
+                String email  = row.getCell(5).getStringCellValue();
+
 
                 // if (StringUtils.isNotBlank(deptId) && !"".equals(userName) && !"".equals(position) && !"".equals(unit) && !"".equals(weiXin) && !"".equals(telPhone) && !"".equals(email) && !"".equals(phone)) {
                 address.setUserName(userName);
@@ -245,11 +241,32 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
                 map.put("tel_phone", telPhone);
                 List<Address> addresses = addressMapper.selectByMap(map);
                 address.setTelPhone(telPhone);
-                address.setWeiXin(weiXin);
                 address.setEmail(email);
-                address.setUnit(unit);
-                String positionNew = "," + position + ",";
-                address.setPosition(positionNew);
+                if (deptId !=null){
+                    Dept byId = deptService.getById(deptId);
+                    address.setUnit(byId.getDeptName());
+                }
+                List result = Arrays.asList(position.split(","));
+                String dickName =",";
+                for (int i = 0; i < result.size(); i++) {
+                    Map<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("parent_id","2a6c549aa14e2f77837b1a11f6e7ad0f");
+                    hashMap.put("field_name", result.get(i));
+                    List<Dict> dicts = dictMapper.selectByMap(hashMap);
+                    if (dicts!=null){
+                        for (Dict d:dicts
+                        ) {
+                            dickName =dickName+d.getDictId()+",";
+                        }
+                    }
+                }
+                if (",".equals(dickName)){
+                    address.setPosition(null);
+                }
+                else {
+                    address.setPosition(dickName);
+                }
+                address.setNewPosition(newPosition);
                 if (deptId == null) {
                     Dept dept = this.deptService.getDept();
                     address.setDeptId(dept.getDeptId());
@@ -305,6 +322,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 
     @Override
     public IPage<Address> getByDept(QueryRequest request, Address address, String userName, String telPhone) {
+
         LambdaQueryWrapper<Address> lambdaQueryWrapper = new LambdaQueryWrapper();
         Dept dept = deptService.getDept();
      //   List<Dept> allId = deptService.getDepts(dept.getDeptId());
