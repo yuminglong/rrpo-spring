@@ -86,22 +86,20 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     public JiebaoResponse createNewDict(Dict dict) {
         String parentId = dict.getParentId();
         Map<String, Object> map = new HashMap<>();
-        map.put("table_name",dict.getTableName());
-        map.put("parent_id",parentId);
+        map.put("table_name", dict.getTableName());
+        map.put("parent_id", parentId);
         List<Dict> dicts = dictMapper.selectByMap(map);
         Map<String, Object> map2 = new HashMap<>();
-        map2.put("field_name",dict.getFieldName());
-        map2.put("parent_id",parentId);
+        map2.put("field_name", dict.getFieldName());
+        map2.put("parent_id", parentId);
         List<Dict> dictes = dictMapper.selectByMap(map2);
-        if (dicts.size()>0 || dictes.size()>0){
-           return new JiebaoResponse().failMessage("字段名重复");
-        }
-        else {
+        if (dicts.size() > 0 || dictes.size() > 0) {
+            return new JiebaoResponse().failMessage("字段名重复");
+        } else {
             if (StringUtils.isNotBlank(parentId)) {
                 dict.setTableName("无");
                 this.save(dict);
-            }
-            else {
+            } else {
                 dict.setFieldName("无");
                 dict.setParentId("0");
                 this.save(dict);
@@ -123,43 +121,42 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Override
     public IPage<Dict> getListTable(QueryRequest request, Dict dict) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Dict::getIfDisable,1);
-        if (StringUtils.isNotBlank(dict.getTableName())){
-            queryWrapper.lambda().like(Dict::getTableName,dict.getTableName());
+        queryWrapper.lambda().eq(Dict::getIfDisable, 1);
+        if (StringUtils.isNotBlank(dict.getTableName())) {
+            queryWrapper.lambda().like(Dict::getTableName, dict.getTableName());
         }
-        if (StringUtils.isNotBlank(dict.getFieldName())){
-            queryWrapper.lambda().like(Dict::getFieldName,dict.getFieldName());
+        if (StringUtils.isNotBlank(dict.getFieldName())) {
+            queryWrapper.lambda().like(Dict::getFieldName, dict.getFieldName());
         }
-        if (StringUtils.isNotBlank(dict.getParentId())){
-            queryWrapper.lambda().eq(Dict::getParentId,dict.getParentId());
+        if (StringUtils.isNotBlank(dict.getParentId())) {
+            queryWrapper.lambda().eq(Dict::getParentId, dict.getParentId());
         }
-        if (StringUtils.isNotBlank(dict.getDictId())){
-            queryWrapper.lambda().eq(Dict::getDictId,dict.getDictId());
+        if (StringUtils.isNotBlank(dict.getDictId())) {
+            queryWrapper.lambda().eq(Dict::getDictId, dict.getDictId());
         }
         Page<Dict> page = new Page<>(request.getPageNum(), request.getPageSize());
-        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
-
 
 
     @Override
     public IPage<Dict> getListTableTwo(QueryRequest request, Dict dict) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.isNotBlank(dict.getTableName())){
-            queryWrapper.lambda().like(Dict::getTableName,dict.getTableName());
+        if (StringUtils.isNotBlank(dict.getTableName())) {
+            queryWrapper.lambda().like(Dict::getTableName, dict.getTableName());
         }
-        if (StringUtils.isNotBlank(dict.getFieldName())){
-            queryWrapper.lambda().like(Dict::getFieldName,dict.getFieldName());
+        if (StringUtils.isNotBlank(dict.getFieldName())) {
+            queryWrapper.lambda().like(Dict::getFieldName, dict.getFieldName());
         }
-        if (StringUtils.isNotBlank(dict.getParentId())){
-            queryWrapper.lambda().eq(Dict::getParentId,dict.getParentId());
+        if (StringUtils.isNotBlank(dict.getParentId())) {
+            queryWrapper.lambda().eq(Dict::getParentId, dict.getParentId());
         }
-        if (StringUtils.isNotBlank(dict.getDictId())){
-            queryWrapper.lambda().eq(Dict::getDictId,dict.getDictId());
+        if (StringUtils.isNotBlank(dict.getDictId())) {
+            queryWrapper.lambda().eq(Dict::getDictId, dict.getDictId());
         }
         Page<Dict> page = new Page<>(request.getPageNum(), request.getPageSize());
-        SortUtil.handleWrapperSort(request, queryWrapper, "creatTime", JiebaoConstant.ORDER_DESC, true);
+        SortUtil.handleWrapperSort(request, queryWrapper, "orderNum", JiebaoConstant.ORDER_ASC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 }

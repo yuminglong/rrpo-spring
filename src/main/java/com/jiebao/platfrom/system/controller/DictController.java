@@ -190,11 +190,13 @@ public class DictController extends BaseController {
         HttpGet httpGet = new HttpGet("http://114.116.174.5:888/jws/push/targets");
         CloseableHttpResponse response = null;
         response = httpClient.execute(httpGet);
+        if (response.toString().contains("404 Not Found")){
+            return new JiebaoResponse().failMessage("链接推送栏目接口失败");
+        }
         HttpEntity httpEntity  = response.getEntity();
         String result = EntityUtils.toString(httpEntity, "UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(result);
         String code = jsonObject.getString("code");
-        System.out.println(code+"---------------");
         if ( "0".equals(code)){
             return new JiebaoResponse().data(jsonObject).okMessage("查询成功");
         }

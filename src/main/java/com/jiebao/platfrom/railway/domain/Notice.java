@@ -37,15 +37,15 @@ public class Notice {
     @ExcelField(value = "标题")
     private String title;
 
-    @ExcelField(value = "内容")
-    private String content;
+    @ExcelField(value = "创建人")
+    private String createUser;
 
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date createTime;
 
+    @ExcelField(value = "内容")
+    private String content;
 
-    @ExcelField(value = "创建人")
-    private String createUser;
 
     @ApiModelProperty(value = "状态：1未发送 2撤销的 3已发布 4已删除")
     private String status;

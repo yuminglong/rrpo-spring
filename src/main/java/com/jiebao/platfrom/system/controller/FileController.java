@@ -180,6 +180,7 @@ public class FileController extends BaseController {
         File file = fileService.getById(fileId);
         java.io.File downloadFile = new java.io.File(file.getFileUrl() + file.getNewName());
         if (downloadFile.exists()) {
+            System.out.println("找到文件！");
             try {
                 InputStream is = new BufferedInputStream(new FileInputStream(downloadFile));
                 byte[] buffer = new byte[is.available()];
@@ -206,7 +207,7 @@ public class FileController extends BaseController {
     @ApiOperation("文件删除接口")
     @PostMapping("/deleteFile")
     public JiebaoResponse deleteFile(String fileId) {
-        System.out.println(fileId + "-------------");
+
         File file = fileService.getById(fileId);
         if (null != file) {
             java.io.File deleteFile = new java.io.File(file.getFileUrl() + file.getNewName());
@@ -394,3 +395,4 @@ public class FileController extends BaseController {
         return new JiebaoResponse().data(this.getDataTable(fileList));
     }
 }
+

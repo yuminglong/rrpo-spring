@@ -69,6 +69,32 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
 
 
     @Override
+    public List<Notice> getNoticeListNew(Notice notice, String startTime, String endTime) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper();
+        //查询状态不为4，4：假删除状态
+        queryWrapper.lambda().ne(Notice::getStatus, 4);
+        String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User byName = userService.findWxByName(username);
+
+        queryWrapper.lambda().eq(Notice::getUserId,byName.getUserId());
+        if (StringUtils.isNotBlank(username)) {
+            queryWrapper.lambda().eq(Notice::getCreateUser, username);
+        }
+        if (StringUtils.isNotBlank(notice.getTitle())) {
+            queryWrapper.lambda().like(Notice::getTitle, notice.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Notice::getCreateTime, startTime).le(Notice::getCreateTime, endTime);
+        }
+        if (StringUtils.isNotBlank(notice.getStatus())) {
+            queryWrapper.lambda().eq(Notice::getStatus, notice.getStatus());
+        }
+        queryWrapper.lambda().orderByDesc(Notice::getCreateTime);
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+
+    @Override
     public IPage<Notice> getNoticeInboxList(QueryRequest request, Notice notice, String startTime, String endTime) {
         QueryWrapper<Notice> queryWrapper = new QueryWrapper();
         //查询状态已发布的3
@@ -88,6 +114,25 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     }
 
 
+    @Override
+    public List<Notice> getNoticeInboxListNew( Notice notice, String startTime, String endTime) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper();
+        //查询状态已发布的3
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getStatus, 3).or().eq(Notice::getStatus, 4));
+        if (StringUtils.isNotBlank(notice.getTitle())) {
+            queryWrapper.lambda().like(Notice::getTitle, notice.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Notice::getReleaseTime, startTime).le(Notice::getReleaseTime, endTime);
+        }
+        if (StringUtils.isNotBlank(notice.getId())){
+            queryWrapper.lambda().eq(Notice::getId,notice.getId());
+        }
+      queryWrapper.lambda().orderByDesc(Notice::getReleaseTime);
+        return this.baseMapper.selectList( queryWrapper);
+    }
+
+
 
     @Override
     public IPage<Notice> getNoticeInboxListByParent(QueryRequest request, Notice notice, String startTime, String endTime) {
@@ -95,7 +140,7 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         //查询状态已发布的3
         queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getStatus, 3).or().eq(Notice::getStatus, 4));
         Dept dept = deptService.getDept();
-        queryWrapper.lambda().eq(Notice::getDeptId,dept.getParentId());
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getDeptId, "1").or().eq(Notice::getDeptId, dept.getParentId()));
         if (StringUtils.isNotBlank(notice.getTitle())) {
             queryWrapper.lambda().like(Notice::getTitle, notice.getTitle());
         }
@@ -108,6 +153,27 @@ public class noticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         Page<Notice> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handleWrapperSort(request, queryWrapper, "releaseTime", JiebaoConstant.ORDER_DESC, true);
         return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+
+    @Override
+    public List<Notice> getNoticeInboxListByParentNew( Notice notice, String startTime, String endTime) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper();
+        //查询状态已发布的3
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getStatus, 3).or().eq(Notice::getStatus, 4));
+        Dept dept = deptService.getDept();
+        queryWrapper.lambda().and(wrapper -> wrapper.eq(Notice::getDeptId, "1").or().eq(Notice::getDeptId, dept.getParentId()));
+        if (StringUtils.isNotBlank(notice.getTitle())) {
+            queryWrapper.lambda().like(Notice::getTitle, notice.getTitle());
+        }
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            queryWrapper.lambda().ge(Notice::getReleaseTime, startTime).le(Notice::getReleaseTime, endTime);
+        }
+        if (StringUtils.isNotBlank(notice.getId())){
+            queryWrapper.lambda().eq(Notice::getId,notice.getId());
+        }
+      queryWrapper.lambda().orderByDesc(Notice::getReleaseTime);
+        return this.baseMapper.selectList(queryWrapper);
     }
 
 

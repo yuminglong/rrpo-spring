@@ -23,6 +23,15 @@ public interface NoticeService extends IService<Notice> {
      */
     IPage<Notice> getNoticeList(QueryRequest request, Notice notice, String startTime, String endTime);
 
+
+    /**
+     * 发件箱导出
+     * @param notice
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Notice> getNoticeListNew( Notice notice, String startTime, String endTime);
     /**
      * 收件箱
      * @param request
@@ -32,6 +41,15 @@ public interface NoticeService extends IService<Notice> {
      * @return
      */
     IPage<Notice> getNoticeInboxList(QueryRequest request, Notice notice, String startTime, String endTime);
+
+    /**
+     * 收件箱导出
+     * @param notice
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Notice> getNoticeInboxListNew( Notice notice, String startTime, String endTime);
 
 
     /**
@@ -43,6 +61,18 @@ public interface NoticeService extends IService<Notice> {
      * @return
      */
     IPage<Notice> getNoticeInboxListByParent(QueryRequest request, Notice notice, String startTime, String endTime);
+
+
+
+
+    /**
+     * 只看父级发的通知公告导出
+     * @param notice
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Notice> getNoticeInboxListByParentNew( Notice notice, String startTime, String endTime);
 
     void updateByKey(Notice notice);
 

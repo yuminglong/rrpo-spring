@@ -82,4 +82,7 @@ public class Dict implements Serializable {
    @ApiModelProperty(value = "是否禁用0、禁用 1、未禁用" ,example = "1")
    private Integer ifDisable;
 
+    @ApiModelProperty(value = "排序" ,example = "1")
+    private Integer orderNum;
+
 }

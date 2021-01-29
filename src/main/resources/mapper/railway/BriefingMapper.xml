@@ -12,7 +12,7 @@
     and c.briefing_id = b.id
     and b.`status` = 3
     and c.briefing_id =#{briefingId}
-    GROUP BY c.dept_id) B
+    ) B
 	ON B.city = A.city ORDER BY A.id
     </select>
 

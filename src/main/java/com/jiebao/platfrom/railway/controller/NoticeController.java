@@ -10,6 +10,7 @@ import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
 import com.jiebao.platfrom.railway.dao.NoticeMapper;
+import com.jiebao.platfrom.railway.domain.Address;
 import com.jiebao.platfrom.railway.domain.Notice;
 import com.jiebao.platfrom.railway.service.NoticeService;
 import com.jiebao.platfrom.system.dao.FileMapper;
@@ -17,6 +18,7 @@ import com.jiebao.platfrom.system.domain.Dept;
 import com.jiebao.platfrom.system.domain.User;
 import com.jiebao.platfrom.system.service.DeptService;
 import com.jiebao.platfrom.system.service.UserService;
+import com.wuwenze.poi.ExcelKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -116,6 +119,24 @@ public class NoticeController extends BaseController {
     }
 
 
+    /**
+     * 导出(发件箱)
+     *
+     */
+    @PostMapping("/excelOut")
+    @ApiOperation(value = "导出(发件箱)", notes = "导出（发件箱）", response = JiebaoResponse.class, httpMethod = "POST")
+    public void getNoticeListExport(HttpServletResponse response, Notice notice, String startTime, String endTime) throws JiebaoException {
+        try {
+            List<Notice> noticeList = noticeService.getNoticeListNew(notice, startTime, endTime);
+            ExcelKit.$Export(Notice.class, response).downXlsx(noticeList, false);
+        }catch (Exception e) {
+            message = "导出Excel失败";
+            log.error(message, e);
+            throw new JiebaoException(message);
+        }
+    }
+
+
     @GetMapping("/inbox")
     @ApiOperation(value = "分页查询(收件箱)", notes = "查询分页数据（收件箱）", response = JiebaoResponse.class, httpMethod = "GET")
     public JiebaoResponse getNoticeInboxList(QueryRequest request, Notice notice, String startTime, String endTime) {
@@ -138,8 +159,41 @@ public class NoticeController extends BaseController {
             }
             return new JiebaoResponse().data(this.getDataTable(noticeList));
         }
-
     }
+
+
+    @PostMapping("/excelInbox")
+    @ApiOperation(value = "导出(收件箱)", notes = "导出（收件箱）", response = JiebaoResponse.class, httpMethod = "POST")
+    public void getNoticeInboxListExport(HttpServletResponse response,  Notice notice, String startTime, String endTime)  throws JiebaoException{
+        Dept dept = deptService.getDept();
+        if (dept.getRank() == 0){
+            try {
+                List<Notice> noticeList = noticeService.getNoticeInboxListNew(notice, startTime, endTime);
+                ExcelKit.$Export(Notice.class, response).downXlsx(noticeList, false);
+            }catch (Exception e) {
+                message = "导出Excel失败";
+                log.error(message, e);
+                throw new JiebaoException(message);
+            }
+        }
+        else {
+            try {
+                List<Notice> noticeList = noticeService.getNoticeInboxListByParentNew(notice, startTime, endTime);
+                ExcelKit.$Export(Notice.class, response).downXlsx(noticeList, false);
+            }catch (Exception e) {
+                message = "导出Excel失败";
+                log.error(message, e);
+                throw new JiebaoException(message);
+            }
+        }
+    }
+
+
+
+
+
+
+
 
     @DeleteMapping("/{ids}")
     @Log("删除通知公告")

@@ -32,18 +32,13 @@ import com.jiebao.platfrom.system.dao.DeptMapper;
 import com.jiebao.platfrom.system.dao.UserConfigMapper;
 import com.jiebao.platfrom.system.dao.UserMapper;
 import com.jiebao.platfrom.system.dao.UserRoleMapper;
-import com.jiebao.platfrom.system.domain.Dept;
-import com.jiebao.platfrom.system.domain.User;
-import com.jiebao.platfrom.system.domain.UserConfig;
-import com.jiebao.platfrom.system.domain.UserRole;
-import com.jiebao.platfrom.system.service.DeptService;
-import com.jiebao.platfrom.system.service.UserConfigService;
-import com.jiebao.platfrom.system.service.UserRoleService;
-import com.jiebao.platfrom.system.service.UserService;
+import com.jiebao.platfrom.system.domain.*;
+import com.jiebao.platfrom.system.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +58,8 @@ public class UnituserController extends BaseController {
 
     private String message;
 
+
+
     @Autowired
     private UnitUserService unituserService;
 
@@ -77,6 +74,9 @@ public class UnituserController extends BaseController {
 
     @Resource
     private ExchangeMapper exchangeMapper;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private InfoCommentService infoCommentService;
@@ -266,7 +266,7 @@ public class UnituserController extends BaseController {
         for (User u : users
         ) {
             Unituser unituser = unituserService.selectName(u.getUsername());
-            if (unituser !=null){
+            if (unituser != null) {
                 if (unituser.getUnit().contains("冷水滩")
                 ) {
                     String roleId = "7c8f277c3adb22397b8c38f15ca03ea8";
@@ -361,10 +361,10 @@ public class UnituserController extends BaseController {
         for (Dept dept : depts
         ) {
             List<Dept> deptByName = deptService.getDeptByName(dept.getDeptName());
-            if (deptByName.size()>1){
+            if (deptByName.size() > 1) {
                 User user = new User();
                 Dept byId = deptService.getById(dept.getParentId());
-                user.setUsername(byId.getDeptName()+dept.getDeptName()+"护路办");
+                user.setUsername(byId.getDeptName() + dept.getDeptName() + "护路办");
                 //user.setMobile(oldUser.getMobileTelephone());
                 user.setStatus("1");
                 user.setCreateTime(new Date());
@@ -373,7 +373,7 @@ public class UnituserController extends BaseController {
                 user.setAvatar("default.jpg");
                 user.setType(0);
                 user.setSsex("2");
-                user.setPassword(MD5Util.encrypt(byId.getDeptName()+dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
+                user.setPassword(MD5Util.encrypt(byId.getDeptName() + dept.getDeptName() + "护路办", Unituser.DEFAULT_PASSWORD));
                 user.setDeptId(dept.getDeptId());
            /* List<Dept> depts = deptService.list();
             for (Dept dept : depts) {
@@ -390,9 +390,9 @@ public class UnituserController extends BaseController {
 
                 // 创建用户默认的个性化配置
                 userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));
-            }else {
+            } else {
                 User user = new User();
-                user.setUsername(dept.getDeptName()+"护路办");
+                user.setUsername(dept.getDeptName() + "护路办");
                 //user.setMobile(oldUser.getMobileTelephone());
                 user.setStatus("1");
                 user.setCreateTime(new Date());
@@ -401,7 +401,7 @@ public class UnituserController extends BaseController {
                 user.setAvatar("default.jpg");
                 user.setType(0);
                 user.setSsex("2");
-                user.setPassword(MD5Util.encrypt(dept.getDeptName()+"护路办", Unituser.DEFAULT_PASSWORD));
+                user.setPassword(MD5Util.encrypt(dept.getDeptName() + "护路办", Unituser.DEFAULT_PASSWORD));
                 user.setDeptId(dept.getDeptId());
            /* List<Dept> depts = deptService.list();
             for (Dept dept : depts) {
@@ -433,16 +433,14 @@ public class UnituserController extends BaseController {
         for (Dept dept : depts
         ) {
             User byName = userService.findByName(dept.getDeptName());
-            if (byName!=null){
-                userConfigMapper.delete(new UpdateWrapper<UserConfig>().eq("user_id",byName.getUserId()));
-                userRoleMapper.delete(new QueryWrapper<UserRole>().eq("user_id",byName.getUserId()));
-                userMapper.delete(new QueryWrapper<User>().eq("user_id",byName.getUserId()));
+            if (byName != null) {
+                userConfigMapper.delete(new UpdateWrapper<UserConfig>().eq("user_id", byName.getUserId()));
+                userRoleMapper.delete(new QueryWrapper<UserRole>().eq("user_id", byName.getUserId()));
+                userMapper.delete(new QueryWrapper<User>().eq("user_id", byName.getUserId()));
             }
         }
         return new JiebaoResponse().data(depts);
     }
-
-
 
 
     @GetMapping("/addTime")
@@ -464,6 +462,83 @@ public class UnituserController extends BaseController {
         }
         return new JiebaoResponse().okMessage("ok");
     }
+
+
+    @GetMapping("/addFile")
+    @ApiOperation(value = "信息互递文件路径", notes = "信息互递文件路径", response = JiebaoResponse.class, httpMethod = "GET")
+    public JiebaoResponse addFile() {
+       /* String path = "/usr/local/rrpo/upload/files/oldfile/hlbFiles";
+        Exchange byId = exchangeService.getById("00034f28d203be43b4a8e6327d71daff");
+        String substring = byId.getUpFile().substring(0, byId.getUpFile().length() - 1);
+        String[] result = substring.split(",");
+        for (String r : result
+        ) {
+            if (r != null) {
+                String file = r.substring(r.lastIndexOf("/") + 1);
+                String suffix = r.substring(r.lastIndexOf("."));
+                String newName = UUID.randomUUID().toString() + suffix;
+                String  accessPath ="https://api.hnzhb.com.cn/jbx/cdn/file/oldfile/hlbFiles/";
+                accessPath = accessPath + newName ;
+                System.out.println("old_name:"+file);
+                System.out.println("new_name："+newName);
+                System.out.println("file_type:2");
+                System.out.println("file_suffix：" + suffix);
+                System.out.println("file_url：" + path +"/");
+                System.out.println("ref_type：1");
+                System.out.println("ref_id:"+"00034f28d203be43b4a8e6327d71daff");
+                System.out.println("access_url:"+accessPath);
+                System.out.println("-----------------------------------------------------我是分分割线-------------------------------------------------------------");
+            }
+        }*/
+        String path = "/usr/local/rrpo/upload/files/oldfile/hlbFiles/";
+        List<Exchange> list = exchangeService.list();
+        for (Exchange e : list
+        ) {
+            if (e.getUpFile()!=null) {
+                String[] result = e.getUpFile().split(",");
+                for (String r : result
+                ) {
+                    if (r != null) {
+                        String file = r.substring(r.lastIndexOf("/") + 1);
+                        if (r.indexOf(".") != -1){
+                            String suffix = r.substring(r.lastIndexOf("."));
+                           // String newName = UUID.randomUUID().toString() + suffix;
+                            String accessPath = "https://api.hnzhb.com.cn/jbx/cdn/file/oldfile/hlbFiles/";
+                            accessPath = accessPath + file;
+                         /*   System.out.println("old_name:" + file);
+                            System.out.println("new_name：" + file);
+                            System.out.println("file_type:2");
+                            System.out.println("file_suffix：" + suffix);
+                            System.out.println("file_url：" + path);
+                            System.out.println("ref_type：1");
+                            System.out.println("ref_id:" + e.getId());
+                            System.out.println("access_url:" + accessPath);
+                            System.out.println("-----------------------------------------------------我是分分割线-------------------------------------------------------------");*/
+                            File file1 = new File();
+                            file1.setOldName(file);
+                            file1.setNewName(file);
+                            file1.setFileType("2");
+                            file1.setFileSuffix(suffix);
+                            file1.setFileUrl(path);
+                            file1.setRefType("1");
+                            file1.setRefId(e.getId());
+                            file1.setTime(new Date());
+                            file1.setUserId("69ec991c569c95684a4aa5064e8c2de8");
+                            file1.setStatus(true);
+                            file1.setAccessUrl(accessPath);
+                            fileService.save(file1);
+
+                        }
+                    }
+                }
+            }
+        }
+        return new JiebaoResponse().okMessage("ok");
+    }
+
+
+
+
 
 }
 

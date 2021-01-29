@@ -101,7 +101,7 @@ public class MonthController {
         return monthService.year(year);
     }
 
-    @GetMapping("yearSN")
+    @PostMapping("yearSN")
     @ApiOperation("年度考核统计视图 起止")
     public JiebaoResponse yearSN(Date startDate,Date endDate) { //传入年份 获得对应 统计数据
         return new JiebaoResponse().data(monthService.yearSN(startDate,endDate)).okMessage("查询成功");

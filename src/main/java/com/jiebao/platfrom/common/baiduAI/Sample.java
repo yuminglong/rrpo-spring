@@ -1,18 +1,29 @@
 package com.jiebao.platfrom.common.baiduAI;
 
 import com.baidu.aip.imagesearch.AipImageSearch;
+import com.jiebao.platfrom.system.dao.DeptMapper;
+import com.jiebao.platfrom.system.domain.Dept;
+import com.jiebao.platfrom.system.service.DeptService;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+
+
+
 
 public class Sample {
     public static final String APP_ID = "21958040";
     public static final String API_KEY = "6TCwO8xXZ4xeWXCtOFnT0gY6";
     public static final String SECRET_KEY = "hncRwME2xsxgqMDjgdwspUsxDV9iXmaG";
 
+    @Autowired
+    DeptService deptService;
 
     public static void main(String[] args) throws IOException {
       /*  String image ="D:\\upload\\images\\2020-08-10\\11.jpg";
@@ -25,15 +36,27 @@ public class Sample {
         String[] split = a.split(",");
         System.out.println(split[0]);*/
 
-        String s = ",a,b,c,";
+       /* String s = ",a,b,c,";
         String s1 = s.replaceAll("^,*|,*$", "");
         List result = Arrays.asList(s1.split(","));
         for (int i = 0; i < result.size(); i++) {
             System.out.println(result.get(i));
 
         }
-        System.out.println(result);
+        System.out.println(result);*/
+
+      /*  List<String> list = new ArrayList<>();
+        Sample.test("100",list);*/
     }
+
+   /* public static List test(String deptId, List list){
+        Dept dept = deptService.getById(deptId);
+        if (dept.getParentId() != "-1"){
+            list.add(dept.getParentId());
+            test(dept.getParentId(),list);
+        }
+       return list;
+    }*/
 
     /**
      * 入库，相同图片则返回false

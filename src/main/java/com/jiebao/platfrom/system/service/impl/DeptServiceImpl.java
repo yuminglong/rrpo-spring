@@ -81,7 +81,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (dept.getStatus()!=null && !"".equals(dept.getStatus())){
             queryWrapper.lambda().eq(Dept::getStatus,dept.getStatus());
         }
-
+        if (dept.getPublics()!=null && !"".equals(dept.getPublics())){
+            queryWrapper.lambda().eq(Dept::getPublics,dept.getPublics());
+        }
         if (StringUtils.isNotBlank(dept.getCreateTimeFrom()) && StringUtils.isNotBlank(dept.getCreateTimeTo()))
             queryWrapper.lambda()
                     .ge(Dept::getCreateTime, dept.getCreateTimeFrom())

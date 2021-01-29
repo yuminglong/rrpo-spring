@@ -60,6 +60,7 @@ public class AccidentServiceImpl extends ServiceImpl<AccidentMapper, Accident> i
         if (endDate != null) {
             queryWrapper.le("month", endDate);//不能大于此时间
         }
+        queryWrapper.orderByDesc("month");
         queryWrapper.orderByDesc("date");
         Page<Accident> page = new Page<>(queryRequest.getPageNum(), queryRequest.getPageSize());
         return new JiebaoResponse().data(this.baseMapper.ListPage(page, queryWrapper)).message("查询成功");
