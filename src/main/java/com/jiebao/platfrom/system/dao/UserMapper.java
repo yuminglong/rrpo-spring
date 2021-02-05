@@ -53,6 +53,9 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> getByDepts(String deptId);
 
 
+    @Select("select * from sys_user r  where  r.dept_id  in #{deptId}")
+    List<User> getByDeptses(List<String> deptId);
+
     @Select("select username from sys_user   ${ew.customSqlSegment}")
     List<String> getUserNameByDepts(@Param("ew") QueryWrapper<User> ew);
 

@@ -1,5 +1,8 @@
 package com.jiebao.platfrom.system.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.jiebao.platfrom.common.annotation.Log;
 import com.jiebao.platfrom.common.authentication.JWTUtil;
@@ -7,6 +10,8 @@ import com.jiebao.platfrom.common.controller.BaseController;
 import com.jiebao.platfrom.common.domain.JiebaoResponse;
 import com.jiebao.platfrom.common.domain.QueryRequest;
 import com.jiebao.platfrom.common.exception.JiebaoException;
+import com.jiebao.platfrom.common.service.CacheService;
+import com.jiebao.platfrom.common.service.RedisService;
 import com.jiebao.platfrom.common.utils.MD5Util;
 import com.jiebao.platfrom.railway.dao.BriefingUserMapper;
 import com.jiebao.platfrom.railway.dao.ExchangeUserMapper;
@@ -40,6 +45,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -65,6 +71,8 @@ public class UserController extends BaseController {
     private DeptService deptService;
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private CacheService CacheService;
 
 
     @GetMapping("check/{username}")
@@ -258,30 +266,52 @@ public class UserController extends BaseController {
         return users;
     }
 
-    @GetMapping("/getDeptAndUser")
-    @ApiOperation(value = "根据部门id查子部门和该部门人员", notes = "根据部门id查子部门和该部门人员", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse getDeptAndUser(String[] deptIds) {
-        List<User> users = new ArrayList();
-        List<Dept> depts = new ArrayList<>();
-    /*    List<String> deptIdes = Arrays.asList(deptIds);
-        Collection<User> users1 = userService.listByIds(deptIdes);
-        Map<String, Object> map = new HashMap<>();
-        map.put("parent_id", deptIds);
-        Collection<Dept> depts1 = deptService.listByMap(map);*/
-        Arrays.stream(deptIds).forEach(deptId -> {
-            List<User> byDept = userService.getByDepts(deptId);
-            users.addAll(byDept);
+    @PostMapping("/getDept")
+    @ApiOperation(value = "根据部门id查子部门和该部门人员", notes = "根据部门id查子部门和该部门人员", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse getDept(String[] deptIds)  {
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("parent_id", deptId);
-            List<Dept> dept = deptMapper.selectByMap(map);
-            depts.addAll(dept);
-        });
+        List<Dept> depts = new ArrayList<>();
+        if (deptIds == null || "".equals(deptIds) || deptIds.length  == 0) {
+            return new JiebaoResponse().failMessage("请勾选");
+        }
+
+        List<Dept> list = deptService.list();
+        for (Dept dept: list) {
+            for (String deptId: deptIds) {
+                if (dept.getParentId().equals(deptId)) {
+                    depts.add(dept);
+                }
+            }
+        }
         HashMap<String, Object> map1 = new HashMap<>();
         map1.put("dept", depts);
+        return new JiebaoResponse().data(map1).okMessage("查询成功");
+    }
+
+
+    @PostMapping("/getUser")
+    @ApiOperation(value = "根据部门id查子部门和该部门人员", notes = "根据部门id查子部门和该部门人员", response = JiebaoResponse.class, httpMethod = "POST")
+    public JiebaoResponse getUser(String[] deptIds)  {
+        List<User> users = new ArrayList();
+        if (deptIds == null || "".equals(deptIds) || deptIds.length  == 0) {
+            return new JiebaoResponse().failMessage("请勾选");
+        }
+        List<User> userList = userService.list();
+        for (User user: userList) {
+            for (String deptId: deptIds) {
+                if (user.getDeptId().equals(deptId)) {
+                    users.add(user);
+                }
+            }
+        }
+        HashMap<String, Object> map1 = new HashMap<>();
         map1.put("user", users);
         return new JiebaoResponse().data(map1).okMessage("查询成功");
     }
+
+
+
+
 
 
     @GetMapping("/getUserInfo")
@@ -300,7 +330,7 @@ public class UserController extends BaseController {
     public boolean getDept() {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
-        if (byName.getDeptId() == null || byName.getDeptId() =="") {
+        if (byName.getDeptId() == null || byName.getDeptId() == "") {
             return false;
         } else {
             return true;
@@ -309,47 +339,44 @@ public class UserController extends BaseController {
 
     @GetMapping("/bandingDept")
     @ApiOperation(value = "若无组织机构id，绑定组织机构id", notes = "绑定组织机构id", response = JiebaoResponse.class, httpMethod = "GET")
-    public JiebaoResponse bandingDept(String deptId)  {
+    public JiebaoResponse bandingDept(String deptId) {
         String username = JWTUtil.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User byName = userService.findByName(username);
         Dept byId = deptService.getById(deptId);
-        if (StringUtils.isNotBlank(deptId)){
-            userMapper.updateDept(deptId,byName.getUserId());
+        if (StringUtils.isNotBlank(deptId)) {
+            userMapper.updateDept(deptId, byName.getUserId());
             UserRole ur = new UserRole();
-            if (username.contains("所")){
+            if (username.contains("所")) {
                 ur.setUserId(byName.getUserId());
                 ur.setRoleId("a8f32da9a55f1f999a78dc926aecc009");
-            }
-            else {
-                if (byId.getRank()==1){
+            } else {
+                if (byId.getRank() == 1) {
                     ur.setUserId(byName.getUserId());
                     ur.setRoleId("1ef79e30d65cf948db46a7e408f46085");
                 }
-                if (byId.getRank() == 2){ //区县
+                if (byId.getRank() == 2) { //区县
                     ur.setUserId(byName.getUserId());
                     ur.setRoleId("7c8f277c3adb22397b8c38f15ca03ea8");
                 }
-               if(byId.getRank() == 3){
+                if (byId.getRank() == 3) {
                     ur.setUserId(byName.getUserId());
                     ur.setRoleId("8c970a7008c0860ae295e8f0fec3280f");
                 }
-                if (byId.getRank() == 4){
+                if (byId.getRank() == 4) {
                     ur.setUserId(byName.getUserId());
                     ur.setRoleId("4f98f01015aa8dbd853e7208c3b44568");
                 }
-                 if (byId.getRank() == 0){
+                if (byId.getRank() == 0) {
                     ur.setUserId(byName.getUserId());
                     ur.setRoleId("9a6ac9c6c290261b2ed31b5c52c9d74b");
+                } else {
+                    ur.setUserId(byName.getUserId());
+                    ur.setRoleId("2");
                 }
-                 else {
-                     ur.setUserId(byName.getUserId());
-                     ur.setRoleId("2");
-                 }
             }
             userRoleMapper.insert(ur);
             return new JiebaoResponse().okMessage("绑定组织机构成功");
-        }
-        else {
+        } else {
             return new JiebaoResponse().okMessage("绑定组织机构失败");
         }
     }

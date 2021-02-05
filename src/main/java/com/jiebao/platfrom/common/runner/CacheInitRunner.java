@@ -38,16 +38,18 @@ public class CacheInitRunner implements ApplicationRunner {
             log.info("Redis连接中 ······");
             cacheService.testConnect();
 
-//            log.info("缓存初始化 ······");
 //            log.info("缓存用户数据 ······");
 //            List<User> list = this.userService.list();
 //            for (User user : list) {
 //                userManager.loadUserRedisCache(user);
 //            }
-//            log.info("缓存组织机构 ······");
-//            cacheService.saveDept();
-           // cacheService.saveAllChildrenDept();
-            log.info("缓存加载完成 ······");
+            log.info("缓存组织机构 ······" + System.currentTimeMillis());
+            //cacheService.saveDept();
+            // cacheService.saveAllChildrenDept();
+
+           /* cacheService.saveExchangeUser();
+            cacheService.saveExchangeDept();*/
+            log.info("缓存加载完成 ······" + System.currentTimeMillis());
         } catch (Exception e) {
             log.error("缓存初始化失败，{}", e.getMessage());
             log.error(" ____   __    _   _ ");
@@ -55,8 +57,9 @@ public class CacheInitRunner implements ApplicationRunner {
             log.error("|_|   /_/--\\ |_| |_|__");
             log.error("                        ");
             log.error("JIEBAO启动失败              ");
-            if (e instanceof RedisConnectException)
+            if (e instanceof RedisConnectException) {
                 log.error("Redis连接异常，请检查Redis连接配置并确保Redis服务已启动");
+            }
             // 关闭 JIEBAO
             context.close();
         }

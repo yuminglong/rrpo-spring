@@ -1,5 +1,6 @@
 package com.jiebao.platfrom.common.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jiebao.platfrom.common.domain.JiebaoConstant;
@@ -177,6 +178,80 @@ public class CacheServiceImpl implements CacheService {
             return this.mapper.readValue(deptString, type);
         }
     }
+
+    @Override
+    public void saveExchangeDept() throws Exception {
+        List<Dept> list = deptService.list();
+        for (Dept dept:list
+             ) {
+            if (dept.getRank() !=3 ){
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("parent_id",dept.getDeptId());
+                List<Dept> depts = deptMapper.selectByMap(map);
+                redisService.set(dept.getDeptId()+".dept", mapper.writeValueAsString(depts));
+            }
+        }
+    }
+
+    @Override
+    public List<Dept> getExchangeDept(String deptId) throws Exception {
+        String ChildrenDept = this.redisService.get(deptId+".dept");
+        if (StringUtils.isBlank(ChildrenDept)) {
+            return null;
+        } else {
+            JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Dept.class);
+            return this.mapper.readValue(ChildrenDept,type);
+        }
+    }
+
+
+    @Override
+    public void saveExchangeUser() throws Exception {
+        List<Dept> list = deptService.list();
+        for (Dept dept:list
+        ) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("dept_id",dept.getDeptId());
+                List<User> users = userMapper.selectByMap(map);
+                redisService.set(dept.getDeptId()+".user", mapper.writeValueAsString(users));
+        }
+    }
+
+
+    @Override
+    public List<User> getExchangeUser(String deptId) throws Exception {
+        String exchangeDeptId = this.redisService.get(deptId+".user");
+        if (StringUtils.isBlank(exchangeDeptId)) {
+            throw new Exception();
+        } else {
+            JavaType type = mapper.getTypeFactory().constructParametricType(List.class, User.class);
+            return this.mapper.readValue(exchangeDeptId,type);
+        }
+    }
+
+
+
+
+/*    @Override
+    public Map<String, Object> getDept() throws Exception {
+        String deptString = this.redisService.get(JiebaoConstant.DEPT_CACHE);
+        if (StringUtils.isBlank(deptString)) {
+            throw new Exception();
+        } else {
+            JavaType type = mapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+            return this.mapper.readValue(deptString, type);
+        }
+    }*/
+
+
+
+
+
+
+
+
+
+
 
 
     @Override

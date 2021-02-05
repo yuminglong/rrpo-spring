@@ -116,12 +116,46 @@ public interface CacheService {
     void saveDept() throws Exception;
 
     /**
+     * 缓存信息互递传阅人子集部门
+     */
+     void saveExchangeDept() throws Exception;
+
+    /**
+     * 读取信息互递传阅人子集部门
+     * @return
+     * @throws Exception
+     */
+     List<Dept> getExchangeDept(String deptId) throws Exception;
+
+    /**
+     * 缓存信息互递查询部门的传阅人员
+     */
+    void saveExchangeUser() throws Exception;
+
+    /**
+     * 读取信息互递查询部门的传阅人员
+     * @param deptId
+     * @return
+     * @throws Exception
+     */
+    List<User> getExchangeUser(String deptId) throws Exception;
+
+
+
+
+
+
+
+    /**
      * 读取组织机构缓存信息
      *
      * @return
      * @throws Exception
      */
     Map<String, Object> getDept() throws Exception;
+
+
+
 
     /**
      * 缓存十四个市州等的作为主节点的所有子节点用户信息
@@ -136,5 +170,7 @@ public interface CacheService {
      * @throws Exception
      */
     List<Dept> getAllChildrenDept(String deptId) throws Exception;
+
+
 
 }
